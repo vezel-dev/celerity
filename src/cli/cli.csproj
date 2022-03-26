@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>celerity</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <IsPublishable>true</IsPublishable>
+        <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the .NET global tool.</PackageDescription>
+        <PackageId>celerity</PackageId>
+        <RollForward>LatestMajor</RollForward>
+        <RootNamespace>Vezel.Celerity</RootNamespace>
+        <ServerGarbageCollection>true</ServerGarbageCollection>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../kernel/kernel.csproj" />
+        <ProjectReference Include="../server/server.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="RadLine" />
+        <PackageReference Include="Spectre.Console.Cli" />
+    </ItemGroup>
+</Project>

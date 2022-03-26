@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Semantics</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides semantic analyses such as symbol binding, type checking,
+and linting.</PackageDescription>
+        <PackageId>Vezel.Celerity.Semantics</PackageId>
+        <RootNamespace>Vezel.Celerity.Semantics</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../syntax/syntax.csproj" />
+    </ItemGroup>
+</Project>

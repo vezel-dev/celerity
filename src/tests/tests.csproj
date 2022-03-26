@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <!--
+        The TestAdapter suffix in the assembly name is required for the VSTest
+        infrastructure to pick up our custom ITestDiscoverer implementation.
+        -->
+        <AssemblyName>Vezel.Celerity.TestAdapter</AssemblyName>
+        <RootNamespace>Vezel.Celerity.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../kernel/kernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector"
+                          PrivateAssets="all" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk"
+                          PrivateAssets="all" />
+        <PackageReference Include="Microsoft.TestPlatform.ObjectModel" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio"
+                          PrivateAssets="all" />
+    </ItemGroup>
+</Project>

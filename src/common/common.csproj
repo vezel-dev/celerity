@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Common</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides common functionality used by all Celerity packages.</PackageDescription>
+        <PackageId>Vezel.Celerity.Common</PackageId>
+        <RootNamespace>Vezel.Celerity</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="celerity" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Analysis" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Common" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Kernel" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Runtime" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Server" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Syntax" />
+    </ItemGroup>
+</Project>

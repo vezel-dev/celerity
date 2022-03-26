@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Kernel</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the language's standard library and host operating system
+interfaces for the runtime system.</PackageDescription>
+        <PackageId>Vezel.Celerity.Kernel</PackageId>
+        <RootNamespace>Vezel.Celerity.Kernel</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="**/*.cel" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../runtime/runtime.csproj" />
+    </ItemGroup>
+</Project>

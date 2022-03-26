@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Syntax</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the language lexer, parser, and abstract syntax tree.</PackageDescription>
+        <PackageId>Vezel.Celerity.Syntax</PackageId>
+        <RootNamespace>Vezel.Celerity.Syntax</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../common/common.csproj" />
+        <ProjectReference Include="../generators/generators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
+    </ItemGroup>
+</Project>
