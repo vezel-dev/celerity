@@ -36,6 +36,6 @@ jobs:
               run: |
                   dotnet tool restore
                   dotnet publish -c ${{ matrix.cfg }}
-            - name: Run tests
-              run: |
-                  dotnet test -c ${{ matrix.cfg }} --no-build
+#            - name: Run tests
+#              run: |
+#                  dotnet test -c ${{ matrix.cfg }} --no-build
