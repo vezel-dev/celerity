@@ -20,7 +20,7 @@ internal static partial class CelerityTestLoader
             }
         }
 
-        var dir = Path.Combine(Path.GetDirectoryName(typeof(CelerityTestLoader).Assembly.Location)!, "..", "..");
+        var dir = Path.Combine(Path.GetDirectoryName(typeof(ThisAssembly).Assembly.Location)!, "..", "..");
 
         foreach (var file in new DirectoryInfo(dir).EnumerateFiles("*.cel"))
         {

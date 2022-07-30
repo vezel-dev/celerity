@@ -16,7 +16,7 @@ internal sealed class BenchmarkCommand : Command<BenchmarkCommand.BenchmarkComma
 
     public override int Execute([NotNull] CommandContext context, [NotNull] BenchmarkCommandSettings settings)
     {
-        return BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly)
+        return BenchmarkSwitcher.FromAssembly(typeof(ThisAssembly).Assembly)
             .RunAll(new CelerityBenchmarkConfig(settings.Test, settings.Filter))
             .Any(s => s.HasCriticalValidationErrors)
             ? 1

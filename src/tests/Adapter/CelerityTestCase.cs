@@ -2,7 +2,7 @@ namespace Vezel.Celerity.Tests.Adapter;
 
 internal sealed partial class CelerityTestCase
 {
-    private static readonly string _source = typeof(CelerityTestCase).Assembly.Location;
+    private static readonly string _source = typeof(ThisAssembly).Assembly.Location;
 
     private static readonly string _executable = Path.Combine(
         Path.GetDirectoryName(_source)!,
