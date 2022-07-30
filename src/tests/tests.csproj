@@ -9,7 +9,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../kernel/kernel.csproj" />
+        <Using Include="Microsoft.VisualStudio.TestPlatform.ObjectModel" />
+        <Using Include="Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter" />
+        <Using Include="Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../cli/cli.csproj"
+                          ReferenceOutputAssembly="false" />
     </ItemGroup>
 
     <ItemGroup>
