@@ -14,8 +14,9 @@ internal sealed class CelerityBenchmarkConfig : ManualConfig
         if (filter != null)
             _ = AddFilter(new GlobFilter(new[] { filter }));
 
-        _ = WithOptions(ConfigOptions.JoinSummary | ConfigOptions.StopOnFirstError | ConfigOptions.DisableLogFile)
-            .WithSummaryStyle(new(CultureInfo.InvariantCulture, false, null, TimeUnit.Microsecond, true))
+        _ = WithOptions(ConfigOptions.JoinSummary | ConfigOptions.StopOnFirstError)
+            .WithArtifactsPath(Path.Combine(Path.GetDirectoryName(Environment.ProcessPath!)!, "artifacts"))
+            .WithSummaryStyle(new(CultureInfo.InvariantCulture, false, null, TimeUnit.Microsecond))
             .AddAnalyser(
                 BaselineCustomAnalyzer.Default,
                 EnvironmentAnalyser.Default,
@@ -46,7 +47,8 @@ internal sealed class CelerityBenchmarkConfig : ManualConfig
                 StatisticColumn.Max,
                 StatisticColumn.Iterations,
                 StatisticColumn.OperationsPerSecond)
-            .AddLogger(ConsoleLogger.Unicode)
+            .AddExporter(MarkdownExporter.GitHub)
+            .AddLogger(CelerityBenchmarkLogger.Instance)
             .AddJob(job);
     }
 }

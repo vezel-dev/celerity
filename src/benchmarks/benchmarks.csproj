@@ -8,15 +8,18 @@
 
     <ItemGroup>
         <Using Include="BenchmarkDotNet.Analysers" />
+        <Using Include="BenchmarkDotNet.Attributes" />
         <Using Include="BenchmarkDotNet.Columns" />
         <Using Include="BenchmarkDotNet.Configs" />
         <Using Include="BenchmarkDotNet.Engines" />
+        <Using Include="BenchmarkDotNet.Exporters" />
         <Using Include="BenchmarkDotNet.Filters" />
         <Using Include="BenchmarkDotNet.Jobs" />
         <Using Include="BenchmarkDotNet.Loggers" />
         <Using Include="BenchmarkDotNet.Running" />
         <Using Include="BenchmarkDotNet.Validators" />
         <Using Include="Perfolizer.Horology" />
+        <Using Include="Spectre.Console" />
         <Using Include="Spectre.Console.Cli" />
     </ItemGroup>
 
