@@ -15,6 +15,10 @@ This package provides the .NET global tool.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Spectre.Console.Cli" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="../kernel/kernel.csproj" />
         <ProjectReference Include="../server/server.csproj" />
     </ItemGroup>
