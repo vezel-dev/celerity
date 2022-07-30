@@ -14,11 +14,9 @@ internal sealed partial class CelerityTestCase
         ThisAssembly.AssemblyConfiguration,
         "celerity.exe");
 
-    private static readonly string _namespace = typeof(CelerityTestCase).Namespace!;
-
     public string Name { get; }
 
-    public string FullName => $"{_namespace}.{Name}";
+    public string FullName => $"{ThisAssembly.RootNamespace}.{Name}";
 
     public FileInfo File { get; }
 
