@@ -38,4 +38,5 @@ jobs:
                   dotnet publish -c ${{ matrix.cfg }}
 #            - name: Run tests
 #              run: |
+#                  dotnet run --project src/benchmarks -c ${{ matrix.cfg }} --no-build
 #                  dotnet test -c ${{ matrix.cfg }} --no-build

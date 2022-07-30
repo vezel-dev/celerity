@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>celerity-benchmarks</AssemblyName>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>Vezel.Celerity.Benchmarks</RootNamespace>
+        <ServerGarbageCollection>true</ServerGarbageCollection>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="BenchmarkDotNet.Analysers" />
+        <Using Include="BenchmarkDotNet.Columns" />
+        <Using Include="BenchmarkDotNet.Configs" />
+        <Using Include="BenchmarkDotNet.Engines" />
+        <Using Include="BenchmarkDotNet.Filters" />
+        <Using Include="BenchmarkDotNet.Jobs" />
+        <Using Include="BenchmarkDotNet.Loggers" />
+        <Using Include="BenchmarkDotNet.Running" />
+        <Using Include="BenchmarkDotNet.Validators" />
+        <Using Include="Perfolizer.Horology" />
+        <Using Include="Spectre.Console.Cli" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../kernel/kernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" />
+        <PackageReference Include="Spectre.Console.Cli" />
+    </ItemGroup>
+</Project>
