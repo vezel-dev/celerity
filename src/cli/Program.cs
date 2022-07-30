@@ -30,6 +30,10 @@ app.Configure(cfg =>
     });
 
     _ = cfg
+        .AddCommand<InfoCommand>("info")
+        .WithDescription("Print Celerity runtime environment information.");
+
+    _ = cfg
         .AddCommand<RunCommand>("run")
         .WithDescription("Run a Celerity program.");
 

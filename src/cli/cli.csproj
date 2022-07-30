@@ -15,6 +15,7 @@ This package provides the .NET global tool.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Spectre.Console" />
         <Using Include="Spectre.Console.Cli" />
     </ItemGroup>
 
