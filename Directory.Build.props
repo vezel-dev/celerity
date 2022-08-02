@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <Product>Celerity</Product>
-        <Description>Celerity is a gradually typed, highly concurrent programming language suitable for embedding.</Description>
+        <Description>Celerity is a highly concurrent and expressive programming language suitable for embedding.</Description>
         <Company>Vezel</Company>
         <Authors>$(Company) Contributors</Authors>
         <Copyright>Copyright © $(Authors)</Copyright>
@@ -25,7 +25,11 @@
         <Nullable>enable</Nullable>
         <PackageDescription>$(Description)
 
-TODO: Description.</PackageDescription>
+Celerity is expression-oriented, multi-paradigm, and features optional type
+checking through success typings. Some notable features are pattern matching,
+first-class functions with closures, opt-in mutability, explicit exception
+propagation, concurrency based on lightweight agents, and non-suspending garbage
+collection.</PackageDescription>
         <PackageLicenseExpression>0BSD</PackageLicenseExpression>
         <PackageOutputPath>$(MSBuildThisFileDirectory)pkg/feed/</PackageOutputPath>
         <PackageProjectUrl>https://docs.vezel.dev/celerity</PackageProjectUrl>

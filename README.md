@@ -7,8 +7,8 @@
 
 <p align="center">
     <strong>
-        A gradually typed, highly concurrent programming language suitable for
-        embedding
+        A highly concurrent and expressive programming language suitable for
+        embedding.
     </strong>
 </p>
 
@@ -29,10 +29,11 @@
 **Celerity** is a programming language aiming for a good balance of
 productivity and scalability while being easily embeddable in host applications.
 
-**Celerity** is gradually typed, expression-oriented, and multi-paradigm. Some
-notable features are pattern matching, first-class functions with closures,
-opt-in mutability, explicit error propagation, concurrency based on lightweight
-agents, and non-suspending garbage collection.
+**Celerity** is expression-oriented, multi-paradigm, and features optional type
+checking through success typings. Some notable features are pattern matching,
+first-class functions with closures, opt-in mutability, explicit exception
+propagation, concurrency based on lightweight agents, and non-suspending garbage
+collection.
 
 ## Usage
 
