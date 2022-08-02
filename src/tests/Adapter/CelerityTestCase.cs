@@ -20,6 +20,8 @@ internal sealed partial class CelerityTestCase
 
     public FileInfo File { get; }
 
+    private readonly string _command;
+
     private readonly string _arguments;
 
     private readonly IReadOnlyDictionary<string, string> _variables;
@@ -33,6 +35,7 @@ internal sealed partial class CelerityTestCase
     public CelerityTestCase(
         string name,
         FileInfo file,
+        string command,
         string arguments,
         IReadOnlyDictionary<string, string> variables,
         bool expectation,
@@ -41,6 +44,7 @@ internal sealed partial class CelerityTestCase
     {
         Name = name;
         File = file;
+        _command = command;
         _arguments = arguments;
         _variables = variables;
         _expectation = expectation;
@@ -59,7 +63,7 @@ internal sealed partial class CelerityTestCase
     [SuppressMessage("", "CA1031")]
     public CelerityTestResult Run(CancellationToken cancellationToken)
     {
-        var info = new ProcessStartInfo(_executable, $"{File.Name} {_arguments}")
+        var info = new ProcessStartInfo(_executable, $"{_command} {File.Name} {_arguments}")
         {
             WorkingDirectory = File.DirectoryName,
             RedirectStandardOutput = true,
