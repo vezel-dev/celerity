@@ -1,5 +1,5 @@
 # Handle Type
 
 ```ebnf
-handle-type ::= "handle"
+handle-type ::= 'handle'
 ```

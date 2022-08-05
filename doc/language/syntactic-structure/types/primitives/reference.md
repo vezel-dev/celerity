@@ -1,5 +1,5 @@
 # Reference Type
 
 ```ebnf
-reference-type ::= "ref"
+reference-type ::= 'ref'
 ```

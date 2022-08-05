@@ -1,5 +1,5 @@
 # Parenthesized Expression
 
 ```ebnf
-parenthesized-expression ::= "(" expression ")"
+parenthesized-expression ::= '(' expression ')'
 ```

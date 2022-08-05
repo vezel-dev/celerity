@@ -1,6 +1,6 @@
 # Attributes
 
 ```ebnf
-attribute ::= "@" value-identifier attribute-value?
-attribute-value ::= "=" literal
+attribute ::= '@' lower-identifier attribute-value?
+attribute-value ::= '=' literal
 ```

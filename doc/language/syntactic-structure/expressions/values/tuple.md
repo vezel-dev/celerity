@@ -1,5 +1,5 @@
 # Tuple Expression
 
 ```ebnf
-tuple-expression ::= "(" expression ("," expression)+ ")"
+tuple-expression ::= '(' expression (',' expression)+ ')'
 ```

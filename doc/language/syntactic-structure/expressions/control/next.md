@@ -1,5 +1,5 @@
 # Next Expression
 
 ```ebnf
-next-expression ::= "next"
+next-expression ::= 'next'
 ```

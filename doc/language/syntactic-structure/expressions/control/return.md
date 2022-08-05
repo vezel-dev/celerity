@@ -1,5 +1,5 @@
 # Return Expression
 
 ```ebnf
-return-expression ::= "tail"? "ret" expression
+return-expression ::= 'tail'? 'ret' expression
 ```

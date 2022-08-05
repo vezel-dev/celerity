@@ -1,5 +1,5 @@
 # Tuple Pattern
 
 ```ebnf
-tuple-pattern ::= "(" pattern ("," pattern)+ ")"
+tuple-pattern ::= '(' pattern (',' pattern)+ ')'
 ```

@@ -1,19 +1,19 @@
 # Identifiers
 
 ```ebnf
-identifier ::= module-identifier |
-               value-identifier |
+identifier ::= upper-identifier |
+               lower-identifier |
                discard-identifier
 ```
 
 ```ebnf
-module-identifier ::= [A-Z] [a-zA-Z0-9]*
+upper-identifier ::= [A-Z] [0-9a-zA-Z]*
 ```
 
 ```ebnf
-value-identifier ::= [a-z] [_a-z0-9]*
+lower-identifier ::= [a-z] [_0-9a-z]*
 ```
 
 ```ebnf
-discard-identifier ::= "_" [_a-z0-9]*
+discard-identifier ::= '_' [_0-9a-z]*
 ```

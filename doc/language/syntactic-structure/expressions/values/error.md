@@ -1,6 +1,6 @@
 # Error Expression
 
 ```ebnf
-error-expression ::= "err" module-identifier "{" (error-expression-field ("," error-expression-field)*)? "}"
-error-expression-field ::= "mut"? value-identifier ":" expression
+error-expression ::= 'err' upper-identifier '{' (error-expression-field (',' error-expression-field)*)? '}'
+error-expression-field ::= 'mut'? lower-identifier ':' expression
 ```

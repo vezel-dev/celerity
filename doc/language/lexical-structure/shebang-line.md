@@ -1,5 +1,5 @@
 # Shebang Line
 
 ```ebnf
-shebang-line ::= "#!" [^#xa]*
+shebang-line ::= '#!' [^#xa#xd]*
 ```

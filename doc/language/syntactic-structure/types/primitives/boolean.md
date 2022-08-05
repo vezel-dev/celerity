@@ -1,5 +1,5 @@
 # Boolean Type
 
 ```ebnf
-boolean-type ::= "bool"
+boolean-type ::= 'bool'
 ```

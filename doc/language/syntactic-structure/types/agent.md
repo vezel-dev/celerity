@@ -1,5 +1,5 @@
 # Agent Type
 
 ```ebnf
-agent-type ::= "agent" "(" type? ")"
+agent-type ::= 'agent' '(' type? ')'
 ```

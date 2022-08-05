@@ -1,5 +1,5 @@
 # Array Type
 
 ```ebnf
-array-type ::= "mut"? "[" type "]"
+array-type ::= 'mut'? '[' type ']'
 ```

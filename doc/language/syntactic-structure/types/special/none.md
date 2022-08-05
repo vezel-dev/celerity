@@ -1,5 +1,5 @@
 # None Type
 
 ```ebnf
-none-type ::= "none"
+none-type ::= 'none'
 ```

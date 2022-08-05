@@ -1,5 +1,5 @@
 # Real Type
 
 ```ebnf
-real-type ::= "real"
+real-type ::= 'real'
 ```

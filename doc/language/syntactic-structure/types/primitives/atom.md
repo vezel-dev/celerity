@@ -1,5 +1,5 @@
 # Atom Type
 
 ```ebnf
-atom-type ::= "atom"
+atom-type ::= 'atom'
 ```

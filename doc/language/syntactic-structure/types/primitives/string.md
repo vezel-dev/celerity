@@ -1,5 +1,5 @@
 # String Type
 
 ```ebnf
-string-type ::= "str"
+string-type ::= 'str'
 ```

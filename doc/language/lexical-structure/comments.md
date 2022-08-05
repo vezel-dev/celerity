@@ -1,5 +1,5 @@
 # Comments
 
 ```ebnf
-comment ::= "//" [^#xa#xd]*
+comment ::= '//' [^#xa#xd]*
 ```

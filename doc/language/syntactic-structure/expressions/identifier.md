@@ -1,5 +1,5 @@
 # Identifier Expression
 
 ```ebnf
-identifier-expression = value-identifier
+identifier-expression = lower-identifier
 ```

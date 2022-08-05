@@ -1,7 +1,7 @@
 # Types
 
 ```ebnf
-type ::= primary-type ("or" primary-type)*
+type ::= primary-type ('or' primary-type)*
 return-type ::= none-type |
                 type
 primary-type ::= any-type |
@@ -27,6 +27,6 @@ primary-type ::= any-type |
 ```
 
 ```ebnf
-type-annotation ::= ":" type
-return-type-annotation ::= "->" return-type
+type-annotation ::= ':' type
+return-type-annotation ::= '->' return-type
 ```

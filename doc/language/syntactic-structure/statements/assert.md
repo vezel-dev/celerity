@@ -1,5 +1,5 @@
 # Assertion Statement
 
 ```ebnf
-assert-statement ::= "assert" expression
+assert-statement ::= 'assert' expression
 ```

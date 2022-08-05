@@ -10,37 +10,44 @@ literal ::= nil-literal |
 ```
 
 ```ebnf
-nil-literal ::= "nil"
+nil-literal ::= 'nil'
 ```
 
 ```ebnf
-boolean-literal ::= "true" |
-                    "false"
+boolean-literal ::= 'true' |
+                    'false'
 ```
 
 ```ebnf
-integer-literal ::= decimal-digit ("_"? decimal-digit)* |
-                    "0" [bB] binary-digit ("_"? binary-digit)* |
-                    "0" [oO] octal-digit ("_"? octal-digit)* |
-                    "0" [xX] hexadecimal-digit ("_"? hexadecimal-digit)* |
-decimal-digit ::= [0-9]
+integer-literal ::= binary-integer-literal |
+                    octal-integer-literal |
+                    decimal-integer-literal |
+                    hexadecimal-integer-literal
+binary-integer-literal ::= '0' [bB] binary-digit ('_'* binary-digit)*
 binary-digit ::= [0-1]
+octal-integer-literal ::= '0' [oO] octal-digit ('_'* octal-digit)*
 octal-digit ::= [0-7]
+decimal-integer-literal ::= decimal-digit ('_'* decimal-digit)*
+decimal-digit ::= [0-9]
+hexadecimal-integer-literal ::= '0' [xX] hexadecimal-digit ('_'* hexadecimal-digit)*
 hexadecimal-digit ::= [0-9a-fA-F]
 ```
 
 ```ebnf
-real-literal ::= real-part "." real-part ([eE] [+-]? real-part)?
-real-part ::= [0-9]+
+real-literal ::= real-part '.' real-part ([eE] [+-]? real-part)?
+real-part ::= decimal-digit ('_'* decimal-digit)*
 ```
 
 ```ebnf
-atom-literal ::= ":" identifier
+atom-literal ::= ':' (upper-identifier |
+                      lower-identifier)
 ```
 
 ```ebnf
-string-literal ::= '"' ([^"\] | string-escape-sequence) '"'
-string-escape-sequence ::= "\" (string-escape-code | string-escape-unicode)
+string-literal ::= '"' ([^#xa#xd"\] |
+                        string-escape-sequence) '"'
+string-escape-sequence ::= '\' (string-escape-code |
+                                string-escape-unicode)
 string-escape-code ::= [0nNrRtT"\]
-string-escape-unicode ::= [uU] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F] [0-9a-fA-F]
+string-escape-unicode ::= [uU] hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit
 ```

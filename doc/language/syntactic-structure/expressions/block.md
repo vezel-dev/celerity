@@ -1,5 +1,5 @@
 # Block Expression
 
 ```ebnf
-block-expression ::= "{" statement+ "}"
+block-expression ::= '{' statement+ '}'
 ```

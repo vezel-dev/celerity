@@ -1,5 +1,5 @@
 # Array Expression
 
 ```ebnf
-array-expression ::= "mut"? "[" (expression ("," expression)*)? "]"
+array-expression ::= 'mut'? '[' (expression (',' expression)*)? ']'
 ```

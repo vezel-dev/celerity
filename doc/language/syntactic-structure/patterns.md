@@ -16,7 +16,9 @@ try-catch-pattern ::= (wildcard-pattern |
 ```
 
 ```ebnf
-pattern-binding ::= "mut"? value-identifier |
-                    discard-identifier
-pattern-alias ::= "as" "mut"? value-identifier
+pattern-binding ::= pattern-variable-binding |
+                    pattern-discard-binding
+pattern-variable-binding ::= 'mut'? lower-identifier
+pattern-discard-binding ::= discard-identifier
+pattern-alias ::= 'as' 'mut'? lower-identifier
 ```

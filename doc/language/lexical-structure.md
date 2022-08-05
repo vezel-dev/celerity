@@ -1,7 +1,8 @@
 # Lexical Structure
 
 ```ebnf
-input ::= shebang-line? token*
+document-input ::= shebang-line? token*
+interactive-input ::= token*
 token ::= white-space |
           comment |
           operator |

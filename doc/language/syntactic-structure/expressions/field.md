@@ -1,5 +1,5 @@
 # Field Expression
 
 ```ebnf
-field-expression ::= "." value-identifier
+field-expression ::= '.' lower-identifier
 ```

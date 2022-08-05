@@ -1,5 +1,5 @@
 # Set Type
 
 ```ebnf
-set-type ::= "mut"? "#" "{" type ".."? "}"
+set-type ::= 'mut'? '#' '{' type '}'
 ```
