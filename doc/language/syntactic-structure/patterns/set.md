@@ -1,5 +1,5 @@
 # Set Pattern
 
 ```ebnf
-set-pattern ::= '#' '{' (expression (',' expression)*)? '}'
+set-pattern ::= '#' '{' (expression (',' expression)* ','?)? '}'
 ```

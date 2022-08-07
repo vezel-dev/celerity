@@ -65,5 +65,6 @@ reserved-keyword ::= 'friend' |
                      'quote' |
                      'try' |
                      'unquote' |
+                     'with' |
                      'yield'
 ```

@@ -1,5 +1,5 @@
 # Set Expression
 
 ```ebnf
-set-expression ::= 'mut'? '#' '{' (expression (',' expression)*)? '}'
+set-expression ::= 'mut'? '#' '{' (expression (',' expression)* ','?)? '}'
 ```
