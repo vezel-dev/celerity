@@ -34,6 +34,10 @@ app.Configure(cfg =>
         .WithDescription("Print Celerity runtime environment information.");
 
     _ = cfg
+        .AddCommand<ReplCommand>("repl")
+        .WithDescription("Start an interactive Celerity session.");
+
+    _ = cfg
         .AddCommand<RunCommand>("run")
         .WithDescription("Run a Celerity program.");
 
