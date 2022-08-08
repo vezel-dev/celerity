@@ -2,8 +2,7 @@
 
 ```ebnf
 document ::= attribute* 'mod' module-path ';' declaration*
-interactive ::= (interactive-declaration |
-                 interactive-statement)*
+interactive ::= interactive-declaration* interactive-statement*
 ```
 
 ```ebnf
