@@ -20,5 +20,5 @@ pattern-binding ::= pattern-variable-binding |
                     pattern-discard-binding
 pattern-variable-binding ::= 'mut'? lower-identifier
 pattern-discard-binding ::= discard-identifier
-pattern-alias ::= 'as' 'mut'? lower-identifier
+pattern-alias ::= 'as' pattern-variable-binding
 ```
