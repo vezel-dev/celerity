@@ -147,6 +147,6 @@ internal sealed partial class CelerityTestCase
         return new(outcome, error, stdout2, stderr2);
     }
 
-    [RegexGenerator(@"^(.*)(\(\d+,\d+\): .*: .*)$", RegexOptions.Multiline | RegexOptions.CultureInvariant)]
+    [RegexGenerator(@"^(.*)(\(\d+,\d+\): \w*: .*)$", RegexOptions.Multiline | RegexOptions.CultureInvariant)]
     private static partial Regex DiagnosticRegex();
 }
