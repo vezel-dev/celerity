@@ -40,7 +40,7 @@
             * [String Type](language/syntactic-structure/types/primitives/string.md)
             * [Reference Type](language/syntactic-structure/types/primitives/reference.md)
             * [Handle Type](language/syntactic-structure/types/primitives/handle.md)
-            * [Module Type](language/syntactic-structure/types/module.md)
+            * [Module Type](language/syntactic-structure/types/primitives/module.md)
         * Special Types
             * [Literal Type](language/syntactic-structure/types/special/literal.md)
             * [Any Type](language/syntactic-structure/types/special/any.md)
