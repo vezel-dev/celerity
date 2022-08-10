@@ -45,7 +45,7 @@ atom-literal ::= ':' (upper-identifier |
 
 ```ebnf
 string-literal ::= '"' ([^#xa#xd"\] |
-                        string-escape-sequence) '"'
+                        string-escape-sequence)* '"'
 string-escape-sequence ::= '\' (string-escape-code |
                                 string-escape-unicode)
 string-escape-code ::= [0nNrRtT"\]
