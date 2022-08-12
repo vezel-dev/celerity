@@ -1,0 +1,781 @@
+<Tree xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="https://vezel.dev/celerity/Ast"
+      xsi:schemaLocation="https://vezel.dev/celerity/Ast ../generators/Ast/Ast.xsd">
+    <Settings Namespace="Vezel.Celerity.Syntax"
+              NameSuffix="Node"
+              BaseType="Syntax" />
+
+    <!-- Structure -->
+
+    <Node Name="ModulePath">
+        <Tokens Name="Component" Separated="true" />
+    </Node>
+
+    <Node Name="Document">
+        <Children Name="Attribute" Type="Attribute" />
+        <Token Name="ModKeyword" />
+        <Child Name="Path" Type="ModulePath" />
+        <Token Name="Semicolon" />
+        <Children Name="Declaration" Type="Declaration" />
+    </Node>
+
+    <Node Name="Interactive">
+        <Children Name="Declaration" Type="Declaration" />
+        <Children Name="Statement" Type="Statement" />
+    </Node>
+
+    <!-- Attributes -->
+
+    <Node Name="Attribute">
+        <Token Name="At" />
+        <Token Name="Name" />
+    </Node>
+
+    <Node Name="AttributeValue">
+        <Token Name="Equals" />
+        <Token Name="Value" />
+    </Node>
+
+    <!-- Declarations -->
+
+    <Node Name="Declaration" Abstract="true">
+        <Children Name="Attribute" Type="Attribute" />
+    </Node>
+
+    <Node Name="MissingDeclaration" Base="Declaration">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Tokens Name="Skipped" />
+    </Node>
+
+    <Node Name="UseDeclaration" Base="Declaration">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="UseKeyword" />
+        <Child Name="Path" Type="ModulePath" />
+        <Child Name="Alias" Type="UseDeclarationAlias" Optional="true" />
+    </Node>
+
+    <Node Name="UseDeclarationAlias">
+        <Token Name="AsKeyword" />
+        <Token Name="Name" />
+    </Node>
+
+    <Node Name="TypeDeclaration" Base="Declaration">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="PubKeyword" Optional="true" />
+        <Token Name="OpaqueKeyword" Optional="true" />
+        <Token Name="TypeKeyword" />
+        <Token Name="Name" />
+        <Child Name="ParameterList" Type="TypeParameterList" Optional="true" />
+        <Token Name="Equals" />
+        <Child Name="Type" Type="Type" />
+    </Node>
+
+    <Node Name="TypeParameterList">
+        <Token Name="OpenParen" />
+        <Children Name="Parameter" Type="TypeParameter" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="TypeParameter">
+        <Token Name="DotDot" Optional="true" />
+        <Children Name="Attribute" Type="Attribute" />
+        <Token Name="Name" />
+    </Node>
+
+    <Node Name="ConstantDeclaration" Base="Declaration">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="PubKeyword" Optional="true" />
+        <Token Name="ConstKeyword" />
+        <Token Name="Name" />
+        <Child Name="Type" Type="TypeAnnotation" Optional="true" />
+        <Token Name="Equals" />
+        <Child Name="Initializer" Type="Expression" />
+    </Node>
+
+    <Node Name="FunctionDeclaration" Base="Declaration">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="PubKeyword" Optional="true" />
+        <Token Name="ExtKeyword" Optional="true" />
+        <Token Name="FnKeyword" />
+        <Token Name="Name" />
+        <Child Name="ParameterList" Type="FunctionParameterList" />
+        <Token Name="ErrKeyword" Optional="true" />
+        <Child Name="ReturnType" Type="ReturnTypeAnnotation" Optional="true" />
+        <Child Name="Body" Type="BlockExpression" />
+    </Node>
+
+    <Node Name="FunctionParameterList">
+        <Token Name="OpenParen" />
+        <Children Name="Parameter" Type="FunctionParameter" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="FunctionParameter">
+        <Token Name="DotDot" Optional="true" />
+        <Children Name="Attribute" Type="Attribute" />
+        <Token Name="Name" />
+        <Child Name="Type" Type="TypeAnnotation" Optional="true" />
+    </Node>
+
+    <Node Name="TestDeclaration" Base="Declaration">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="TestKeyword" />
+        <Token Name="Name" />
+        <Child Name="Body" Type="BlockExpression" />
+    </Node>
+
+    <!-- Types -->
+
+    <Node Name="Type" Abstract="true" />
+
+    <Node Name="BooleanType" Base="Type">
+        <Token Name="BoolKeyword" />
+    </Node>
+
+    <Node Name="IntegerType" Base="Type">
+        <Token Name="IntKeyword" />
+        <Child Name="Range" Type="IntegerTypeRange" Optional="true" />
+    </Node>
+
+    <Node Name="IntegerTypeRange">
+        <Token Name="OpenParen" />
+        <Child Name="LowerBound" Type="IntegerTypeRangeBound" Optional="true" />
+        <Token Name="DotDot" />
+        <Child Name="UpperBound" Type="IntegerTypeRangeBound" Optional="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="IntegerTypeRangeBound">
+        <Token Name="Minus" Optional="true" />
+        <Token Name="Literal" />
+    </Node>
+
+    <Node Name="RealType" Base="Type">
+        <Token Name="RealKeyword" />
+    </Node>
+
+    <Node Name="AtomType" Base="Type">
+        <Token Name="AtomKeyword" />
+    </Node>
+
+    <Node Name="StringType" Base="Type">
+        <Token Name="StrKeyword" />
+    </Node>
+
+    <Node Name="ReferenceType" Base="Type">
+        <Token Name="RefKeyword" />
+    </Node>
+
+    <Node Name="HandleType" Base="Type">
+        <Token Name="HandleKeyword" />
+    </Node>
+
+    <Node Name="ModuleType" Base="Type">
+        <Token Name="ModKeyword" />
+    </Node>
+
+    <Node Name="LiteralType" Base="Type">
+        <Token Name="Minus" Optional="true" />
+        <Token Name="Literal" />
+    </Node>
+
+    <Node Name="AnyType" Base="Type">
+        <Token Name="AnyKeyword" />
+    </Node>
+
+    <Node Name="NominalType" Base="Type">
+        <Child Name="Path" Type="NominalTypePath" Optional="true" />
+        <Token Name="Name" />
+        <Child Name="ArgumentList" Type="NominalTypeArgumentList" Optional="true" />
+    </Node>
+
+    <Node Name="NominalTypeArgumentList">
+        <Token Name="OpenParen" />
+        <Children Name="Argument" Type="NominalTypeArgument" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="NominalTypeArgument">
+        <Child Name="Argument" Type="Type" />
+    </Node>
+
+    <Node Name="NominalTypePath">
+        <Child Name="Path" Type="ModulePath" />
+        <Token Name="Dot" />
+    </Node>
+
+    <Node Name="RecordType" Base="Type">
+        <Token Name="RecKeyword" />
+        <Token Name="OpenBrace" />
+        <Children Name="Field" Type="TypeField" Separated="true" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="ErrorType" Base="Type">
+        <Token Name="ErrKeyword" />
+        <Token Name="Name" Optional="true" />
+        <Token Name="OpenBrace" />
+        <Children Name="Field" Type="TypeField" Separated="true" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="TypeField">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Name" />
+        <Token Name="Colon" />
+        <Child Name="Type" Type="Type" />
+    </Node>
+
+    <Node Name="TupleType" Base="Type">
+        <Token Name="OpenParen" />
+        <Children Name="Component" Type="Type" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="ArrayType" Base="Type">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="OpenBracket" />
+        <Child Name="Element" Type="Type" />
+        <Token Name="CloseBracket" />
+    </Node>
+
+    <Node Name="SetType" Base="Type">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Hash" />
+        <Token Name="OpenBrace" />
+        <Child Name="Element" Type="Type" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="MapType" Base="Type">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Hash" />
+        <Token Name="OpenBracket" />
+        <Children Name="Pair" Type="MapTypePair" Separated="true" />
+        <Token Name="CloseBracket" />
+    </Node>
+
+    <Node Name="MapTypePair">
+        <Child Name="Key" Type="Type" />
+        <Token Name="Colon" />
+        <Token Name="Question" Optional="true" />
+        <Child Name="Value" Type="Type" />
+    </Node>
+
+    <Node Name="FunctionType" Base="Type">
+        <Token Name="FnKeyword" />
+        <Child Name="ParameterList" Type="FunctionTypeParameterList" />
+        <Token Name="ErrKeyword" Optional="true" />
+        <Child Name="ReturnType" Type="ReturnTypeAnnotation" />
+    </Node>
+
+    <Node Name="FunctionTypeParameterList">
+        <Token Name="OpenParen" />
+        <Children Name="Parameter" Type="FunctionTypeParameter" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="FunctionTypeParameter">
+        <Token Name="DotDot" Optional="true" />
+        <Children Name="Attribute" Type="Attribute" />
+        <Child Name="Type" Type="Type" />
+    </Node>
+
+    <Node Name="AgentType" Base="Type">
+        <Token Name="AgentKeyword" />
+        <Token Name="OpenParen" />
+        <Child Name="Message" Type="Type" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="UnionType" Base="Type">
+        <Children Name="Type" Type="Type" Separated="true" />
+    </Node>
+
+    <Node Name="ReturnType" Abstract="true" />
+
+    <Node Name="NormalReturnType" Base="ReturnType">
+        <Child Name="Type" Type="Type" />
+    </Node>
+
+    <Node Name="NoneReturnType" Base="ReturnType">
+        <Token Name="NoneKeyword" />
+    </Node>
+
+    <Node Name="TypeAnnotation">
+        <Token Name="Colon" />
+        <Child Name="Type" Type="Type" />
+    </Node>
+
+    <Node Name="ReturnTypeAnnotation">
+        <Token Name="Arrow" />
+        <Child Name="Type" Type="ReturnType" />
+    </Node>
+
+    <!-- Statements -->
+
+    <Node Name="Statement" Abstract="true">
+        <Children Name="Attribute" Type="Attribute" />
+        <Token Name="Semicolon" Optional="true" />
+    </Node>
+
+    <Node Name="MissingStatement" Abstract="true">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Tokens Name="Skipped" />
+        <Token Name="Semicolon" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="LetStatement" Base="Statement">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="LetKeyword" />
+        <Child Name="Pattern" Type="Pattern" />
+        <Token Name="Equals" />
+        <Child Name="Initializer" Type="Expression" />
+        <Token Name="Semicolon" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="UseStatement" Base="Statement">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="UseKeyword" />
+        <Child Name="Pattern" Type="Pattern" />
+        <Token Name="Equals" />
+        <Child Name="Initializer" Type="Expression" />
+        <Token Name="Semicolon" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="DeferStatement" Base="Statement">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="DeferKeyword" />
+        <Child Name="Expression" Type="Expression" />
+        <Token Name="Semicolon" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="AssertStatement" Base="Statement">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="AssertKeyword" />
+        <Child Name="Expression" Type="Expression" />
+        <Token Name="Semicolon" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="ExpressionStatement" Base="Statement">
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Child Name="Expression" Type="Expression" />
+        <Token Name="Semicolon" Optional="true" Override="true" />
+    </Node>
+
+    <!-- Expressions -->
+
+    <Node Name="Expression" Abstract="true" />
+
+    <Node Name="MissingExpression" Base="Expression" />
+
+    <Node Name="LiteralExpression" Base="Expression">
+        <Token Name="Literal" />
+    </Node>
+
+    <Node Name="ModuleExpression" Base="Expression">
+        <Child Name="Path" Type="ModulePath" />
+    </Node>
+
+    <Node Name="RecordExpression" Base="Expression">
+        <Token Name="RecKeyword" />
+        <Token Name="OpenBrace" />
+        <Children Name="Field" Type="ExpressionField" Separated="true" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="ErrorExpression" Base="Expression">
+        <Token Name="ErrKeyword" />
+        <Token Name="Name" />
+        <Token Name="OpenBrace" />
+        <Children Name="Field" Type="ExpressionField" Separated="true" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="ExpressionField">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Name" />
+        <Token Name="Colon" />
+        <Child Name="Value" Type="Expression" />
+    </Node>
+
+    <Node Name="TupleExpression" Base="Expression">
+        <Token Name="OpenParen" />
+        <Children Name="Component" Type="Expression" Separated="true" />
+        <Token Name="CloseClose" />
+    </Node>
+
+    <Node Name="ArrayExpression" Base="Expression">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="OpenBracket" />
+        <Children Name="Element" Type="Expression" Separated="true" />
+        <Token Name="CloseBracket" />
+    </Node>
+
+    <Node Name="SetExpression" Base="Expression">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Hash" />
+        <Token Name="OpenBrace" />
+        <Children Name="Element" Type="Expression" Separated="true" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="MapExpression" Base="Expression">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Hash" />
+        <Token Name="OpenBracket" />
+        <Children Name="Pair" Type="MapExpressionPair" Separated="true" />
+        <Token Name="CloseBracket" />
+    </Node>
+
+    <Node Name="MapExpressionPair">
+        <Child Name="Key" Type="Expression" />
+        <Token Name="Colon" />
+        <Child Name="Value" Type="Expression" />
+    </Node>
+
+    <Node Name="LambdaExpression" Base="Expression">
+        <Token Name="FnKeyword" />
+        <Child Name="ParameterList" Type="FunctionParameterList" />
+        <Token Name="ErrKeyword" Optional="true" />
+        <Child Name="ReturnType" Type="ReturnTypeAnnotation" Optional="true" />
+        <Token Name="Arrow" />
+        <Child Name="Body" Type="Expression" />
+    </Node>
+
+    <Node Name="UnaryExpression" Base="Expression">
+        <Token Name="Operator" />
+        <Child Name="Operand" Type="Expression" />
+    </Node>
+
+    <Node Name="AdditiveExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <Node Name="MultiplicativeExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <Node Name="BitwiseExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <Node Name="ShiftExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <Node Name="LogicalExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <Node Name="RelationalExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <Node Name="IfExpression" Base="Expression">
+        <Token Name="IfKeyword" />
+        <Child Name="Condition" Type="Expression" />
+        <Child Name="Body" Type="BlockExpression" />
+        <Child Name="Else" Type="IfExpressionElse" Optional="true" />
+    </Node>
+
+    <Node Name="IfExpressionElse">
+        <Token Name="ElseKeyword" />
+        <Child Name="Body" Type="BlockExpression" />
+    </Node>
+
+    <Node Name="WhileExpression" Base="Expression">
+        <Token Name="WhileKeyword" />
+        <Child Name="Condition" Type="Expression" />
+        <Child Name="Body" Type="BlockExpression" />
+    </Node>
+
+    <Node Name="ForExpression" Base="Expression">
+        <Token Name="ForKeyword" />
+        <Child Name="Pattern" Type="Pattern" />
+        <Token Name="InKeyword" />
+        <Child Name="Collection" Type="Expression" />
+        <Child Name="Body" Type="BlockExpression" />
+    </Node>
+
+    <Node Name="NextExpression" Base="Expression">
+        <Token Name="NextKeyword" />
+    </Node>
+
+    <Node Name="BreakExpression" Base="Expression">
+        <Token Name="BreakKeyword" />
+    </Node>
+
+    <Node Name="ConditionExpression" Base="Expression">
+        <Token Name="CondKeyword" />
+        <Token Name="OpenBrace" />
+        <Children Name="Arm" Type="ConditionExpressionArm" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="ConditionExpressionArm">
+        <Child Name="Condition" Type="Expression" />
+        <Token Name="Arrow" />
+        <Child Name="Body" Type="Expression" />
+        <Token Name="Semicolon" />
+    </Node>
+
+    <Node Name="MatchExpression" Base="Expression">
+        <Token Name="MatchKeyword" />
+        <Child Name="Operand" Type="Expression" />
+        <Token Name="OpenBrace" />
+        <Children Name="Arm" Type="PatternArm" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="PatternArm">
+        <Child Name="Pattern" Type="Pattern" />
+        <Child Name="Guard" Type="PatternArmGuard" Optional="true" />
+        <Token Name="Arrow" />
+        <Child Name="Body" Type="Expression" />
+        <Token Name="Semicolon" />
+    </Node>
+
+    <Node Name="PatternArmGuard">
+        <Token Name="IfKeyword" />
+        <Child Name="Condition" Type="Expression" />
+    </Node>
+
+    <Node Name="ReturnExpression" Base="Expression">
+        <Token Name="TailKeyword" Optional="true" />
+        <Token Name="RetKeyword" />
+        <Child Name="Operand" Type="Expression" />
+    </Node>
+
+    <Node Name="RaiseExpression" Base="Expression">
+        <Token Name="RaiseKeyword" />
+        <Child Name="Operand" Type="Expression" />
+    </Node>
+
+    <Node Name="ReceiveExpression" Base="Expression">
+        <Token Name="RecvKeyword" />
+        <Token Name="OpenBrace" />
+        <Children Name="Arm" Type="PatternArm" />
+        <Token Name="CloseBrace" />
+        <Child Name="Else" Type="ReceiveExpressionElse" Optional="true" />
+    </Node>
+
+    <Node Name="ReceiveExpressionElse">
+        <Token Name="ElseKeyword" />
+        <Child Name="Body" Type="BlockExpression" />
+    </Node>
+
+    <Node Name="ParenthesizedExpression" Base="Expression">
+        <Token Name="OpenParen" />
+        <Child Name="Expression" Type="Expression" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="BlockExpression" Base="Expression">
+        <Token Name="OpenBrace" />
+        <Children Name="Statement" Type="Statement" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="IdentifierExpression" Base="Expression">
+        <Token Name="Identifier" />
+    </Node>
+
+    <Node Name="AssignmentExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <Node Name="FieldExpression" Base="Expression">
+        <Child Name="Subject" Type="Expression" />
+        <Token Name="Dot" />
+        <Token Name="Name" />
+    </Node>
+
+    <Node Name="IndexExpression" Base="Expression">
+        <Child Name="Subject" Type="Expression" />
+        <Child Name="ArgumentList" Type="IndexArgumentList" />
+    </Node>
+
+    <Node Name="CallExpression" Base="Expression">
+        <Child Name="Subject" Type="Expression" />
+        <Child Name="ArgumentList" Type="CallArgumentList" />
+        <Child Name="Try" Type="CallTry" Optional="true" />
+    </Node>
+
+    <Node Name="MethodCallExpression" Base="Expression">
+        <Child Name="Subject" Type="Expression" />
+        <Token Name="Arrow" />
+        <Token Name="Name" />
+        <Child Name="ArgumentList" Type="CallArgumentList" />
+        <Child Name="Try" Type="CallTry" Optional="true" />
+    </Node>
+
+    <Node Name="IndexArgumentList">
+        <Token Name="OpenBracket" />
+        <Children Name="Argument" Type="Argument" Separated="true" />
+        <Token Name="CloseBracket" />
+    </Node>
+
+    <Node Name="CallArgumentList">
+        <Token Name="OpenParen" />
+        <Children Name="Argument" Type="Argument" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="Argument">
+        <Token Name="DotDot" Optional="true" />
+        <Child Name="Value" Type="Expression" />
+    </Node>
+
+    <Node Name="CallTry">
+        <Token Name="Question" />
+        <Child Name="Catch" Type="CallTryCatch" Optional="true" />
+    </Node>
+
+    <Node Name="CallTryCatch">
+        <Token Name="CatchKeyword" />
+        <Token Name="OpenBrace" />
+        <Children Name="Arm" Type="PatternArm" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="SendExpression" Base="Expression">
+        <Child Name="LeftOperand" Type="Expression" />
+        <Token Name="Operator" />
+        <Child Name="RightOperand" Type="Expression" />
+    </Node>
+
+    <!-- Patterns -->
+
+    <Node Name="Pattern" Abstract="true">
+        <Child Name="Alias" Type="PatternAlias" Optional="true" />
+    </Node>
+
+    <Node Name="PatternAlias">
+        <Token Name="AsKeyword" />
+        <Child Name="Binding" Type="PatternVariableBinding" />
+    </Node>
+
+    <Node Name="PatternBinding" Abstract="true">
+        <Token Name="Name" />
+    </Node>
+
+    <Node Name="PatternVariableBinding" Base="PatternBinding">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Name" Override="true" />
+    </Node>
+
+    <Node Name="PatternDiscardBinding" Base="PatternBinding">
+        <Token Name="Name" Override="true" />
+    </Node>
+
+    <Node Name="MissingPattern" Base="Pattern">
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="WildcardPattern" Base="Pattern">
+        <Child Name="Binding" Type="PatternBinding" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="LiteralPattern" Base="Pattern">
+        <Token Name="Minus" Optional="true" />
+        <Token Name="Value" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="StringPattern" Base="Pattern">
+        <Token Name="LeftLiteral" Optional="true" />
+        <Token Name="LeftColonColon" Optional="true" />
+        <Child Name="Middle" Type="PatternBinding" Optional="true" />
+        <Token Name="RightColonColon" Optional="true" />
+        <Token Name="RightLiteral" Optional="true" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="ModulePattern" Base="Pattern">
+        <Child Name="Path" Type="ModulePath" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="RecordPattern" Base="Pattern">
+        <Token Name="RecKeyword" />
+        <Token Name="OpenBrace" />
+        <Children Name="Field" Type="PatternField" Separated="true" />
+        <Token Name="CloseBrace" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="ErrorPattern" Base="Pattern">
+        <Token Name="ErrKeyword" />
+        <Token Name="Name" />
+        <Token Name="OpenBrace" />
+        <Children Name="Field" Type="PatternField" Separated="true" />
+        <Token Name="CloseBrace" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="PatternField">
+        <Token Name="Name" />
+        <Token Name="Colon" />
+        <Child Name="Pattern" Type="Pattern" />
+    </Node>
+
+    <Node Name="TuplePattern" Base="Pattern">
+        <Token Name="OpenParen" />
+        <Children Name="Component" Type="Pattern" Separated="true" />
+        <Token Name="CloseParen" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="ArrayPattern" Base="Pattern">
+        <Child Name="LeftClause" Type="ArrayPatternClause" />
+        <Token Name="LeftColonColon" Optional="true" />
+        <Child Name="Middle" Type="PatternBinding" Optional="true" />
+        <Token Name="RightColonColon" Optional="true" />
+        <Child Name="RightClause" Type="ArrayPatternClause" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="ArrayPatternClause">
+        <Token Name="OpenBracket" />
+        <Children Name="Element" Type="Pattern" Separated="true" />
+        <Token Name="CloseBracket" />
+    </Node>
+
+    <Node Name="MapPattern" Base="Pattern">
+        <Token Name="Hash" />
+        <Token Name="OpenBracket" />
+        <Children Name="Pair" Type="MapPatternPair" Separated="true" />
+        <Token Name="CloseBracket" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+
+    <Node Name="MapPatternPair">
+        <Child Name="Key" Type="Expression" />
+        <Token Name="Colon" />
+        <Child Name="Value" Type="Pattern" />
+    </Node>
+
+    <Node Name="SetPattern" Base="Pattern">
+        <Token Name="Hash" />
+        <Token Name="OpenBrace" />
+        <Children Name="Element" Type="Expression" Separated="true" />
+        <Token Name="CloseBrace" />
+        <Child Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Node>
+</Tree>
