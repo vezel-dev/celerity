@@ -12,7 +12,7 @@ internal sealed partial class CelerityTestCase
         "cli",
         "bin",
         ThisAssembly.AssemblyConfiguration,
-        "celerity.exe");
+        "celerity");
 
     public string Name { get; }
 
@@ -31,6 +31,12 @@ internal sealed partial class CelerityTestCase
     private readonly string _stdout;
 
     private readonly string _stderr;
+
+    static CelerityTestCase()
+    {
+        if (OperatingSystem.IsWindows())
+            _executable += ".exe";
+    }
 
     public CelerityTestCase(
         string name,
