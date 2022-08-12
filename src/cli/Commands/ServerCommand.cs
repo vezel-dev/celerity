@@ -14,6 +14,6 @@ internal sealed class ServerCommand : AsyncCommand<ServerCommand.ServerCommandSe
     {
         // TODO
 
-        return Task.FromResult(1);
+        return Task.FromResult(0);
     }
 }

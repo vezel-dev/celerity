@@ -14,6 +14,6 @@ internal sealed class CheckCommand : AsyncCommand<CheckCommand.CheckCommandSetti
     {
         // TODO
 
-        return Task.FromResult(1);
+        return Task.FromResult(0);
     }
 }

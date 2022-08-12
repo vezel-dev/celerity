@@ -7,6 +7,6 @@ internal sealed class FormatFixCommand : FormatCommand
     {
         // TODO
 
-        return Task.FromResult(1);
+        return Task.FromResult(0);
     }
 }

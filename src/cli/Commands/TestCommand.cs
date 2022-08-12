@@ -14,6 +14,6 @@ internal sealed class TestCommand : AsyncCommand<TestCommand.TestCommandSettings
     {
         // TODO
 
-        return Task.FromResult(1);
+        return Task.FromResult(0);
     }
 }

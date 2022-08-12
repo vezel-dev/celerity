@@ -14,6 +14,6 @@ internal sealed class ReplCommand : AsyncCommand<ReplCommand.ReplCommandSettings
     {
         // TODO
 
-        return Task.FromResult(1);
+        return Task.FromResult(0);
     }
 }
