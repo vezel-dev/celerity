@@ -8,7 +8,7 @@ public sealed class CelerityTestExecutor : ITestExecutor
 
     private readonly CancellationTokenSource _cts = new();
 
-    public void RunTests(IEnumerable<TestCase> tests, IRunContext runContext, IFrameworkHandle frameworkHandle)
+    public void RunTests(IEnumerable<TestCase>? tests, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
     {
         ArgumentNullException.ThrowIfNull(tests);
         ArgumentNullException.ThrowIfNull(runContext);
@@ -17,7 +17,7 @@ public sealed class CelerityTestExecutor : ITestExecutor
         RunTests(tests.Select(t => (CelerityTestLoader.Tests[t.FullyQualifiedName], t)), frameworkHandle);
     }
 
-    public void RunTests(IEnumerable<string> sources, IRunContext runContext, IFrameworkHandle frameworkHandle)
+    public void RunTests(IEnumerable<string>? sources, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
     {
         ArgumentNullException.ThrowIfNull(sources);
         ArgumentNullException.ThrowIfNull(runContext);
