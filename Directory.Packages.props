@@ -13,7 +13,7 @@
         <PackageVersion Include="Microsoft.SourceLink.GitHub"
                         Version="1.1.1" />
         <PackageVersion Include="Microsoft.TestPlatform.ObjectModel"
-                        Version="17.2.0" />
+                        Version="17.3.0" />
         <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers"
                         Version="17.2.32" />
         <PackageVersion Include="Microsoft.Windows.CsWin32"
