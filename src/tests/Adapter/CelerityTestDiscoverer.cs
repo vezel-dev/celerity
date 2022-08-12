@@ -10,6 +10,11 @@ public sealed class CelerityTestDiscoverer : ITestDiscoverer
         IMessageLogger logger,
         ITestCaseDiscoverySink discoverySink)
     {
+        ArgumentNullException.ThrowIfNull(sources);
+        ArgumentNullException.ThrowIfNull(discoveryContext);
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(discoverySink);
+
         foreach (var test in CelerityTestLoader.Tests.Values)
             discoverySink.SendTestCase(test.Convert());
     }
