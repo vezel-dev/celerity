@@ -91,8 +91,6 @@ public enum SyntaxTokenKind
     UpperIdentifier,
     LowerIdentifier,
     DiscardIdentifier,
-    NilLiteral,
-    BooleanLiteral,
     IntegerLiteral,
     RealLiteral,
     AtomLiteral,
