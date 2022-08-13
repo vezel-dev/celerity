@@ -9,7 +9,6 @@ public enum SyntaxTokenKind
     ShiftOperator,
     MultiplicativeOperator,
     AdditiveOperator,
-    OpenAngleMinus,
     Equals,
     EqualsEquals,
     ExclamationEquals,

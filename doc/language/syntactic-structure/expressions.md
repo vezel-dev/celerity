@@ -1,7 +1,7 @@
 # Expressions
 
 ```ebnf
-expression ::= send-expression
+expression ::= assignment-expression
 prefix-expression ::= unary-expression |
                       primary-expression |
                       postfix-expression
@@ -30,5 +30,5 @@ primary-expression ::= parenthesized-expression |
 postfix-expression ::= primary-expression (field-expression |
                                            index-expression |
                                            call-expression |
-                                           method-call-expression)*
+                                           send-expression)*
 ```

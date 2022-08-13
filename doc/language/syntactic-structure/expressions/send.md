@@ -1,5 +1,7 @@
 # Send Expression
 
 ```ebnf
-send-expression ::= assignment-expression ('<-' send-expression)*
+send-expression ::= '->' lower-identifier send-argument-list
+send-argument-list ::= '(' (send-argument (',' send-argument)*)? ')'
+send-argument ::= expression
 ```

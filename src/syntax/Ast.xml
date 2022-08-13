@@ -283,9 +283,24 @@
 
     <Node Name="AgentType" Base="Type">
         <Token Name="AgentKeyword" />
+        <Token Name="OpenBrace" />
+        <Children Name="Message" Type="AgentTypeMessage" Separated="true" />
+        <Token Name="CloseBrace" />
+    </Node>
+
+    <Node Name="AgentTypeMessage">
+        <Token Name="Name" />
+        <Child Name="ParameterList" Type="AgentTypeMessageParameterList" />
+    </Node>
+
+    <Node Name="AgentTypeMessageParameterList">
         <Token Name="OpenParen" />
-        <Child Name="Message" Type="Type" />
+        <Children Name="Parameter" Type="AgentTypeMessageParameter" Separated="true" />
         <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="AgentTypeMessageParameter">
+        <Child Name="Type" Type="Type" />
     </Node>
 
     <Node Name="UnionType" Base="Type">
@@ -436,11 +451,21 @@
 
     <Node Name="LambdaExpression" Base="Expression">
         <Token Name="FnKeyword" />
-        <Child Name="ParameterList" Type="FunctionParameterList" />
-        <Token Name="ErrKeyword" Optional="true" />
-        <Child Name="ReturnType" Type="ReturnTypeAnnotation" Optional="true" />
+        <Child Name="ParameterList" Type="LambdaParameterList" />
         <Token Name="Arrow" />
         <Child Name="Body" Type="Expression" />
+    </Node>
+
+    <Node Name="LambdaParameterList">
+        <Token Name="OpenParen" />
+        <Children Name="Parameter" Type="LambdaParameter" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="LambdaParameter">
+        <Token Name="DotDot" Optional="true" />
+        <Children Name="Attribute" Type="Attribute" />
+        <Token Name="Name" />
     </Node>
 
     <Node Name="UnaryExpression" Base="Expression">
@@ -500,6 +525,12 @@
         <Token Name="WhileKeyword" />
         <Child Name="Condition" Type="Expression" />
         <Child Name="Body" Type="BlockExpression" />
+        <Child Name="Else" Type="WhileExpressionElse" Optional="true" />
+    </Node>
+
+    <Node Name="WhileExpressionElse">
+        <Token Name="ElseKeyword" />
+        <Child Name="Body" Type="BlockExpression" />
     </Node>
 
     <Node Name="ForExpression" Base="Expression">
@@ -507,6 +538,12 @@
         <Child Name="Pattern" Type="Pattern" />
         <Token Name="InKeyword" />
         <Child Name="Collection" Type="Expression" />
+        <Child Name="Body" Type="BlockExpression" />
+        <Child Name="Else" Type="ForExpressionElse" Optional="true" />
+    </Node>
+
+    <Node Name="ForExpressionElse">
+        <Token Name="ElseKeyword" />
         <Child Name="Body" Type="BlockExpression" />
     </Node>
 
@@ -516,6 +553,12 @@
 
     <Node Name="BreakExpression" Base="Expression">
         <Token Name="BreakKeyword" />
+        <Child Name="Result" Type="BreakExpressionResult" Optional="true" />
+    </Node>
+
+    <Node Name="BreakExpressionResult">
+        <Token Name="AsKeyword" />
+        <Child Name="Value" Type="Expression" />
     </Node>
 
     <Node Name="ConditionExpression" Base="Expression">
@@ -567,9 +610,28 @@
     <Node Name="ReceiveExpression" Base="Expression">
         <Token Name="RecvKeyword" />
         <Token Name="OpenBrace" />
-        <Children Name="Arm" Type="PatternArm" />
+        <Children Name="Arm" Type="ReceiveExpressionArm" />
         <Token Name="CloseBrace" />
         <Child Name="Else" Type="ReceiveExpressionElse" Optional="true" />
+    </Node>
+
+    <Node Name="ReceiveExpressionArm">
+        <Token Name="Name" />
+        <Child Name="ParameterList" Type="ReceiveParameterList" />
+        <Child Name="Guard" Type="PatternArmGuard" Optional="true" />
+        <Token Name="Arrow" />
+        <Child Name="Body" Type="Expression" />
+        <Token Name="Semicolon" />
+    </Node>
+
+    <Node Name="ReceiveParameterList">
+        <Token Name="OpenParen" />
+        <Children Name="Parameter" Type="ReceiveParameter" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="ReceiveParameter">
+        <Child Name="Pattern" Type="Pattern" />
     </Node>
 
     <Node Name="ReceiveExpressionElse">
@@ -610,33 +672,30 @@
         <Child Name="ArgumentList" Type="IndexArgumentList" />
     </Node>
 
+    <Node Name="IndexArgumentList">
+        <Token Name="OpenBracket" />
+        <Children Name="Argument" Type="IndexArgument" Separated="true" />
+        <Token Name="CloseBracket" />
+    </Node>
+
+    <Node Name="IndexArgument">
+        <Token Name="DotDot" Optional="true" />
+        <Child Name="Value" Type="Expression" />
+    </Node>
+
     <Node Name="CallExpression" Base="Expression">
         <Child Name="Subject" Type="Expression" />
         <Child Name="ArgumentList" Type="CallArgumentList" />
         <Child Name="Try" Type="CallTry" Optional="true" />
     </Node>
 
-    <Node Name="MethodCallExpression" Base="Expression">
-        <Child Name="Subject" Type="Expression" />
-        <Token Name="Arrow" />
-        <Token Name="Name" />
-        <Child Name="ArgumentList" Type="CallArgumentList" />
-        <Child Name="Try" Type="CallTry" Optional="true" />
-    </Node>
-
-    <Node Name="IndexArgumentList">
-        <Token Name="OpenBracket" />
-        <Children Name="Argument" Type="Argument" Separated="true" />
-        <Token Name="CloseBracket" />
-    </Node>
-
     <Node Name="CallArgumentList">
         <Token Name="OpenParen" />
-        <Children Name="Argument" Type="Argument" Separated="true" />
+        <Children Name="Argument" Type="CallArgument" Separated="true" />
         <Token Name="CloseParen" />
     </Node>
 
-    <Node Name="Argument">
+    <Node Name="CallArgument">
         <Token Name="DotDot" Optional="true" />
         <Child Name="Value" Type="Expression" />
     </Node>
@@ -654,9 +713,20 @@
     </Node>
 
     <Node Name="SendExpression" Base="Expression">
-        <Child Name="LeftOperand" Type="Expression" />
-        <Token Name="Operator" />
-        <Child Name="RightOperand" Type="Expression" />
+        <Child Name="Target" Type="Expression" />
+        <Token Name="Arrow" />
+        <Token Name="Name" />
+        <Child Name="ArgumentList" Type="SendArgumentList" />
+    </Node>
+
+    <Node Name="SendArgumentList">
+        <Token Name="OpenParen" />
+        <Children Name="Argument" Type="SendArgument" Separated="true" />
+        <Token Name="CloseParen" />
+    </Node>
+
+    <Node Name="SendArgument">
+        <Child Name="Value" Type="Expression" />
     </Node>
 
     <!-- Patterns -->

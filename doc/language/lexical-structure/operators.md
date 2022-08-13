@@ -18,8 +18,7 @@ operator-part ::= [+-~*/%&|^><]
 ```
 
 ```ebnf
-special-operator ::= '<-' |
-                     '=' |
+special-operator ::= '=' |
                      '==' |
                      '!=' |
                      '>' |
