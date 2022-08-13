@@ -6,7 +6,7 @@ public sealed class SourceDiagnostic
 
     public SourceDiagnosticSeverity Severity { get; }
 
-    public bool IsFatal => Severity == SourceDiagnosticSeverity.Error;
+    public bool IsError => Severity == SourceDiagnosticSeverity.Error;
 
     public SourceLocation Location { get; }
 
