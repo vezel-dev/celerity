@@ -1,13 +1,9 @@
 namespace Vezel.Celerity.Driver.Commands;
 
 [SuppressMessage("", "CA1812")]
-internal sealed class InfoCommand : AsyncCommand<InfoCommand.InfoCommandSettings>
+internal sealed class InfoCommand : AsyncCommand
 {
-    public sealed class InfoCommandSettings : CommandSettings
-    {
-    }
-
-    public override Task<int> ExecuteAsync(CommandContext context, InfoCommandSettings settings)
+    public override Task<int> ExecuteAsync(CommandContext context)
     {
         var culture = CultureInfo.InvariantCulture;
 
