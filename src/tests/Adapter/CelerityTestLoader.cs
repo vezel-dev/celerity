@@ -68,12 +68,12 @@ internal static partial class CelerityTestLoader
         Tests = tests;
     }
 
-    [RegexGenerator(@"^test:cmd (.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"^test:cmd (.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
     private static partial Regex CommandRegex();
 
-    [RegexGenerator(@"^test:args (.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"^test:args (.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
     private static partial Regex ArgumentsRegex();
 
-    [RegexGenerator(@"^test:env (.*)=(.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"^test:env (.*)=(.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
     private static partial Regex EnvironmentRegex();
 }
