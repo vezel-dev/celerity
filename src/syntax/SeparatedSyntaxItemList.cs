@@ -1,5 +1,6 @@
 namespace Vezel.Celerity.Syntax;
 
+[SuppressMessage("", "CA1710")]
 [SuppressMessage("", "CA1815")]
 public readonly struct SeparatedSyntaxItemList<TItem, TSeparator> : IReadOnlyCollection<SyntaxItem>
     where TItem : SyntaxItem
