@@ -29,7 +29,7 @@
         <PackageVersion Include="RadLine"
                         Version="0.6.0" />
         <PackageVersion Include="Spectre.Console.Cli"
-                        Version="0.45.1-preview.0.8" />
+                        Version="0.45.1-preview.0.19" />
         <PackageVersion Include="StyleCop.Analyzers"
                         Version="1.2.0-beta.435" />
         <PackageVersion Include="xunit"
