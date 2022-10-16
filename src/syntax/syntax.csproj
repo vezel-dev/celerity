@@ -14,6 +14,12 @@ This package provides the language lexer, parser, and abstract syntax tree.</Pac
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="buildTransitive/**"
+              Pack="true"
+              PackagePath="%(Identity)" />
+    </ItemGroup>
+
+    <ItemGroup>
         <AdditionalFiles Include="Ast.xml" />
     </ItemGroup>
 

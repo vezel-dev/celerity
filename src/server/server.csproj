@@ -10,10 +10,19 @@ This package provides the Language Server Protocol implementation.</PackageDescr
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="buildTransitive/**"
+              Pack="true"
+              PackagePath="%(Identity)" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="../semantics/semantics.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="OmniSharp.Extensions.LanguageServer" />
     </ItemGroup>
+
+    <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
+    <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>

@@ -11,6 +11,12 @@ collector, agent scheduler, etc.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="buildTransitive/**"
+              Pack="true"
+              PackagePath="%(Identity)" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="../semantics/semantics.csproj" />
     </ItemGroup>
 
@@ -23,4 +29,7 @@ collector, agent scheduler, etc.</PackageDescription>
         <PackageReference Include="Microsoft.Windows.SDK.Win32Metadata"
                           PrivateAssets="all" />
     </ItemGroup>
+
+    <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
+    <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>

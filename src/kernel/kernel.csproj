@@ -11,10 +11,20 @@ interfaces for the runtime system.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="buildTransitive/**"
+              Pack="true"
+              PackagePath="%(Identity)" />
+    </ItemGroup>
+
+    <ItemGroup>
         <EmbeddedResource Include="**/*.cel" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../runtime/runtime.csproj" />
     </ItemGroup>
+
+    <Import Project="../runtime/buildTransitive/Vezel.Celerity.Runtime.targets" />
+    <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
+    <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>

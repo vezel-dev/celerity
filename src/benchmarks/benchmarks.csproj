@@ -31,4 +31,9 @@
         <PackageReference Include="BenchmarkDotNet" />
         <PackageReference Include="Spectre.Console.Cli" />
     </ItemGroup>
+
+    <Import Project="../kernel/buildTransitive/Vezel.Celerity.Kernel.targets" />
+    <Import Project="../runtime/buildTransitive/Vezel.Celerity.Runtime.targets" />
+    <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
+    <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>

@@ -11,6 +11,14 @@ and linting.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="buildTransitive/**"
+              Pack="true"
+              PackagePath="%(Identity)" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="../syntax/syntax.csproj" />
     </ItemGroup>
+
+    <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>
