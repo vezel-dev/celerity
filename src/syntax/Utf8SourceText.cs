@@ -27,7 +27,7 @@ public sealed class Utf8SourceText : SourceText
     public static async Task<Utf8SourceText> FromAsync(
         string fullPath, Stream stream, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(stream);
+        Check.Null(stream);
 
         var ms = new MemoryStream();
 

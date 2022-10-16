@@ -6,21 +6,21 @@ public abstract partial class SyntaxWalker<T>
 
     protected SyntaxWalker(SyntaxWalkerDepth depth = SyntaxWalkerDepth.Nodes)
     {
-        _ = Enum.IsDefined(depth) ? true : throw new ArgumentOutOfRangeException(nameof(depth));
+        Check.Enum(depth);
 
         _depth = depth;
     }
 
     public T VisitNode(SyntaxNode node, T state)
     {
-        ArgumentNullException.ThrowIfNull(node);
+        Check.Null(node);
 
         return node.Visit(this, state);
     }
 
     protected virtual T DefaultVisitNode(SyntaxNode node, T state)
     {
-        ArgumentNullException.ThrowIfNull(node);
+        Check.Null(node);
 
         foreach (var elem in node.Items())
         {
@@ -35,7 +35,7 @@ public abstract partial class SyntaxWalker<T>
 
     public virtual T VisitToken(SyntaxToken token, T state)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        Check.Null(token);
 
         if (_depth >= SyntaxWalkerDepth.Trivia)
         {
@@ -53,21 +53,21 @@ public abstract partial class SyntaxWalker<T>
 
     public virtual T VisitLeadingTrivia(SyntaxTrivia trivia, T state)
     {
-        ArgumentNullException.ThrowIfNull(trivia);
+        Check.Null(trivia);
 
         return DefaultVisitTrivia(trivia, state);
     }
 
     public virtual T VisitTrailingTrivia(SyntaxTrivia trivia, T state)
     {
-        ArgumentNullException.ThrowIfNull(trivia);
+        Check.Null(trivia);
 
         return DefaultVisitTrivia(trivia, state);
     }
 
     protected virtual T DefaultVisitTrivia(SyntaxTrivia trivia, T state)
     {
-        ArgumentNullException.ThrowIfNull(trivia);
+        Check.Null(trivia);
 
         return state;
     }

@@ -4,7 +4,7 @@ public static class SyntaxExtensions
 {
     public static IEnumerable<SyntaxNode> Ancestors(this SyntaxNode node)
     {
-        ArgumentNullException.ThrowIfNull(node);
+        Check.Null(node);
 
         var current = node;
 
@@ -14,7 +14,7 @@ public static class SyntaxExtensions
 
     public static IEnumerable<SyntaxNode> Siblings(this SyntaxNode node)
     {
-        ArgumentNullException.ThrowIfNull(node);
+        Check.Null(node);
 
         var parent = node.Parent;
 
@@ -27,7 +27,7 @@ public static class SyntaxExtensions
 
     public static IEnumerable<SyntaxNode> Descendants(this SyntaxNode node)
     {
-        ArgumentNullException.ThrowIfNull(node);
+        Check.Null(node);
 
         var work = new Queue<SyntaxNode>();
 

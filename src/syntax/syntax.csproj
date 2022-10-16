@@ -10,6 +10,10 @@ This package provides the language lexer, parser, and abstract syntax tree.</Pac
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Vezel.Celerity.Diagnostics" />
+    </ItemGroup>
+
+    <ItemGroup>
         <AdditionalFiles Include="Ast.xml" />
     </ItemGroup>
 

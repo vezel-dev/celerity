@@ -8,7 +8,7 @@ public abstract class SourceText
 
     protected SourceText(string fullPath)
     {
-        ArgumentException.ThrowIfNullOrEmpty(fullPath);
+        Check.NullOrEmpty(fullPath);
 
         FullPath = fullPath;
     }

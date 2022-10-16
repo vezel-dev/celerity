@@ -37,12 +37,12 @@ public sealed class SourceDiagnostic
         string message,
         params SourceDiagnosticNote[] notes)
     {
-        ArgumentNullException.ThrowIfNull(item);
-        _ = Enum.IsDefined(severity) ? true : throw new ArgumentOutOfRangeException(nameof(severity));
-        _ = location.FullPath ?? throw new ArgumentException(null, nameof(location));
-        ArgumentException.ThrowIfNullOrEmpty(message);
-        ArgumentNullException.ThrowIfNull(notes);
-        _ = notes.All(n => n != null) ? true : throw new ArgumentException(null, nameof(notes));
+        Check.Null(item);
+        Check.Enum(severity);
+        Check.Argument(location.FullPath != null, location);
+        Check.NullOrEmpty(message);
+        Check.Null(notes);
+        Check.ForEach(notes, note => Check.Argument(note != null, notes));
 
         return new(item, severity, location, message, notes.ToImmutableArray());
     }

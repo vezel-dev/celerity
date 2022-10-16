@@ -17,9 +17,9 @@ public sealed class SourceDiagnosticNote
 
     public static SourceDiagnosticNote Create(SyntaxItem item, SourceLocation location, string message)
     {
-        ArgumentNullException.ThrowIfNull(item);
-        _ = location.FullPath ?? throw new ArgumentException(null, nameof(location));
-        ArgumentException.ThrowIfNullOrEmpty(message);
+        Check.Null(item);
+        Check.Argument(location.FullPath != null, location);
+        Check.NullOrEmpty(message);
 
         return new(item, location, message);
     }
