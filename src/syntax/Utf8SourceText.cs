@@ -10,12 +10,12 @@ public sealed class Utf8SourceText : SourceText
         Text = text;
     }
 
-    public static Utf8SourceText From(string fullPath, ReadOnlySpan<byte> text)
+    public static Utf8SourceText From(string fullPath, scoped ReadOnlySpan<byte> text)
     {
         return new(fullPath, text.ToArray());
     }
 
-    public static Utf8SourceText From(string fullPath, ReadOnlySpan<char> text)
+    public static Utf8SourceText From(string fullPath, scoped ReadOnlySpan<char> text)
     {
         var utf8 = new byte[Encoding.GetByteCount(text)];
 

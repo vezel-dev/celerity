@@ -5,7 +5,8 @@ internal static class Check
     public static class Always
     {
         public static void Assert(
-            [DoesNotReturnIf(false)] bool condition, [CallerArgumentExpression("condition")] string? expression = null)
+            [DoesNotReturnIf(false)] bool condition,
+            [CallerArgumentExpression(nameof(condition))] string? expression = null)
         {
             if (!condition)
                 throw new UnreachableException($"Hard assertion '{expression}' failed.");
@@ -16,7 +17,8 @@ internal static class Check
     {
         [Conditional("DEBUG")]
         public static void Assert(
-            [DoesNotReturnIf(false)] bool condition, [CallerArgumentExpression("condition")] string? expression = null)
+            [DoesNotReturnIf(false)] bool condition,
+            [CallerArgumentExpression(nameof(condition))] string? expression = null)
         {
             if (!condition)
                 throw new UnreachableException($"Debug assertion '{expression}' failed.");
@@ -27,7 +29,8 @@ internal static class Check
     {
         [Conditional("RELEASE")]
         public static void Assert(
-            [DoesNotReturnIf(false)] bool condition, [CallerArgumentExpression("condition")] string? expression = null)
+            [DoesNotReturnIf(false)] bool condition,
+            [CallerArgumentExpression(nameof(condition))] string? expression = null)
         {
             if (!condition)
                 throw new UnreachableException($"Release assertion '{expression}' failed.");
@@ -36,8 +39,8 @@ internal static class Check
 
     public static void Argument<T>(
         [DoesNotReturnIf(false)] bool condition,
-        scoped in T value,
-        [CallerArgumentExpression("value")] string? name = null)
+        in T value,
+        [CallerArgumentExpression(nameof(value))] string? name = null)
     {
         _ = value;
 
@@ -45,17 +48,18 @@ internal static class Check
             throw new ArgumentException(null, name);
     }
 
-    public static void Null([NotNull] object? value, [CallerArgumentExpression("value")] string? name = null)
+    public static void Null([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string? name = null)
     {
         ArgumentNullException.ThrowIfNull(value, name);
     }
 
-    public static void NullOrEmpty([NotNull] string? value, [CallerArgumentExpression("value")] string? name = null)
+    public static void NullOrEmpty(
+        [NotNull] string? value, [CallerArgumentExpression(nameof(value))] string? name = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(value, name);
     }
 
-    public static void Enum<T>(T value, [CallerArgumentExpression("value")] string? name = null)
+    public static void Enum<T>(T value, [CallerArgumentExpression(nameof(value))] string? name = null)
         where T : struct, Enum
     {
         if (!System.Enum.IsDefined(value))
