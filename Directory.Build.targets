@@ -32,9 +32,15 @@
             <PropertyGroup>
                 <ApplicationIcon Condition="'$(OutputType)' != 'Library'">$(MSBuildThisFileDirectory)celerity.ico</ApplicationIcon>
                 <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-                <IsTrimmable Condition="'$(OutputType)' == 'Library'">>true</IsTrimmable>
                 <PackageIcon>celerity.png</PackageIcon>
                 <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
+            </PropertyGroup>
+
+            <PropertyGroup Condition="'$(OutputType)' == 'Library'">
+                <EnableAotAnalyzer>true</EnableAotAnalyzer>
+                <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+                <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+                <IsTrimmable>true</IsTrimmable>
             </PropertyGroup>
 
             <ItemGroup>
