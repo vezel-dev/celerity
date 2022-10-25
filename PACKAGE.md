@@ -15,8 +15,6 @@ This project offers the following packages:
 
 * [celerity](https://www.nuget.org/packages/celerity): Provides the .NET global
   tool.
-* [Vezel.Celerity.Common](https://www.nuget.org/packages/Vezel.Celerity.Common):
-  Provides common functionality used by all Celerity packages.
 * [Vezel.Celerity.Syntax](https://www.nuget.org/packages/Vezel.Celerity.Syntax):
   Provides the language lexer, parser, and abstract syntax tree.
 * [Vezel.Celerity.Semantics](https://www.nuget.org/packages/Vezel.Celerity.Semantics):
