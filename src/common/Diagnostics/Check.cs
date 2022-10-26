@@ -1,5 +1,6 @@
 namespace Vezel.Celerity.Diagnostics;
 
+[StackTraceHidden]
 internal static class Check
 {
     public static class Always
