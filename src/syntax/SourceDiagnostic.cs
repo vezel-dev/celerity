@@ -42,7 +42,7 @@ public sealed class SourceDiagnostic
         Check.Argument(location.FullPath != null, location);
         Check.NullOrEmpty(message);
         Check.Null(notes);
-        Check.ForEach(notes, note => Check.Argument(note != null, notes));
+        Check.All(notes, static note => note != null);
 
         return new(item, severity, location, message, notes.ToImmutableArray());
     }
