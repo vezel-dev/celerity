@@ -28,10 +28,7 @@ public sealed class AstGenerator : IIncrementalGenerator
 
                 foreach (var node in tree.Nodes ?? Array.Empty<AstNode>())
                     GenerateNode(
-                        ctx,
-                        Path.ChangeExtension(baseName, $"{node.Name}{tree.Settings.NameSuffix}.g.cs"),
-                        tree,
-                        node);
+                        ctx, Path.ChangeExtension(baseName, $"{node.Name}{tree.Settings.NameSuffix}.g.cs"), tree, node);
             });
     }
 
