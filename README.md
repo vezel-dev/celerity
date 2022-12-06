@@ -18,7 +18,7 @@
 [![Commits](https://img.shields.io/github/commit-activity/m/vezel-dev/celerity/master?label=commits&color=slateblue)](https://github.com/vezel-dev/celerity/commits/master)
 [![Build](https://img.shields.io/github/workflow/status/vezel-dev/celerity/Build/master)](https://github.com/vezel-dev/celerity/actions/workflows/build.yml)
 [![Discussions](https://img.shields.io/github/discussions/vezel-dev/celerity?color=teal)](https://github.com/vezel-dev/celerity/discussions)
-[![Discord](https://img.shields.io/discord/960716713136095232?color=peru&label=discord)](https://discord.gg/SdBCrRuNxY)
+[![Discord](https://img.shields.io/discord/960716713136095232?color=peru&label=discord)](https://discord.gg/uD8maMVVFX)
 
 </div>
 
