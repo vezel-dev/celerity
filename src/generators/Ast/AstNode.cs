@@ -11,6 +11,7 @@ public sealed class AstNode
     [XmlAttribute]
     public bool Abstract { get; set; }
 
+    [SuppressMessage("", "CA1819")]
     [XmlElement("Token", Type = typeof(AstTokenProperty))]
     [XmlElement("Tokens", Type = typeof(AstTokensProperty))]
     [XmlElement("Child", Type = typeof(AstChildProperty))]

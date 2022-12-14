@@ -6,6 +6,7 @@ public sealed class AstTree
     [XmlElement]
     public AstSettings Settings { get; set; } = null!;
 
+    [SuppressMessage("", "CA1819")]
     [XmlElement("Node")]
     public AstNode[] Nodes { get; set; } = null!;
 
