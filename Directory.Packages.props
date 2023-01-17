@@ -36,7 +36,7 @@
         <PackageVersion Include="Microsoft.Windows.SDK.Win32Metadata"
                         Version="40.0.14-preview" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
-                        Version="0.19.6" />
+                        Version="0.19.7" />
         <PackageVersion Include="RadLine"
                         Version="0.6.0" />
         <PackageVersion Include="Spectre.Console.Cli"
