@@ -13,7 +13,5 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp"
                           PrivateAssets="all" />
-        <PackageReference Include="PolySharp"
-                          PrivateAssets="all" />
     </ItemGroup>
 </Project>
