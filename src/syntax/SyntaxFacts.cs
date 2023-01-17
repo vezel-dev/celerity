@@ -2,8 +2,10 @@ namespace Vezel.Celerity.Syntax;
 
 public static class SyntaxFacts
 {
-    public static SyntaxTokenKind GetNormalKeywordKind(string text)
+    public static SyntaxTokenKind? GetNormalKeywordKind(string text)
     {
+        Check.Null(text);
+
         return text switch
         {
             "and" => SyntaxTokenKind.AndKeyword,
@@ -41,12 +43,14 @@ public static class SyntaxFacts
             "type" => SyntaxTokenKind.TypeKeyword,
             "use" => SyntaxTokenKind.UseKeyword,
             "while" => SyntaxTokenKind.WhileKeyword,
-            _ => SyntaxTokenKind.Missing,
+            _ => null,
         };
     }
 
-    public static SyntaxTokenKind GetTypeKeywordKind(string text)
+    public static SyntaxTokenKind? GetTypeKeywordKind(string text)
     {
+        Check.Null(text);
+
         return text switch
         {
             "agent" => SyntaxTokenKind.AgentKeyword,
@@ -59,12 +63,14 @@ public static class SyntaxFacts
             "real" => SyntaxTokenKind.RealKeyword,
             "ref" => SyntaxTokenKind.RefKeyword,
             "str" => SyntaxTokenKind.StrKeyword,
-            _ => SyntaxTokenKind.Missing,
+            _ => null,
         };
     }
 
-    public static SyntaxTokenKind GetReservedKeywordKind(string text)
+    public static SyntaxTokenKind? GetReservedKeywordKind(string text)
     {
+        Check.Null(text);
+
         return text switch
         {
             "friend" => SyntaxTokenKind.FriendKeyword,
@@ -76,7 +82,7 @@ public static class SyntaxFacts
             "unquote" => SyntaxTokenKind.UnquoteKeyword,
             "with" => SyntaxTokenKind.WithKeyword,
             "yield" => SyntaxTokenKind.YieldKeyword,
-            _ => SyntaxTokenKind.Missing,
+            _ => null,
         };
     }
 }
