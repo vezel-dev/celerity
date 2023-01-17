@@ -34,7 +34,7 @@
         <PackageVersion Include="Microsoft.Windows.SDK.Win32Docs"
                         Version="0.1.12-alpha" />
         <PackageVersion Include="Microsoft.Windows.SDK.Win32Metadata"
-                        Version="37.0.34-preview" />
+                        Version="40.0.14-preview" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
                         Version="0.19.6" />
         <PackageVersion Include="RadLine"
