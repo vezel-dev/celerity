@@ -3,10 +3,10 @@ namespace Vezel.Celerity.Generators.Ast;
 public sealed class AstChildrenProperty : AstProperty
 {
     [XmlAttribute]
-    public string Type { get; set; } = null!;
+    public required string Type { get; init; }
 
     [XmlAttribute]
-    public bool Separated { get; set; }
+    public required bool Separated { get; init; }
 
     internal override string GetPropertyName()
     {

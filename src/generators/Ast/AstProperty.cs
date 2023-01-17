@@ -15,7 +15,7 @@ public abstract class AstProperty
 
     internal string GetParameterName()
     {
-        var param = $"{char.ToLowerInvariant(Name[0])}{Name.Substring(1)}";
+        var param = $"{char.ToLowerInvariant(Name[0])}{Name[1..]}";
 
         return SyntaxFacts.GetKeywordKind(param) != SyntaxKind.None ? $"@{param}" : param;
     }

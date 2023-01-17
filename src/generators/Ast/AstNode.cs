@@ -3,18 +3,18 @@ namespace Vezel.Celerity.Generators.Ast;
 public sealed class AstNode
 {
     [XmlAttribute]
-    public string Name { get; set; } = null!;
+    public required string Name { get; init; }
 
     [XmlAttribute]
-    public string? Base { get; set; }
+    public required string? Base { get; init; }
 
     [XmlAttribute]
-    public bool Abstract { get; set; }
+    public required bool Abstract { get; init; }
 
     [SuppressMessage("", "CA1819")]
     [XmlElement("Token", Type = typeof(AstTokenProperty))]
     [XmlElement("Tokens", Type = typeof(AstTokensProperty))]
     [XmlElement("Child", Type = typeof(AstChildProperty))]
     [XmlElement("Children", Type = typeof(AstChildrenProperty))]
-    public AstProperty[] Properties { get; set; } = null!;
+    public required AstProperty[] Properties { get; init; }
 }

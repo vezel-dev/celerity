@@ -150,7 +150,13 @@ internal sealed partial class CelerityTestCase
             outcome = TestOutcome.Failed;
         }
 
-        return new(outcome, error, stdout2, stderr2);
+        return new()
+        {
+            Outcome = outcome,
+            Error = error,
+            StandardOut = stdout2,
+            StandardError = stderr2,
+        };
     }
 
     [GeneratedRegex(@"^(.*)(\(\d+,\d+\): \w*: .*)$", RegexOptions.Multiline | RegexOptions.CultureInvariant)]

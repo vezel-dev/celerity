@@ -2,19 +2,11 @@ namespace Vezel.Celerity.Tests.Adapter;
 
 internal sealed class CelerityTestResult
 {
-    public TestOutcome Outcome { get; }
+    public required TestOutcome Outcome { get; init; }
 
-    public string? Error { get; }
+    public required string? Error { get; init; }
 
-    public string StandardOut { get; }
+    public required string StandardOut { get; init; }
 
-    public string StandardError { get; }
-
-    public CelerityTestResult(TestOutcome outcome, string? error, string stdout, string stderr)
-    {
-        Outcome = outcome;
-        Error = error;
-        StandardOut = stdout;
-        StandardError = stderr;
-    }
+    public required string StandardError { get; init; }
 }

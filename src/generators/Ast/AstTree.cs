@@ -4,7 +4,7 @@ namespace Vezel.Celerity.Generators.Ast;
 public sealed class AstTree
 {
     [XmlElement]
-    public AstSettings Settings { get; set; } = null!;
+    public required AstSettings Settings { get; init; }
 
     [SuppressMessage("", "CA1819")]
     [XmlElement("Node")]

@@ -3,7 +3,7 @@ namespace Vezel.Celerity.Generators.Ast;
 public sealed class AstTokensProperty : AstProperty
 {
     [XmlAttribute]
-    public bool Separated { get; set; }
+    public required bool Separated { get; init; }
 
     internal override string GetPropertyName()
     {
