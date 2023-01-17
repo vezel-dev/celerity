@@ -40,7 +40,7 @@
         <PackageVersion Include="RadLine"
                         Version="0.6.0" />
         <PackageVersion Include="Spectre.Console.Cli"
-                        Version="0.45.1-preview.0.33" />
+                        Version="0.46.0" />
         <PackageVersion Include="xunit"
                         Version="2.4.2" />
         <PackageVersion Include="xunit.runner.visualstudio"
