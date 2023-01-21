@@ -4,6 +4,34 @@ namespace Vezel.Celerity.Syntax;
 public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
     where T : SyntaxItem
 {
+    public struct Enumerator : IEnumerator<T>
+    {
+        public T Current => _enumerator.Current;
+
+        object IEnumerator.Current => Current;
+
+        private ImmutableArray<T>.Enumerator _enumerator;
+
+        internal Enumerator(ImmutableArray<T>.Enumerator enumerator)
+        {
+            _enumerator = enumerator;
+        }
+
+        public void Dispose()
+        {
+        }
+
+        public bool MoveNext()
+        {
+            return _enumerator.MoveNext();
+        }
+
+        public void Reset()
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     public int Count => _items.Length;
 
     public T this[int index] => _items[index];
@@ -15,18 +43,18 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
         _items = items;
     }
 
-    public ImmutableArray<T>.Enumerator GetEnumerator()
+    public Enumerator GetEnumerator()
     {
-        return _items.GetEnumerator();
+        return new(_items.GetEnumerator());
     }
 
     IEnumerator<T> IEnumerable<T>.GetEnumerator()
     {
-        return _items.AsEnumerable().GetEnumerator();
+        return GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        return _items.AsEnumerable().GetEnumerator();
+        return GetEnumerator();
     }
 }
