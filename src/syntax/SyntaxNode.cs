@@ -2,21 +2,14 @@ namespace Vezel.Celerity.Syntax;
 
 public abstract class SyntaxNode : SyntaxItem
 {
-    public override SyntaxNode? Parent => _parent;
+    public new SyntaxNode? Parent => Unsafe.As<SyntaxNode?>(base.Parent);
 
     public abstract bool HasTokens { get; }
 
     public abstract bool HasChildren { get; }
 
-    private SyntaxNode? _parent;
-
     private protected SyntaxNode()
     {
-    }
-
-    internal void SetParent(SyntaxNode parent)
-    {
-        _parent = parent;
     }
 
     public abstract IEnumerable<SyntaxItem> Items();

@@ -244,27 +244,13 @@ public sealed class AstGenerator : IIncrementalGenerator
                             writer.WriteLine($"{param}.SetParent(this);");
                             break;
                         default:
-                            var sep = prop is AstTokensProperty { Separated: true } or AstChildrenProperty { Separated: true };
-
-                            writer.WriteLine($"foreach (var item in {param}{(sep ? ".Items" : string.Empty)})");
+                            writer.WriteLine($"foreach (var item in {param})");
 
                             writer.Indent++;
 
                             writer.WriteLine("item.SetParent(this);");
 
                             writer.Indent--;
-
-                            if (sep)
-                            {
-                                writer.WriteLine();
-                                writer.WriteLine($"foreach (var separator in {param}.Separators)");
-
-                                writer.Indent++;
-
-                                writer.WriteLine("separator.SetParent(this);");
-
-                                writer.Indent--;
-                            }
 
                             break;
                     }
@@ -361,7 +347,7 @@ public sealed class AstGenerator : IIncrementalGenerator
 
         writer.Indent++;
 
-        writer.WriteLine("ArgumentNullException.ThrowIfNull(node);");
+        writer.WriteLine("Check.Null(node);");
         writer.WriteLine();
         writer.WriteLine($"return DefaultVisitNode(node, state);");
 

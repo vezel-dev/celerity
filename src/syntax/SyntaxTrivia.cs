@@ -2,7 +2,7 @@ namespace Vezel.Celerity.Syntax;
 
 public sealed class SyntaxTrivia : SyntaxItem
 {
-    public override SyntaxToken Parent => _parent;
+    public new SyntaxToken Parent => Unsafe.As<SyntaxToken>(base.Parent!);
 
     public SourceLocation Location { get; }
 
@@ -10,18 +10,11 @@ public sealed class SyntaxTrivia : SyntaxItem
 
     public string Text { get; }
 
-    private SyntaxToken _parent = null!;
-
     internal SyntaxTrivia(SourceLocation location, SyntaxTriviaKind kind, string text)
     {
         Location = location;
         Kind = kind;
         Text = text;
-    }
-
-    internal void SetParent(SyntaxToken parent)
-    {
-        _parent = parent;
     }
 
     public override string ToString()

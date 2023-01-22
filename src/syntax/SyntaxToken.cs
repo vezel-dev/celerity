@@ -2,7 +2,7 @@ namespace Vezel.Celerity.Syntax;
 
 public sealed class SyntaxToken : SyntaxItem
 {
-    public override SyntaxNode Parent => _parent;
+    public new SyntaxNode Parent => Unsafe.As<SyntaxNode>(base.Parent!);
 
     public SourceLocation Location { get; }
 
@@ -27,8 +27,6 @@ public sealed class SyntaxToken : SyntaxItem
     public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
 
     public bool HasTrailingTrivia => !TrailingTrivia.IsEmpty;
-
-    private SyntaxNode _parent = null!;
 
     internal SyntaxToken(string fullPath)
         : this(
@@ -56,18 +54,11 @@ public sealed class SyntaxToken : SyntaxItem
         LeadingTrivia = leading;
         TrailingTrivia = trailing;
 
-        if (HasLeadingTrivia)
-            foreach (var trivia in leading)
-                trivia.SetParent(this);
+        foreach (var trivia in leading)
+            trivia.SetParent(this);
 
-        if (HasTrailingTrivia)
-            foreach (var trivia in trailing)
-                trivia.SetParent(this);
-    }
-
-    internal void SetParent(SyntaxNode parent)
-    {
-        _parent = parent;
+        foreach (var trivia in trailing)
+            trivia.SetParent(this);
     }
 
     public override string ToString()
