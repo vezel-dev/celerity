@@ -1,0 +1,13 @@
+-x
+c
+-c
+unix-types
+preview-codegen
+-n
+Vezel.Celerity.Runtime
+-was
+*=internal
+-m
+RuntimeNative
+-p
+celerity_

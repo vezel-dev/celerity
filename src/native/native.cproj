@@ -1,0 +1,116 @@
+<Project Sdk="Vezel.Zig.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Runtime.Native</AssemblyName>
+        <DefineConstants>
+            $(DefineConstants);
+            _XOPEN_SOURCE;
+            WIN32_LEAN_AND_MEAN
+        </DefineConstants>
+        <!-- TODO: https://github.com/dotnet/msbuild/issues/6672 -->
+        <PackageDefines>false</PackageDefines>
+        <PublicHeadersPath>include</PublicHeadersPath>
+        <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/3 -->
+        <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/4 -->
+        <RuntimeIdentifiers>
+            linux-arm64;
+            linux-x64;
+            linux-musl-arm64;
+            linux-musl-x64;
+            osx-x64;
+            win-x64
+        </RuntimeIdentifiers>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <_NativeBindingsResponse>bindings.rsp</_NativeBindingsResponse>
+        <_NativeBindingsText>bindings.txt</_NativeBindingsText>
+        <_NativeBindingsCache>$(BaseIntermediateOutputPath)$(AssemblyName).bindings.cache</_NativeBindingsCache>
+        <_NativeBindingsPath>$(BaseIntermediateOutputPath)$(AssemblyName).bindings.cs</_NativeBindingsPath>
+    </PropertyGroup>
+
+    <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/67 -->
+    <ItemGroup>
+        <_NativeBindingsHeader Include="$(PublicHeadersPath)/**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PreludeHeader Include="prelude.h" />
+    </ItemGroup>
+
+    <Target Name="_WriteNativeBindingsCache">
+        <Hash ItemsToHash="$(MSBuildAllProjects); @(_NativeBindingsHeader); $(_NativeBindingsResponse); $(_NativeBindingsText)"
+              IgnoreCase="true">
+            <Output TaskParameter="HashResult"
+                    PropertyName="_NativeBindingsCacheHash" />
+        </Hash>
+
+        <WriteLinesToFile Lines="$(_NativeBindingsCacheHash)"
+                          File="$(_NativeBindingsCache)"
+                          Overwrite="true"
+                          WriteOnlyWhenDifferent="true" />
+
+        <ItemGroup>
+            <FileWrites Include="$(_NativeBindingsCache)" />
+        </ItemGroup>
+    </Target>
+
+    <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/68 -->
+    <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/69 -->
+    <Target Name="_GenerateNativeBindings"
+            Inputs="@(_NativeBindingsHeader); $(_NativeBindingsResponse); $(_NativeBindingsText); $(_NativeBindingsCache)"
+            Outputs="$(_NativeBindingsPath)"
+            DependsOnTargets="_WriteNativeBindingsCache"
+            AfterTargets="Build"
+            Condition="'$(_RidFanOut)' == 'true'">
+        <Exec Command="dotnet ClangSharpPInvokeGenerator @$(_NativeBindingsResponse) -f @(_NativeBindingsHeader->'%(Identity)', ' ') -std $(LanguageStandard) -l $(AssemblyName) -h $(_NativeBindingsText) -o $(_NativeBindingsPath)"
+              StandardOutputImportance="low"
+              StandardErrorImportance="low"
+              CustomWarningRegularExpression="^    .*:\d+:\d+: warning: .*$"
+              CustomErrorRegularExpression="^    .*:\d+:\d+: (?:fatal )?error: .*$"
+              IgnoreExitCode="true">
+            <Output TaskParameter="ExitCode"
+                    PropertyName="_ExitCode" />
+        </Exec>
+
+        <!--
+        The bindings file sometimes gets written even if there are errors in some files. Delete it so that the next run
+        does not think that this one was successful.
+        -->
+        <Delete Files="$(_NativeBindingsPath)"
+                Condition="'$(_ExitCode)' != 0 and Exists('$(_NativeBindingsPath)')" />
+
+        <Error Text="Bindings could not be generated."
+               Condition="'$(_ExitCode)' != 0" />
+    </Target>
+
+    <Target Name="_GetNativeBindings"
+            Returns="@(_NativeBindings)">
+        <ItemGroup>
+            <_NativeBindings Include="$([MSBuild]::NormalizePath('$(_NativeBindingsPath)'))" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="_GetNativeLibrary"
+            Returns="@(_NativeLibrary)">
+        <ItemGroup>
+            <_NativeLibrary Include="$(TargetPath)"
+                            RuntimeIdentifier="$(RuntimeIdentifier)" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="_GetNativeLibraries"
+            Returns="@(_NativeLibrary)">
+        <ItemGroup>
+            <_RuntimeIdentifiers Include="$(RuntimeIdentifiers)" />
+            <_Projects Include="$(MSBuildProjectFullPath)"
+                       Properties="RuntimeIdentifier=%(_RuntimeIdentifiers.Identity)" />
+        </ItemGroup>
+
+        <MSBuild Projects="@(_Projects)"
+                 Targets="_GetNativeLibrary"
+                 BuildInParallel="$(BuildInParallel)">
+            <Output TaskParameter="TargetOutputs"
+                    ItemName="_NativeLibrary" />
+        </MSBuild>
+    </Target>
+</Project>

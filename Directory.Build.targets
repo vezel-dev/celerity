@@ -19,7 +19,7 @@
         <Using Include="System.Xml.Serialization" />
     </ItemGroup>
 
-    <ItemGroup>
+    <ItemGroup Condition="'$(UsingVezelZigSdk)' != 'true'">
         <AdditionalFiles Include="$(MSBuildThisFileDirectory).stylecop.json" />
     </ItemGroup>
 

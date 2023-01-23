@@ -1,3 +1,4 @@
+.clangd
 .vs
 *.user
 /pkg/cache/*/*

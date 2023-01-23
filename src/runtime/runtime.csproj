@@ -17,6 +17,8 @@ collector, agent scheduler, etc.</PackageDescription>
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="../native/native.cproj"
+                          ReferenceOutputAssembly="false" />
         <ProjectReference Include="../semantics/semantics.csproj" />
     </ItemGroup>
 
@@ -29,6 +31,36 @@ collector, agent scheduler, etc.</PackageDescription>
         <PackageReference Include="Microsoft.Windows.SDK.Win32Metadata"
                           PrivateAssets="all" />
     </ItemGroup>
+
+    <Target Name="_AddNativeBindings"
+            BeforeTargets="BeforeCompile">
+        <MSBuild Projects="../native/native.cproj"
+                 Targets="_GetNativeBindings">
+            <Output TaskParameter="TargetOutputs"
+                    ItemName="_NativeBindings" />
+        </MSBuild>
+
+        <ItemGroup>
+            <Compile Include="@(_NativeBindings)" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="_AddNativeLibraries"
+            DependsOnTargets="ResolveAssemblyReferences"
+            BeforeTargets="AssignTargetPaths">
+        <MSBuild Projects="../native/native.cproj"
+                 Targets="_GetNativeLibraries">
+            <Output TaskParameter="TargetOutputs"
+                    ItemName="_NativeLibrary" />
+        </MSBuild>
+
+        <ItemGroup>
+            <Content Include="@(_NativeLibrary)"
+                     CopyToOutputDirectory="Always"
+                     Link="%(RuntimeIdentifier)/%(Filename)%(Extension)"
+                     PackagePath="runtimes/%(RuntimeIdentifier)/native" />
+        </ItemGroup>
+    </Target>
 
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />

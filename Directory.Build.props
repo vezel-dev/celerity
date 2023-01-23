@@ -16,7 +16,9 @@
         <ImplicitUsings>true</ImplicitUsings>
         <IsPackable>false</IsPackable>
         <IsPublishable>false</IsPublishable>
+        <LanguageStandard>gnu2x</LanguageStandard>
         <LangVersion>latest</LangVersion>
+        <MicrosoftExtensions>true</MicrosoftExtensions>
         <Nullable>enable</Nullable>
         <PackageDescription>$(Description)
 
@@ -31,6 +33,7 @@ collection.</PackageDescription>
         <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
         <RepositoryUrl>https://github.com/vezel-dev/celerity.git</RepositoryUrl>
         <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+        <SymbolVisibility>Hidden</SymbolVisibility>
         <TargetFramework>net7.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
