@@ -1,6 +1,5 @@
 # Use Declaration
 
 ```ebnf
-use-declaration ::= 'use' module-path use-declaration-alias?
-use-declaration-alias ::= 'as' upper-identifier
+use-declaration ::= 'use' upper-identifier '=' module-path
 ```

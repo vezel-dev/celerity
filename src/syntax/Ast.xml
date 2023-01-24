@@ -50,13 +50,9 @@
     <Node Name="UseDeclaration" Base="Declaration">
         <Children Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="UseKeyword" />
-        <Child Name="Path" Type="ModulePath" />
-        <Child Name="Alias" Type="UseDeclarationAlias" Optional="true" />
-    </Node>
-
-    <Node Name="UseDeclarationAlias">
-        <Token Name="AsKeyword" />
         <Token Name="Name" />
+        <Token Name="Equals" />
+        <Child Name="Path" Type="ModulePath" />
     </Node>
 
     <Node Name="TypeDeclaration" Base="Declaration">
