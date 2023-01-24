@@ -31,7 +31,7 @@ public sealed class SyntaxTree
             new LanguageParser(
                 new LanguageLexer(
                     text.FullPath,
-                    text.EnumerateRunes().ToArray(),
+                    text.Runes,
                     mode,
                     diags).Lex(),
                 mode,

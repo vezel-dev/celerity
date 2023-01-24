@@ -6,9 +6,14 @@ internal sealed class LanguageLexer
     {
         private readonly Stack<Rune> _stack;
 
-        public RuneStack(IReadOnlyList<Rune> runes)
+        public RuneStack(ReadOnlyMemory<Rune> runes)
         {
-            _stack = new(runes.Reverse());
+            _stack = new(runes.Length);
+
+            var span = runes.Span;
+
+            for (var i = span.Length - 1; i >= 0; i--)
+                _stack.Push(span[i]);
         }
 
         public Rune? Peek()
@@ -53,7 +58,7 @@ internal sealed class LanguageLexer
 
     public LanguageLexer(
         string fullPath,
-        IReadOnlyList<Rune> runes,
+        ReadOnlyMemory<Rune> runes,
         SyntaxMode mode,
         ImmutableArray<SourceDiagnostic>.Builder diagnostics)
     {

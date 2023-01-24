@@ -67,6 +67,12 @@ internal static class Check
             throw new ArgumentOutOfRangeException(name);
     }
 
+    public static void Data([DoesNotReturnIf(false)] bool condition)
+    {
+        if (!condition)
+            throw new InvalidDataException();
+    }
+
     public static void All<T>(
         IEnumerable<T> value,
         Func<T, bool> predicate,
