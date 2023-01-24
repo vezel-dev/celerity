@@ -11,10 +11,10 @@ This package provides common functionality used by all Celerity packages.</Packa
 
     <ItemGroup>
         <InternalsVisibleTo Include="celerity" />
-        <InternalsVisibleTo Include="Vezel.Celerity.Analysis" />
         <InternalsVisibleTo Include="Vezel.Celerity.Common" />
         <InternalsVisibleTo Include="Vezel.Celerity.Kernel" />
         <InternalsVisibleTo Include="Vezel.Celerity.Runtime" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Semantics" />
         <InternalsVisibleTo Include="Vezel.Celerity.Server" />
         <InternalsVisibleTo Include="Vezel.Celerity.Syntax" />
     </ItemGroup>
