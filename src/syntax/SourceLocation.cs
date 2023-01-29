@@ -1,6 +1,7 @@
 namespace Vezel.Celerity.Syntax;
 
-public readonly struct SourceLocation : IEquatable<SourceLocation>
+public readonly struct SourceLocation :
+    IEquatable<SourceLocation>, IEqualityOperators<SourceLocation, SourceLocation, bool>
 {
     public string FullPath { get; }
 
