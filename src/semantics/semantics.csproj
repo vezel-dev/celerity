@@ -11,6 +11,11 @@ and linting.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Vezel.Celerity.Diagnostics" />
+        <Using Include="Vezel.Celerity.Syntax" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="buildTransitive/**"
               Pack="true"
               PackagePath="%(Identity)" />

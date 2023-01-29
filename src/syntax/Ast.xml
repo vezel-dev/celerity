@@ -40,17 +40,19 @@
 
     <Node Name="Declaration" Abstract="true">
         <Children Name="Attribute" Type="Attribute" />
+        <Token Name="Name" />
     </Node>
 
     <Node Name="MissingDeclaration" Base="Declaration">
         <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="Name" Override="true" />
         <Tokens Name="Skipped" />
     </Node>
 
     <Node Name="UseDeclaration" Base="Declaration">
         <Children Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="UseKeyword" />
-        <Token Name="Name" />
+        <Token Name="Name" Override="true" />
         <Token Name="Equals" />
         <Child Name="Path" Type="ModulePath" />
     </Node>
@@ -60,7 +62,7 @@
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="OpaqueKeyword" Optional="true" />
         <Token Name="TypeKeyword" />
-        <Token Name="Name" />
+        <Token Name="Name" Override="true" />
         <Child Name="ParameterList" Type="TypeParameterList" Optional="true" />
         <Token Name="Equals" />
         <Child Name="Type" Type="Type" />
@@ -78,26 +80,30 @@
         <Token Name="Name" />
     </Node>
 
-    <Node Name="ConstantDeclaration" Base="Declaration">
+    <Node Name="CodeDeclaration" Base="Declaration" Abstract="true">
+        <Child Name="Body" Type="Expression" Optional="true" />
+    </Node>
+
+    <Node Name="ConstantDeclaration" Base="CodeDeclaration">
         <Children Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="ConstKeyword" />
-        <Token Name="Name" />
+        <Token Name="Name" Override="true" />
         <Child Name="Type" Type="TypeAnnotation" Optional="true" />
         <Token Name="Equals" />
-        <Child Name="Initializer" Type="Expression" />
+        <Child Name="Body" Type="Expression" Override="true" />
     </Node>
 
-    <Node Name="FunctionDeclaration" Base="Declaration">
+    <Node Name="FunctionDeclaration" Base="CodeDeclaration">
         <Children Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="ExtKeyword" Optional="true" />
         <Token Name="FnKeyword" />
-        <Token Name="Name" />
+        <Token Name="Name" Override="true" />
         <Child Name="ParameterList" Type="FunctionParameterList" />
         <Token Name="ErrKeyword" Optional="true" />
         <Child Name="ReturnType" Type="ReturnTypeAnnotation" Optional="true" />
-        <Child Name="Body" Type="BlockExpression" />
+        <Child Name="Body" Type="BlockExpression" Optional="true" Override="true" />
     </Node>
 
     <Node Name="FunctionParameterList">
@@ -106,18 +112,24 @@
         <Token Name="CloseParen" />
     </Node>
 
-    <Node Name="FunctionParameter">
+    <Node Name="CodeParameter" Abstract="true">
         <Token Name="DotDot" Optional="true" />
         <Children Name="Attribute" Type="Attribute" />
         <Token Name="Name" />
+    </Node>
+
+    <Node Name="FunctionParameter" Base="CodeParameter">
+        <Token Name="DotDot" Optional="true" Override="true" />
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="Name" Override="true" />
         <Child Name="Type" Type="TypeAnnotation" Optional="true" />
     </Node>
 
-    <Node Name="TestDeclaration" Base="Declaration">
+    <Node Name="TestDeclaration" Base="CodeDeclaration">
         <Children Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="TestKeyword" />
-        <Token Name="Name" />
-        <Child Name="Body" Type="BlockExpression" />
+        <Token Name="Name" Override="true" />
+        <Child Name="Body" Type="BlockExpression" Override="true" />
     </Node>
 
     <!-- Types -->
@@ -458,10 +470,10 @@
         <Token Name="CloseParen" />
     </Node>
 
-    <Node Name="LambdaParameter">
-        <Token Name="DotDot" Optional="true" />
-        <Children Name="Attribute" Type="Attribute" />
-        <Token Name="Name" />
+    <Node Name="LambdaParameter" Base="CodeParameter">
+        <Token Name="DotDot" Optional="true" Override="true" />
+        <Children Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="Name" Override="true" />
     </Node>
 
     <Node Name="UnaryExpression" Base="Expression">
@@ -564,11 +576,17 @@
         <Token Name="CloseBrace" />
     </Node>
 
-    <Node Name="ConditionExpressionArm">
-        <Child Name="Condition" Type="Expression" />
+    <Node Name="ExpressionArm" Abstract="true">
         <Token Name="Arrow" />
         <Child Name="Body" Type="Expression" />
         <Token Name="Semicolon" />
+    </Node>
+
+    <Node Name="ConditionExpressionArm" Base="ExpressionArm">
+        <Child Name="Condition" Type="Expression" />
+        <Token Name="Arrow" Override="true" />
+        <Child Name="Body" Type="Expression" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Node>
 
     <Node Name="MatchExpression" Base="Expression">
@@ -579,15 +597,15 @@
         <Token Name="CloseBrace" />
     </Node>
 
-    <Node Name="PatternArm">
+    <Node Name="PatternArm" Base="ExpressionArm">
         <Child Name="Pattern" Type="Pattern" />
-        <Child Name="Guard" Type="PatternArmGuard" Optional="true" />
-        <Token Name="Arrow" />
-        <Child Name="Body" Type="Expression" />
-        <Token Name="Semicolon" />
+        <Child Name="Guard" Type="ArmGuard" Optional="true" />
+        <Token Name="Arrow" Override="true" />
+        <Child Name="Body" Type="Expression" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Node>
 
-    <Node Name="PatternArmGuard">
+    <Node Name="ArmGuard">
         <Token Name="IfKeyword" />
         <Child Name="Condition" Type="Expression" />
     </Node>
@@ -611,13 +629,13 @@
         <Child Name="Else" Type="ReceiveExpressionElse" Optional="true" />
     </Node>
 
-    <Node Name="ReceiveExpressionArm">
+    <Node Name="ReceiveExpressionArm" Base="ExpressionArm">
         <Token Name="Name" />
         <Child Name="ParameterList" Type="ReceiveParameterList" />
-        <Child Name="Guard" Type="PatternArmGuard" Optional="true" />
-        <Token Name="Arrow" />
-        <Child Name="Body" Type="Expression" />
-        <Token Name="Semicolon" />
+        <Child Name="Guard" Type="ArmGuard" Optional="true" />
+        <Token Name="Arrow" Override="true" />
+        <Child Name="Body" Type="Expression" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Node>
 
     <Node Name="ReceiveParameterList">
