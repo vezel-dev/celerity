@@ -32,7 +32,7 @@ public sealed class SyntaxToken : SyntaxItem
         : this(
             new(fullPath),
             SyntaxTokenKind.Missing,
-            string.Empty,
+            "<error>",
             null,
             ImmutableArray<SyntaxTrivia>.Empty,
             ImmutableArray<SyntaxTrivia>.Empty)
