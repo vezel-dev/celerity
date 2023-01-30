@@ -2,8 +2,6 @@ namespace Vezel.Celerity.Syntax;
 
 public sealed class SyntaxTree
 {
-    public SyntaxMode Mode { get; }
-
     public RootNode Root { get; }
 
     public ImmutableArray<SourceDiagnostic> Diagnostics { get; }
@@ -12,9 +10,8 @@ public sealed class SyntaxTree
 
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
-    private SyntaxTree(SyntaxMode mode, RootNode root, ImmutableArray<SourceDiagnostic> diagnostics)
+    private SyntaxTree(RootNode root, ImmutableArray<SourceDiagnostic> diagnostics)
     {
-        Mode = mode;
         Root = root;
         Diagnostics = diagnostics;
     }
@@ -27,7 +24,6 @@ public sealed class SyntaxTree
         var diags = ImmutableArray.CreateBuilder<SourceDiagnostic>();
 
         return new(
-            mode,
             new LanguageParser(
                 new LanguageLexer(
                     text.FullPath,
