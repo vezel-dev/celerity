@@ -77,7 +77,6 @@
     </Node>
 
     <Node Name="TypeParameter">
-        <Token Name="DotDot" Optional="true" />
         <Children Name="Attribute" Type="Attribute" />
         <Token Name="Name" />
     </Node>
@@ -115,13 +114,11 @@
     </Node>
 
     <Node Name="CodeParameter" Abstract="true">
-        <Token Name="DotDot" Optional="true" />
         <Children Name="Attribute" Type="Attribute" />
         <Token Name="Name" />
     </Node>
 
     <Node Name="FunctionParameter" Base="CodeParameter">
-        <Token Name="DotDot" Optional="true" Override="true" />
         <Children Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="Name" Override="true" />
         <Child Name="Type" Type="TypeAnnotation" Optional="true" />
@@ -286,7 +283,6 @@
     </Node>
 
     <Node Name="FunctionTypeParameter">
-        <Token Name="DotDot" Optional="true" />
         <Children Name="Attribute" Type="Attribute" />
         <Child Name="Type" Type="Type" />
     </Node>
@@ -473,7 +469,6 @@
     </Node>
 
     <Node Name="LambdaParameter" Base="CodeParameter">
-        <Token Name="DotDot" Optional="true" Override="true" />
         <Children Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="Name" Override="true" />
     </Node>
@@ -695,7 +690,6 @@
     </Node>
 
     <Node Name="IndexArgument">
-        <Token Name="DotDot" Optional="true" />
         <Child Name="Value" Type="Expression" />
     </Node>
 
@@ -712,7 +706,6 @@
     </Node>
 
     <Node Name="CallArgument">
-        <Token Name="DotDot" Optional="true" />
         <Child Name="Value" Type="Expression" />
     </Node>
 
