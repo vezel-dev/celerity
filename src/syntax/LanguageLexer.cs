@@ -374,7 +374,7 @@ internal sealed class LanguageLexer
                 break;
         }
 
-        return tokens.ToArray();
+        return tokens;
     }
 
     private void LexShebangLine(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder array)
