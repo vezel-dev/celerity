@@ -4,7 +4,7 @@ public sealed class SyntaxTree
 {
     public SyntaxMode Mode { get; }
 
-    public SyntaxNode Root { get; }
+    public RootNode Root { get; }
 
     public ImmutableArray<SourceDiagnostic> Diagnostics { get; }
 
@@ -12,7 +12,7 @@ public sealed class SyntaxTree
 
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
-    private SyntaxTree(SyntaxMode mode, SyntaxNode root, ImmutableArray<SourceDiagnostic> diagnostics)
+    private SyntaxTree(SyntaxMode mode, RootNode root, ImmutableArray<SourceDiagnostic> diagnostics)
     {
         Mode = mode;
         Root = root;

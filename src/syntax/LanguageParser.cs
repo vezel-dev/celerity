@@ -16,7 +16,7 @@ internal sealed class LanguageParser
         _diagnostics = diagnostics;
     }
 
-    public SyntaxNode Parse()
+    public RootNode Parse()
     {
         // TODO
 
