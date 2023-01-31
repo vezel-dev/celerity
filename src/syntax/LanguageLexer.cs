@@ -2,37 +2,9 @@ namespace Vezel.Celerity.Syntax;
 
 internal sealed class LanguageLexer
 {
-    private sealed class RuneStack
-    {
-        private readonly Stack<Rune> _stack;
+    private static readonly int _initialBufferSize = Environment.SystemPageSize;
 
-        public RuneStack(ReadOnlyMemory<Rune> runes)
-        {
-            _stack = new(runes.Length);
-
-            var span = runes.Span;
-
-            for (var i = span.Length - 1; i >= 0; i--)
-                _stack.Push(span[i]);
-        }
-
-        public Rune? Peek()
-        {
-            return _stack.TryPeek(out var rune) ? rune : null;
-        }
-
-        public void Push(Rune rune)
-        {
-            _stack.Push(rune);
-        }
-
-        public Rune? Pop()
-        {
-            return _stack.TryPop(out var rune) ? rune : null;
-        }
-    }
-
-    private readonly RuneStack _stack;
+    private readonly SyntaxInputReader<Rune> _reader;
 
     private readonly SyntaxMode _mode;
 
@@ -52,9 +24,9 @@ internal sealed class LanguageLexer
 
     private SourceLocation _location;
 
-    private byte[] _utf8 = new byte[1024];
+    private byte[] _utf8 = new byte[_initialBufferSize];
 
-    private char[] _utf16 = new char[1024];
+    private char[] _utf16 = new char[_initialBufferSize];
 
     public LanguageLexer(
         string fullPath,
@@ -62,33 +34,30 @@ internal sealed class LanguageLexer
         SyntaxMode mode,
         ImmutableArray<SourceDiagnostic>.Builder diagnostics)
     {
-        _stack = new(runes);
+        _reader = new(runes);
         _mode = mode;
         _diagnostics = diagnostics;
         _location = new(fullPath, 1, 1);
     }
 
-    private Rune? PeekNext()
+    private Rune? Peek1()
     {
-        return _stack.Peek();
+        return _reader.TryPeek(out var rune) ? rune : null;
     }
 
-    private (Rune? First, Rune? Second) PeekNextTwo()
+    private (Rune First, Rune Second)? Peek2()
     {
-        var first = _stack.Pop();
-        var second = _stack.Peek();
-
-        if (first is Rune r)
-            _stack.Push(r);
-
-        return (first, second);
+        return _reader.TryPeek(out var first, out var second) ? (first, second) : null;
     }
 
-    private Rune? MoveNext(List<Rune>? runes = null)
+    private void Advance(List<Rune>? runes = null)
     {
-        if (_stack.Pop() is not Rune rune)
-            return null;
+        _ = Read(runes);
+    }
 
+    private Rune Read(List<Rune>? runes = null)
+    {
+        var rune = _reader.Read();
         var nl = rune.Value == '\n';
 
         _location = new(_location.FullPath, _location.Line + (nl ? 1 : 0), nl ? 1 : _location.Column + 1);
@@ -194,9 +163,9 @@ internal sealed class LanguageLexer
         Error(_location, $"Expected {expected}, but found {(found != null ? $"'{found}'" : "end of input")}");
     }
 
-    private static string CreateAtom(string text)
+    private static ReadOnlyMemory<char> CreateAtom(string text)
     {
-        return text[1..];
+        return text.AsMemory(1..);
     }
 
     private static BigInteger CreateInteger(string text)
@@ -314,12 +283,12 @@ internal sealed class LanguageLexer
         return result;
     }
 
-    public IReadOnlyList<SyntaxToken> Lex()
+    public ReadOnlyMemory<SyntaxToken> Lex()
     {
         var tokens = new List<SyntaxToken>();
 
         // The shebang line can only occur at the very beginning.
-        if (_mode == SyntaxMode.Document && PeekNextTwo() == ((Rune)'#', (Rune)'!'))
+        if (_mode == SyntaxMode.Document && Peek2() == ((Rune)'#', (Rune)'!'))
             LexShebangLine(_location, _leading);
 
         while (true)
@@ -329,7 +298,7 @@ internal sealed class LanguageLexer
             SourceLocation location;
             SyntaxTokenKind kind;
 
-            if (PeekNext() is Rune cur)
+            if (Peek1() is Rune cur)
             {
                 (location, kind) = cur.Value switch
                 {
@@ -358,7 +327,7 @@ internal sealed class LanguageLexer
 
                 if (kind == SyntaxTokenKind.Unrecognized)
                 {
-                    _ = MoveNext();
+                    Advance();
 
                     Error(location, $"Unrecognized character '{cur}'");
                 }
@@ -374,23 +343,23 @@ internal sealed class LanguageLexer
                 break;
         }
 
-        return tokens;
+        return tokens.ToArray();
     }
 
     private void LexShebangLine(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder array)
     {
-        _ = MoveNext(_trivia);
-        _ = MoveNext(_trivia);
+        Advance(_trivia);
+        Advance(_trivia);
 
-        while (PeekNext()?.Value is not ('\r' or '\n'))
-            _ = MoveNext(_trivia);
+        while (Peek1()?.Value is not ('\r' or '\n'))
+            Advance(_trivia);
 
         array.Add(CreateTrivia(location, SyntaxTriviaKind.ShebangLine));
     }
 
     private void LexTrivia(ImmutableArray<SyntaxTrivia>.Builder array)
     {
-        while (PeekNext() is Rune cur)
+        while (Peek1() is Rune cur)
         {
             switch (cur.Value)
             {
@@ -408,7 +377,7 @@ internal sealed class LanguageLexer
                     else
                         continue;
                 default:
-                    if (PeekNextTwo() != ((Rune)'/', (Rune)'/'))
+                    if (Peek2() != ((Rune)'/', (Rune)'/'))
                         break;
 
                     LexComment(_location, array);
@@ -421,35 +390,35 @@ internal sealed class LanguageLexer
 
     private void LexWhiteSpace(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder array)
     {
-        while (PeekNext()?.Value is ' ' or '\t')
-            _ = MoveNext(_trivia);
+        while (Peek1()?.Value is ' ' or '\t')
+            Advance(_trivia);
 
         array.Add(CreateTrivia(location, SyntaxTriviaKind.WhiteSpace));
     }
 
     private void LexNewLine(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder array)
     {
-        if (MoveNext(_trivia)?.Value == '\r' && PeekNext()?.Value == '\n')
-            _ = MoveNext(_trivia);
+        if (Read(_trivia).Value == '\r' && Peek1()?.Value == '\n')
+            Advance(_trivia);
 
         array.Add(CreateTrivia(location, SyntaxTriviaKind.NewLine));
     }
 
     private void LexComment(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder array)
     {
-        _ = MoveNext(_trivia);
-        _ = MoveNext(_trivia);
+        Advance(_trivia);
+        Advance(_trivia);
 
-        while (PeekNext()?.Value is not ('\r' or '\n'))
-            _ = MoveNext(_trivia);
+        while (Peek1()?.Value is not ('\r' or '\n'))
+            Advance(_trivia);
 
         array.Add(CreateTrivia(location, SyntaxTriviaKind.Comment));
     }
 
     private (SourceLocation Location, SyntaxTokenKind Kind) LexOperatorOrPunctuator(SourceLocation location)
     {
-        var r1 = (Rune)MoveNext()!;
-        var r2 = PeekNext();
+        var r1 = Read();
+        var r2 = Peek1();
 
         // Handle operators that we know cannot be custom operators.
         var kind = (r1.Value, r2?.Value) switch
@@ -475,9 +444,9 @@ internal sealed class LanguageLexer
         var parts = 1;
 
         // Lex the full operator.
-        while (PeekNext()?.Value is '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<')
+        while (Peek1()?.Value is '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<')
         {
-            _ = MoveNext();
+            Advance();
 
             parts++;
         }
@@ -498,11 +467,11 @@ internal sealed class LanguageLexer
 
     private (SourceLocation Location, SyntaxTokenKind Kind) LexPunctuator(SourceLocation location, SyntaxTokenKind kind)
     {
-        _ = MoveNext();
+        Advance();
 
-        if (kind == SyntaxTokenKind.Dot && PeekNext()?.Value == '.')
+        if (kind == SyntaxTokenKind.Dot && Peek1()?.Value == '.')
         {
-            _ = MoveNext();
+            Advance();
 
             return (location, SyntaxTokenKind.DotDot);
         }
@@ -516,14 +485,14 @@ internal sealed class LanguageLexer
         switch (kind)
         {
             case SyntaxTokenKind.UpperIdentifier:
-                while (PeekNext()?.Value is ('0' and <= '9') or ('a' and <= 'z') or (>= 'A' and <= 'Z'))
-                    _ = MoveNext();
+                while (Peek1()?.Value is ('0' and <= '9') or ('a' and <= 'z') or (>= 'A' and <= 'Z'))
+                    Advance();
 
                 break;
             case SyntaxTokenKind.LowerIdentifier:
             case SyntaxTokenKind.DiscardIdentifier:
-                while (PeekNext()?.Value is '_' or ('0' and <= '9') or ('a' and <= 'z'))
-                    _ = MoveNext();
+                while (Peek1()?.Value is '_' or ('0' and <= '9') or ('a' and <= 'z'))
+                    Advance();
 
                 break;
         }
@@ -545,7 +514,7 @@ internal sealed class LanguageLexer
 
     private (SourceLocation Location, SyntaxTokenKind Kind) LexNumberLiteral(SourceLocation location)
     {
-        var radix = (((Rune)MoveNext()!).Value, PeekNext()?.Value) switch
+        var radix = (Read().Value, Peek1()?.Value) switch
         {
             ('0', 'b' or 'B') => 2,
             ('0', 'o' or 'O') => 8,
@@ -554,7 +523,7 @@ internal sealed class LanguageLexer
         };
 
         if (radix != 10)
-            _ = MoveNext();
+            Advance();
 
         bool ConsumeDigits(int radix)
         {
@@ -562,7 +531,7 @@ internal sealed class LanguageLexer
 
             while (true)
             {
-                switch ((radix, PeekNext()?.Value))
+                switch ((radix, Peek1()?.Value))
                 {
                     // TODO: https://github.com/dotnet/roslyn/issues/63445
                     case (2 or 8 or 10 or 16, >= '0' and <= '1'):
@@ -571,12 +540,12 @@ internal sealed class LanguageLexer
                     case (16, (>= 'a' and <= 'f') or (>= 'A' and <= 'F')):
                         good = true;
 
-                        _ = MoveNext();
+                        Advance();
                         continue;
                     case (_, '_') when good:
                         good = false;
 
-                        _ = MoveNext();
+                        Advance();
                         continue;
                     default:
                         break;
@@ -590,35 +559,35 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(radix) && radix != 10)
         {
-            ErrorExpected($"base-{radix} digit", PeekNext());
+            ErrorExpected($"base-{radix} digit", Peek1());
 
             return (location, SyntaxTokenKind.IntegerLiteral);
         }
 
         // Is it an integer or real literal?
-        if (radix != 10 || PeekNext()?.Value != '.')
+        if (radix != 10 || Peek1()?.Value != '.')
             return (location, SyntaxTokenKind.IntegerLiteral);
 
-        _ = MoveNext();
+        Advance();
 
         if (!ConsumeDigits(10))
         {
-            ErrorExpected("digit", PeekNext());
+            ErrorExpected("digit", Peek1());
 
             return (location, SyntaxTokenKind.RealLiteral);
         }
 
         // Do we have an exponent part?
-        if (PeekNext()?.Value is not ('e' or 'E'))
+        if (Peek1()?.Value is not ('e' or 'E'))
             return (_location, SyntaxTokenKind.RealLiteral);
 
-        _ = MoveNext();
+        Advance();
 
-        if (PeekNext()?.Value is '+' or '-')
-            _ = MoveNext();
+        if (Peek1()?.Value is '+' or '-')
+            Advance();
 
         if (!ConsumeDigits(10))
-            ErrorExpected("digit", PeekNext());
+            ErrorExpected("digit", Peek1());
 
         return (_location, SyntaxTokenKind.RealLiteral);
     }
@@ -626,16 +595,16 @@ internal sealed class LanguageLexer
     private (SourceLocation Location, SyntaxTokenKind Kind) LexAtomLiteralOrPunctuator(
         SourceLocation location, SyntaxTokenKind kind)
     {
-        _ = MoveNext();
+        Advance();
 
-        if (kind == SyntaxTokenKind.Colon && PeekNext()?.Value == ':')
+        if (kind == SyntaxTokenKind.Colon && Peek1()?.Value == ':')
         {
-            _ = MoveNext();
+            Advance();
 
             return (location, SyntaxTokenKind.ColonColon);
         }
 
-        var ident = PeekNext()?.Value switch
+        var ident = Peek1()?.Value switch
         {
             >= 'A' and <= 'Z' => SyntaxTokenKind.UpperIdentifier,
             >= 'a' and <= 'z' => SyntaxTokenKind.LowerIdentifier,
@@ -655,11 +624,11 @@ internal sealed class LanguageLexer
 
     private (SourceLocation Location, SyntaxTokenKind Kind) LexStringLiteral(SourceLocation location)
     {
-        _ = MoveNext();
+        Advance();
 
         while (true)
         {
-            var cur = PeekNext();
+            var cur = Peek1();
 
             if (cur?.Value is null or '\r' or '\t')
             {
@@ -668,7 +637,7 @@ internal sealed class LanguageLexer
                 break;
             }
 
-            var r = (Rune)MoveNext()!;
+            var r = Read();
 
             if (r.Value == '"')
                 break;
@@ -676,19 +645,19 @@ internal sealed class LanguageLexer
             if (r.Value != '\\')
                 continue;
 
-            var code = PeekNext();
+            var code = Peek1();
 
             switch (code?.Value)
             {
                 case '0' or 'n' or 'N' or 'r' or 'R' or 't' or 'T' or '"' or '\\':
-                    _ = MoveNext();
+                    Advance();
                     break;
                 case 'u' or 'U':
-                    _ = MoveNext();
+                    Advance();
 
                     for (var i = 0; i < 6; i++)
                     {
-                        var hex = PeekNext();
+                        var hex = Peek1();
 
                         if (hex?.Value is not (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F'))
                         {
@@ -697,7 +666,7 @@ internal sealed class LanguageLexer
                             break;
                         }
 
-                        _ = MoveNext();
+                        Advance();
                     }
 
                     break;

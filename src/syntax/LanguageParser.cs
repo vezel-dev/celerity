@@ -2,16 +2,16 @@ namespace Vezel.Celerity.Syntax;
 
 internal sealed class LanguageParser
 {
-    private readonly IReadOnlyList<SyntaxToken> _tokens;
+    private readonly SyntaxInputReader<SyntaxToken> _reader;
 
     private readonly SyntaxMode _mode;
 
     private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
 
     public LanguageParser(
-        IReadOnlyList<SyntaxToken> tokens, SyntaxMode mode, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+        ReadOnlyMemory<SyntaxToken> tokens, SyntaxMode mode, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
     {
-        _tokens = tokens;
+        _reader = new(tokens);
         _mode = mode;
         _diagnostics = diagnostics;
     }
@@ -20,7 +20,7 @@ internal sealed class LanguageParser
     {
         // TODO
 
-        _ = _tokens;
+        _ = _reader;
         _ = _mode;
         _ = _diagnostics;
 
