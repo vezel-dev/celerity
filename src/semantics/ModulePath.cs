@@ -15,13 +15,13 @@ public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<Modu
     public bool IsCore => Components[0] == CoreModuleName;
 
     public ModulePath(params string[] components)
-        : this(components.ToImmutableArray())
+        : this(components.AsEnumerable())
     {
     }
 
-    public ModulePath(ImmutableArray<string> components)
+    public ModulePath(IEnumerable<string> components)
     {
-        Check.Argument(!components.IsDefaultOrEmpty, components);
+        Check.Null(components);
         Check.All(
             components,
             static component =>
@@ -29,7 +29,7 @@ public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<Modu
                 PathStartChars.AsSpan().Contains(component[0]) &&
                 component.AsSpan(1).IndexOfAnyExcept(PathChars) == -1);
 
-        Components = components;
+        Components = components.ToImmutableArray();
         FullPath = string.Join("::", components);
     }
 
