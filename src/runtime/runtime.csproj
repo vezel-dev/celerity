@@ -11,6 +11,10 @@ collector, agent scheduler, etc.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Vezel.Celerity.Semantics" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="buildTransitive/**"
               Pack="true"
               PackagePath="%(Identity)" />
