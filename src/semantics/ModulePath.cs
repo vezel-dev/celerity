@@ -6,13 +6,9 @@ public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<Modu
 
     private const string PathChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    public static string CoreModuleName { get; } = "Core";
-
     public ImmutableArray<string> Components { get; }
 
     public string FullPath { get; }
-
-    public bool IsCore => Components[0] == CoreModuleName;
 
     public ModulePath(params string[] components)
         : this(components.AsEnumerable())

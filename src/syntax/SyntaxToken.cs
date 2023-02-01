@@ -18,15 +18,9 @@ public sealed class SyntaxToken : SyntaxItem
 
     public object? Value { get; }
 
-    public bool HasValue => Value != null;
-
     public ImmutableArray<SyntaxTrivia> LeadingTrivia { get; }
 
-    public bool HasLeadingTrivia => !LeadingTrivia.IsEmpty;
-
     public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
-
-    public bool HasTrailingTrivia => !TrailingTrivia.IsEmpty;
 
     internal SyntaxToken(string fullPath)
         : this(

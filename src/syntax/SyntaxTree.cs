@@ -6,8 +6,6 @@ public sealed class SyntaxTree
 
     public ImmutableArray<SourceDiagnostic> Diagnostics { get; }
 
-    public bool HasDiagnostics => !Diagnostics.IsEmpty;
-
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
     private SyntaxTree(RootNode root, ImmutableArray<SourceDiagnostic> diagnostics)

@@ -2,6 +2,8 @@ namespace Vezel.Celerity.Syntax;
 
 public static class SyntaxExtensions
 {
+    // TODO: Replace iterators with non-allocating struct enumerators.
+
     public static IEnumerable<SyntaxNode> Ancestors(this SyntaxNode node)
     {
         Check.Null(node);

@@ -14,8 +14,6 @@ public sealed class SourceDiagnostic
 
     public ImmutableArray<SourceDiagnosticNote> Notes { get; }
 
-    public bool HasNotes => !Notes.IsEmpty;
-
     private SourceDiagnostic(
         SyntaxItem item,
         SourceDiagnosticSeverity severity,

@@ -8,8 +8,6 @@ public sealed class SemanticAnalysis
 
     public ImmutableArray<SourceDiagnostic> Diagnostics { get; }
 
-    public bool HasDiagnostics => !Diagnostics.IsEmpty;
-
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
     private SemanticAnalysis(

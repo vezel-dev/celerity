@@ -39,13 +39,11 @@ public abstract partial class SyntaxWalker<T>
 
         if (_depth >= SyntaxWalkerDepth.Trivia)
         {
-            if (token.HasLeadingTrivia)
-                foreach (var trivia in token.LeadingTrivia)
-                    state = VisitLeadingTrivia(trivia, state);
+            foreach (var trivia in token.LeadingTrivia)
+                state = VisitLeadingTrivia(trivia, state);
 
-            if (token.HasTrailingTrivia)
-                foreach (var trivia in token.TrailingTrivia)
-                    state = VisitTrailingTrivia(trivia, state);
+            foreach (var trivia in token.TrailingTrivia)
+                state = VisitTrailingTrivia(trivia, state);
         }
 
         return state;
