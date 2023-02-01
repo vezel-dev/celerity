@@ -67,6 +67,17 @@ internal sealed class LanguageLexer
         return rune;
     }
 
+    private void Error(SourceLocation location, string message)
+    {
+        _currentDiagnostics.Add((SourceDiagnosticSeverity.Error, location, message));
+    }
+
+    private void ErrorExpected(string expected, Rune? found)
+    {
+        // TODO: Better printing of special runes (white space, control, etc).
+        Error(_location, $"Expected {expected}, but found {(found != null ? $"'{found}'" : "end of input")}");
+    }
+
     private ReadOnlyMemory<byte> ToUtf8(List<Rune> runes)
     {
         var length = 0;
@@ -132,9 +143,9 @@ internal sealed class LanguageLexer
             kind switch
             {
                 _ when _currentDiagnostics.Count != 0 => null,
-                SyntaxTokenKind.AtomLiteral => CreateAtom(text),
                 SyntaxTokenKind.IntegerLiteral => CreateInteger(text),
                 SyntaxTokenKind.RealLiteral => CreateReal(text),
+                SyntaxTokenKind.AtomLiteral => CreateAtom(text),
                 SyntaxTokenKind.StringLiteral => CreateString(),
                 _ => null,
             },
@@ -150,22 +161,6 @@ internal sealed class LanguageLexer
         _currentDiagnostics.Clear();
 
         return token;
-    }
-
-    private void Error(SourceLocation location, string message)
-    {
-        _currentDiagnostics.Add((SourceDiagnosticSeverity.Error, location, message));
-    }
-
-    private void ErrorExpected(string expected, Rune? found)
-    {
-        // TODO: Better printing of special runes (white space, control, etc).
-        Error(_location, $"Expected {expected}, but found {(found != null ? $"'{found}'" : "end of input")}");
-    }
-
-    private static ReadOnlyMemory<char> CreateAtom(string text)
-    {
-        return text.AsMemory(1..);
     }
 
     private static BigInteger CreateInteger(string text)
@@ -210,6 +205,11 @@ internal sealed class LanguageLexer
             text.Replace("_", null, StringComparison.Ordinal),
             NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent,
             CultureInfo.InvariantCulture);
+    }
+
+    private static ReadOnlyMemory<char> CreateAtom(string text)
+    {
+        return text.AsMemory(1..);
     }
 
     private ReadOnlyMemory<byte> CreateString()
