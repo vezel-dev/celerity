@@ -1,7 +1,7 @@
 # Lexical Structure
 
 ```ebnf
-document-input ::= shebang-line? token*
+module-input ::= shebang-line? token*
 interactive-input ::= token*
 token ::= white-space |
           comment |

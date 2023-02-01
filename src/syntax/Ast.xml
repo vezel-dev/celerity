@@ -13,7 +13,7 @@
 
     <Node Name="Root" Abstract="true" />
 
-    <Node Name="Document" Base="Root">
+    <Node Name="Module" Base="Root">
         <Children Name="Attribute" Type="Attribute" />
         <Token Name="ModKeyword" />
         <Child Name="Path" Type="ModulePath" />
