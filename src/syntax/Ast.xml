@@ -391,22 +391,24 @@
 
     <Node Name="MissingExpression" Base="Expression" />
 
-    <Node Name="LiteralExpression" Base="Expression">
+    <Node Name="ValueExpression" Base="Expression" Abstract="true" />
+
+    <Node Name="LiteralExpression" Base="ValueExpression">
         <Token Name="Literal" />
     </Node>
 
-    <Node Name="ModuleExpression" Base="Expression">
+    <Node Name="ModuleExpression" Base="ValueExpression">
         <Child Name="Path" Type="ModulePath" />
     </Node>
 
-    <Node Name="RecordExpression" Base="Expression">
+    <Node Name="RecordExpression" Base="ValueExpression">
         <Token Name="RecKeyword" />
         <Token Name="OpenBrace" />
         <Children Name="Field" Type="ExpressionField" Separated="true" />
         <Token Name="CloseBrace" />
     </Node>
 
-    <Node Name="ErrorExpression" Base="Expression">
+    <Node Name="ErrorExpression" Base="ValueExpression">
         <Token Name="ErrKeyword" />
         <Token Name="Name" />
         <Token Name="OpenBrace" />
@@ -421,20 +423,20 @@
         <Child Name="Value" Type="Expression" />
     </Node>
 
-    <Node Name="TupleExpression" Base="Expression">
+    <Node Name="TupleExpression" Base="ValueExpression">
         <Token Name="OpenParen" />
         <Children Name="Component" Type="Expression" Separated="true" />
         <Token Name="CloseClose" />
     </Node>
 
-    <Node Name="ArrayExpression" Base="Expression">
+    <Node Name="ArrayExpression" Base="ValueExpression">
         <Token Name="MutKeyword" Optional="true" />
         <Token Name="OpenBracket" />
         <Children Name="Element" Type="Expression" Separated="true" />
         <Token Name="CloseBracket" />
     </Node>
 
-    <Node Name="SetExpression" Base="Expression">
+    <Node Name="SetExpression" Base="ValueExpression">
         <Token Name="MutKeyword" Optional="true" />
         <Token Name="Hash" />
         <Token Name="OpenBrace" />
@@ -442,7 +444,7 @@
         <Token Name="CloseBrace" />
     </Node>
 
-    <Node Name="MapExpression" Base="Expression">
+    <Node Name="MapExpression" Base="ValueExpression">
         <Token Name="MutKeyword" Optional="true" />
         <Token Name="Hash" />
         <Token Name="OpenBracket" />
@@ -456,7 +458,7 @@
         <Child Name="Value" Type="Expression" />
     </Node>
 
-    <Node Name="LambdaExpression" Base="Expression">
+    <Node Name="LambdaExpression" Base="ValueExpression">
         <Token Name="FnKeyword" />
         <Child Name="ParameterList" Type="LambdaParameterList" />
         <Token Name="Arrow" />
@@ -474,48 +476,52 @@
         <Token Name="Name" Override="true" />
     </Node>
 
-    <Node Name="UnaryExpression" Base="Expression">
+    <Node Name="OperatorExpression" Base="Expression" Abstract="true" />
+
+    <Node Name="UnaryExpression" Base="OperatorExpression">
         <Token Name="Operator" />
         <Child Name="Operand" Type="Expression" />
     </Node>
 
-    <Node Name="AdditiveExpression" Base="Expression">
+    <Node Name="AdditiveExpression" Base="OperatorExpression">
         <Child Name="LeftOperand" Type="Expression" />
         <Token Name="Operator" />
         <Child Name="RightOperand" Type="Expression" />
     </Node>
 
-    <Node Name="MultiplicativeExpression" Base="Expression">
+    <Node Name="MultiplicativeExpression" Base="OperatorExpression">
         <Child Name="LeftOperand" Type="Expression" />
         <Token Name="Operator" />
         <Child Name="RightOperand" Type="Expression" />
     </Node>
 
-    <Node Name="BitwiseExpression" Base="Expression">
+    <Node Name="BitwiseExpression" Base="OperatorExpression">
         <Child Name="LeftOperand" Type="Expression" />
         <Token Name="Operator" />
         <Child Name="RightOperand" Type="Expression" />
     </Node>
 
-    <Node Name="ShiftExpression" Base="Expression">
+    <Node Name="ShiftExpression" Base="OperatorExpression">
         <Child Name="LeftOperand" Type="Expression" />
         <Token Name="Operator" />
         <Child Name="RightOperand" Type="Expression" />
     </Node>
 
-    <Node Name="LogicalExpression" Base="Expression">
+    <Node Name="LogicalExpression" Base="OperatorExpression">
         <Child Name="LeftOperand" Type="Expression" />
         <Token Name="Operator" />
         <Child Name="RightOperand" Type="Expression" />
     </Node>
 
-    <Node Name="RelationalExpression" Base="Expression">
+    <Node Name="RelationalExpression" Base="OperatorExpression">
         <Child Name="LeftOperand" Type="Expression" />
         <Token Name="Operator" />
         <Child Name="RightOperand" Type="Expression" />
     </Node>
 
-    <Node Name="IfExpression" Base="Expression">
+    <Node Name="ControlExpression" Base="Expression" Abstract="true" />
+
+    <Node Name="IfExpression" Base="ControlExpression">
         <Token Name="IfKeyword" />
         <Child Name="Condition" Type="Expression" />
         <Child Name="Body" Type="BlockExpression" />
@@ -527,7 +533,9 @@
         <Child Name="Body" Type="BlockExpression" />
     </Node>
 
-    <Node Name="WhileExpression" Base="Expression">
+    <Node Name="LoopExpression" Base="ControlExpression" Abstract="true" />
+
+    <Node Name="WhileExpression" Base="LoopExpression">
         <Token Name="WhileKeyword" />
         <Child Name="Condition" Type="Expression" />
         <Child Name="Body" Type="BlockExpression" />
@@ -539,7 +547,7 @@
         <Child Name="Body" Type="BlockExpression" />
     </Node>
 
-    <Node Name="ForExpression" Base="Expression">
+    <Node Name="ForExpression" Base="LoopExpression">
         <Token Name="ForKeyword" />
         <Child Name="Pattern" Type="Pattern" />
         <Token Name="InKeyword" />
@@ -553,11 +561,11 @@
         <Child Name="Body" Type="BlockExpression" />
     </Node>
 
-    <Node Name="NextExpression" Base="Expression">
+    <Node Name="NextExpression" Base="ControlExpression">
         <Token Name="NextKeyword" />
     </Node>
 
-    <Node Name="BreakExpression" Base="Expression">
+    <Node Name="BreakExpression" Base="ControlExpression">
         <Token Name="BreakKeyword" />
         <Child Name="Result" Type="BreakExpressionResult" Optional="true" />
     </Node>
@@ -567,7 +575,7 @@
         <Child Name="Value" Type="Expression" />
     </Node>
 
-    <Node Name="ConditionExpression" Base="Expression">
+    <Node Name="ConditionExpression" Base="ControlExpression">
         <Token Name="CondKeyword" />
         <Token Name="OpenBrace" />
         <Children Name="Arm" Type="ConditionExpressionArm" />
@@ -587,7 +595,7 @@
         <Token Name="Semicolon" Override="true" />
     </Node>
 
-    <Node Name="MatchExpression" Base="Expression">
+    <Node Name="MatchExpression" Base="ControlExpression">
         <Token Name="MatchKeyword" />
         <Child Name="Operand" Type="Expression" />
         <Token Name="OpenBrace" />
@@ -608,18 +616,18 @@
         <Child Name="Condition" Type="Expression" />
     </Node>
 
-    <Node Name="ReturnExpression" Base="Expression">
+    <Node Name="ReturnExpression" Base="ControlExpression">
         <Token Name="TailKeyword" Optional="true" />
         <Token Name="RetKeyword" />
         <Child Name="Operand" Type="Expression" />
     </Node>
 
-    <Node Name="RaiseExpression" Base="Expression">
+    <Node Name="RaiseExpression" Base="ControlExpression">
         <Token Name="RaiseKeyword" />
         <Child Name="Operand" Type="Expression" />
     </Node>
 
-    <Node Name="ReceiveExpression" Base="Expression">
+    <Node Name="ReceiveExpression" Base="ControlExpression">
         <Token Name="RecvKeyword" />
         <Token Name="OpenBrace" />
         <Children Name="Arm" Type="ReceiveExpressionArm" />
