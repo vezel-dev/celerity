@@ -12,4 +12,10 @@ public abstract class SyntaxItem
     private protected SyntaxItem()
     {
     }
+
+    public RootNode GetRoot()
+    {
+        // RootNode is the only syntax item with a null Parent.
+        return Parent != null ? Parent.GetRoot() : Unsafe.As<RootNode>(this);
+    }
 }
