@@ -12,7 +12,7 @@
                     </xsd:complexType>
                 </xsd:element>
 
-                <xsd:element name="Node" maxOccurs="unbounded">
+                <xsd:element name="Type" maxOccurs="unbounded">
                     <xsd:complexType>
                         <xsd:sequence>
                             <xsd:choice minOccurs="0" maxOccurs="unbounded">
@@ -32,7 +32,7 @@
                                     </xsd:complexType>
                                 </xsd:element>
 
-                                <xsd:element name="Child">
+                                <xsd:element name="Node">
                                     <xsd:complexType>
                                         <xsd:attribute name="Name" type="xsd:Name" use="required" />
                                         <xsd:attribute name="Override" type="xsd:boolean" />
@@ -41,7 +41,7 @@
                                     </xsd:complexType>
                                 </xsd:element>
 
-                                <xsd:element name="Children">
+                                <xsd:element name="Nodes">
                                     <xsd:complexType>
                                         <xsd:attribute name="Name" type="xsd:Name" use="required" />
                                         <xsd:attribute name="Override" type="xsd:boolean" />
@@ -55,6 +55,7 @@
                         <xsd:attribute name="Name" type="xsd:Name" use="required" />
                         <xsd:attribute name="Base" type="xsd:Name" />
                         <xsd:attribute name="Abstract" type="xsd:boolean" />
+                        <xsd:attribute name="Root" type="xsd:boolean" />
                     </xsd:complexType>
                 </xsd:element>
             </xsd:sequence>

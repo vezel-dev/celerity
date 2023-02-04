@@ -22,13 +22,8 @@ public abstract partial class SyntaxWalker<T>
     {
         Check.Null(node);
 
-        foreach (var elem in node.Items())
-        {
-            if (elem is SyntaxNode child)
-                state = VisitNode(child, state);
-            else if (_depth >= SyntaxWalkerDepth.Tokens)
-                state = VisitToken(Unsafe.As<SyntaxToken>(elem), state);
-        }
+        foreach (var elem in node.Children())
+            state = elem is SyntaxNode n ? VisitNode(n, state) : VisitToken(Unsafe.As<SyntaxToken>(elem), state);
 
         return state;
     }

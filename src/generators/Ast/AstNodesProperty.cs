@@ -1,6 +1,6 @@
 namespace Vezel.Celerity.Generators.Ast;
 
-public sealed class AstChildrenProperty : AstProperty
+public sealed class AstNodesProperty : AstProperty
 {
     [XmlAttribute]
     public required string Type { get; init; }
@@ -16,7 +16,7 @@ public sealed class AstChildrenProperty : AstProperty
     internal override string GetTypeName(AstTree tree)
     {
         var list = "SyntaxItemList";
-        var type = tree.GetNodeTypeName(Type);
+        var type = tree.GetTypeName(Type);
 
         return Separated ? $"Separated{list}<{type}, SyntaxToken>" : $"{list}<{type}>";
     }

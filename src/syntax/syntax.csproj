@@ -11,6 +11,7 @@ This package provides the language lexer, parser, and abstract syntax tree.</Pac
 
     <ItemGroup>
         <Using Include="Vezel.Celerity.Diagnostics" />
+        <Using Include="Vezel.Celerity.Linq" />
     </ItemGroup>
 
     <ItemGroup>

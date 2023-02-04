@@ -7,10 +7,10 @@ public sealed class AstTree
     public required AstSettings Settings { get; init; }
 
     [SuppressMessage("", "CA1819")]
-    [XmlElement("Node")]
-    public AstNode[] Nodes { get; set; } = null!;
+    [XmlElement("Type")]
+    public AstType[] Types { get; set; } = null!;
 
-    internal string GetNodeTypeName(string name)
+    internal string GetTypeName(string name)
     {
         return $"{name}{Settings.NameSuffix}";
     }

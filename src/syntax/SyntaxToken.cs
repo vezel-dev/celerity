@@ -4,6 +4,8 @@ public sealed class SyntaxToken : SyntaxItem
 {
     public new SyntaxNode Parent => Unsafe.As<SyntaxNode>(base.Parent!);
 
+    public override bool HasChildren => !LeadingTrivia.IsEmpty || !TrailingTrivia.IsEmpty;
+
     public SourceLocation Location { get; }
 
     public SyntaxTokenKind Kind { get; }
@@ -53,6 +55,25 @@ public sealed class SyntaxToken : SyntaxItem
 
         foreach (var trivia in trailing)
             trivia.SetParent(this);
+    }
+
+    public new IEnumerable<SyntaxNode> Ancestors()
+    {
+        return base.Ancestors().UnsafeCast<SyntaxNode>();
+    }
+
+    public override IEnumerable<SyntaxTrivia> Children()
+    {
+        foreach (var leading in LeadingTrivia)
+            yield return leading;
+
+        foreach (var trailing in TrailingTrivia)
+            yield return trailing;
+    }
+
+    public override IEnumerable<SyntaxTrivia> Descendants()
+    {
+        return Children();
     }
 
     public override string ToString()

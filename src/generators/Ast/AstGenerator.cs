@@ -26,13 +26,13 @@ public sealed class AstGenerator : IIncrementalGenerator
                 var tree = (AstTree)new XmlSerializer(typeof(AstTree)).Deserialize(xmlReader);
                 var baseName = Path.GetFileName(file.Path);
 
-                foreach (var node in tree.Nodes ?? Array.Empty<AstNode>())
-                    GenerateNode(
-                        ctx, Path.ChangeExtension(baseName, $"{node.Name}{tree.Settings.NameSuffix}.g.cs"), tree, node);
+                foreach (var type in tree.Types ?? Array.Empty<AstType>())
+                    GenerateType(
+                        ctx, Path.ChangeExtension(baseName, $"{type.Name}{tree.Settings.NameSuffix}.g.cs"), tree, type);
             });
     }
 
-    private static void GenerateNode(SourceProductionContext context, string name, AstTree tree, AstNode node)
+    private static void GenerateType(SourceProductionContext context, string name, AstTree tree, AstType type)
     {
         var sb = new StringBuilder();
         using var writer = new IndentedTextWriter(new StringWriter(sb));
@@ -44,21 +44,27 @@ public sealed class AstGenerator : IIncrementalGenerator
         writer.WriteLine($"namespace {settings.Namespace};");
         writer.WriteLine();
 
-        var typeName = tree.GetNodeTypeName(node.Name);
-        var baseTypeName = node.Base is string b ? tree.GetNodeTypeName(b) : tree.GetNodeTypeName(settings.BaseType);
+        var typeName = tree.GetTypeName(type.Name);
+        var baseTypeName = type.Base is string b ? tree.GetTypeName(b) : tree.GetTypeName(settings.BaseType);
 
-        writer.WriteLine($"public {(node.Abstract ? "abstract" : "sealed")} class {typeName} : {baseTypeName}");
+        writer.WriteLine($"public {(type.Abstract ? "abstract" : "sealed")} class {typeName} : {baseTypeName}");
         writer.WriteLine("{");
 
         writer.Indent++;
 
-        var props = node.Properties ?? Array.Empty<AstProperty>();
+        if (!type.Root)
+        {
+            writer.WriteLine($"public new SyntaxNode Parent => base.Parent!;");
+            writer.WriteLine();
+        }
+
+        var props = type.Properties ?? Array.Empty<AstProperty>();
 
         foreach (var prop in props)
         {
             var mod = string.Empty;
 
-            if (node.Abstract)
+            if (type.Abstract)
                 mod = " abstract";
             else if (prop.Override)
                 mod = " override";
@@ -67,7 +73,7 @@ public sealed class AstGenerator : IIncrementalGenerator
             writer.WriteLine();
         }
 
-        if (node.Abstract)
+        if (type.Abstract)
         {
             writer.WriteLine($"private protected {typeName}()");
             writer.WriteLine("{");
@@ -75,8 +81,70 @@ public sealed class AstGenerator : IIncrementalGenerator
         }
         else
         {
+            var nodes = props.Where(p => p is AstNodeProperty or AstNodesProperty).ToArray();
+
+            writer.Write("public override bool HasNodes");
+
+            if (nodes.Length == 0)
+                writer.WriteLine(" => false;");
+            else if (nodes.Any(p => p is AstNodeProperty { Optional: false }))
+                writer.WriteLine(" => true;");
+            else
+            {
+                writer.WriteLine();
+                writer.WriteLine("{");
+
+                writer.Indent++;
+
+                writer.WriteLine("get");
+                writer.WriteLine("{");
+
+                writer.Indent++;
+
+                for (var i = 0; i < nodes.Length; i++)
+                {
+                    var prop = nodes[i];
+                    var propName = prop.GetPropertyName();
+
+                    switch (prop)
+                    {
+                        case AstNodeProperty:
+                            writer.WriteLine($"if ({propName} != null)");
+                            break;
+                        case AstNodesProperty { Separated: true }:
+                            writer.WriteLine($"if ({propName}.Items.Count != 0)");
+                            break;
+                        default:
+                            writer.WriteLine($"if ({propName}.Count != 0)");
+                            break;
+                    }
+
+                    writer.Indent++;
+
+                    writer.WriteLine("return true;");
+
+                    writer.Indent--;
+
+                    if (i != nodes.Length - 1)
+                        writer.WriteLine();
+                }
+
+                writer.WriteLine();
+                writer.WriteLine("return false;");
+
+                writer.Indent--;
+
+                writer.WriteLine("}");
+
+                writer.Indent--;
+
+                writer.WriteLine("}");
+            }
+
+            writer.WriteLine();
+
             var tokens = props.Where(
-                p => p is AstTokenProperty or AstTokensProperty or AstChildrenProperty { Separated: true }).ToArray();
+                p => p is AstTokenProperty or AstTokensProperty or AstNodesProperty { Separated: true }).ToArray();
 
             writer.Write("public override bool HasTokens");
 
@@ -138,68 +206,6 @@ public sealed class AstGenerator : IIncrementalGenerator
 
             writer.WriteLine();
 
-            var children = props.Where(p => p is AstChildProperty or AstChildrenProperty).ToArray();
-
-            writer.Write("public override bool HasChildren");
-
-            if (children.Length == 0)
-                writer.WriteLine(" => false;");
-            else if (children.Any(p => p is AstChildProperty { Optional: false }))
-                writer.WriteLine(" => true;");
-            else
-            {
-                writer.WriteLine();
-                writer.WriteLine("{");
-
-                writer.Indent++;
-
-                writer.WriteLine("get");
-                writer.WriteLine("{");
-
-                writer.Indent++;
-
-                for (var i = 0; i < children.Length; i++)
-                {
-                    var prop = children[i];
-                    var propName = prop.GetPropertyName();
-
-                    switch (prop)
-                    {
-                        case AstChildProperty:
-                            writer.WriteLine($"if ({propName} != null)");
-                            break;
-                        case AstChildrenProperty { Separated: true }:
-                            writer.WriteLine($"if ({propName}.Items.Count != 0)");
-                            break;
-                        default:
-                            writer.WriteLine($"if ({propName}.Count != 0)");
-                            break;
-                    }
-
-                    writer.Indent++;
-
-                    writer.WriteLine("return true;");
-
-                    writer.Indent--;
-
-                    if (i != children.Length - 1)
-                        writer.WriteLine();
-                }
-
-                writer.WriteLine();
-                writer.WriteLine("return false;");
-
-                writer.Indent--;
-
-                writer.WriteLine("}");
-
-                writer.Indent--;
-
-                writer.WriteLine("}");
-            }
-
-            writer.WriteLine();
-
             if (props.Length != 0)
             {
                 writer.WriteLine($"internal {typeName}(");
@@ -237,10 +243,10 @@ public sealed class AstGenerator : IIncrementalGenerator
 
                     switch (prop)
                     {
-                        case AstTokenProperty { Optional: true } or AstChildProperty { Optional: true }:
+                        case AstTokenProperty { Optional: true } or AstNodeProperty { Optional: true }:
                             writer.WriteLine($"{param}?.SetParent(this);");
                             break;
-                        case AstTokenProperty or AstChildProperty:
+                        case AstTokenProperty or AstNodeProperty:
                             writer.WriteLine($"{param}.SetParent(this);");
                             break;
                         default:
@@ -269,7 +275,7 @@ public sealed class AstGenerator : IIncrementalGenerator
 
             writer.WriteLine();
 
-            writer.WriteLine("public override IEnumerable<SyntaxItem> Items()");
+            writer.WriteLine("public override IEnumerable<SyntaxItem> Children()");
             writer.WriteLine("{");
 
             writer.Indent++;
@@ -283,7 +289,7 @@ public sealed class AstGenerator : IIncrementalGenerator
 
                     switch (prop)
                     {
-                        case AstTokenProperty { Optional: true } or AstChildProperty { Optional: true }:
+                        case AstTokenProperty { Optional: true } or AstNodeProperty { Optional: true }:
                             writer.WriteLine($"if ({propName} != null)");
 
                             writer.Indent++;
@@ -292,7 +298,7 @@ public sealed class AstGenerator : IIncrementalGenerator
 
                             writer.Indent--;
                             break;
-                        case AstTokenProperty or AstChildProperty:
+                        case AstTokenProperty or AstNodeProperty:
                             writer.WriteLine($"yield return {propName};");
                             break;
                         default:
@@ -342,7 +348,7 @@ public sealed class AstGenerator : IIncrementalGenerator
 
         writer.Indent++;
 
-        writer.WriteLine($"public virtual T Visit({tree.GetNodeTypeName(node.Name)} node, T state)");
+        writer.WriteLine($"public virtual T Visit({tree.GetTypeName(type.Name)} node, T state)");
         writer.WriteLine("{");
 
         writer.Indent++;
