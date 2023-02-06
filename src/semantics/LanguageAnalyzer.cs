@@ -2,25 +2,23 @@ namespace Vezel.Celerity.Semantics;
 
 internal sealed class LanguageAnalyzer : SyntaxWalker<object?>
 {
-    private readonly ImmutableArray<Declaration>.Builder _declarations;
-
-    private readonly ImmutableArray<LambdaFunction>.Builder _lambdas;
+    private readonly SemanticTablesBuilder _builder;
 
     private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
 
+    private readonly Scope _scope;
+
     public LanguageAnalyzer(
-        ImmutableArray<Declaration>.Builder declarations,
-        ImmutableArray<LambdaFunction>.Builder lambdas,
-        ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+        RootScope scope, SemanticTablesBuilder builder, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
     {
-        _declarations = declarations;
-        _lambdas = lambdas;
+        _scope = scope;
+        _builder = builder;
         _diagnostics = diagnostics;
 
         // TODO
 
-        _ = _declarations;
-        _ = _lambdas;
+        _ = _scope;
+        _ = _builder;
         _ = _diagnostics;
     }
 }
