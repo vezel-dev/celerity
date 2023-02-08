@@ -688,12 +688,12 @@ internal sealed class LanguageLexer
                 break;
             }
 
-            var r = Read();
+            var ch = Read();
 
-            if (r == '"')
+            if (ch == '"')
                 break;
 
-            if (r != '\\')
+            if (ch != '\\')
                 continue;
 
             var code = Peek1();
