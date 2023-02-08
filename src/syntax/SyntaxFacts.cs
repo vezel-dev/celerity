@@ -2,10 +2,8 @@ namespace Vezel.Celerity.Syntax;
 
 public static class SyntaxFacts
 {
-    public static SyntaxTokenKind? GetNormalKeywordKind(string text)
+    public static SyntaxTokenKind? GetNormalKeywordKind(scoped ReadOnlySpan<char> text)
     {
-        Check.Null(text);
-
         return text switch
         {
             "and" => SyntaxTokenKind.AndKeyword,
@@ -47,10 +45,8 @@ public static class SyntaxFacts
         };
     }
 
-    public static SyntaxTokenKind? GetTypeKeywordKind(string text)
+    public static SyntaxTokenKind? GetTypeKeywordKind(scoped ReadOnlySpan<char> text)
     {
-        Check.Null(text);
-
         return text switch
         {
             "agent" => SyntaxTokenKind.AgentKeyword,
@@ -67,10 +63,8 @@ public static class SyntaxFacts
         };
     }
 
-    public static SyntaxTokenKind? GetReservedKeywordKind(string text)
+    public static SyntaxTokenKind? GetReservedKeywordKind(scoped ReadOnlySpan<char> text)
     {
-        Check.Null(text);
-
         return text switch
         {
             "friend" => SyntaxTokenKind.FriendKeyword,
