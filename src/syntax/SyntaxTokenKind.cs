@@ -2,8 +2,8 @@ namespace Vezel.Celerity.Syntax;
 
 public enum SyntaxTokenKind
 {
-    Missing,
-    EndOfInput,
+    Missing, // Synthesized in LanguageParser for missing tokens.
+    EndOfInput, // Synthesized in LanguageLexer after all input has been consumed.
     Unrecognized,
     BitwiseOperator,
     ShiftOperator,
