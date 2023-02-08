@@ -24,9 +24,9 @@ public sealed class SyntaxToken : SyntaxItem
 
     public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
 
-    internal SyntaxToken(string fullPath)
+    internal SyntaxToken(string path)
         : this(
-            new(fullPath),
+            new(path),
             SyntaxTokenKind.Missing,
             "<error>",
             null,

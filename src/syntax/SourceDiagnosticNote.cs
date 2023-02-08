@@ -18,7 +18,7 @@ public sealed class SourceDiagnosticNote
     public static SourceDiagnosticNote Create(SyntaxItem item, SourceLocation location, string message)
     {
         Check.Null(item);
-        Check.Argument(location.FullPath != null, location);
+        Check.Argument(!location.IsMissing, location);
         Check.NullOrEmpty(message);
 
         return new(item, location, message);

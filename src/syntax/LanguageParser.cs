@@ -9,7 +9,7 @@ internal sealed class LanguageParser
     private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
 
     public LanguageParser(
-        ReadOnlyMemory<SyntaxToken> tokens, SyntaxMode mode, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+        IReadOnlyList<SyntaxToken> tokens, SyntaxMode mode, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
     {
         _reader = new(tokens);
         _mode = mode;

@@ -24,8 +24,7 @@ public sealed class SyntaxTree
         return new(
             new LanguageParser(
                 new LanguageLexer(
-                    text.FullPath,
-                    text.Runes,
+                    text,
                     mode,
                     diags).Lex(),
                 mode,

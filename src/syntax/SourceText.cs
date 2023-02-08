@@ -1,76 +1,48 @@
 namespace Vezel.Celerity.Syntax;
 
-public class SourceText
+public abstract class SourceText : IReadOnlyList<char>
 {
-    public string FullPath { get; }
+    public string Path { get; }
 
-    public ReadOnlyMemory<Rune> Runes { get; }
+    public abstract int Count { get; }
 
-    private static readonly UTF8Encoding _utf8 = new(false, true);
+    public abstract char this[int index] { get; }
 
-    private static readonly UnicodeEncoding _utf16 = new(false, false, true);
-
-    protected SourceText(string fullPath, scoped ReadOnlySpan<Rune> runes)
+    protected SourceText(string path)
     {
-        Check.NullOrEmpty(fullPath);
+        Check.NullOrEmpty(path);
 
-        FullPath = fullPath;
-        Runes = runes.ToArray();
+        Path = path;
     }
 
-    public static SourceText FromUtf8(string fullPath, scoped ReadOnlySpan<byte> text)
+    public IEnumerable<SourceTextLine> EnumerateLines()
     {
-        string str;
+        var reader = new SyntaxInputReader<char>(this);
+        var builder = new StringBuilder();
+        var line = 1;
 
-        try
+        while (reader.Count != 0)
         {
-            str = _utf8.GetString(text);
-        }
-        catch (DecoderFallbackException)
-        {
-            throw new InvalidDataException();
-        }
+            var ch = reader.Read();
 
-        return new(fullPath, str.EnumerateRunes().ToArray());
+            _ = builder.Append(ch);
+
+            if (ch is '\r' or '\n')
+            {
+                if ((ch, reader.Peek1()) == ('\r', (true, '\n')))
+                    _ = builder.Append(reader.Read());
+
+                yield return new(new(Path, line++, 1), builder.ToString());
+
+                _ = builder.Clear();
+            }
+        }
     }
 
-    public static SourceText FromUtf16(string fullPath, scoped ReadOnlySpan<char> text)
+    public abstract IEnumerator<char> GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator()
     {
-        var runes = text.ToString().EnumerateRunes().ToArray();
-
-        Check.Data(runes.All(rune => rune != Rune.ReplacementChar));
-
-        return new(fullPath, runes);
-    }
-
-    public static ValueTask<SourceText> FromUtf8Async(
-        string fullPath, Stream stream, CancellationToken cancellationToken = default)
-    {
-        return FromAsync(fullPath, stream, _utf8, cancellationToken);
-    }
-
-    public static ValueTask<SourceText> FromUtf16Async(
-        string fullPath, Stream stream, CancellationToken cancellationToken = default)
-    {
-        return FromAsync(fullPath, stream, _utf16, cancellationToken);
-    }
-
-    private static async ValueTask<SourceText> FromAsync(
-        string fullPath, Stream stream, Encoding encoding, CancellationToken cancellationToken)
-    {
-        using var reader = new StreamReader(stream, encoding, false, leaveOpen: true);
-
-        string str;
-
-        try
-        {
-            str = await reader.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (DecoderFallbackException)
-        {
-            throw new InvalidDataException();
-        }
-
-        return new(fullPath, str.EnumerateRunes().ToArray());
+        return GetEnumerator();
     }
 }

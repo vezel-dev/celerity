@@ -35,9 +35,19 @@ public sealed class SourceDiagnostic
         string message,
         params SourceDiagnosticNote[] notes)
     {
+        return Create(item, severity, location, message, notes.AsEnumerable());
+    }
+
+    public static SourceDiagnostic Create(
+        SyntaxItem item,
+        SourceDiagnosticSeverity severity,
+        SourceLocation location,
+        string message,
+        IEnumerable<SourceDiagnosticNote> notes)
+    {
         Check.Null(item);
         Check.Enum(severity);
-        Check.Argument(location.FullPath != null, location);
+        Check.Argument(!location.IsMissing, location);
         Check.NullOrEmpty(message);
         Check.Null(notes);
         Check.All(notes, static note => note != null);
