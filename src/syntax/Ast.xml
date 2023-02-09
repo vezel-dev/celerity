@@ -11,7 +11,9 @@
         <Tokens Name="Component" Separated="true" />
     </Type>
 
-    <Type Name="Root" Abstract="true" Root="true" />
+    <Type Name="Root" Abstract="true" Root="true">
+        <Token Name="EndOfInput" />
+    </Type>
 
     <Type Name="Module" Base="Root" Root="true">
         <Nodes Name="Attribute" Type="Attribute" />
@@ -19,11 +21,13 @@
         <Node Name="Path" Type="ModulePath" />
         <Token Name="Semicolon" />
         <Nodes Name="Declaration" Type="Declaration" />
+        <Token Name="EndOfInput" Override="true" />
     </Type>
 
     <Type Name="Interactive" Base="Root" Root="true">
         <Nodes Name="Declaration" Type="Declaration" />
         <Nodes Name="Statement" Type="Statement" />
+        <Token Name="EndOfInput" Override="true" />
     </Type>
 
     <!-- Attributes -->
