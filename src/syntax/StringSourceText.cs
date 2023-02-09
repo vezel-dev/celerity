@@ -27,7 +27,7 @@ public sealed class StringSourceText : SourceText
         Value = value;
     }
 
-    public override IEnumerator<char> GetEnumerator()
+    public override CharEnumerator GetEnumerator()
     {
         return Value.GetEnumerator();
     }
