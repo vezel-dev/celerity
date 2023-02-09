@@ -345,7 +345,7 @@ internal sealed class LanguageLexer
         var tokens = new List<SyntaxToken>();
 
         // The shebang line can only occur at the very beginning.
-        if (_mode == SyntaxMode.Document && Peek2() == ('#', '!'))
+        if (_mode == SyntaxMode.Module && Peek2() == ('#', '!'))
             LexShebangLine(_location, _leading);
 
         while (true)

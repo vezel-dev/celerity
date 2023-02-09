@@ -2,6 +2,6 @@ namespace Vezel.Celerity.Syntax;
 
 public enum SyntaxMode
 {
-    Document,
+    Module,
     Interactive,
 }
