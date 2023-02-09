@@ -8,7 +8,7 @@ internal sealed class LanguageLexer
 
     private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
 
-    private readonly List<(SourceDiagnosticSeverity, SourceLocation, string)> _currentDiagnostics = new();
+    private readonly List<Func<SyntaxToken, SourceDiagnostic>> _currentDiagnostics = new();
 
     private readonly StringBuilder _chars = new();
 
@@ -59,7 +59,8 @@ internal sealed class LanguageLexer
 
     private void Error(SourceLocation location, string message)
     {
-        _currentDiagnostics.Add((SourceDiagnosticSeverity.Error, location, message));
+        _currentDiagnostics.Add(
+            token => SourceDiagnostic.Create(token, SourceDiagnosticSeverity.Error, location, message));
     }
 
     private void ErrorExpected(string expected, char? found)
@@ -80,6 +81,8 @@ internal sealed class LanguageLexer
     private SyntaxToken CreateToken(SourceLocation location, SyntaxTokenKind kind)
     {
         var text = _chars.ToString();
+
+        _ = _chars.Clear();
 
         // We handle keywords here to avoid an extra allocation while lexing identifiers.
         if (kind == SyntaxTokenKind.LowerIdentifier)
@@ -112,13 +115,10 @@ internal sealed class LanguageLexer
             _leading.ToImmutable(),
             _trailing.ToImmutable());
 
-        _ = _chars.Clear();
-
         _leading.Clear();
         _trailing.Clear();
 
-        _diagnostics.AddRange(
-            _currentDiagnostics.Select(tup => SourceDiagnostic.Create(token, tup.Item1, tup.Item2, tup.Item3)));
+        _diagnostics.AddRange(_currentDiagnostics.Select(creator => creator(token)));
         _currentDiagnostics.Clear();
 
         return token;
