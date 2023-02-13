@@ -7,8 +7,8 @@ call-argument ::= expression
 ```
 
 ```ebnf
-call-try ::= '?' call-try-catch?
-call-try-catch ::= 'catch' '{' call-try-catch-arm+ '}'
-call-try-catch-arm ::= try-catch-pattern call-try-catch-arm-guard? '=>' expression ';'
-call-try-catch-arm-guard ::= 'if' expression
+call-expression-try ::= '?' call-expression-try-catch?
+call-expression-try-catch ::= 'catch' '{' call-expression-try-catch-arm+ '}'
+call-expression-try-catch-arm ::= try-catch-pattern call-expression-try-catch-arm-guard? '=>' expression ';'
+call-expression-try-catch-arm-guard ::= 'if' expression
 ```
