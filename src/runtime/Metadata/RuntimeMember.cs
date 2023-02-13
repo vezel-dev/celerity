@@ -6,7 +6,7 @@ public abstract class RuntimeMember : RuntimeMetadata
 
     public string Name { get; }
 
-    private protected RuntimeMember(RuntimeModule module, string name, ImmutableArray<AttributePair> attributes)
+    private protected RuntimeMember(RuntimeModule module, string name, IEnumerable<AttributeSemantics> attributes)
         : base(attributes)
     {
         Module = module;

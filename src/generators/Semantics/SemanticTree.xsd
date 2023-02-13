@@ -1,0 +1,57 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="https://vezel.dev/celerity/SemanticTree"
+            elementFormDefault="qualified">
+    <xsd:element name="Tree">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Type" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                                <xsd:element name="Value">
+                                    <xsd:complexType>
+                                        <xsd:attribute name="Name" type="xsd:Name" use="required" />
+                                        <xsd:attribute name="Type" type="xsd:string" use="required" />
+                                        <xsd:attribute name="Override" type="xsd:boolean" />
+                                    </xsd:complexType>
+                                </xsd:element>
+
+                                <xsd:element name="Node">
+                                    <xsd:complexType>
+                                        <xsd:attribute name="Name" type="xsd:Name" use="required" />
+                                        <xsd:attribute name="Type" type="xsd:Name" use="required" />
+                                        <xsd:attribute name="Optional" type="xsd:boolean" />
+                                        <xsd:attribute name="Override" type="xsd:boolean" />
+                                    </xsd:complexType>
+                                </xsd:element>
+
+                                <xsd:element name="Nodes">
+                                    <xsd:complexType>
+                                        <xsd:attribute name="Name" type="xsd:Name" use="required" />
+                                        <xsd:attribute name="Type" type="xsd:Name" use="required" />
+                                        <xsd:attribute name="Override" type="xsd:boolean" />
+                                    </xsd:complexType>
+                                </xsd:element>
+
+                                <xsd:element name="Computed">
+                                    <xsd:complexType>
+                                        <xsd:attribute name="Name" type="xsd:Name" use="required" />
+                                        <xsd:attribute name="Type" type="xsd:string" use="required" />
+                                        <xsd:attribute name="Body" type="xsd:string" use="required" />
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:choice>
+                        </xsd:sequence>
+
+                        <xsd:attribute name="Name" type="xsd:Name" use="required" />
+                        <xsd:attribute name="Base" type="xsd:Name" />
+                        <xsd:attribute name="Parent" type="xsd:Name" />
+                        <xsd:attribute name="Syntax" type="xsd:Name" />
+                        <xsd:attribute name="Abstract" type="xsd:boolean" />
+                        <xsd:attribute name="Root" type="xsd:boolean" />
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

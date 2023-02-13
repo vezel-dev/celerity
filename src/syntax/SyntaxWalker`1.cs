@@ -1,3 +1,5 @@
+using Vezel.Celerity.Syntax.Tree;
+
 namespace Vezel.Celerity.Syntax;
 
 public abstract partial class SyntaxWalker<T>
@@ -22,8 +24,8 @@ public abstract partial class SyntaxWalker<T>
     {
         Check.Null(node);
 
-        foreach (var elem in node.Children())
-            state = elem is SyntaxNode n ? VisitNode(n, state) : VisitToken(Unsafe.As<SyntaxToken>(elem), state);
+        foreach (var child in node.Children())
+            state = child is SyntaxNode n ? VisitNode(n, state) : VisitToken(Unsafe.As<SyntaxToken>(child), state);
 
         return state;
     }

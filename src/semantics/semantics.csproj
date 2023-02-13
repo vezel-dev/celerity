@@ -12,7 +12,6 @@ and linting.</PackageDescription>
 
     <ItemGroup>
         <Using Include="Vezel.Celerity.Diagnostics" />
-        <Using Include="Vezel.Celerity.Syntax" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,6 +21,13 @@ and linting.</PackageDescription>
     </ItemGroup>
 
     <ItemGroup>
+        <AdditionalFiles Include="Tree/SemanticTree.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../generators/generators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
         <ProjectReference Include="../syntax/syntax.csproj" />
     </ItemGroup>
 

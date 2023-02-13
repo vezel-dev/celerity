@@ -10,11 +10,15 @@ public sealed class RuntimeModule : RuntimeMetadata
 
     public ImmutableDictionary<string, RuntimeTest> Tests { get; }
 
+    private int _lambdaId;
+
     internal RuntimeModule(
-        Semantics.Module module, IEnumerable<CodeDeclaration> declarations, IEnumerable<LambdaFunction> lambdas)
+        ModuleDocumentSemantics module,
+        IEnumerable<CodeDeclarationSemantics> declarations,
+        IEnumerable<LambdaExpressionSemantics> lambdas)
         : base(module.Attributes)
     {
-        Path = module.Path;
+        Path = module.Path!;
 
         var constants = new List<RuntimeConstant>();
         var functions = new List<RuntimeFunction>();
@@ -24,13 +28,13 @@ public sealed class RuntimeModule : RuntimeMetadata
         {
             switch (decl)
             {
-                case ConstantDeclaration constant:
+                case ConstantDeclarationSemantics constant:
                     constants.Add(new(this, constant));
                     break;
-                case FunctionDeclaration function:
+                case FunctionDeclarationSemantics function:
                     functions.Add(new(this, function));
                     break;
-                case TestDeclaration test:
+                case TestDeclarationSemantics test:
                     tests.Add(new(this, test));
                     break;
             }
@@ -42,5 +46,10 @@ public sealed class RuntimeModule : RuntimeMetadata
         Constants = constants.ToImmutableDictionary(constant => constant.Name, constant => constant);
         Functions = functions.ToImmutableDictionary(function => function.Name, function => function);
         Tests = tests.ToImmutableDictionary(test => test.Name, test => test);
+    }
+
+    internal int AllocateLambdaId()
+    {
+        return _lambdaId++;
     }
 }

@@ -8,11 +8,11 @@ public sealed class RuntimeParameter : RuntimeMetadata
 
     public string Name { get; }
 
-    internal RuntimeParameter(RuntimeFunction function, int ordinal, Parameter parameter)
+    internal RuntimeParameter(RuntimeFunction function, int ordinal, CodeParameterSemantics parameter)
         : base(parameter.Attributes)
     {
         Function = function;
         Ordinal = ordinal;
-        Name = parameter.Name;
+        Name = parameter.Symbol!.Name;
     }
 }

@@ -8,22 +8,22 @@ public class RuntimeFunction : RuntimeMember
 
     public int Arity => Parameters.Length;
 
-    internal RuntimeFunction(RuntimeModule module, FunctionDeclaration function)
-        : this(module, function.Name, function.Attributes, function.Parameters)
+    internal RuntimeFunction(RuntimeModule module, FunctionDeclarationSemantics function)
+        : this(module, function.Symbol!.Name, function.Attributes, function.Parameters)
     {
         IsExternal = function.IsExternal;
     }
 
-    internal RuntimeFunction(RuntimeModule module, LambdaFunction function)
-        : this(module, $"λ{function.Id}", ImmutableArray<AttributePair>.Empty, function.Parameters)
+    internal RuntimeFunction(RuntimeModule module, LambdaExpressionSemantics function)
+        : this(module, $"λ{module.AllocateLambdaId()}", SemanticNodeList<AttributeSemantics>.Empty, function.Parameters)
     {
     }
 
     private RuntimeFunction(
         RuntimeModule module,
         string name,
-        ImmutableArray<AttributePair> attributes,
-        ImmutableArray<Parameter> parameters)
+        SemanticNodeList<AttributeSemantics> attributes,
+        IEnumerable<CodeParameterSemantics> parameters)
         : base(module, name, attributes)
     {
         Parameters = parameters.Select((param, i) => new RuntimeParameter(this, i, param)).ToImmutableArray();

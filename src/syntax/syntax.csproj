@@ -21,7 +21,7 @@ This package provides the language lexer, parser, and abstract syntax tree.</Pac
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="Ast.xml" />
+        <AdditionalFiles Include="Tree/SyntaxTree.xml" />
     </ItemGroup>
 
     <ItemGroup>

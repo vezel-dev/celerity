@@ -1,3 +1,5 @@
+using Vezel.Celerity.Syntax.Tree;
+
 namespace Vezel.Celerity.Syntax;
 
 public static class SyntaxFacts

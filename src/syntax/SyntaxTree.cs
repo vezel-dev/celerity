@@ -1,16 +1,19 @@
+using Vezel.Celerity.Syntax.Text;
+using Vezel.Celerity.Syntax.Tree;
+
 namespace Vezel.Celerity.Syntax;
 
 public sealed class SyntaxTree
 {
-    public RootNode Root { get; }
+    public DocumentSyntax Document { get; }
 
     public ImmutableArray<SourceDiagnostic> Diagnostics { get; }
 
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
-    private SyntaxTree(RootNode root, ImmutableArray<SourceDiagnostic> diagnostics)
+    private SyntaxTree(DocumentSyntax document, ImmutableArray<SourceDiagnostic> diagnostics)
     {
-        Root = root;
+        Document = document;
         Diagnostics = diagnostics;
     }
 

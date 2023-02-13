@@ -1,3 +1,6 @@
+using Vezel.Celerity.Syntax.Text;
+using Vezel.Celerity.Syntax.Tree;
+
 namespace Vezel.Celerity.Syntax;
 
 internal sealed class LanguageLexer
@@ -87,11 +90,11 @@ internal sealed class LanguageLexer
         // We handle keywords here to avoid an extra allocation while lexing identifiers.
         if (kind == SyntaxTokenKind.LowerIdentifier)
         {
-            if (SyntaxFacts.GetNormalKeywordKind(text) is SyntaxTokenKind kw1)
+            if (SyntaxFacts.GetNormalKeywordKind(text) is { } kw1)
                 kind = kw1;
-            else if (SyntaxFacts.GetTypeKeywordKind(text) is SyntaxTokenKind kw2)
+            else if (SyntaxFacts.GetTypeKeywordKind(text) is { } kw2)
                 kind = kw2;
-            else if (SyntaxFacts.GetReservedKeywordKind(text) is SyntaxTokenKind kw3)
+            else if (SyntaxFacts.GetReservedKeywordKind(text) is { } kw3)
                 kind = kw3;
         }
 
@@ -355,7 +358,7 @@ internal sealed class LanguageLexer
             SourceLocation location;
             SyntaxTokenKind kind;
 
-            if (Peek1() is char cur)
+            if (Peek1() is { } cur)
             {
                 (location, kind) = cur switch
                 {
@@ -417,7 +420,7 @@ internal sealed class LanguageLexer
 
     private void LexTrivia(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        while (Peek1() is char cur)
+        while (Peek1() is { } cur)
         {
             switch (cur)
             {
@@ -492,7 +495,7 @@ internal sealed class LanguageLexer
             _ => default(SyntaxTokenKind?),
         };
 
-        if (kind is SyntaxTokenKind k)
+        if (kind is { } k)
             return (location, k);
 
         if (ch1 == '!')
@@ -661,7 +664,7 @@ internal sealed class LanguageLexer
             _ => default(SyntaxTokenKind?),
         };
 
-        if (ident is SyntaxTokenKind k)
+        if (ident is { } k)
         {
             kind = SyntaxTokenKind.AtomLiteral;
 

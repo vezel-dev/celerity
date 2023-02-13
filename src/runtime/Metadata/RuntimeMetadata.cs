@@ -4,7 +4,7 @@ public abstract class RuntimeMetadata
 {
     public ImmutableArray<(string Name, object? Value)> Attributes { get; }
 
-    private protected RuntimeMetadata(ImmutableArray<AttributePair> attributes)
+    private protected RuntimeMetadata(IEnumerable<AttributeSemantics> attributes)
     {
         Attributes = attributes.Select(pair => (pair.Name, pair.Value)).ToImmutableArray();
     }

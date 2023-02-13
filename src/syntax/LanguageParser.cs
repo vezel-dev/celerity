@@ -1,3 +1,6 @@
+using Vezel.Celerity.Syntax.Text;
+using Vezel.Celerity.Syntax.Tree;
+
 namespace Vezel.Celerity.Syntax;
 
 internal sealed class LanguageParser
@@ -16,7 +19,7 @@ internal sealed class LanguageParser
         _diagnostics = diagnostics;
     }
 
-    public RootNode Parse()
+    public DocumentSyntax Parse()
     {
         // TODO
 
