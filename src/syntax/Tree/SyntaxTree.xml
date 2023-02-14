@@ -663,7 +663,7 @@
         <Node Name="Operand" Type="Expression" />
     </Type>
 
-    <Type Name="LoopBranchExpression" Base="Expression" Abstract="true" />
+    <Type Name="LoopBranchExpression" Base="BranchExpression" Abstract="true" />
 
     <Type Name="NextExpression" Base="LoopBranchExpression">
         <Token Name="NextKeyword" />
