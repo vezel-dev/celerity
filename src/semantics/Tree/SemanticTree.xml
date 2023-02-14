@@ -343,6 +343,8 @@
 
     <Type Name="BlockExpression" Base="Expression">
         <Nodes Name="Statement" Type="Statement" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
     </Type>
 
     <Type Name="IdentifierExpression" Base="Expression">
