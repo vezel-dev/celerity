@@ -306,32 +306,35 @@
         <Node Name="Else" Type="BlockExpression" Optional="true" />
     </Type>
 
-    <Type Name="BranchExpression" Base="ControlExpression" Abstract="true" />
+    <Type Name="BranchExpression" Base="ControlExpression" Abstract="true">
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+    </Type>
 
     <Type Name="ReturnExpression" Base="BranchExpression">
         <Computed Name="IsTail" Type="bool" Body="Syntax.TailKeywordToken != null" />
         <Node Name="Operand" Type="Expression" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
-        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="RaiseExpression" Base="BranchExpression">
         <Node Name="Operand" Type="Expression" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
-        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
-    <Type Name="LoopBranchExpression" Base="Expression" Abstract="true" />
+    <Type Name="LoopBranchExpression" Base="BranchExpression" Abstract="true" />
 
     <Type Name="NextExpression" Base="LoopBranchExpression">
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
-        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="BreakExpression" Base="LoopBranchExpression">
         <Node Name="Result" Type="Expression" Optional="true" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
-        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="ParenthesizedExpression" Base="Expression">
