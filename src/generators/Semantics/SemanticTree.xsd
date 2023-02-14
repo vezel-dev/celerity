@@ -46,7 +46,6 @@
                         <xsd:attribute name="Name" type="xsd:Name" use="required" />
                         <xsd:attribute name="Base" type="xsd:Name" />
                         <xsd:attribute name="Parent" type="xsd:Name" />
-                        <xsd:attribute name="Syntax" type="xsd:Name" />
                         <xsd:attribute name="Abstract" type="xsd:boolean" />
                         <xsd:attribute name="Root" type="xsd:boolean" />
                     </xsd:complexType>
