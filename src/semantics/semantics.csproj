@@ -4,8 +4,8 @@
         <IsPackable>true</IsPackable>
         <PackageDescription>$(PackageDescription)
 
-This package provides semantic analyses such as symbol binding, type checking,
-and linting.</PackageDescription>
+This package provides semantic analyses such as symbol binding and type
+checking, as well as the semantic tree representation.</PackageDescription>
         <PackageId>Vezel.Celerity.Semantics</PackageId>
         <RootNamespace>Vezel.Celerity.Semantics</RootNamespace>
     </PropertyGroup>

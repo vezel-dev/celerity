@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <AssemblyName>Vezel.Celerity.Server</AssemblyName>
+        <AssemblyName>Vezel.Celerity.Interpreter</AssemblyName>
         <IsPackable>true</IsPackable>
         <PackageDescription>$(PackageDescription)
 
-This package provides the Language Server Protocol implementation.</PackageDescription>
-        <PackageId>Vezel.Celerity.Server</PackageId>
-        <RootNamespace>Vezel.Celerity.Server</RootNamespace>
+This package provides the portable bytecode interpreter which does not require
+dynamic code generation or the supporting native library.</PackageDescription>
+        <PackageId>Vezel.Celerity.Interpreter</PackageId>
+        <RootNamespace>Vezel.Celerity.Interpreter</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,14 +17,10 @@ This package provides the Language Server Protocol implementation.</PackageDescr
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../tooling/tooling.csproj" />
+        <ProjectReference Include="../runtime/runtime.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="OmniSharp.Extensions.LanguageServer" />
-    </ItemGroup>
-
+    <Import Project="../runtime/buildTransitive/Vezel.Celerity.Runtime.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
-    <Import Project="../tooling/buildTransitive/Vezel.Celerity.Tooling.targets" />
 </Project>

@@ -1,6 +1,6 @@
 <Project Sdk="Vezel.Zig.Sdk">
     <PropertyGroup>
-        <AssemblyName>Vezel.Celerity.Runtime.Native</AssemblyName>
+        <AssemblyName>Vezel.Celerity.Native</AssemblyName>
         <DefineConstants>
             $(DefineConstants);
             _XOPEN_SOURCE;

@@ -1,10 +1,10 @@
-namespace Vezel.Celerity.Runtime.Native;
+namespace Vezel.Celerity.Jit.Native;
 
-internal static partial class RuntimeInterop
+internal static partial class JitInterop
 {
-    private const string Library = "Vezel.Celerity.Runtime.Native";
+    private const string Library = "Vezel.Celerity.Native";
 
-    static RuntimeInterop()
+    static JitInterop()
     {
         Initialize();
     }

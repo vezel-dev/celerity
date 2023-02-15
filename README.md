@@ -42,31 +42,43 @@ This project offers the following packages:
 | Package | Description | Downloads |
 | -: | - | :- |
 | [![celerity][cli-img]][cli-pkg] | Provides the .NET global tool. | ![Downloads][cli-dls] |
-| [![Vezel.Celerity.Syntax][syntax-img]][syntax-pkg] | Provides the language lexer, parser, and abstract syntax tree. | ![Downloads][syntax-dls] |
-| [![Vezel.Celerity.Semantics][semantics-img]][semantics-pkg] | Provides semantic analyses such as symbol binding, type checking, and linting. | ![Downloads][semantics-dls] |
-| [![Vezel.Celerity.Runtime][runtime-img]][runtime-pkg] | Provides the runtime system consisting of the interpreter, garbage collector, agent scheduler, etc. | ![Downloads][runtime-dls] |
+| [![Vezel.Celerity.Syntax][syntax-img]][syntax-pkg] | Provides syntactical analyses such as lexing and parsing, as well as the syntax tree representation. | ![Downloads][syntax-dls] |
+| [![Vezel.Celerity.Semantics][semantics-img]][semantics-pkg] | Provides semantic analyses such as symbol binding and type checking, as well as the semantic tree representation. | ![Downloads][semantics-dls] |
+| [![Vezel.Celerity.Runtime][runtime-img]][runtime-pkg] | Provides shared components of the runtime system such as the bytecode lowerer, garbage collector, and agent scheduler. | ![Downloads][runtime-dls] |
+| [![Vezel.Celerity.Interpreter][interpreter-img]][interpreter-pkg] | Provides the portable bytecode interpreter which does not require dynamic code generation or the supporting native library. | ![Downloads][interpreter-dls] |
+| [![Vezel.Celerity.Jit][jit-img]][jit-pkg] | Provides the optimizing just-in-time compiler for 64-bit systems, as well as the supporting native library. | ![Downloads][jit-dls] |
 | [![Vezel.Celerity.Kernel][kernel-img]][kernel-pkg] | Provides the language's standard library and host operating system interfaces for the runtime system. | ![Downloads][kernel-dls] |
+| [![Vezel.Celerity.Tooling][tooling-img]][tooling-pkg] | Provides high-level tooling such as diagnostic rendering and source code formatting. | ![Downloads][tooling-dls] |
 | [![Vezel.Celerity.Server][server-img]][server-pkg] | Provides the Language Server Protocol implementation. | ![Downloads][server-dls] |
 
 [cli-pkg]: https://www.nuget.org/packages/celerity
 [syntax-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Syntax
 [semantics-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Semantics
 [runtime-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime
+[interpreter-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Interpreter
+[jit-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Jit
 [kernel-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Kernel
+[tooling-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Tooling
 [server-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Server
 
 [cli-img]: https://img.shields.io/nuget/v/celerity?label=celerity
 [syntax-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Syntax?label=Vezel.Celerity.Syntax
 [semantics-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Semantics?label=Vezel.Celerity.Semantics
 [runtime-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime?label=Vezel.Celerity.Runtime
+[interpreter-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Interpreter?label=Vezel.Celerity.Interpreter
+[jit-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Jit?label=Vezel.Celerity.Jit
 [kernel-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Kernel?label=Vezel.Celerity.Kernel
+[tooling-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Tooling?label=Vezel.Celerity.Tooling
 [server-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Server?label=Vezel.Celerity.Server
 
 [cli-dls]: https://img.shields.io/nuget/dt/celerity?label=
 [syntax-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Syntax?label=
 [semantics-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Semantics?label=
 [runtime-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Runtime?label=
+[interpreter-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Interpreter?label=
+[jit-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Jit?label=
 [kernel-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Kernel?label=
+[tooling-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Tooling?label=
 [server-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Server?label=
 
 To install a tool package in a project, run `dotnet tool install <name>`. To

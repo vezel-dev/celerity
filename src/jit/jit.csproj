@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Jit</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the optimizing just-in-time compiler for 64-bit systems,
+as well as the supporting native library.</PackageDescription>
+        <PackageId>Vezel.Celerity.Jit</PackageId>
+        <RootNamespace>Vezel.Celerity.Jit</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="buildTransitive/**"
+              Pack="true"
+              PackagePath="%(Identity)" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../native/native.cproj"
+                          ReferenceOutputAssembly="false" />
+        <ProjectReference Include="../runtime/runtime.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Iced" />
+        <PackageReference Include="Microsoft.Windows.CsWin32"
+                          PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Windows.SDK.Win32Docs"
+                          PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Windows.SDK.Win32Metadata"
+                          PrivateAssets="all" />
+    </ItemGroup>
+
+    <Target Name="_AddNativeLibraries"
+            DependsOnTargets="ResolveAssemblyReferences"
+            BeforeTargets="AssignTargetPaths">
+        <MSBuild Projects="../native/native.cproj"
+                 Targets="_GetNativeLibraries">
+            <Output TaskParameter="TargetOutputs"
+                    ItemName="_NativeLibrary" />
+        </MSBuild>
+
+        <ItemGroup>
+            <Content Include="@(_NativeLibrary)"
+                     CopyToOutputDirectory="Always"
+                     Link="%(RuntimeIdentifier)/%(Filename)%(Extension)"
+                     PackagePath="runtimes/%(RuntimeIdentifier)/native" />
+        </ItemGroup>
+    </Target>
+
+    <Import Project="../runtime/buildTransitive/Vezel.Celerity.Runtime.targets" />
+    <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
+    <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
+</Project>
