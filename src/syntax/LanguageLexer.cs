@@ -87,7 +87,7 @@ internal sealed class LanguageLexer
 
         _ = _chars.Clear();
 
-        // We handle keywords here to avoid an extra allocation while lexing identifiers.
+        // We handle keywords and nil/Boolean literals here to avoid an extra allocation while lexing identifiers.
         if (kind == SyntaxTokenKind.LowerIdentifier)
         {
             if (SyntaxFacts.GetNormalKeywordKind(text) is { } kw1)
@@ -96,9 +96,11 @@ internal sealed class LanguageLexer
                 kind = kw2;
             else if (SyntaxFacts.GetReservedKeywordKind(text) is { } kw3)
                 kind = kw3;
+            else if (SyntaxFacts.GetKeywordLiteralKind(text) is { } lit)
+                kind = lit;
         }
 
-        // Intern keywords, punctuators, and special operators.
+        // Intern keywords, nil/Boolean literals, punctuators, and special operators.
         if (IsInternable(kind))
             text = string.Intern(text);
 
@@ -109,6 +111,8 @@ internal sealed class LanguageLexer
             kind switch
             {
                 _ when _currentDiagnostics.Count != 0 => null,
+                SyntaxTokenKind.NilLiteral => CreateNil(),
+                SyntaxTokenKind.BooleanLiteral => CreateBoolean(text),
                 SyntaxTokenKind.IntegerLiteral => CreateInteger(text),
                 SyntaxTokenKind.RealLiteral => CreateReal(text),
                 SyntaxTokenKind.AtomLiteral => CreateAtom(text),
@@ -166,7 +170,6 @@ internal sealed class LanguageLexer
             SyntaxTokenKind.ElseKeyword or
             SyntaxTokenKind.ErrKeyword or
             SyntaxTokenKind.ExtKeyword or
-            SyntaxTokenKind.FalseKeyword or
             SyntaxTokenKind.FnKeyword or
             SyntaxTokenKind.IfKeyword or
             SyntaxTokenKind.InKeyword or
@@ -175,7 +178,6 @@ internal sealed class LanguageLexer
             SyntaxTokenKind.ModKeyword or
             SyntaxTokenKind.MutKeyword or
             SyntaxTokenKind.NextKeyword or
-            SyntaxTokenKind.NilKeyword or
             SyntaxTokenKind.NotKeyword or
             SyntaxTokenKind.OpaqueKeyword or
             SyntaxTokenKind.OrKeyword or
@@ -186,7 +188,6 @@ internal sealed class LanguageLexer
             SyntaxTokenKind.RetKeyword or
             SyntaxTokenKind.TailKeyword or
             SyntaxTokenKind.TestKeyword or
-            SyntaxTokenKind.TrueKeyword or
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
             SyntaxTokenKind.WhileKeyword or
@@ -208,9 +209,21 @@ internal sealed class LanguageLexer
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.UnquoteKeyword or
             SyntaxTokenKind.WithKeyword or
-            SyntaxTokenKind.YieldKeyword => true,
+            SyntaxTokenKind.YieldKeyword or
+            SyntaxTokenKind.NilLiteral or
+            SyntaxTokenKind.BooleanLiteral => true,
             _ => false,
         };
+    }
+
+    private static object? CreateNil()
+    {
+        return null;
+    }
+
+    private static bool CreateBoolean(string text)
+    {
+        return text == "true";
     }
 
     private static BigInteger CreateInteger(string text)

@@ -19,7 +19,6 @@ public static class SyntaxFacts
             "else" => SyntaxTokenKind.ElseKeyword,
             "err" => SyntaxTokenKind.ErrKeyword,
             "ext" => SyntaxTokenKind.ExtKeyword,
-            "false" => SyntaxTokenKind.FalseKeyword,
             "fn" => SyntaxTokenKind.FnKeyword,
             "if" => SyntaxTokenKind.IfKeyword,
             "in" => SyntaxTokenKind.InKeyword,
@@ -28,7 +27,6 @@ public static class SyntaxFacts
             "mod" => SyntaxTokenKind.ModKeyword,
             "mut" => SyntaxTokenKind.MutKeyword,
             "next" => SyntaxTokenKind.NextKeyword,
-            "nil" => SyntaxTokenKind.NilKeyword,
             "not" => SyntaxTokenKind.NotKeyword,
             "opaque" => SyntaxTokenKind.OpaqueKeyword,
             "or" => SyntaxTokenKind.OrKeyword,
@@ -39,7 +37,6 @@ public static class SyntaxFacts
             "ret" => SyntaxTokenKind.RetKeyword,
             "tail" => SyntaxTokenKind.TailKeyword,
             "test" => SyntaxTokenKind.TestKeyword,
-            "true" => SyntaxTokenKind.TrueKeyword,
             "type" => SyntaxTokenKind.TypeKeyword,
             "use" => SyntaxTokenKind.UseKeyword,
             "while" => SyntaxTokenKind.WhileKeyword,
@@ -82,6 +79,16 @@ public static class SyntaxFacts
         };
     }
 
+    public static SyntaxTokenKind? GetKeywordLiteralKind(scoped ReadOnlySpan<char> text)
+    {
+        return text switch
+        {
+            "false" or "true" => SyntaxTokenKind.BooleanLiteral,
+            "nil" => SyntaxTokenKind.NilLiteral,
+            _ => null,
+        };
+    }
+
     public static bool IsKeyword(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
@@ -99,7 +106,6 @@ public static class SyntaxFacts
             SyntaxTokenKind.ElseKeyword or
             SyntaxTokenKind.ErrKeyword or
             SyntaxTokenKind.ExtKeyword or
-            SyntaxTokenKind.FalseKeyword or
             SyntaxTokenKind.FnKeyword or
             SyntaxTokenKind.IfKeyword or
             SyntaxTokenKind.InKeyword or
@@ -108,7 +114,6 @@ public static class SyntaxFacts
             SyntaxTokenKind.ModKeyword or
             SyntaxTokenKind.MutKeyword or
             SyntaxTokenKind.NextKeyword or
-            SyntaxTokenKind.NilKeyword or
             SyntaxTokenKind.NotKeyword or
             SyntaxTokenKind.OpaqueKeyword or
             SyntaxTokenKind.OrKeyword or
@@ -119,7 +124,6 @@ public static class SyntaxFacts
             SyntaxTokenKind.RetKeyword or
             SyntaxTokenKind.TailKeyword or
             SyntaxTokenKind.TestKeyword or
-            SyntaxTokenKind.TrueKeyword or
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
             SyntaxTokenKind.WhileKeyword or
