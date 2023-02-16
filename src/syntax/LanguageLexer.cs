@@ -208,7 +208,7 @@ internal sealed class LanguageLexer
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.UnquoteKeyword or
             SyntaxTokenKind.WithKeyword or
-            SyntaxTokenKind.YieldKeyword or
+            SyntaxTokenKind.YieldKeyword => true,
             _ => false,
         };
     }
