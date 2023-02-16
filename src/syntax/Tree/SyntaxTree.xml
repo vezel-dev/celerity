@@ -340,13 +340,13 @@
 
     <Type Name="Statement" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
-        <Token Name="Semicolon" Optional="true" />
+        <Token Name="Semicolon" />
     </Type>
 
     <Type Name="MissingStatement" Base="Statement">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Tokens Name="Skipped" />
-        <Token Name="Semicolon" Optional="true" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="BindingStatement" Base="Statement" Abstract="true">
@@ -361,7 +361,7 @@
         <Node Name="Pattern" Type="Pattern" Override="true" />
         <Token Name="Equals" Override="true" />
         <Node Name="Initializer" Type="Expression" Override="true" />
-        <Token Name="Semicolon" Optional="true" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="UseStatement" Base="BindingStatement">
@@ -370,27 +370,27 @@
         <Node Name="Pattern" Type="Pattern" Override="true" />
         <Token Name="Equals" Override="true" />
         <Node Name="Initializer" Type="Expression" Override="true" />
-        <Token Name="Semicolon" Optional="true" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="DeferStatement" Base="Statement">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="DeferKeyword" />
         <Node Name="Expression" Type="Expression" />
-        <Token Name="Semicolon" Optional="true" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="AssertStatement" Base="Statement">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="AssertKeyword" />
         <Node Name="Expression" Type="Expression" />
-        <Token Name="Semicolon" Optional="true" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="ExpressionStatement" Base="Statement">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Node Name="Expression" Type="Expression" />
-        <Token Name="Semicolon" Optional="true" Override="true" />
+        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <!-- Expressions -->

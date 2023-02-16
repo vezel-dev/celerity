@@ -10,5 +10,5 @@ statement ::= attribute* (let-statement |
 
 ```ebnf
 interactive-statement ::= attribute* (let-statement |
-                                      expression-statement)
+                                      expression-statement) ';'
 ```
