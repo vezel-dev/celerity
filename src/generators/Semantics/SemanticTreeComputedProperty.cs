@@ -12,4 +12,15 @@ public sealed class SemanticTreeComputedProperty : SemanticTreeProperty
     {
         return Type;
     }
+
+    internal override string GetPropertyName()
+    {
+        return Name;
+    }
+
+    internal override string GetParameterName()
+    {
+        // TODO: https://github.com/Sergio0694/PolySharp/issues/60
+        throw new NotSupportedException();
+    }
 }

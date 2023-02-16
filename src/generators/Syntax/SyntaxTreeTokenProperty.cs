@@ -16,6 +16,11 @@ public sealed class SyntaxTreeTokenProperty : SyntaxTreeProperty
 
     internal override string GetPropertyName()
     {
-        return $"{base.GetPropertyName()}Token";
+        return $"{Name}Token";
+    }
+
+    internal override string GetParameterName()
+    {
+        return $"{char.ToLowerInvariant(Name[0])}{Name[1..]}Token";
     }
 }

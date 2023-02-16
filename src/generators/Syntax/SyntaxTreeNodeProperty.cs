@@ -16,4 +16,16 @@ public sealed class SyntaxTreeNodeProperty : SyntaxTreeProperty
     {
         return $"{Type}Syntax{(Optional ? "?" : string.Empty)}";
     }
+
+    internal override string GetPropertyName()
+    {
+        return Name;
+    }
+
+    internal override string GetParameterName()
+    {
+        var param = $"{char.ToLowerInvariant(Name[0])}{Name[1..]}";
+
+        return SyntaxFacts.GetKeywordKind(param) != SyntaxKind.None ? $"@{param}" : param;
+    }
 }

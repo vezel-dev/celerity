@@ -12,6 +12,13 @@ public sealed class SemanticTreeNodesProperty : SemanticTreeProperty
 
     internal override string GetPropertyName()
     {
-        return $"{base.GetPropertyName()}s";
+        return $"{Name}s";
+    }
+
+    internal override string GetParameterName()
+    {
+        var param = $"{char.ToLowerInvariant(Name[0])}{Name[1..]}s";
+
+        return SyntaxFacts.GetKeywordKind(param) != SyntaxKind.None ? $"@{param}" : param;
     }
 }

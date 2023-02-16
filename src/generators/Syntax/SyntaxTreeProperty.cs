@@ -14,15 +14,7 @@ public abstract class SyntaxTreeProperty
 
     internal abstract string GetTypeName();
 
-    internal virtual string GetPropertyName()
-    {
-        return Name;
-    }
+    internal abstract string GetPropertyName();
 
-    internal string GetParameterName()
-    {
-        var param = $"{char.ToLowerInvariant(Name[0])}{Name[1..]}";
-
-        return SyntaxFacts.GetKeywordKind(param) != SyntaxKind.None ? $"@{param}" : param;
-    }
+    internal abstract string GetParameterName();
 }
