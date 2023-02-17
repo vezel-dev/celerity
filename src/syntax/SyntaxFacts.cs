@@ -4,6 +4,11 @@ namespace Vezel.Celerity.Syntax;
 
 public static class SyntaxFacts
 {
+    public static SyntaxTokenKind? GetKeywordKind(scoped ReadOnlySpan<char> text)
+    {
+        return GetNormalKeywordKind(text) ?? GetTypeKeywordKind(text) ?? GetReservedKeywordKind(text);
+    }
+
     public static SyntaxTokenKind? GetNormalKeywordKind(scoped ReadOnlySpan<char> text)
     {
         return text switch
@@ -91,6 +96,11 @@ public static class SyntaxFacts
 
     public static bool IsKeyword(SyntaxTokenKind kind)
     {
+        return IsNormalKeyword(kind) || IsTypeKeyword(kind) || IsReservedKeyword(kind);
+    }
+
+    public static bool IsNormalKeyword(SyntaxTokenKind kind)
+    {
         Check.Enum(kind);
 
         return kind switch
@@ -127,6 +137,16 @@ public static class SyntaxFacts
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
             SyntaxTokenKind.WhileKeyword or
+            _ => false,
+        };
+    }
+
+    public static bool IsTypeKeyword(SyntaxTokenKind kind)
+    {
+        Check.Enum(kind);
+
+        return kind switch
+        {
             SyntaxTokenKind.AgentKeyword or
             SyntaxTokenKind.AnyKeyword or
             SyntaxTokenKind.AtomKeyword or
@@ -137,6 +157,16 @@ public static class SyntaxFacts
             SyntaxTokenKind.RealKeyword or
             SyntaxTokenKind.RefKeyword or
             SyntaxTokenKind.StrKeyword or
+            _ => false,
+        };
+    }
+
+    public static bool IsReservedKeyword(SyntaxTokenKind kind)
+    {
+        Check.Enum(kind);
+
+        return kind switch
+        {
             SyntaxTokenKind.FriendKeyword or
             SyntaxTokenKind.MacroKeyword or
             SyntaxTokenKind.MetaKeyword or
@@ -187,6 +217,73 @@ public static class SyntaxFacts
             SyntaxTokenKind.RealLiteral or
             SyntaxTokenKind.AtomLiteral or
             SyntaxTokenKind.StringLiteral => true,
+            _ => false,
+        };
+    }
+
+    public static bool IsDeclarationStarter(SyntaxTokenKind kind)
+    {
+        return kind switch
+        {
+            SyntaxTokenKind.ConstKeyword or
+            SyntaxTokenKind.ExtKeyword or
+            SyntaxTokenKind.FnKeyword or
+            SyntaxTokenKind.PubKeyword or
+            SyntaxTokenKind.TestKeyword or
+            SyntaxTokenKind.TypeKeyword or
+            SyntaxTokenKind.UseKeyword => true,
+            _ => false,
+        };
+    }
+
+    public static bool IsStatementStarter(SyntaxTokenKind kind)
+    {
+        return kind switch
+        {
+            SyntaxTokenKind.AssertKeyword or
+            SyntaxTokenKind.DeferKeyword or
+            SyntaxTokenKind.LetKeyword or
+            SyntaxTokenKind.UseKeyword or
+            _ => IsExpressionStarter(kind),
+        };
+    }
+
+    public static bool IsExpressionStarter(SyntaxTokenKind kind)
+    {
+        return kind switch
+        {
+            SyntaxTokenKind.BitwiseOperator or
+            SyntaxTokenKind.ShiftOperator or
+            SyntaxTokenKind.MultiplicativeOperator or
+            SyntaxTokenKind.AdditiveOperator or
+            SyntaxTokenKind.Hash or
+            SyntaxTokenKind.OpenParen or
+            SyntaxTokenKind.OpenBracket or
+            SyntaxTokenKind.OpenBrace or
+            SyntaxTokenKind.BreakKeyword or
+            SyntaxTokenKind.CondKeyword or
+            SyntaxTokenKind.ErrKeyword or
+            SyntaxTokenKind.FnKeyword or
+            SyntaxTokenKind.IfKeyword or
+            SyntaxTokenKind.MatchKeyword or
+            SyntaxTokenKind.MutKeyword or
+            SyntaxTokenKind.NextKeyword or
+            SyntaxTokenKind.NotKeyword or
+            SyntaxTokenKind.RaiseKeyword or
+            SyntaxTokenKind.RecKeyword or
+            SyntaxTokenKind.RecvKeyword or
+            SyntaxTokenKind.RetKeyword or
+            SyntaxTokenKind.TailKeyword or
+            SyntaxTokenKind.WhileKeyword or
+            SyntaxTokenKind.UpperIdentifier or
+            SyntaxTokenKind.LowerIdentifier or
+            SyntaxTokenKind.DiscardIdentifier or
+            SyntaxTokenKind.NilLiteral or
+            SyntaxTokenKind.BooleanLiteral or
+            SyntaxTokenKind.IntegerLiteral or
+            SyntaxTokenKind.RealLiteral or
+            SyntaxTokenKind.AtomLiteral or
+            SyntaxTokenKind.StringLiteral or
             _ => false,
         };
     }
