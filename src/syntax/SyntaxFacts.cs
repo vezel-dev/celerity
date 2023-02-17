@@ -209,6 +209,16 @@ public static class SyntaxFacts
         };
     }
 
+    public static bool IsBindingIdentifier(SyntaxTokenKind kind)
+    {
+        return kind == SyntaxTokenKind.DiscardIdentifier || IsCodeIdentifier(kind);
+    }
+
+    public static bool IsCodeIdentifier(SyntaxTokenKind kind)
+    {
+        return kind == SyntaxTokenKind.LowerIdentifier || IsTypeKeyword(kind);
+    }
+
     public static bool IsLiteral(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
