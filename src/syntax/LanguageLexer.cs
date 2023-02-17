@@ -155,60 +155,9 @@ internal sealed class LanguageLexer
             SyntaxTokenKind.CloseBracket or
             SyntaxTokenKind.OpenBrace or
             SyntaxTokenKind.CloseBrace or
-            SyntaxTokenKind.AndKeyword or
-            SyntaxTokenKind.AsKeyword or
-            SyntaxTokenKind.AssertKeyword or
-            SyntaxTokenKind.BreakKeyword or
-            SyntaxTokenKind.CatchKeyword or
-            SyntaxTokenKind.CondKeyword or
-            SyntaxTokenKind.ConstKeyword or
-            SyntaxTokenKind.DeferKeyword or
-            SyntaxTokenKind.ElseKeyword or
-            SyntaxTokenKind.ErrKeyword or
-            SyntaxTokenKind.ExtKeyword or
-            SyntaxTokenKind.FnKeyword or
-            SyntaxTokenKind.IfKeyword or
-            SyntaxTokenKind.InKeyword or
-            SyntaxTokenKind.LetKeyword or
-            SyntaxTokenKind.MatchKeyword or
-            SyntaxTokenKind.ModKeyword or
-            SyntaxTokenKind.MutKeyword or
-            SyntaxTokenKind.NextKeyword or
-            SyntaxTokenKind.NotKeyword or
-            SyntaxTokenKind.OpaqueKeyword or
-            SyntaxTokenKind.OrKeyword or
-            SyntaxTokenKind.PubKeyword or
-            SyntaxTokenKind.RaiseKeyword or
-            SyntaxTokenKind.RecKeyword or
-            SyntaxTokenKind.RecvKeyword or
-            SyntaxTokenKind.RetKeyword or
-            SyntaxTokenKind.TailKeyword or
-            SyntaxTokenKind.TestKeyword or
-            SyntaxTokenKind.TypeKeyword or
-            SyntaxTokenKind.UseKeyword or
-            SyntaxTokenKind.WhileKeyword or
-            SyntaxTokenKind.AgentKeyword or
-            SyntaxTokenKind.AnyKeyword or
-            SyntaxTokenKind.AtomKeyword or
-            SyntaxTokenKind.BoolKeyword or
-            SyntaxTokenKind.HandleKeyword or
-            SyntaxTokenKind.IntKeyword or
-            SyntaxTokenKind.NoneKeyword or
-            SyntaxTokenKind.RealKeyword or
-            SyntaxTokenKind.RefKeyword or
-            SyntaxTokenKind.StrKeyword or
-            SyntaxTokenKind.FriendKeyword or
-            SyntaxTokenKind.MacroKeyword or
-            SyntaxTokenKind.MetaKeyword or
-            SyntaxTokenKind.PragmaKeyword or
-            SyntaxTokenKind.QuoteKeyword or
-            SyntaxTokenKind.TryKeyword or
-            SyntaxTokenKind.UnquoteKeyword or
-            SyntaxTokenKind.WithKeyword or
-            SyntaxTokenKind.YieldKeyword or
             SyntaxTokenKind.NilLiteral or
             SyntaxTokenKind.BooleanLiteral => true,
-            _ => false,
+            _ => SyntaxFacts.IsKeyword(kind),
         };
     }
 

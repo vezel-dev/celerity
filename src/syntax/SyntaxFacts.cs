@@ -25,6 +25,7 @@ public static class SyntaxFacts
             "err" => SyntaxTokenKind.ErrKeyword,
             "ext" => SyntaxTokenKind.ExtKeyword,
             "fn" => SyntaxTokenKind.FnKeyword,
+            "for" => SyntaxTokenKind.ForKeyword,
             "if" => SyntaxTokenKind.IfKeyword,
             "in" => SyntaxTokenKind.InKeyword,
             "let" => SyntaxTokenKind.LetKeyword,
@@ -117,6 +118,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.ErrKeyword or
             SyntaxTokenKind.ExtKeyword or
             SyntaxTokenKind.FnKeyword or
+            SyntaxTokenKind.ForKeyword or
             SyntaxTokenKind.IfKeyword or
             SyntaxTokenKind.InKeyword or
             SyntaxTokenKind.LetKeyword or
@@ -264,6 +266,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.CondKeyword or
             SyntaxTokenKind.ErrKeyword or
             SyntaxTokenKind.FnKeyword or
+            SyntaxTokenKind.ForKeyword or
             SyntaxTokenKind.IfKeyword or
             SyntaxTokenKind.MatchKeyword or
             SyntaxTokenKind.MutKeyword or

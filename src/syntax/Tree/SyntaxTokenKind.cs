@@ -45,6 +45,7 @@ public enum SyntaxTokenKind
     ErrKeyword,
     ExtKeyword,
     FnKeyword,
+    ForKeyword,
     IfKeyword,
     InKeyword,
     LetKeyword,
