@@ -23,6 +23,11 @@ internal sealed class SyntaxInputReader<T>
         return Count >= 2 ? (true, _items[_position], _items[_position + 1]) : default;
     }
 
+    public (bool Success, T? First, T? Second, T? Third) Peek3()
+    {
+        return Count >= 3 ? (true, _items[_position], _items[_position + 1], _items[_position + 2]) : default;
+    }
+
     public T Read()
     {
         return _items[_position++];
