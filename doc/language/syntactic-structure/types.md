@@ -5,6 +5,7 @@ type ::= primary-type ('or' primary-type)*
 return-type ::= none-type |
                 type
 primary-type ::= any-type |
+                 literal-type |
                  boolean-type |
                  integer-type |
                  real-type |
@@ -13,8 +14,6 @@ primary-type ::= any-type |
                  reference-type |
                  handle-type |
                  module-type |
-                 literal-type |
-                 range-type |
                  record-type |
                  error-type |
                  tuple-type |
