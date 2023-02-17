@@ -5,7 +5,7 @@ namespace Vezel.Celerity.Semantics.Binding;
 public sealed class VariableSymbol : LocalSymbol
 {
     public override bool IsMutable =>
-        Bindings.Any(decl => decl is PatternVariableBindingSemantics { Syntax.MutKeywordToken: not null });
+        Bindings.Any(decl => decl is VariablePatternBindingSemantics { Syntax.MutKeywordToken: not null });
 
     internal VariableSymbol()
     {
@@ -13,10 +13,10 @@ public sealed class VariableSymbol : LocalSymbol
 
     private protected override string GetName(SemanticNode node)
     {
-        return Unsafe.As<PatternVariableBindingSemantics>(node).Syntax.NameToken.Text;
+        return Unsafe.As<VariablePatternBindingSemantics>(node).Syntax.NameToken.Text;
     }
 
-    internal void AddBinding(PatternVariableBindingSemantics binding)
+    internal void AddBinding(VariablePatternBindingSemantics binding)
     {
         base.AddBinding(binding);
     }

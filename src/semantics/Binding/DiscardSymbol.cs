@@ -10,10 +10,10 @@ public sealed class DiscardSymbol : LocalSymbol
 
     private protected override string GetName(SemanticNode node)
     {
-        return Unsafe.As<PatternDiscardBindingSemantics>(node).Syntax.NameToken.Text;
+        return Unsafe.As<DiscardPatternBindingSemantics>(node).Syntax.NameToken.Text;
     }
 
-    internal void AddBinding(PatternDiscardBindingSemantics binding)
+    internal void AddBinding(DiscardPatternBindingSemantics binding)
     {
         base.AddBinding(binding);
     }

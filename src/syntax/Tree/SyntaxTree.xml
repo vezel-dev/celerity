@@ -136,6 +136,8 @@
 
     <Type Name="Type" Abstract="true" />
 
+    <Type Name="MissingType" Base="Type" />
+
     <Type Name="BooleanType" Base="Type">
         <Token Name="BoolKeyword" />
     </Type>
@@ -210,11 +212,11 @@
 
     <Type Name="AggregateType" Base="Type" Abstract="true">
         <Token Name="OpenBrace" />
-        <Nodes Name="Field" Type="TypeField" Separated="true" />
+        <Nodes Name="Field" Type="AggregateTypeField" Separated="true" />
         <Token Name="CloseBrace" />
     </Type>
 
-    <Type Name="TypeField" Parent="AggregateType">
+    <Type Name="AggregateTypeField" Parent="AggregateType">
         <Token Name="MutKeyword" Optional="true" />
         <Token Name="Name" />
         <Token Name="Colon" />
@@ -224,7 +226,7 @@
     <Type Name="RecordType" Base="AggregateType">
         <Token Name="RecKeyword" />
         <Token Name="OpenBrace" Override="true" />
-        <Nodes Name="Field" Type="TypeField" Separated="true" Override="true" />
+        <Nodes Name="Field" Type="AggregateTypeField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
     </Type>
 
@@ -232,7 +234,7 @@
         <Token Name="ErrKeyword" />
         <Token Name="Name" Optional="true" />
         <Token Name="OpenBrace" Override="true" />
-        <Nodes Name="Field" Type="TypeField" Separated="true" Override="true" />
+        <Nodes Name="Field" Type="AggregateTypeField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
     </Type>
 
@@ -411,11 +413,11 @@
 
     <Type Name="AggregateExpression" Base="ValueExpression" Abstract="true">
         <Token Name="OpenBrace" />
-        <Nodes Name="Field" Type="ExpressionField" Separated="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" />
         <Token Name="CloseBrace" />
     </Type>
 
-    <Type Name="ExpressionField" Parent="AggregateExpression">
+    <Type Name="AggregateExpressionField" Parent="AggregateExpression">
         <Token Name="MutKeyword" Optional="true" />
         <Token Name="Name" />
         <Token Name="Colon" />
@@ -425,7 +427,7 @@
     <Type Name="RecordExpression" Base="AggregateExpression">
         <Token Name="RecKeyword" />
         <Token Name="OpenBrace" Override="true" />
-        <Nodes Name="Field" Type="ExpressionField" Separated="true" Override="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
     </Type>
 
@@ -433,7 +435,7 @@
         <Token Name="ErrKeyword" />
         <Token Name="Name" />
         <Token Name="OpenBrace" Override="true" />
-        <Nodes Name="Field" Type="ExpressionField" Separated="true" Override="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
     </Type>
 
@@ -543,10 +545,10 @@
         <Token Name="IfKeyword" />
         <Node Name="Condition" Type="Expression" />
         <Node Name="Body" Type="BlockExpression" />
-        <Node Name="Else" Type="IfExpressionElse" Optional="true" />
+        <Node Name="Else" Type="ExpressionElse" Optional="true" />
     </Type>
 
-    <Type Name="IfExpressionElse" Parent="IfExpression">
+    <Type Name="ExpressionElse" Parent="Expression">
         <Token Name="ElseKeyword" />
         <Node Name="Body" Type="BlockExpression" />
     </Type>
@@ -575,19 +577,19 @@
         <Token Name="MatchKeyword" />
         <Node Name="Operand" Type="Expression" />
         <Token Name="OpenBrace" />
-        <Nodes Name="Arm" Type="PatternArm" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" />
         <Token Name="CloseBrace" />
     </Type>
 
-    <Type Name="PatternArm" Base="ExpressionArm">
+    <Type Name="ExpressionPatternArm" Base="ExpressionArm">
         <Node Name="Pattern" Type="Pattern" />
-        <Node Name="Guard" Type="ArmGuard" Optional="true" />
+        <Node Name="Guard" Type="ExpressionArmGuard" Optional="true" />
         <Token Name="Arrow" Override="true" />
         <Node Name="Body" Type="Expression" Override="true" />
         <Token Name="Semicolon" Override="true" />
     </Type>
 
-    <Type Name="ArmGuard" Parent="ExpressionArm">
+    <Type Name="ExpressionArmGuard" Parent="ExpressionArm">
         <Token Name="IfKeyword" />
         <Node Name="Condition" Type="Expression" />
     </Type>
@@ -597,13 +599,13 @@
         <Token Name="OpenBrace" />
         <Nodes Name="Arm" Type="ReceiveExpressionArm" />
         <Token Name="CloseBrace" />
-        <Node Name="Else" Type="ReceiveExpressionElse" Optional="true" />
+        <Node Name="Else" Type="ExpressionElse" Optional="true" />
     </Type>
 
     <Type Name="ReceiveExpressionArm" Base="ExpressionArm" Parent="ReceiveExpression">
         <Token Name="Name" />
         <Node Name="ParameterList" Type="ReceiveParameterList" />
-        <Node Name="Guard" Type="ArmGuard" Optional="true" />
+        <Node Name="Guard" Type="ExpressionArmGuard" Optional="true" />
         <Token Name="Arrow" Override="true" />
         <Node Name="Body" Type="Expression" Override="true" />
         <Token Name="Semicolon" Override="true" />
@@ -619,23 +621,13 @@
         <Node Name="Pattern" Type="Pattern" />
     </Type>
 
-    <Type Name="ReceiveExpressionElse" Parent="ReceiveExpression">
-        <Token Name="ElseKeyword" />
-        <Node Name="Body" Type="BlockExpression" />
-    </Type>
-
     <Type Name="LoopExpression" Base="ControlExpression" Abstract="true" />
 
     <Type Name="WhileExpression" Base="LoopExpression">
         <Token Name="WhileKeyword" />
         <Node Name="Condition" Type="Expression" />
         <Node Name="Body" Type="BlockExpression" />
-        <Node Name="Else" Type="WhileExpressionElse" Optional="true" />
-    </Type>
-
-    <Type Name="WhileExpressionElse" Parent="WhileExpression">
-        <Token Name="ElseKeyword" />
-        <Node Name="Body" Type="BlockExpression" />
+        <Node Name="Else" Type="ExpressionElse" Optional="true" />
     </Type>
 
     <Type Name="ForExpression" Base="LoopExpression">
@@ -644,12 +636,7 @@
         <Token Name="InKeyword" />
         <Node Name="Collection" Type="Expression" />
         <Node Name="Body" Type="BlockExpression" />
-        <Node Name="Else" Type="ForExpressionElse" Optional="true" />
-    </Type>
-
-    <Type Name="ForExpressionElse" Parent="ForExpression">
-        <Token Name="ElseKeyword" />
-        <Node Name="Body" Type="BlockExpression" />
+        <Node Name="Else" Type="ExpressionElse" Optional="true" />
     </Type>
 
     <Type Name="BranchExpression" Base="ControlExpression" Abstract="true" />
@@ -703,14 +690,18 @@
         <Node Name="RightOperand" Type="Expression" />
     </Type>
 
-    <Type Name="FieldExpression" Base="Expression">
+    <Type Name="PostfixExpression" Base="Expression" Abstract="true">
         <Node Name="Subject" Type="Expression" />
+    </Type>
+
+    <Type Name="FieldExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
         <Token Name="Dot" />
         <Token Name="Name" />
     </Type>
 
-    <Type Name="IndexExpression" Base="Expression">
-        <Node Name="Subject" Type="Expression" />
+    <Type Name="IndexExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
         <Node Name="ArgumentList" Type="IndexArgumentList" />
     </Type>
 
@@ -720,8 +711,8 @@
         <Token Name="CloseBracket" />
     </Type>
 
-    <Type Name="CallExpression" Base="Expression">
-        <Node Name="Subject" Type="Expression" />
+    <Type Name="CallExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
         <Node Name="ArgumentList" Type="CallArgumentList" />
         <Node Name="Try" Type="CallExpressionTry" Optional="true" />
     </Type>
@@ -740,12 +731,12 @@
     <Type Name="CallExpressionTryCatch" Parent="CallExpressionTry">
         <Token Name="CatchKeyword" />
         <Token Name="OpenBrace" />
-        <Nodes Name="Arm" Type="PatternArm" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" />
         <Token Name="CloseBrace" />
     </Type>
 
-    <Type Name="SendExpression" Base="Expression">
-        <Node Name="Target" Type="Expression" />
+    <Type Name="SendExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
         <Token Name="Arrow" />
         <Token Name="Name" />
         <Node Name="ArgumentList" Type="SendArgumentList" />
@@ -765,19 +756,23 @@
 
     <Type Name="PatternAlias" Parent="Pattern">
         <Token Name="AsKeyword" />
-        <Node Name="Binding" Type="PatternVariableBinding" />
+        <Node Name="Binding" Type="VariablePatternBinding" />
     </Type>
 
     <Type Name="PatternBinding" Parent="Pattern" Abstract="true">
         <Token Name="Name" />
     </Type>
 
-    <Type Name="PatternVariableBinding" Parent="Pattern" Base="PatternBinding">
+    <Type Name="MissingPatternBinding" Parent="Pattern" Base="PatternBinding">
+        <Token Name="Name" Override="true" />
+    </Type>
+
+    <Type Name="VariablePatternBinding" Parent="Pattern" Base="PatternBinding">
         <Token Name="MutKeyword" Optional="true" />
         <Token Name="Name" Override="true" />
     </Type>
 
-    <Type Name="PatternDiscardBinding" Parent="Pattern" Base="PatternBinding">
+    <Type Name="DiscardPatternBinding" Parent="Pattern" Base="PatternBinding">
         <Token Name="Name" Override="true" />
     </Type>
 
@@ -812,11 +807,11 @@
 
     <Type Name="AggregatePattern" Base="Pattern" Abstract="true">
         <Token Name="OpenBrace" />
-        <Nodes Name="Field" Type="PatternField" Separated="true" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" />
         <Token Name="CloseBrace" />
     </Type>
 
-    <Type Name="PatternField" Parent="AggregatePattern">
+    <Type Name="AggregatePatternField" Parent="AggregatePattern">
         <Token Name="Name" />
         <Token Name="Colon" />
         <Node Name="Pattern" Type="Pattern" />
@@ -825,16 +820,16 @@
     <Type Name="RecordPattern" Base="AggregatePattern">
         <Token Name="RecKeyword" />
         <Token Name="OpenBrace" Override="true" />
-        <Nodes Name="Field" Type="PatternField" Separated="true" Override="true" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
         <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
 
     <Type Name="ErrorPattern" Base="AggregatePattern">
         <Token Name="ErrKeyword" />
-        <Token Name="Name" />
+        <Token Name="Name" Optional="true" />
         <Token Name="OpenBrace" Override="true" />
-        <Nodes Name="Field" Type="PatternField" Separated="true" Override="true" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
         <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
