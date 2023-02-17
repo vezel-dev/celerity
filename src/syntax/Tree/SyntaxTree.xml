@@ -397,6 +397,8 @@
 
     <Type Name="Expression" Abstract="true" />
 
+    <Type Name="MissingExpression" Base="Expression" />
+
     <Type Name="ValueExpression" Base="Expression" Abstract="true" />
 
     <Type Name="LiteralExpression" Base="ValueExpression">
