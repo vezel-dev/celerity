@@ -59,7 +59,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        Error(missing, next?.Location, "Expected lowercase identifier");
+        ErrorExpected(missing, next?.Location, "lowercase identifier");
 
         return missing;
     }
@@ -74,7 +74,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        Error(missing, next?.Location, "Expected lowercase or discard identifier");
+        ErrorExpected(missing, next?.Location, "lowercase or discard identifier");
 
         return missing;
     }
@@ -88,7 +88,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        Error(missing, next?.Location, "Expected real or integer literal");
+        ErrorExpected(missing, next?.Location, "real or integer literal");
 
         return missing;
     }
@@ -108,7 +108,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        Error(missing, next?.Location, "Expected literal");
+        ErrorExpected(missing, next?.Location, "literal");
 
         return missing;
     }
@@ -123,10 +123,10 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        Error(
+        ErrorExpected(
             missing,
             next?.Location,
-            $"Expected {SyntaxFacts.GetFriendlyName(kind1)} or {SyntaxFacts.GetFriendlyName(kind2)}");
+            $"{SyntaxFacts.GetFriendlyName(kind1)} or {SyntaxFacts.GetFriendlyName(kind2)}");
 
         return missing;
     }
@@ -140,7 +140,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        Error(missing, next?.Location, $"Expected {SyntaxFacts.GetFriendlyName(kind)}");
+        ErrorExpected(missing, next?.Location, SyntaxFacts.GetFriendlyName(kind));
 
         return missing;
     }
@@ -165,10 +165,11 @@ internal sealed class LanguageParser
         return new(_path);
     }
 
-    private void Error(SyntaxItem item, SourceLocation? location, string message)
+    private void ErrorExpected(SyntaxItem item, SourceLocation? location, string expected)
     {
         _diagnostics.Add(
-            SourceDiagnostic.Create(item, SourceDiagnosticSeverity.Error, location ?? _eoiLocation, message));
+            SourceDiagnostic.Create(
+                item, SourceDiagnosticSeverity.Error, location ?? _eoiLocation, $"Expected {expected}"));
     }
 
     private static ImmutableArray<T>.Builder Builder<T>()
@@ -229,7 +230,7 @@ internal sealed class LanguageParser
                 {
                     var first = skipped[0];
 
-                    Error(first, first.Location, "Expected declaration");
+                    ErrorExpected(first, first.Location, "declaration");
 
                     decls.Add(new MissingDeclarationSyntax(DrainList(dattrs), Missing(), DrainList(skipped)));
                 }
@@ -274,7 +275,7 @@ internal sealed class LanguageParser
                 {
                     var first = skipped[0];
 
-                    Error(first, first.Location, "Expected declaration or statement");
+                    ErrorExpected(first, first.Location, "declaration or statement");
 
                     stmts.Add(new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), semicolon ?? Missing()));
                 }
@@ -530,7 +531,7 @@ internal sealed class LanguageParser
         };
 
         if (type is MissingTypeSyntax)
-            Error(type, Peek1()?.Location, "Expected type");
+            ErrorExpected(type, Peek1()?.Location, "type");
 
         return type;
     }
@@ -1176,7 +1177,7 @@ internal sealed class LanguageParser
         };
 
         if (expr is MissingExpressionSyntax)
-            Error(expr, Peek1()?.Location, "Expected expression");
+            ErrorExpected(expr, Peek1()?.Location, "expression");
 
         return ParsePostfixExpression(expr);
     }
@@ -1227,7 +1228,7 @@ internal sealed class LanguageParser
                 {
                     var first = skipped[0];
 
-                    Error(first, first.Location, "Expected statement");
+                    ErrorExpected(first, first.Location, "statement");
 
                     stmts.Add(new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), semicolon ?? Missing()));
                 }
@@ -1843,7 +1844,7 @@ internal sealed class LanguageParser
         };
 
         if (pat is MissingPatternSyntax)
-            Error(pat, Peek1()?.Location, "Expected pattern");
+            ErrorExpected(pat, Peek1()?.Location, "pattern");
 
         return pat;
     }
@@ -1868,7 +1869,7 @@ internal sealed class LanguageParser
         };
 
         if (binding is MissingPatternBindingSyntax)
-            Error(binding, next?.Location, "Expected pattern binding");
+            ErrorExpected(binding, next?.Location, "pattern binding");
 
         return binding;
     }

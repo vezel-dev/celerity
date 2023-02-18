@@ -66,10 +66,9 @@ internal sealed class LanguageLexer
             token => SourceDiagnostic.Create(token, SourceDiagnosticSeverity.Error, location, message));
     }
 
-    private void ErrorExpected(string expected, char? found)
+    private void ErrorExpected(string expected)
     {
-        // TODO: Better printing of special characters (white space, control, etc).
-        Error(_location, $"Expected {expected}, but found {(found != null ? $"'{found}'" : "end of input")}");
+        Error(_location, $"Expected {expected}");
     }
 
     private SyntaxTrivia CreateTrivia(SourceLocation location, SyntaxTriviaKind kind)
@@ -348,8 +347,7 @@ internal sealed class LanguageLexer
                 {
                     Advance();
 
-                    // TODO: Better printing of special characters (white space, control, etc).
-                    Error(location, $"Unrecognized character '{cur}'");
+                    Error(location, $"Unrecognized character");
                 }
 
                 LexTrivia(_location, _trailing);
@@ -459,7 +457,7 @@ internal sealed class LanguageLexer
 
         if (ch1 == '!')
         {
-            ErrorExpected("'='", ch2);
+            ErrorExpected("'='");
 
             return (location, SyntaxTokenKind.ExclamationEquals);
         }
@@ -570,7 +568,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(radix) && radix != 10)
         {
-            ErrorExpected($"base-{radix} digit", Peek1());
+            ErrorExpected($"base-{radix} digit");
 
             return (location, SyntaxTokenKind.IntegerLiteral);
         }
@@ -583,7 +581,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(10))
         {
-            ErrorExpected("digit", Peek1());
+            ErrorExpected("digit");
 
             return (location, SyntaxTokenKind.RealLiteral);
         }
@@ -598,7 +596,7 @@ internal sealed class LanguageLexer
             Advance();
 
         if (!ConsumeDigits(10))
-            ErrorExpected("digit", Peek1());
+            ErrorExpected("digit");
 
         return (location, SyntaxTokenKind.RealLiteral);
     }
@@ -645,7 +643,7 @@ internal sealed class LanguageLexer
 
             if (cur is null or '\n' or '\r')
             {
-                ErrorExpected("closing '\"'", cur);
+                ErrorExpected("closing '\"'");
 
                 break;
             }
@@ -676,7 +674,7 @@ internal sealed class LanguageLexer
 
                         if (digit is not (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F'))
                         {
-                            ErrorExpected("Unicode escape sequence digit", digit);
+                            ErrorExpected("Unicode escape sequence digit");
 
                             break;
                         }
@@ -685,11 +683,11 @@ internal sealed class LanguageLexer
                     }
 
                     if (!Rune.IsValid(int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture)))
-                        Error(loc, $"Expected valid Unicode escape sequence, but found '{hex}'");
+                        Error(loc, $"Invalid Unicode escape sequence");
 
                     break;
                 default:
-                    ErrorExpected("escape sequence code", code);
+                    ErrorExpected("escape sequence code");
                     break;
             }
         }
