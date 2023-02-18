@@ -1240,22 +1240,34 @@ internal sealed class LanguageParser
 
             while (Peek1() is { IsEndOfInput: false } next)
             {
+                // We might be looking at a declaration because the user has not yet closed the current block
+                // expression. If so, stop parsing this block so we can properly parse the declaration.
+                //
+                // Note these ambiguities:
+                //
+                // {
+                //     fn() {};
+                //     use _ = foo();
+                // }
+                //
+                // The fn and use keywords could be confused with declarations. For those cases, we need to look ahead.
+                if (SyntaxFacts.IsDeclarationStarter(next.Kind) &&
+                    Peek2() is not (
+                        ({ Kind: SyntaxTokenKind.FnKeyword }, { Kind: SyntaxTokenKind.OpenParen }) or
+                        ({ Kind: SyntaxTokenKind.UseKeyword }, { Kind: not SyntaxTokenKind.UpperIdentifier })))
+                {
+                    DrainToMissingStatement(null);
+
+                    decl = true;
+
+                    break;
+                }
+
                 if (SyntaxFacts.IsStatementStarter(next.Kind))
                 {
                     DrainToMissingStatement(null);
 
                     stmts.Add(ParseStatement(attrs, false));
-
-                    break;
-                }
-
-                if (SyntaxFacts.IsDeclarationStarter(next.Kind))
-                {
-                    DrainToMissingStatement(null);
-
-                    // We are probably looking at a declaration because the user has not yet closed the current block
-                    // expression. Stop parsing this block so we can properly parse the declaration.
-                    decl = true;
 
                     break;
                 }
