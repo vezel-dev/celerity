@@ -1510,15 +1510,28 @@ internal sealed class LanguageParser
         var cond = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var arms = Builder<ConditionExpressionArmSyntax>();
+        var seps = Builder<SyntaxToken>();
 
         arms.Add(ParseConditionExpressionArm());
 
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            arms.Add(ParseConditionExpressionArm());
+        if (Optional(SyntaxTokenKind.Comma) is { } comma)
+        {
+            seps.Add(comma);
+
+            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
+            {
+                arms.Add(ParseConditionExpressionArm());
+
+                if (Peek1()?.Kind != SyntaxTokenKind.Comma)
+                    break;
+
+                seps.Add(Read());
+            }
+        }
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(cond, open, List(arms), close);
+        return new(cond, open, List(arms, seps), close);
     }
 
     private ConditionExpressionArmSyntax ParseConditionExpressionArm()
@@ -1526,9 +1539,8 @@ internal sealed class LanguageParser
         var condition = ParseExpression();
         var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
         var body = ParseExpression();
-        var semi = Expect(SyntaxTokenKind.Semicolon);
 
-        return new(condition, arrow, body, semi);
+        return new(condition, arrow, body);
     }
 
     private MatchExpressionSyntax ParseMatchExpression()
@@ -1537,15 +1549,28 @@ internal sealed class LanguageParser
         var oper = ParseExpression();
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var arms = Builder<ExpressionPatternArmSyntax>();
+        var seps = Builder<SyntaxToken>();
 
         arms.Add(ParseExpressionPatternArm());
 
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            arms.Add(ParseExpressionPatternArm());
+        if (Optional(SyntaxTokenKind.Comma) is { } comma)
+        {
+            seps.Add(comma);
+
+            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
+            {
+                arms.Add(ParseExpressionPatternArm());
+
+                if (Peek1()?.Kind != SyntaxTokenKind.Comma)
+                    break;
+
+                seps.Add(Read());
+            }
+        }
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(match, oper, open, List(arms), close);
+        return new(match, oper, open, List(arms, seps), close);
     }
 
     private ExpressionPatternArmSyntax ParseExpressionPatternArm()
@@ -1554,9 +1579,8 @@ internal sealed class LanguageParser
         var guard = Peek1()?.Kind == SyntaxTokenKind.IfKeyword ? ParseExpressionArmGuard() : null;
         var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
         var body = ParseExpression();
-        var semi = Expect(SyntaxTokenKind.Semicolon);
 
-        return new(pat, guard, arrow, body, semi);
+        return new(pat, guard, arrow, body);
     }
 
     private ExpressionArmGuardSyntax ParseExpressionArmGuard()
@@ -1572,16 +1596,29 @@ internal sealed class LanguageParser
         var recv = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var arms = Builder<ReceiveExpressionArmSyntax>();
+        var seps = Builder<SyntaxToken>();
 
         arms.Add(ParseReceiveExpressionArm());
 
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            arms.Add(ParseReceiveExpressionArm());
+        if (Optional(SyntaxTokenKind.Comma) is { } comma)
+        {
+            seps.Add(comma);
+
+            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
+            {
+                arms.Add(ParseReceiveExpressionArm());
+
+                if (Peek1()?.Kind != SyntaxTokenKind.Comma)
+                    break;
+
+                seps.Add(Read());
+            }
+        }
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var @else = Peek1()?.Kind == SyntaxTokenKind.ElseKeyword ? ParseExpressionElse() : null;
 
-        return new(recv, open, List(arms), close, @else);
+        return new(recv, open, List(arms, seps), close, @else);
     }
 
     private ReceiveExpressionArmSyntax ParseReceiveExpressionArm()
@@ -1591,9 +1628,8 @@ internal sealed class LanguageParser
         var guard = Peek1()?.Kind == SyntaxTokenKind.IfKeyword ? ParseExpressionArmGuard() : null;
         var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
         var body = ParseExpression();
-        var semi = Expect(SyntaxTokenKind.Semicolon);
 
-        return new(name, parms, guard, arrow, body, semi);
+        return new(name, parms, guard, arrow, body);
     }
 
     private ReceiveParameterListSyntax ParseReceiveParameterList()
@@ -1795,15 +1831,28 @@ internal sealed class LanguageParser
         var @catch = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var arms = Builder<ExpressionPatternArmSyntax>();
+        var seps = Builder<SyntaxToken>();
 
         arms.Add(ParseExpressionPatternArm());
 
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            arms.Add(ParseExpressionPatternArm());
+        if (Optional(SyntaxTokenKind.Comma) is { } comma)
+        {
+            seps.Add(comma);
+
+            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
+            {
+                arms.Add(ParseExpressionPatternArm());
+
+                if (Peek1()?.Kind != SyntaxTokenKind.Comma)
+                    break;
+
+                seps.Add(Read());
+            }
+        }
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(@catch, open, List(arms), close);
+        return new(@catch, open, List(arms, seps), close);
     }
 
     private SendExpressionSyntax ParseSendExpression(ExpressionSyntax subject)

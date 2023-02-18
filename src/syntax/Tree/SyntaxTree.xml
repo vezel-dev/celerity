@@ -556,28 +556,26 @@
     <Type Name="ConditionExpression" Base="ConditionalExpression">
         <Token Name="CondKeyword" />
         <Token Name="OpenBrace" />
-        <Nodes Name="Arm" Type="ConditionExpressionArm" />
+        <Nodes Name="Arm" Type="ConditionExpressionArm" Separated="true" />
         <Token Name="CloseBrace" />
     </Type>
 
     <Type Name="ExpressionArm" Parent="Expression" Abstract="true">
         <Token Name="Arrow" />
         <Node Name="Body" Type="Expression" />
-        <Token Name="Semicolon" />
     </Type>
 
     <Type Name="ConditionExpressionArm" Base="ExpressionArm" Parent="ConditionExpression">
         <Node Name="Condition" Type="Expression" />
         <Token Name="Arrow" Override="true" />
         <Node Name="Body" Type="Expression" Override="true" />
-        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="MatchExpression" Base="ConditionalExpression">
         <Token Name="MatchKeyword" />
         <Node Name="Operand" Type="Expression" />
         <Token Name="OpenBrace" />
-        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
         <Token Name="CloseBrace" />
     </Type>
 
@@ -586,7 +584,6 @@
         <Node Name="Guard" Type="ExpressionArmGuard" Optional="true" />
         <Token Name="Arrow" Override="true" />
         <Node Name="Body" Type="Expression" Override="true" />
-        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="ExpressionArmGuard" Parent="ExpressionArm">
@@ -597,7 +594,7 @@
     <Type Name="ReceiveExpression" Base="ConditionalExpression">
         <Token Name="RecvKeyword" />
         <Token Name="OpenBrace" />
-        <Nodes Name="Arm" Type="ReceiveExpressionArm" />
+        <Nodes Name="Arm" Type="ReceiveExpressionArm" Separated="true" />
         <Token Name="CloseBrace" />
         <Node Name="Else" Type="ExpressionElse" Optional="true" />
     </Type>
@@ -608,7 +605,6 @@
         <Node Name="Guard" Type="ExpressionArmGuard" Optional="true" />
         <Token Name="Arrow" Override="true" />
         <Node Name="Body" Type="Expression" Override="true" />
-        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="ReceiveParameterList" Parent="ReceiveExpressionArm">
@@ -731,7 +727,7 @@
     <Type Name="CallExpressionTryCatch" Parent="CallExpressionTry">
         <Token Name="CatchKeyword" />
         <Token Name="OpenBrace" />
-        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
         <Token Name="CloseBrace" />
     </Type>
 
