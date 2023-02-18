@@ -469,6 +469,8 @@ internal sealed class LanguageParser
         {
             parms.Add(ParseFunctionParameter());
 
+            // TODO: The way we parse the parameter list (and other similar syntax nodes) causes the parser to
+            // misinterpret the entire function body for some invalid inputs. We need to do better here.
             while (Peek1()?.Kind == SyntaxTokenKind.Comma)
             {
                 seps.Add(Read());
