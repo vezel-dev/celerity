@@ -882,15 +882,12 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenParen);
         var (args, seps) = SeparatedBuilder<TypeSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
-        {
-            args.Add(ParseType());
+        args.Add(ParseType());
 
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                args.Add(ParseType());
-            }
+        while (Optional(SyntaxTokenKind.Comma) is { } sep)
+        {
+            seps.Add(sep);
+            args.Add(ParseType());
         }
 
         var close = Expect(SyntaxTokenKind.CloseParen);
