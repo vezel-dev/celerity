@@ -1772,15 +1772,12 @@ internal sealed class LanguageParser
         var args = Builder<ExpressionSyntax>();
         var seps = Builder<SyntaxToken>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseBracket)
-        {
-            args.Add(ParseExpression());
+        args.Add(ParseExpression());
 
-            while (Peek1()?.Kind == SyntaxTokenKind.Comma)
-            {
-                seps.Add(Read());
-                args.Add(ParseExpression());
-            }
+        while (Peek1()?.Kind == SyntaxTokenKind.Comma)
+        {
+            seps.Add(Read());
+            args.Add(ParseExpression());
         }
 
         var close = Expect(SyntaxTokenKind.CloseBracket);
