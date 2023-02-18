@@ -3,7 +3,7 @@ using Vezel.Celerity.Syntax.Tree;
 
 namespace Vezel.Celerity.Syntax;
 
-public sealed class SyntaxTree
+public sealed class SyntaxAnalysis
 {
     public DocumentSyntax Document { get; }
 
@@ -11,13 +11,13 @@ public sealed class SyntaxTree
 
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
-    private SyntaxTree(DocumentSyntax document, ImmutableArray<SourceDiagnostic> diagnostics)
+    private SyntaxAnalysis(DocumentSyntax document, ImmutableArray<SourceDiagnostic> diagnostics)
     {
         Document = document;
         Diagnostics = diagnostics;
     }
 
-    public static SyntaxTree Parse(SourceText text, SyntaxMode mode)
+    public static SyntaxAnalysis Create(SourceText text, SyntaxMode mode)
     {
         Check.Null(text);
         Check.Enum(mode);

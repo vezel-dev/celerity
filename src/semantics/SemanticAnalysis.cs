@@ -3,9 +3,9 @@ using Vezel.Celerity.Semantics.Tree;
 
 namespace Vezel.Celerity.Semantics;
 
-public sealed class SemanticTree
+public sealed class SemanticAnalysis
 {
-    public SyntaxTree Syntax { get; }
+    public SyntaxAnalysis Syntax { get; }
 
     public DocumentSemantics Document { get; }
 
@@ -13,14 +13,14 @@ public sealed class SemanticTree
 
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
-    private SemanticTree(SyntaxTree syntax, DocumentSemantics document, ImmutableArray<SourceDiagnostic> diagnostics)
+    private SemanticAnalysis(SyntaxAnalysis syntax, DocumentSemantics document, ImmutableArray<SourceDiagnostic> diagnostics)
     {
         Syntax = syntax;
         Document = document;
         Diagnostics = diagnostics;
     }
 
-    public static SemanticTree Analyze(SyntaxTree syntax)
+    public static SemanticAnalysis Create(SyntaxAnalysis syntax)
     {
         Check.Null(syntax);
 
