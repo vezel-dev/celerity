@@ -1219,7 +1219,7 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var stmts = Builder<StatementSyntax>();
 
-        while (Peek1()?.Kind != SyntaxTokenKind.CloseBrace)
+        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
         {
             var attrs = ParseAttributes();
             var skipped = Builder<SyntaxToken>();
