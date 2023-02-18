@@ -109,7 +109,7 @@ internal sealed class LanguageLexer
                 SyntaxTokenKind.NilLiteral => CreateNil(),
                 SyntaxTokenKind.BooleanLiteral => CreateBoolean(text),
                 SyntaxTokenKind.IntegerLiteral => CreateInteger(text),
-                SyntaxTokenKind.RealLiteral => CreateReal(text),
+                SyntaxTokenKind.RealLiteral => CreateReal(location, text),
                 SyntaxTokenKind.AtomLiteral => CreateAtom(text),
                 SyntaxTokenKind.StringLiteral => CreateString(text),
                 _ => null,
@@ -206,13 +206,19 @@ internal sealed class LanguageLexer
         return result;
     }
 
-    private static double CreateReal(string text)
+    private double? CreateReal(SourceLocation location, string text)
     {
-        // TODO: This can return PositiveInfinity/NegativeInfinity for overflow. We need to handle that.
-        return double.Parse(
+        var value = double.Parse(
             text.Replace("_", null, StringComparison.Ordinal),
             NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent,
             CultureInfo.InvariantCulture);
+
+        if (!double.IsInfinity(value))
+            return value;
+
+        Error(location, "Real literal is out of range");
+
+        return null;
     }
 
     private static ReadOnlyMemory<char> CreateAtom(string text)
