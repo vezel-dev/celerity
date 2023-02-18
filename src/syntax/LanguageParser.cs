@@ -1214,7 +1214,7 @@ internal sealed class LanguageParser
 
     private BlockExpressionSyntax ParseBlockExpression()
     {
-        var open = Read();
+        var open = Expect(SyntaxTokenKind.OpenBrace);
         var stmts = Builder<StatementSyntax>();
 
         while (Peek1()?.Kind != SyntaxTokenKind.CloseBrace)
