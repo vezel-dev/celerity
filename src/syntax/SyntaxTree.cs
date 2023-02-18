@@ -26,12 +26,13 @@ public sealed class SyntaxTree
 
         return new(
             new LanguageParser(
+                text.Path,
                 new LanguageLexer(
                     text,
                     mode,
                     diags).Lex(),
                 mode,
-                diags).Parse(),
+                diags).ParseDocument(),
             diags.ToImmutable());
     }
 }
