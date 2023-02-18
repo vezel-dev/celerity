@@ -225,6 +225,8 @@ public static class SyntaxFacts
 
         return kind switch
         {
+            SyntaxTokenKind.NilLiteral or
+            SyntaxTokenKind.BooleanLiteral or
             SyntaxTokenKind.IntegerLiteral or
             SyntaxTokenKind.RealLiteral or
             SyntaxTokenKind.AtomLiteral or
