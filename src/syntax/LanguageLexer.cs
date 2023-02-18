@@ -181,17 +181,17 @@ internal sealed class LanguageLexer
         else if (text.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             radix = 16;
 
-        var str = text.AsSpan();
+        var span = text.AsSpan();
 
         // Strip base prefix.
         if (radix != 10)
-            str = str[2..];
+            span = span[2..];
 
         var result = BigInteger.Zero;
 
         try
         {
-            foreach (var ch in str)
+            foreach (var ch in span)
             {
                 if (ch == '_')
                     continue;
@@ -205,7 +205,7 @@ internal sealed class LanguageLexer
                 };
             }
         }
-        catch (Exception e) when (e is OutOfMemoryException or OverflowException)
+        catch (Exception ex) when (ex is OutOfMemoryException or OverflowException)
         {
             Error(location, "Integer literal is too large");
 
@@ -554,7 +554,7 @@ internal sealed class LanguageLexer
 
         bool ConsumeDigits(int radix)
         {
-            var good = false;
+            var ok = false;
 
             while (true)
             {
@@ -565,12 +565,12 @@ internal sealed class LanguageLexer
                     case (8 or 10 or 16, >= '2' and <= '7'):
                     case (10 or 16, >= '8' and <= '9'):
                     case (16, (>= 'a' and <= 'f') or (>= 'A' and <= 'F')):
-                        good = true;
+                        ok = true;
 
                         Advance();
                         continue;
-                    case (_, '_') when good:
-                        good = false;
+                    case (_, '_') when ok:
+                        ok = false;
 
                         Advance();
                         continue;
@@ -581,7 +581,7 @@ internal sealed class LanguageLexer
                 break;
             }
 
-            return good;
+            return ok;
         }
 
         if (!ConsumeDigits(radix) && radix != 10)
@@ -657,9 +657,7 @@ internal sealed class LanguageLexer
 
         while (true)
         {
-            var cur = Peek1();
-
-            if (cur is null or '\n' or '\r')
+            if (Peek1() is null or '\n' or '\r')
             {
                 ErrorExpected("closing '\"'");
 
@@ -674,9 +672,7 @@ internal sealed class LanguageLexer
             if (ch != '\\')
                 continue;
 
-            var code = Peek1();
-
-            switch (code)
+            switch (Peek1())
             {
                 case '0' or 'n' or 'N' or 'r' or 'R' or 't' or 'T' or '"' or '\\':
                     Advance();
