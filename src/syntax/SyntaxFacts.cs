@@ -138,7 +138,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.TestKeyword or
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
-            SyntaxTokenKind.WhileKeyword or
+            SyntaxTokenKind.WhileKeyword => true,
             _ => false,
         };
     }
@@ -158,7 +158,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.NoneKeyword or
             SyntaxTokenKind.RealKeyword or
             SyntaxTokenKind.RefKeyword or
-            SyntaxTokenKind.StrKeyword or
+            SyntaxTokenKind.StrKeyword => true,
             _ => false,
         };
     }
@@ -255,7 +255,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.AssertKeyword or
             SyntaxTokenKind.DeferKeyword or
             SyntaxTokenKind.LetKeyword or
-            SyntaxTokenKind.UseKeyword or
+            SyntaxTokenKind.UseKeyword => true,
             _ => IsExpressionStarter(kind),
         };
     }
@@ -296,7 +296,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.IntegerLiteral or
             SyntaxTokenKind.RealLiteral or
             SyntaxTokenKind.AtomLiteral or
-            SyntaxTokenKind.StringLiteral or
+            SyntaxTokenKind.StringLiteral => true,
             _ => false,
         };
     }
