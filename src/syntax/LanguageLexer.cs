@@ -108,7 +108,7 @@ internal sealed class LanguageLexer
                 _ when _currentDiagnostics.Count != 0 => null,
                 SyntaxTokenKind.NilLiteral => CreateNil(),
                 SyntaxTokenKind.BooleanLiteral => CreateBoolean(text),
-                SyntaxTokenKind.IntegerLiteral => CreateInteger(text),
+                SyntaxTokenKind.IntegerLiteral => CreateInteger(location, text),
                 SyntaxTokenKind.RealLiteral => CreateReal(location, text),
                 SyntaxTokenKind.AtomLiteral => CreateAtom(text),
                 SyntaxTokenKind.StringLiteral => CreateString(text),
@@ -170,7 +170,7 @@ internal sealed class LanguageLexer
         return text == "true";
     }
 
-    private static BigInteger CreateInteger(string text)
+    private BigInteger? CreateInteger(SourceLocation location, string text)
     {
         var radix = 10;
 
@@ -189,18 +189,27 @@ internal sealed class LanguageLexer
 
         var result = BigInteger.Zero;
 
-        foreach (var ch in str)
+        try
         {
-            if (ch == '_')
-                continue;
-
-            result = result * radix + ch switch
+            foreach (var ch in str)
             {
-                >= '0' and <= '9' => ch - '0',
-                >= 'a' and <= 'z' => ch - 'a' + 10,
-                >= 'A' and <= 'Z' => ch - 'A' + 10,
-                _ => throw new UnreachableException(),
-            };
+                if (ch == '_')
+                    continue;
+
+                result = result * radix + ch switch
+                {
+                    >= '0' and <= '9' => ch - '0',
+                    >= 'a' and <= 'z' => ch - 'a' + 10,
+                    >= 'A' and <= 'Z' => ch - 'A' + 10,
+                    _ => throw new UnreachableException(),
+                };
+            }
+        }
+        catch (Exception e) when (e is OutOfMemoryException or OverflowException)
+        {
+            Error(location, "Integer literal is too large");
+
+            return null;
         }
 
         return result;
