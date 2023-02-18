@@ -1244,7 +1244,7 @@ internal sealed class LanguageParser
                 {
                     DrainToMissingStatement(null);
 
-                    stmts.Add(ParseStatement(attrs, true));
+                    stmts.Add(ParseStatement(attrs, false));
 
                     break;
                 }
