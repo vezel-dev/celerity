@@ -461,7 +461,7 @@ internal sealed class LanguageParser
         var open = Read();
         var (parms, seps) = SeparatedBuilder<FunctionParameterSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
+        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
         {
             parms.Add(ParseFunctionParameter());
 
@@ -779,7 +779,7 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenParen);
         var (parms, seps) = SeparatedBuilder<FunctionTypeParameterSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
+        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
         {
             parms.Add(ParseFunctionTypeParameter());
 
@@ -837,7 +837,7 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenParen);
         var (parms, seps) = SeparatedBuilder<AgentTypeMessageParameterSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
+        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
         {
             parms.Add(ParseAgentTypeMessageParameter());
 
@@ -1439,7 +1439,7 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenParen);
         var (parms, seps) = SeparatedBuilder<LambdaParameterSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
+        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
         {
             parms.Add(ParseLambdaParameter());
 
@@ -1610,7 +1610,7 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenParen);
         var (parms, seps) = SeparatedBuilder<ReceiveParameterSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
+        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
         {
             parms.Add(ParseReceiveParameter());
 
@@ -1769,7 +1769,7 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenParen);
         var (args, seps) = SeparatedBuilder<ExpressionSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
+        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
         {
             args.Add(ParseExpression());
 
@@ -1835,7 +1835,7 @@ internal sealed class LanguageParser
         var open = Expect(SyntaxTokenKind.OpenParen);
         var (args, seps) = SeparatedBuilder<ExpressionSyntax>();
 
-        if (Peek1()?.Kind != SyntaxTokenKind.CloseParen)
+        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
         {
             args.Add(ParseExpression());
 
