@@ -265,33 +265,33 @@ internal sealed class LanguageLexer
 
             _ = enumerator.MoveNext();
 
-            var escape = char.MaxValue;
+            var replacement = char.MaxValue;
 
             switch (enumerator.Current)
             {
                 case '0':
-                    escape = '\0';
+                    replacement = '\0';
                     break;
                 case 'n' or 'N':
-                    escape = '\n';
+                    replacement = '\n';
                     break;
                 case 'r' or 'R':
-                    escape = '\r';
+                    replacement = '\r';
                     break;
                 case 't' or 'T':
-                    escape = '\t';
+                    replacement = '\t';
                     break;
                 case '"':
-                    escape = '"';
+                    replacement = '"';
                     break;
                 case '\\':
-                    escape = '\\';
+                    replacement = '\\';
                     break;
                 case 'u' or 'U':
                     break;
             }
 
-            if (escape == char.MaxValue)
+            if (replacement == char.MaxValue)
             {
                 for (var i = 0; i < hex.Length; i++)
                 {
@@ -302,11 +302,10 @@ internal sealed class LanguageLexer
 
                 var scalar = (Rune)int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
 
-                _ = scalar.EncodeToUtf16(code);
-                _ = _string.Append(code);
+                _ = _string.Append(code[..scalar.EncodeToUtf16(code)]);
             }
             else
-                _ = _string.Append(escape);
+                _ = _string.Append(replacement);
         }
 
         var result = _string.ToString();
