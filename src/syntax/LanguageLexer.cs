@@ -209,6 +209,7 @@ internal sealed class LanguageLexer
 
     private static double CreateReal(string text)
     {
+        // TODO: This can return PositiveInfinity/NegativeInfinity for overflow. We need to handle that.
         return double.Parse(
             text.Replace("_", null, StringComparison.Ordinal),
             NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent,
