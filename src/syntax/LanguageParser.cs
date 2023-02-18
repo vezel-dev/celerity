@@ -200,6 +200,64 @@ internal sealed class LanguageParser
         return new(List(elements), List(separators));
     }
 
+    private (ImmutableArray<T>.Builder Elements, ImmutableArray<SyntaxToken>.Builder Separators) ParseSeparatedList<T>(
+        Func<LanguageParser, T> parser,
+        SyntaxTokenKind separator,
+        SyntaxTokenKind closer,
+        bool allowEmpty,
+        bool allowTrailing)
+        where T : SyntaxNode
+    {
+        // TODO: The way we parse a parameter list (and other similar syntax nodes) causes the parser to misinterpret
+        // the entire function body for some invalid inputs. We need to do better here.
+
+        var result = SeparatedBuilder<T>();
+        var (elems, seps) = result;
+
+        bool NextIsRelevant()
+        {
+            return Peek1() is { IsEndOfInput: false } next && next.Kind != closer;
+        }
+
+        if (!allowTrailing)
+        {
+            if (allowEmpty && !NextIsRelevant())
+                return result;
+
+            elems.Add(parser(this));
+
+            while (Optional(separator) is { } sep)
+            {
+                seps.Add(sep);
+                elems.Add(parser(this));
+            }
+
+            return result;
+        }
+
+        if (!allowEmpty)
+        {
+            elems.Add(parser(this));
+
+            if (Optional(separator) is not { } sep)
+                return result;
+
+            seps.Add(sep);
+        }
+
+        while (NextIsRelevant())
+        {
+            elems.Add(parser(this));
+
+            if (Optional(separator) is not { } sep2)
+                break;
+
+            seps.Add(sep2);
+        }
+
+        return result;
+    }
+
     public DocumentSyntax ParseDocument()
     {
         return _mode switch
@@ -407,16 +465,12 @@ internal sealed class LanguageParser
     private TypeParameterListSyntax ParseTypeParameterList()
     {
         var open = Read();
-        var (parms, seps) = SeparatedBuilder<TypeParameterSyntax>();
-
-        parms.Add(ParseTypeParameter());
-
-        while (Optional(SyntaxTokenKind.Comma) is { } sep)
-        {
-            seps.Add(sep);
-            parms.Add(ParseTypeParameter());
-        }
-
+        var (parms, seps) = ParseSeparatedList(
+            static @this => @this.ParseTypeParameter(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: false,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -459,21 +513,12 @@ internal sealed class LanguageParser
     private FunctionParameterListSyntax ParseFunctionParameterList()
     {
         var open = Read();
-        var (parms, seps) = SeparatedBuilder<FunctionParameterSyntax>();
-
-        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
-        {
-            parms.Add(ParseFunctionParameter());
-
-            // TODO: The way we parse the parameter list (and other similar syntax nodes) causes the parser to
-            // misinterpret the entire function body for some invalid inputs. We need to do better here.
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                parms.Add(ParseFunctionParameter());
-            }
-        }
-
+        var (parms, seps) = ParseSeparatedList(
+            static @this => @this.ParseFunctionParameter(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: true,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -642,18 +687,12 @@ internal sealed class LanguageParser
     {
         var rec = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (fields, seps) = SeparatedBuilder<AggregateTypeFieldSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            fields.Add(ParseAggregateTypeField());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregateTypeField(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(rec, open, List(fields, seps), close);
@@ -664,18 +703,12 @@ internal sealed class LanguageParser
         var err = Read();
         var name = Optional(SyntaxTokenKind.UpperIdentifier);
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (fields, seps) = SeparatedBuilder<AggregateTypeFieldSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            fields.Add(ParseAggregateTypeField());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregateTypeField(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(err, name, open, List(fields, seps), close);
@@ -696,6 +729,7 @@ internal sealed class LanguageParser
         var open = Read();
         var (comps, seps) = SeparatedBuilder<TypeSyntax>();
 
+        // TODO: Can we merge this with ParseSeparatedList?
         comps.Add(ParseType());
         seps.Add(Expect(SyntaxTokenKind.Comma));
         comps.Add(ParseType());
@@ -737,18 +771,12 @@ internal sealed class LanguageParser
         var mut = Optional(SyntaxTokenKind.MutKeyword);
         var hash = Read();
         var open = Read();
-        var (pairs, seps) = SeparatedBuilder<MapTypePairSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBracket })
-        {
-            pairs.Add(ParseMapTypePair());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (pairs, seps) = ParseSeparatedList(
+            static @this => @this.ParseMapTypePair(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBracket,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(mut, hash, open, List(pairs, seps), close);
@@ -777,19 +805,12 @@ internal sealed class LanguageParser
     private FunctionTypeParameterListSyntax ParseFunctionTypeParameterList()
     {
         var open = Expect(SyntaxTokenKind.OpenParen);
-        var (parms, seps) = SeparatedBuilder<FunctionTypeParameterSyntax>();
-
-        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
-        {
-            parms.Add(ParseFunctionTypeParameter());
-
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                parms.Add(ParseFunctionTypeParameter());
-            }
-        }
-
+        var (parms, seps) = ParseSeparatedList(
+            static @this => @this.ParseFunctionTypeParameter(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: true,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -807,18 +828,12 @@ internal sealed class LanguageParser
     {
         var agent = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (msgs, seps) = SeparatedBuilder<AgentTypeMessageSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            msgs.Add(ParseAgentTypeMessage());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (msgs, seps) = ParseSeparatedList(
+            static @this => @this.ParseAgentTypeMessage(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(agent, open, List(msgs, seps), close);
@@ -835,19 +850,12 @@ internal sealed class LanguageParser
     private AgentTypeMessageParameterListSyntax ParseAgentTypeMessageParameterList()
     {
         var open = Expect(SyntaxTokenKind.OpenParen);
-        var (parms, seps) = SeparatedBuilder<AgentTypeMessageParameterSyntax>();
-
-        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
-        {
-            parms.Add(ParseAgentTypeMessageParameter());
-
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                parms.Add(ParseAgentTypeMessageParameter());
-            }
-        }
-
+        var (parms, seps) = ParseSeparatedList(
+            static @this => @this.ParseAgentTypeMessageParameter(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: true,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -880,16 +888,12 @@ internal sealed class LanguageParser
     private NominalTypeArgumentListSyntax ParseNominalTypeArgumentList()
     {
         var open = Expect(SyntaxTokenKind.OpenParen);
-        var (args, seps) = SeparatedBuilder<TypeSyntax>();
-
-        args.Add(ParseType());
-
-        while (Optional(SyntaxTokenKind.Comma) is { } sep)
-        {
-            seps.Add(sep);
-            args.Add(ParseType());
-        }
-
+        var (args, seps) = ParseSeparatedList(
+            static @this => @this.ParseType(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: false,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(args, seps), close);
@@ -1173,6 +1177,7 @@ internal sealed class LanguageParser
         {
             var (exprs, seps) = SeparatedBuilder<ExpressionSyntax>();
 
+            // TODO: Can we merge this with ParseSeparatedList?
             exprs.Add(expr);
             seps.Add(comma);
             exprs.Add(ParseExpression());
@@ -1298,18 +1303,12 @@ internal sealed class LanguageParser
     {
         var rec = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (fields, seps) = SeparatedBuilder<AggregateExpressionFieldSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            fields.Add(ParseAggregateExpressionField());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregateExpressionField(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(rec, open, List(fields, seps), close);
@@ -1320,18 +1319,12 @@ internal sealed class LanguageParser
         var err = Read();
         var name = Expect(SyntaxTokenKind.UpperIdentifier);
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (fields, seps) = SeparatedBuilder<AggregateExpressionFieldSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            fields.Add(ParseAggregateExpressionField());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregateExpressionField(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(err, name, open, List(fields, seps), close);
@@ -1351,18 +1344,12 @@ internal sealed class LanguageParser
     {
         var mut = Optional(SyntaxTokenKind.MutKeyword);
         var open = Read();
-        var (elems, seps) = SeparatedBuilder<ExpressionSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBracket })
-        {
-            elems.Add(ParseExpression());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (elems, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBracket,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(mut, open, List(elems, seps), close);
@@ -1373,18 +1360,12 @@ internal sealed class LanguageParser
         var mut = Optional(SyntaxTokenKind.MutKeyword);
         var hash = Read();
         var open = Read();
-        var (elems, seps) = SeparatedBuilder<ExpressionSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            elems.Add(ParseExpression());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (elems, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(mut, hash, open, List(elems, seps), close);
@@ -1395,18 +1376,12 @@ internal sealed class LanguageParser
         var mut = Optional(SyntaxTokenKind.MutKeyword);
         var hash = Read();
         var open = Read();
-        var (pairs, seps) = SeparatedBuilder<MapExpressionPairSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBracket })
-        {
-            pairs.Add(ParseMapExpressionPair());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (pairs, seps) = ParseSeparatedList(
+            static @this => @this.ParseMapExpressionPair(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBracket,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(mut, hash, open, List(pairs, seps), close);
@@ -1434,19 +1409,12 @@ internal sealed class LanguageParser
     private LambdaParameterListSyntax ParseLambdaParameterList()
     {
         var open = Expect(SyntaxTokenKind.OpenParen);
-        var (parms, seps) = SeparatedBuilder<LambdaParameterSyntax>();
-
-        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
-        {
-            parms.Add(ParseLambdaParameter());
-
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                parms.Add(ParseLambdaParameter());
-            }
-        }
-
+        var (parms, seps) = ParseSeparatedList(
+            static @this => @this.ParseLambdaParameter(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: true,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -1482,25 +1450,12 @@ internal sealed class LanguageParser
     {
         var cond = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (arms, seps) = SeparatedBuilder<ConditionExpressionArmSyntax>();
-
-        arms.Add(ParseConditionExpressionArm());
-
-        if (Optional(SyntaxTokenKind.Comma) is { } comma)
-        {
-            seps.Add(comma);
-
-            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            {
-                arms.Add(ParseConditionExpressionArm());
-
-                if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                    break;
-
-                seps.Add(sep);
-            }
-        }
-
+        var (arms, seps) = ParseSeparatedList(
+            static @this => @this.ParseConditionExpressionArm(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: false,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(cond, open, List(arms, seps), close);
@@ -1520,25 +1475,12 @@ internal sealed class LanguageParser
         var match = Read();
         var oper = ParseExpression();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (arms, seps) = SeparatedBuilder<ExpressionPatternArmSyntax>();
-
-        arms.Add(ParseExpressionPatternArm());
-
-        if (Optional(SyntaxTokenKind.Comma) is { } comma)
-        {
-            seps.Add(comma);
-
-            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            {
-                arms.Add(ParseExpressionPatternArm());
-
-                if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                    break;
-
-                seps.Add(sep);
-            }
-        }
-
+        var (arms, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpressionPatternArm(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: false,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(match, oper, open, List(arms, seps), close);
@@ -1566,25 +1508,12 @@ internal sealed class LanguageParser
     {
         var recv = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (arms, seps) = SeparatedBuilder<ReceiveExpressionArmSyntax>();
-
-        arms.Add(ParseReceiveExpressionArm());
-
-        if (Optional(SyntaxTokenKind.Comma) is { } comma)
-        {
-            seps.Add(comma);
-
-            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            {
-                arms.Add(ParseReceiveExpressionArm());
-
-                if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                    break;
-
-                seps.Add(sep);
-            }
-        }
-
+        var (arms, seps) = ParseSeparatedList(
+            static @this => @this.ParseReceiveExpressionArm(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: false,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var @else = Peek1()?.Kind == SyntaxTokenKind.ElseKeyword ? ParseExpressionElse() : null;
 
@@ -1605,19 +1534,12 @@ internal sealed class LanguageParser
     private ReceiveParameterListSyntax ParseReceiveParameterList()
     {
         var open = Expect(SyntaxTokenKind.OpenParen);
-        var (parms, seps) = SeparatedBuilder<ReceiveParameterSyntax>();
-
-        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
-        {
-            parms.Add(ParseReceiveParameter());
-
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                parms.Add(ParseReceiveParameter());
-            }
-        }
-
+        var (parms, seps) = ParseSeparatedList(
+            static @this => @this.ParseReceiveParameter(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: true,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -1737,17 +1659,13 @@ internal sealed class LanguageParser
 
     private IndexArgumentListSyntax ParseIndexArgumentList()
     {
-        var open = Expect(SyntaxTokenKind.OpenBracket);
-        var (args, seps) = SeparatedBuilder<ExpressionSyntax>();
-
-        args.Add(ParseExpression());
-
-        while (Optional(SyntaxTokenKind.Comma) is { } sep)
-        {
-            seps.Add(sep);
-            args.Add(ParseExpression());
-        }
-
+        var open = Read();
+        var (args, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBracket,
+            allowEmpty: false,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(open, List(args, seps), close);
@@ -1763,20 +1681,13 @@ internal sealed class LanguageParser
 
     private CallArgumentListSyntax ParseCallArgumentList()
     {
-        var open = Expect(SyntaxTokenKind.OpenParen);
-        var (args, seps) = SeparatedBuilder<ExpressionSyntax>();
-
-        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
-        {
-            args.Add(ParseExpression());
-
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                args.Add(ParseExpression());
-            }
-        }
-
+        var open = Read();
+        var (args, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: true,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(args, seps), close);
@@ -1794,25 +1705,12 @@ internal sealed class LanguageParser
     {
         var @catch = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (arms, seps) = SeparatedBuilder<ExpressionPatternArmSyntax>();
-
-        arms.Add(ParseExpressionPatternArm());
-
-        if (Optional(SyntaxTokenKind.Comma) is { } comma)
-        {
-            seps.Add(comma);
-
-            while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-            {
-                arms.Add(ParseExpressionPatternArm());
-
-                if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                    break;
-
-                seps.Add(sep);
-            }
-        }
-
+        var (arms, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpressionPatternArm(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: false,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(@catch, open, List(arms, seps), close);
@@ -1830,19 +1728,12 @@ internal sealed class LanguageParser
     private SendArgumentListSyntax ParseSendArgumentList()
     {
         var open = Expect(SyntaxTokenKind.OpenParen);
-        var (args, seps) = SeparatedBuilder<ExpressionSyntax>();
-
-        if (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseParen })
-        {
-            args.Add(ParseExpression());
-
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
-            {
-                seps.Add(sep);
-                args.Add(ParseExpression());
-            }
-        }
-
+        var (args, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: true,
+            allowTrailing: false);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(args, seps), close);
@@ -1986,18 +1877,12 @@ internal sealed class LanguageParser
     {
         var rec = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (fields, seps) = SeparatedBuilder<AggregatePatternFieldSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            fields.Add(ParseAggregatePatternField());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregatePatternField(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
 
@@ -2009,18 +1894,12 @@ internal sealed class LanguageParser
         var err = Read();
         var name = Optional(SyntaxTokenKind.UpperIdentifier);
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (fields, seps) = SeparatedBuilder<AggregatePatternFieldSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            fields.Add(ParseAggregatePatternField());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregatePatternField(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
 
@@ -2041,6 +1920,7 @@ internal sealed class LanguageParser
         var open = Read();
         var (comps, seps) = SeparatedBuilder<PatternSyntax>();
 
+        // TODO: Can we merge this with ParseSeparatedList?
         comps.Add(ParsePattern());
         seps.Add(Expect(SyntaxTokenKind.Comma));
         comps.Add(ParsePattern());
@@ -2094,18 +1974,12 @@ internal sealed class LanguageParser
     private ArrayPatternClauseSyntax ParseArrayPatternClause()
     {
         var open = Expect(SyntaxTokenKind.OpenBracket);
-        var (elems, seps) = SeparatedBuilder<PatternSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBracket })
-        {
-            elems.Add(ParsePattern());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (elems, seps) = ParseSeparatedList(
+            static @this => @this.ParsePattern(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBracket,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(open, List(elems, seps), close);
@@ -2115,18 +1989,12 @@ internal sealed class LanguageParser
     {
         var hash = Read();
         var open = Expect(SyntaxTokenKind.OpenBracket);
-        var (pairs, seps) = SeparatedBuilder<MapPatternPairSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBracket })
-        {
-            pairs.Add(ParseMapPatternPair());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (pairs, seps) = ParseSeparatedList(
+            static @this => @this.ParseMapPatternPair(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBracket,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
         var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
 
@@ -2146,18 +2014,12 @@ internal sealed class LanguageParser
     {
         var hash = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (elems, seps) = SeparatedBuilder<ExpressionSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            elems.Add(ParseExpression());
-
-            if (Optional(SyntaxTokenKind.Comma) is not { } sep)
-                break;
-
-            seps.Add(sep);
-        }
-
+        var (elems, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
 
