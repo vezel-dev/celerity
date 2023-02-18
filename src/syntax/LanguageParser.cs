@@ -273,7 +273,7 @@ internal sealed class LanguageParser
             {
                 if (skipped.Count != 0 || semicolon != null)
                 {
-                    var first = skipped[0];
+                    var first = skipped.FirstOrDefault() ?? semicolon!;
 
                     ErrorExpected(first, first.Location, "declaration or statement");
 
@@ -1228,7 +1228,7 @@ internal sealed class LanguageParser
             {
                 if (skipped.Count != 0 || semicolon != null)
                 {
-                    var first = skipped[0];
+                    var first = skipped.FirstOrDefault() ?? semicolon!;
 
                     ErrorExpected(first, first.Location, "statement");
 
