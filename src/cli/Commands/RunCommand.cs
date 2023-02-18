@@ -47,7 +47,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
                 AnsiConsole.Markup("[grey] | [/]");
 
                 if (style != null)
-                    AnsiConsole.MarkupLine(culture, $"[{style}]{{0}}[/]", text);
+                    AnsiConsole.MarkupLine(culture, $"[{style}]{{0}}[/]", text.EscapeMarkup());
                 else
                     AnsiConsole.WriteLine(text);
             }
@@ -66,13 +66,12 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
                 _ => throw new UnreachableException(),
             };
 
-            AnsiConsole.MarkupLine(culture, $"[{color}]{{0}}[/]", diag);
+            AnsiConsole.MarkupLine(culture, $"[{color}]{{0}}[/]", diag.ToString().EscapeMarkup());
 
             PrintContext(leading);
             PrintLine(target.Line, target.Text, "bold");
 
-            AnsiConsole.MarkupLine(
-                culture, $"[{color}]{{0}}^[/]", new string(' ', margin + 3 + location.Character - 1));
+            AnsiConsole.MarkupLine(culture, $"[{color}]   {{0, {margin + location.Character}}}[/]", "^");
 
             PrintContext(trailing);
 
