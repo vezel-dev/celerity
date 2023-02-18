@@ -507,13 +507,13 @@ internal sealed class LanguageLexer
         switch (kind)
         {
             case SyntaxTokenKind.UpperIdentifier:
-                while (Peek1() is ('0' and <= '9') or ('a' and <= 'z') or (>= 'A' and <= 'Z'))
+                while (Peek1() is (>= '0' and <= '9') or (>= 'a' and <= 'z') or (>= 'A' and <= 'Z'))
                     Advance();
 
                 break;
             case SyntaxTokenKind.LowerIdentifier:
             case SyntaxTokenKind.DiscardIdentifier:
-                while (Peek1() is '_' or ('0' and <= '9') or ('a' and <= 'z'))
+                while (Peek1() is '_' or (>= '0' and <= '9') or (>= 'a' and <= 'z'))
                     Advance();
 
                 break;
