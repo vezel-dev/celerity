@@ -200,6 +200,12 @@ internal sealed class LanguageParser
         return new(List(elements), List(separators));
     }
 
+    private T? ParseOptional<T>(SyntaxTokenKind kind, Func<LanguageParser, T> parser)
+        where T : SyntaxNode
+    {
+        return Peek1()?.Kind == kind ? parser(this) : null;
+    }
+
     private (ImmutableArray<T>.Builder Elements, ImmutableArray<SyntaxToken>.Builder Separators) ParseSeparatedList<T>(
         Func<LanguageParser, T> parser,
         SyntaxTokenKind separator,
@@ -391,7 +397,7 @@ internal sealed class LanguageParser
     {
         var at = Read();
         var name = ExpectCodeIdentifier();
-        var value = Peek1()?.Kind == SyntaxTokenKind.Equals ? ParseAttributeValue() : null;
+        var value = ParseOptional(SyntaxTokenKind.Equals, static @this => @this.ParseAttributeValue());
 
         return new(at, name, value);
     }
@@ -455,7 +461,7 @@ internal sealed class LanguageParser
         var opaque = pub != null ? Optional(SyntaxTokenKind.OpaqueKeyword) : null;
         var kw = Expect(SyntaxTokenKind.TypeKeyword);
         var name = Expect(SyntaxTokenKind.LowerIdentifier);
-        var parms = Peek1()?.Kind == SyntaxTokenKind.OpenParen ? ParseTypeParameterList() : null;
+        var parms = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseTypeParameterList());
         var equals = Expect(SyntaxTokenKind.Equals);
         var type = ParseType();
 
@@ -489,7 +495,7 @@ internal sealed class LanguageParser
         var pub = Optional(SyntaxTokenKind.PubKeyword);
         var @const = Expect(SyntaxTokenKind.ConstKeyword);
         var name = ExpectCodeIdentifier();
-        var type = Peek1()?.Kind == SyntaxTokenKind.Colon ? ParseTypeAnnotation() : null;
+        var type = ParseOptional(SyntaxTokenKind.Colon, static @this => @this.ParseTypeAnnotation());
         var equals = Expect(SyntaxTokenKind.Equals);
         var body = ParseExpression();
 
@@ -504,7 +510,7 @@ internal sealed class LanguageParser
         var name = ExpectCodeIdentifier();
         var parms = ParseFunctionParameterList();
         var err = Optional(SyntaxTokenKind.ErrKeyword);
-        var type = Peek1()?.Kind == SyntaxTokenKind.MinusCloseAngle ? ParseReturnTypeAnnotation() : null;
+        var type = ParseOptional(SyntaxTokenKind.MinusCloseAngle, static @this => @this.ParseReturnTypeAnnotation());
         var body = ext == null ? ParseBlockExpression() : null;
 
         return new(List(attributes), pub, ext, fn, name, parms, err, type, body);
@@ -528,7 +534,7 @@ internal sealed class LanguageParser
     {
         var attrs = ParseAttributes();
         var name = ExpectBindingIdentifier();
-        var type = Peek1()?.Kind == SyntaxTokenKind.Colon ? ParseTypeAnnotation() : null;
+        var type = ParseOptional(SyntaxTokenKind.Colon, static @this => @this.ParseTypeAnnotation());
 
         return new(List(attrs), name, type);
     }
@@ -604,7 +610,7 @@ internal sealed class LanguageParser
     private IntegerTypeSyntax ParseIntegerType()
     {
         var @int = Read();
-        var range = Peek1()?.Kind == SyntaxTokenKind.OpenParen ? ParseIntegerTypeRange() : null;
+        var range = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseIntegerTypeRange());
 
         return new(@int, range);
     }
@@ -870,9 +876,9 @@ internal sealed class LanguageParser
 
     private NominalTypeSyntax ParseNominalType()
     {
-        var path = Peek1()?.Kind == SyntaxTokenKind.UpperIdentifier ? ParseNominalTypePath() : null;
+        var path = ParseOptional(SyntaxTokenKind.UpperIdentifier, static @this => @this.ParseNominalTypePath());
         var name = Expect(SyntaxTokenKind.LowerIdentifier);
-        var args = Peek1()?.Kind == SyntaxTokenKind.OpenParen ? ParseNominalTypeArgumentList() : null;
+        var args = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseNominalTypeArgumentList());
 
         return new(path, name, args);
     }
@@ -1433,7 +1439,7 @@ internal sealed class LanguageParser
         var @if = Read();
         var condition = ParseExpression();
         var body = ParseBlockExpression();
-        var @else = Peek1()?.Kind == SyntaxTokenKind.ElseKeyword ? ParseExpressionElse() : null;
+        var @else = ParseOptional(SyntaxTokenKind.ElseKeyword, static @this => @this.ParseExpressionElse());
 
         return new(@if, condition, body, @else);
     }
@@ -1489,7 +1495,7 @@ internal sealed class LanguageParser
     private ExpressionPatternArmSyntax ParseExpressionPatternArm()
     {
         var pat = ParsePattern();
-        var guard = Peek1()?.Kind == SyntaxTokenKind.IfKeyword ? ParseExpressionArmGuard() : null;
+        var guard = ParseOptional(SyntaxTokenKind.IfKeyword, static @this => @this.ParseExpressionArmGuard());
         var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
         var body = ParseExpression();
 
@@ -1515,7 +1521,7 @@ internal sealed class LanguageParser
             allowEmpty: false,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
-        var @else = Peek1()?.Kind == SyntaxTokenKind.ElseKeyword ? ParseExpressionElse() : null;
+        var @else = ParseOptional(SyntaxTokenKind.ElseKeyword, static @this => @this.ParseExpressionElse());
 
         return new(recv, open, List(arms, seps), close, @else);
     }
@@ -1524,7 +1530,7 @@ internal sealed class LanguageParser
     {
         var name = ExpectCodeIdentifier();
         var parms = ParseReceiveParameterList();
-        var guard = Peek1()?.Kind == SyntaxTokenKind.IfKeyword ? ParseExpressionArmGuard() : null;
+        var guard = ParseOptional(SyntaxTokenKind.IfKeyword, static @this => @this.ParseExpressionArmGuard());
         var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
         var body = ParseExpression();
 
@@ -1557,7 +1563,7 @@ internal sealed class LanguageParser
         var @while = Read();
         var condition = ParseExpression();
         var body = ParseBlockExpression();
-        var @else = Peek1()?.Kind == SyntaxTokenKind.ElseKeyword ? ParseExpressionElse() : null;
+        var @else = ParseOptional(SyntaxTokenKind.ElseKeyword, static @this => @this.ParseExpressionElse());
 
         return new(@while, condition, body, @else);
     }
@@ -1569,7 +1575,7 @@ internal sealed class LanguageParser
         var @in = Expect(SyntaxTokenKind.InKeyword);
         var collection = ParseExpression();
         var body = ParseBlockExpression();
-        var @else = Peek1()?.Kind == SyntaxTokenKind.ElseKeyword ? ParseExpressionElse() : null;
+        var @else = ParseOptional(SyntaxTokenKind.ElseKeyword, static @this => @this.ParseExpressionElse());
 
         return new(@for, pat, @in, collection, body, @else);
     }
@@ -1601,7 +1607,7 @@ internal sealed class LanguageParser
     private BreakExpressionSyntax ParseBreakExpression()
     {
         var @break = Read();
-        var result = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParseBreakExpressionResult() : null;
+        var result = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParseBreakExpressionResult());
 
         return new(@break, result);
     }
@@ -1674,7 +1680,7 @@ internal sealed class LanguageParser
     private CallExpressionSyntax ParseCallExpression(ExpressionSyntax subject)
     {
         var args = ParseCallArgumentList();
-        var @try = Peek1()?.Kind == SyntaxTokenKind.Question ? ParseCallExpressionTry() : null;
+        var @try = ParseOptional(SyntaxTokenKind.Question, static @this => @this.ParseCallExpressionTry());
 
         return new(subject, args, @try);
     }
@@ -1696,7 +1702,7 @@ internal sealed class LanguageParser
     private CallExpressionTrySyntax ParseCallExpressionTry()
     {
         var question = Read();
-        var @catch = Peek1()?.Kind == SyntaxTokenKind.CatchKeyword ? ParseCallExpressionTryCatch() : null;
+        var @catch = ParseOptional(SyntaxTokenKind.CatchKeyword, static @this => @this.ParseCallExpressionTryCatch());
 
         return new(question, @catch);
     }
@@ -1817,7 +1823,7 @@ internal sealed class LanguageParser
                 return ParseArrayPattern(binding);
         }
 
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new WildcardPatternSyntax(binding, alias);
     }
@@ -1826,7 +1832,7 @@ internal sealed class LanguageParser
     {
         var minus = OptionalMinus();
         var literal = minus != null ? ExpectNumericLiteral() : Read();
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(minus, literal, alias);
     }
@@ -1860,7 +1866,7 @@ internal sealed class LanguageParser
             }
         }
 
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(leftLit, leftSep, binding, rightSep, rightLit, alias);
     }
@@ -1868,7 +1874,7 @@ internal sealed class LanguageParser
     private ModulePatternSyntax ParseModulePattern()
     {
         var path = ParseModulePath();
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(path, alias);
     }
@@ -1884,7 +1890,7 @@ internal sealed class LanguageParser
             allowEmpty: true,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(rec, open, List(fields, seps), close, alias);
     }
@@ -1901,7 +1907,7 @@ internal sealed class LanguageParser
             allowEmpty: true,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(err, name, open, List(fields, seps), close, alias);
     }
@@ -1932,7 +1938,7 @@ internal sealed class LanguageParser
         }
 
         var close = Expect(SyntaxTokenKind.CloseParen);
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(open, List(comps, seps), close, alias);
     }
@@ -1966,7 +1972,7 @@ internal sealed class LanguageParser
             }
         }
 
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(leftClause, leftSep, binding, rightSep, rightClause, alias);
     }
@@ -1996,7 +2002,7 @@ internal sealed class LanguageParser
             allowEmpty: true,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(hash, open, List(pairs, seps), close, alias);
     }
@@ -2021,7 +2027,7 @@ internal sealed class LanguageParser
             allowEmpty: true,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
-        var alias = Peek1()?.Kind == SyntaxTokenKind.AsKeyword ? ParsePatternAlias() : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(hash, open, List(elems, seps), close, alias);
     }
