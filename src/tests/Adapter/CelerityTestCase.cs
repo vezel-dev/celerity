@@ -60,7 +60,7 @@ internal sealed partial class CelerityTestCase
 
     public TestCase Convert()
     {
-        return new TestCase(FullName, new(CelerityTestExecutor.ExecutorUri), _source)
+        return new(FullName, new(CelerityTestExecutor.ExecutorUri), _source)
         {
             CodeFilePath = File.FullName,
         };
