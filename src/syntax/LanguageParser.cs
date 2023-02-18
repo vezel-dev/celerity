@@ -1513,7 +1513,7 @@ internal sealed class LanguageParser
 
         arms.Add(ParseConditionExpressionArm());
 
-        while (Peek1()?.Kind != SyntaxTokenKind.CloseBrace)
+        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
             arms.Add(ParseConditionExpressionArm());
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
@@ -1540,7 +1540,7 @@ internal sealed class LanguageParser
 
         arms.Add(ParseExpressionPatternArm());
 
-        while (Peek1()?.Kind != SyntaxTokenKind.CloseBrace)
+        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
             arms.Add(ParseExpressionPatternArm());
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
@@ -1575,7 +1575,7 @@ internal sealed class LanguageParser
 
         arms.Add(ParseReceiveExpressionArm());
 
-        while (Peek1()?.Kind != SyntaxTokenKind.CloseBrace)
+        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
             arms.Add(ParseReceiveExpressionArm());
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
@@ -1798,7 +1798,7 @@ internal sealed class LanguageParser
 
         arms.Add(ParseExpressionPatternArm());
 
-        while (Peek1()?.Kind != SyntaxTokenKind.CloseBrace)
+        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
             arms.Add(ParseExpressionPatternArm());
 
         var close = Expect(SyntaxTokenKind.CloseBrace);
