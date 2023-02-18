@@ -453,7 +453,11 @@ internal sealed class LanguageLexer
         };
 
         if (kind is { } k)
+        {
+            Advance();
+
             return (location, k);
+        }
 
         if (ch1 == '!')
         {
