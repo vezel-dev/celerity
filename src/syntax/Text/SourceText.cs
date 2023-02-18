@@ -37,6 +37,10 @@ public abstract class SourceText : IReadOnlyList<char>
                 _ = builder.Clear();
             }
         }
+
+        // Edge cases: The file is empty, or the last line lacks a line ending.
+        if (line == 1 || builder.Length != 0)
+            yield return new(new(Path, line, 1), builder.ToString());
     }
 
     public abstract IEnumerator<char> GetEnumerator();
