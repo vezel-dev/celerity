@@ -78,7 +78,6 @@ public enum SyntaxTokenKind
     FriendKeyword,
     MacroKeyword,
     MetaKeyword,
-    PragmaKeyword,
     QuoteKeyword,
     TryKeyword,
     UnquoteKeyword,

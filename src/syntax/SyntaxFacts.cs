@@ -75,7 +75,6 @@ public static class SyntaxFacts
             "friend" => SyntaxTokenKind.FriendKeyword,
             "macro" => SyntaxTokenKind.MacroKeyword,
             "meta" => SyntaxTokenKind.MetaKeyword,
-            "pragma" => SyntaxTokenKind.PragmaKeyword,
             "quote" => SyntaxTokenKind.QuoteKeyword,
             "try" => SyntaxTokenKind.TryKeyword,
             "unquote" => SyntaxTokenKind.UnquoteKeyword,
@@ -172,7 +171,6 @@ public static class SyntaxFacts
             SyntaxTokenKind.FriendKeyword or
             SyntaxTokenKind.MacroKeyword or
             SyntaxTokenKind.MetaKeyword or
-            SyntaxTokenKind.PragmaKeyword or
             SyntaxTokenKind.QuoteKeyword or
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.UnquoteKeyword or

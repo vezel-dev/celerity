@@ -61,7 +61,6 @@ type-keyword ::= 'agent' |
 reserved-keyword ::= 'friend' |
                      'macro' |
                      'meta' |
-                     'pragma' |
                      'quote' |
                      'try' |
                      'unquote' |
