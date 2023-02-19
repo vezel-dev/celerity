@@ -34,15 +34,9 @@ public abstract class SyntaxNode : SyntaxItem
         return base.SiblingsAndSelf().UnsafeCast<SyntaxNode>();
     }
 
-    public IEnumerable<SyntaxNode> ChildNodes()
-    {
-        return Children().OfType<SyntaxNode>();
-    }
+    public abstract IEnumerable<SyntaxNode> ChildNodes();
 
-    public IEnumerable<SyntaxToken> ChildTokens()
-    {
-        return Children().OfType<SyntaxToken>();
-    }
+    public abstract IEnumerable<SyntaxToken> ChildTokens();
 
     public override IEnumerable<SyntaxItem> Descendants()
     {
@@ -63,21 +57,41 @@ public abstract class SyntaxNode : SyntaxItem
         while (work.Count != 0);
     }
 
-    // TODO: Optimize some of these (e.g. avoid descending into trivia and tokens when possible).
-
     public IEnumerable<SyntaxNode> DescendantNodes()
     {
-        return Descendants().OfType<SyntaxNode>();
+        var work = new Queue<SyntaxNode>();
+
+        work.Enqueue(this);
+
+        do
+        {
+            var current = work.Dequeue();
+
+            if (current.HasNodes)
+                foreach (var child in current.ChildNodes())
+                    work.Enqueue(child);
+
+            yield return current;
+        }
+        while (work.Count != 0);
     }
 
     public IEnumerable<SyntaxToken> DescendantTokens()
     {
+        // Not much we can do better here.
         return Descendants().OfType<SyntaxToken>();
     }
 
     public IEnumerable<SyntaxTrivia> DescendantTrivia()
     {
-        return Descendants().OfType<SyntaxTrivia>();
+        foreach (var token in DescendantTokens())
+        {
+            foreach (var leading in token.LeadingTrivia)
+                yield return leading;
+
+            foreach (var trailing in token.TrailingTrivia)
+                yield return trailing;
+        }
     }
 
     internal abstract T Visit<T>(SyntaxWalker<T> walker, T state);

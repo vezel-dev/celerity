@@ -322,6 +322,123 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
 
             writer.WriteLine();
 
+            writer.WriteLine("public override IEnumerable<SyntaxNode> ChildNodes()");
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            if (nodes.Length != 0)
+            {
+                for (var i = 0; i < nodes.Length; i++)
+                {
+                    var prop = nodes[i];
+                    var propName = prop.GetPropertyName();
+
+                    switch (prop)
+                    {
+                        case SyntaxTreeNodeProperty p:
+                            if (p.Optional)
+                            {
+                                writer.WriteLine($"if ({propName} != null)");
+
+                                writer.Indent++;
+                            }
+
+                            writer.WriteLine($"yield return {propName};");
+
+                            if (p.Optional)
+                                writer.Indent--;
+
+                            break;
+                        case SyntaxTreeNodesProperty p:
+                            writer.WriteLine(
+                                $"foreach (var item in {propName}{(p.Separated ? ".Elements" : string.Empty)})");
+
+                            writer.Indent++;
+
+                            writer.WriteLine("yield return item;");
+
+                            writer.Indent--;
+                            break;
+                    }
+
+                    if (i != nodes.Length - 1)
+                        writer.WriteLine();
+                }
+            }
+            else
+                writer.WriteLine("return Array.Empty<SyntaxNode>();");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+
+            writer.WriteLine();
+
+            writer.WriteLine("public override IEnumerable<SyntaxToken> ChildTokens()");
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            if (tokens.Length != 0)
+            {
+                for (var i = 0; i < tokens.Length; i++)
+                {
+                    var prop = tokens[i];
+                    var propName = prop.GetPropertyName();
+
+                    switch (prop)
+                    {
+                        case SyntaxTreeNodesProperty:
+                            writer.WriteLine($"foreach (var item in {propName}.Separators)");
+
+                            writer.Indent++;
+
+                            writer.WriteLine("yield return item;");
+
+                            writer.Indent--;
+                            break;
+                        case SyntaxTreeTokenProperty p:
+                            if (p.Optional)
+                            {
+                                writer.WriteLine($"if ({propName} != null)");
+
+                                writer.Indent++;
+                            }
+
+                            writer.WriteLine($"yield return {propName};");
+
+                            if (p.Optional)
+                                writer.Indent--;
+
+                            break;
+                        case SyntaxTreeTokensProperty p:
+                            writer.WriteLine($"foreach (var item in {propName})");
+
+                            writer.Indent++;
+
+                            if (p.Separated)
+                                writer.WriteLine("yield return Unsafe.As<SyntaxToken>(item);");
+                            else
+                                writer.WriteLine("yield return item;");
+
+                            writer.Indent--;
+                            break;
+                    }
+
+                    if (i != tokens.Length - 1)
+                        writer.WriteLine();
+                }
+            }
+            else
+                writer.WriteLine("return Array.Empty<SyntaxToken>();");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+
+            writer.WriteLine();
+
             writer.WriteLine("internal override T Visit<T>(SyntaxWalker<T> walker, T state)");
             writer.WriteLine("{");
 
