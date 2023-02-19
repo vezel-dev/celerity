@@ -572,11 +572,15 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.FnKeyword, _, _) => ParseFunctionType(),
             (SyntaxTokenKind.AgentKeyword, _, _) => ParseAgentType(),
             (SyntaxTokenKind.UpperIdentifier or SyntaxTokenKind.LowerIdentifier, _, _) => ParseNominalType(),
-            _ => Unsafe.As<TypeSyntax>(new MissingTypeSyntax()),
+            _ => default(TypeSyntax),
         };
 
-        if (type is MissingTypeSyntax)
+        if (type == null)
+        {
+            type = new NominalTypeSyntax(null, Missing(), null);
+
             ErrorExpected(type, Peek1()?.Location, "type");
+        }
 
         return type;
     }
@@ -1161,11 +1165,15 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.RaiseKeyword, _, _) => ParseRaiseExpression(),
             (SyntaxTokenKind.NextKeyword, _, _) => ParseNextExpression(),
             (SyntaxTokenKind.BreakKeyword, _, _) => ParseBreakExpression(),
-            _ => new MissingExpressionSyntax(),
+            _ => null,
         };
 
-        if (expr is MissingExpressionSyntax)
+        if (expr == null)
+        {
+            expr = new IdentifierExpressionSyntax(Missing());
+
             ErrorExpected(expr, Peek1()?.Location, "expression");
+        }
 
         return ParsePostfixExpression(expr);
     }
@@ -1771,11 +1779,15 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBrace) => ParseSetPattern(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket) => ParseMapPattern(),
             (SyntaxTokenKind.UpperIdentifier, _) => ParseModulePattern(),
-            _ => new MissingPatternSyntax(null),
+            _ => null,
         };
 
-        if (pat is MissingPatternSyntax)
+        if (pat == null)
+        {
+            pat = new WildcardPatternSyntax(new VariablePatternBindingSyntax(null, Missing()), null);
+
             ErrorExpected(pat, Peek1()?.Location, "pattern");
+        }
 
         return pat;
     }
@@ -1796,11 +1808,15 @@ internal sealed class LanguageParser
             { } kind when kind == SyntaxTokenKind.MutKeyword || SyntaxFacts.IsCodeIdentifier(kind) =>
                 ParseVariablePatternBinding(),
             SyntaxTokenKind.DiscardIdentifier => ParseDiscardPatternBinding(),
-            _ => Unsafe.As<PatternBindingSyntax>(new MissingPatternBindingSyntax(Missing())),
+            _ => default(PatternBindingSyntax),
         };
 
-        if (binding is MissingPatternBindingSyntax)
+        if (binding == null)
+        {
+            binding = new VariablePatternBindingSyntax(null, Missing());
+
             ErrorExpected(binding, next?.Location, "pattern binding");
+        }
 
         return binding;
     }
