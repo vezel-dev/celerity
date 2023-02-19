@@ -20,6 +20,7 @@ normal-keyword ::= 'and' |
                    'ext' |
                    'false' |
                    'fn' |
+                   'for' |
                    'if' |
                    'in' |
                    'let' |
