@@ -38,10 +38,14 @@
                         Version="0.1.12-alpha" />
         <PackageVersion Include="Microsoft.Windows.SDK.Win32Metadata"
                         Version="41.0.25-preview" />
+        <PackageVersion Include="NuGet.Versioning"
+                        Version="6.4.0" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
                         Version="0.19.7" />
         <PackageVersion Include="RadLine"
                         Version="0.6.0" />
+        <PackageVersion Include="Spdx"
+                        Version="0.8.0" />
         <PackageVersion Include="Spectre.Console.Cli"
                         Version="0.46.0" />
         <PackageVersion Include="Wcwidth"

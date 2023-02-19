@@ -21,6 +21,8 @@ code formatting.</PackageDescription>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="NuGet.Versioning" />
+        <PackageReference Include="Spdx" />
         <PackageReference Include="Wcwidth" />
     </ItemGroup>
 
