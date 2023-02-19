@@ -60,6 +60,12 @@ internal sealed class LanguageLexer
         return ch;
     }
 
+    private void Warning(SourceLocation location, string message)
+    {
+        _currentDiagnostics.Add(
+            token => SourceDiagnostic.Create(token, SourceDiagnosticSeverity.Warning, location, message));
+    }
+
     private void Error(SourceLocation location, string message)
     {
         _currentDiagnostics.Add(
@@ -539,16 +545,28 @@ internal sealed class LanguageLexer
 
     private (SourceLocation Location, SyntaxTokenKind Kind) LexNumberLiteral(SourceLocation location)
     {
-        var radix = (Read(), Peek1()) switch
+        var ch1 = Read();
+        var ch2 = Peek1();
+
+        var (radix, warn) = (ch1, ch2) switch
         {
-            ('0', 'b' or 'B') => 2,
-            ('0', 'o' or 'O') => 8,
-            ('0', 'x' or 'X') => 16,
-            _ => 10,
+            ('0', 'b') => (2, false),
+            ('0', 'B') => (2, true),
+            ('0', 'o') => (8, false),
+            ('0', 'O') => (8, true),
+            ('0', 'x') => (16, false),
+            ('0', 'X') => (16, true),
+            _ => (10, false),
         };
 
         if (radix != 10)
-            Advance();
+        {
+            var loc = _location;
+            var ind = Read();
+
+            if (warn)
+                Warning(loc, $"Consider using lowercase base indicator '{char.ToLowerInvariant(ind)}' for clarity");
+        }
 
         bool ConsumeDigits(int radix)
         {
