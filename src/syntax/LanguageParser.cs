@@ -1277,6 +1277,17 @@ internal sealed class LanguageParser
                 break;
         }
 
+        // Blocks must have at least one statement.
+        if (stmts.Count == 0)
+        {
+            var missing = new MissingStatementSyntax(
+                SyntaxItemList<AttributeSyntax>.Empty, SyntaxItemList<SyntaxToken>.Empty, Missing());
+
+            ErrorExpected(missing, Peek1()?.Location, "statement");
+
+            stmts.Add(missing);
+        }
+
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(open, List(stmts), close);
