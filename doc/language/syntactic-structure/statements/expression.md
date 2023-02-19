@@ -1,5 +1,5 @@
 # Expression Statement
 
 ```ebnf
-expression-statement = expression
+expression-statement ::= expression
 ```
