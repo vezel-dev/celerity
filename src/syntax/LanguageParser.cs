@@ -1406,7 +1406,7 @@ internal sealed class LanguageParser
     {
         var fn = Read();
         var parms = ParseLambdaParameterList();
-        var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
+        var arrow = Expect(SyntaxTokenKind.MinusCloseAngle);
         var body = ParseExpression();
 
         return new(fn, parms, arrow, body);
@@ -1470,7 +1470,7 @@ internal sealed class LanguageParser
     private ConditionExpressionArmSyntax ParseConditionExpressionArm()
     {
         var condition = ParseExpression();
-        var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
+        var arrow = Expect(SyntaxTokenKind.MinusCloseAngle);
         var body = ParseExpression();
 
         return new(condition, arrow, body);
@@ -1496,7 +1496,7 @@ internal sealed class LanguageParser
     {
         var pat = ParsePattern();
         var guard = ParseOptional(SyntaxTokenKind.IfKeyword, static @this => @this.ParseExpressionArmGuard());
-        var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
+        var arrow = Expect(SyntaxTokenKind.MinusCloseAngle);
         var body = ParseExpression();
 
         return new(pat, guard, arrow, body);
@@ -1531,7 +1531,7 @@ internal sealed class LanguageParser
         var name = ExpectCodeIdentifier();
         var parms = ParseReceiveParameterList();
         var guard = ParseOptional(SyntaxTokenKind.IfKeyword, static @this => @this.ParseExpressionArmGuard());
-        var arrow = Expect(SyntaxTokenKind.EqualsCloseAngle);
+        var arrow = Expect(SyntaxTokenKind.MinusCloseAngle);
         var body = ParseExpression();
 
         return new(name, parms, guard, arrow, body);

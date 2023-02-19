@@ -23,7 +23,6 @@ public enum SyntaxTokenKind
     ColonColon,
     Semicolon,
     MinusCloseAngle,
-    EqualsCloseAngle,
     At,
     Hash,
     Question,

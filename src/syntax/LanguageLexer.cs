@@ -144,7 +144,6 @@ internal sealed class LanguageLexer
             SyntaxTokenKind.ColonColon or
             SyntaxTokenKind.Semicolon or
             SyntaxTokenKind.MinusCloseAngle or
-            SyntaxTokenKind.EqualsCloseAngle or
             SyntaxTokenKind.At or
             SyntaxTokenKind.Hash or
             SyntaxTokenKind.Question or
@@ -461,7 +460,6 @@ internal sealed class LanguageLexer
             ('!', '=') => SyntaxTokenKind.ExclamationEquals,
             ('<', '=') => SyntaxTokenKind.OpenAngleEquals,
             ('=', '=') => SyntaxTokenKind.EqualsEquals,
-            ('=', '>') => SyntaxTokenKind.EqualsCloseAngle,
             ('=', _) => SyntaxTokenKind.Equals,
             _ => default(SyntaxTokenKind?),
         };
@@ -490,7 +488,7 @@ internal sealed class LanguageLexer
             parts++;
         }
 
-        // Handle remaining special operators and custom operators.
+        // Handle remaining special operators, and then custom operators.
         return (parts, ch1, ch2) switch
         {
             (1, '<', _) => (location, SyntaxTokenKind.OpenAngle),
