@@ -287,15 +287,15 @@ internal sealed class LanguageParser
             var dattrs = ParseAttributes();
             var skipped = Builder<SyntaxToken>();
 
-            void DrainToMissingDeclaration()
+            void DrainToMissingDeclaration(bool attributes)
             {
-                if (skipped.Count != 0)
+                if (skipped.Count != 0 || (attributes && dattrs.Count != 0))
                 {
-                    var first = skipped[0];
+                    var missing = new MissingDeclarationSyntax(DrainList(dattrs), Missing(), DrainList(skipped));
 
-                    ErrorExpected(first, first.Location, "declaration");
+                    ErrorExpected(missing, (skipped.FirstOrDefault() ?? Peek1())?.Location, "declaration");
 
-                    decls.Add(new MissingDeclarationSyntax(DrainList(dattrs), Missing(), DrainList(skipped)));
+                    decls.Add(missing);
                 }
             }
 
@@ -303,7 +303,7 @@ internal sealed class LanguageParser
             {
                 if (SyntaxFacts.IsDeclarationStarter(next.Kind))
                 {
-                    DrainToMissingDeclaration();
+                    DrainToMissingDeclaration(false);
 
                     decls.Add(ParseDeclaration(dattrs, true));
 
@@ -314,7 +314,7 @@ internal sealed class LanguageParser
             }
 
             // There can be some leftover skipped tokens.
-            DrainToMissingDeclaration();
+            DrainToMissingDeclaration(true);
         }
 
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
@@ -332,15 +332,15 @@ internal sealed class LanguageParser
             var attrs = ParseAttributes();
             var skipped = Builder<SyntaxToken>();
 
-            void DrainToMissingStatement(SyntaxToken? semicolon)
+            void DrainToMissingStatement(bool attributes)
             {
-                if (skipped.Count != 0 || semicolon != null)
+                if (skipped.Count != 0 || (attributes && attrs.Count != 0))
                 {
-                    var first = skipped.FirstOrDefault() ?? semicolon!;
+                    var missing = new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), Missing());
 
-                    ErrorExpected(first, first.Location, "declaration or statement");
+                    ErrorExpected(missing, (skipped.FirstOrDefault() ?? Peek1())?.Location, "declaration or statement");
 
-                    stmts.Add(new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), semicolon ?? Missing()));
+                    stmts.Add(missing);
                 }
             }
 
@@ -348,7 +348,7 @@ internal sealed class LanguageParser
             {
                 if (SyntaxFacts.IsDeclarationStarter(next.Kind))
                 {
-                    DrainToMissingStatement(null);
+                    DrainToMissingStatement(false);
 
                     decls.Add(ParseDeclaration(attrs, true));
 
@@ -357,25 +357,21 @@ internal sealed class LanguageParser
 
                 if (SyntaxFacts.IsStatementStarter(next.Kind))
                 {
-                    DrainToMissingStatement(null);
+                    DrainToMissingStatement(false);
 
                     stmts.Add(ParseStatement(attrs, true));
 
                     break;
                 }
 
-                if (next.Kind == SyntaxTokenKind.Semicolon)
-                {
-                    DrainToMissingStatement(Read());
-
-                    break;
-                }
-
                 skipped.Add(Read());
+
+                if (next.Kind == SyntaxTokenKind.Semicolon)
+                    break;
             }
 
             // There can be some leftover skipped tokens.
-            DrainToMissingStatement(null);
+            DrainToMissingStatement(true);
         }
 
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
@@ -1211,18 +1207,19 @@ internal sealed class LanguageParser
 
         while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
         {
+            var mark = _reader.Save();
             var attrs = ParseAttributes();
             var skipped = Builder<SyntaxToken>();
 
-            void DrainToMissingStatement(SyntaxToken? semicolon)
+            void DrainToMissingStatement()
             {
-                if (skipped.Count != 0 || semicolon != null)
+                if (skipped.Count != 0)
                 {
-                    var first = skipped.FirstOrDefault() ?? semicolon!;
+                    var missing = new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), Missing());
 
-                    ErrorExpected(first, first.Location, "statement");
+                    ErrorExpected(missing, (skipped.FirstOrDefault() ?? Peek1())?.Location, "statement");
 
-                    stmts.Add(new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), semicolon ?? Missing()));
+                    stmts.Add(missing);
                 }
             }
 
@@ -1246,7 +1243,12 @@ internal sealed class LanguageParser
                         ({ Kind: SyntaxTokenKind.FnKeyword }, { Kind: SyntaxTokenKind.OpenParen }) or
                         ({ Kind: SyntaxTokenKind.UseKeyword }, { Kind: not SyntaxTokenKind.UpperIdentifier })))
                 {
-                    DrainToMissingStatement(null);
+                    DrainToMissingStatement();
+
+                    // If we have any attributes that were not attached to the MissingStatementSyntax, rewind so that
+                    // they become available when the declaration is parsed.
+                    if (attrs.Count != 0)
+                        _reader.Rewind(mark);
 
                     decl = true;
 
@@ -1255,25 +1257,21 @@ internal sealed class LanguageParser
 
                 if (SyntaxFacts.IsStatementStarter(next.Kind))
                 {
-                    DrainToMissingStatement(null);
+                    DrainToMissingStatement();
 
                     stmts.Add(ParseStatement(attrs, false));
 
                     break;
                 }
 
-                if (next.Kind == SyntaxTokenKind.Semicolon)
-                {
-                    DrainToMissingStatement(Read());
-
-                    break;
-                }
-
                 skipped.Add(Read());
+
+                if (next.Kind == SyntaxTokenKind.Semicolon)
+                    break;
             }
 
             // There can be some leftover skipped tokens.
-            DrainToMissingStatement(null);
+            DrainToMissingStatement();
 
             if (decl)
                 break;
