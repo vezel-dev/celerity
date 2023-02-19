@@ -30,17 +30,26 @@ internal sealed class LanguageParser
 
     private SyntaxToken? Peek1()
     {
-        return _reader.Peek1() is (true, var tok) ? tok : null;
+        _ = _reader.TryPeek(0, out var tok);
+
+        return tok;
     }
 
-    private (SyntaxToken First, SyntaxToken Second)? Peek2()
+    private (SyntaxToken? First, SyntaxToken? Second) Peek2()
     {
-        return _reader.Peek2() is (true, var tok1, var tok2) ? (tok1, tok2)! : null;
+        _ = _reader.TryPeek(0, out var tok1);
+        _ = _reader.TryPeek(1, out var tok2);
+
+        return (tok1, tok2);
     }
 
-    private (SyntaxToken First, SyntaxToken Second, SyntaxToken Third)? Peek3()
+    private (SyntaxToken? First, SyntaxToken? Second, SyntaxToken? Third) Peek3()
     {
-        return _reader.Peek3() is (true, var tok1, var tok2, var tok3) ? (tok1, tok2, tok3)! : null;
+        _ = _reader.TryPeek(0, out var tok1);
+        _ = _reader.TryPeek(1, out var tok2);
+        _ = _reader.TryPeek(2, out var tok3);
+
+        return (tok1, tok2, tok3);
     }
 
     private SyntaxToken Read()
@@ -423,9 +432,9 @@ internal sealed class LanguageParser
 
     private DeclarationSyntax ParseDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes, bool interactive)
     {
-        var next2 = Peek2()!;
+        var (tok1, tok2) = Peek2()!;
 
-        return (next2?.First.Kind, next2?.Second.Kind) switch
+        return (tok1?.Kind, tok2?.Kind) switch
         {
             (SyntaxTokenKind.UseKeyword, _) => ParseUseDeclaration(attributes),
             (SyntaxTokenKind.TypeKeyword, _) or
@@ -546,11 +555,11 @@ internal sealed class LanguageParser
 
     private TypeSyntax ParseType()
     {
-        var next3 = Peek3();
-        var type = (next3?.First.Kind, next3?.Second.Kind, next3?.Third.Kind) switch
+        var (tok1, tok2, tok3) = Peek3();
+        var type = (tok1?.Kind, tok2?.Kind, tok3?.Kind) switch
         {
             (SyntaxTokenKind.AnyKeyword, _, _) => ParseAnyType(),
-            _ when IsMinus(next3?.First) => ParseLiteralType(),
+            _ when IsMinus(tok1) => ParseLiteralType(),
             ({ } literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralType(),
             (SyntaxTokenKind.BoolKeyword, _, _) => ParseBooleanType(),
             (SyntaxTokenKind.IntKeyword, _, _) => ParseIntegerType(),
@@ -1138,8 +1147,8 @@ internal sealed class LanguageParser
 
     private ExpressionSyntax ParsePrimaryExpression()
     {
-        var next3 = Peek3();
-        var expr = (next3?.First.Kind, next3?.Second.Kind, next3?.Third.Kind) switch
+        var (tok1, tok2, tok3) = Peek3();
+        var expr = (tok1?.Kind, tok2?.Kind, tok3?.Kind) switch
         {
             (SyntaxTokenKind.OpenParen, _, _) => ParseParenthesizedOrTupleExpression(),
             (SyntaxTokenKind.OpenBrace, _, _) => ParseBlockExpression(),
@@ -1764,12 +1773,12 @@ internal sealed class LanguageParser
 
     private PatternSyntax ParsePattern()
     {
-        var next2 = Peek2();
-        var pat = (next2?.First.Kind, next2?.Second.Kind) switch
+        var (tok1, tok2) = Peek2();
+        var pat = (tok1?.Kind, tok2?.Kind) switch
         {
             (SyntaxTokenKind.MutKeyword, _) => ParseWildcardOrStringOrArrayPattern(),
             ({ } ident, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseWildcardOrStringOrArrayPattern(),
-            _ when IsMinus(next2?.First) => ParseLiteralPattern(),
+            _ when IsMinus(tok1) => ParseLiteralPattern(),
             (SyntaxTokenKind.StringLiteral, _) => ParseStringPattern(null),
             ({ } literal, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralPattern(),
             (SyntaxTokenKind.RecKeyword, _) => ParseRecordPattern(),

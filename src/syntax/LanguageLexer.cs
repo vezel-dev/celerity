@@ -35,12 +35,12 @@ internal sealed class LanguageLexer
 
     private char? Peek1()
     {
-        return _reader.Peek1() is (true, var ch) ? ch : null;
+        return _reader.TryPeek(0, out var ch) ? ch : null;
     }
 
-    private (char First, char Second)? Peek2()
+    private (char? First, char? Second) Peek2()
     {
-        return _reader.Peek2() is (true, var ch1, var ch2) ? (ch1, ch2) : null;
+        return (_reader.TryPeek(0, out var ch1) ? ch1 : null, _reader.TryPeek(1, out var ch2) ? ch2 : null);
     }
 
     private void Advance(StringBuilder? builder = null)
@@ -60,16 +60,19 @@ internal sealed class LanguageLexer
         return ch;
     }
 
+    private void Diagnostic(SourceDiagnosticSeverity severity, SourceLocation location, string message)
+    {
+        _currentDiagnostics.Add(token => SourceDiagnostic.Create(token, severity, location, message));
+    }
+
     private void Warning(SourceLocation location, string message)
     {
-        _currentDiagnostics.Add(
-            token => SourceDiagnostic.Create(token, SourceDiagnosticSeverity.Warning, location, message));
+        Diagnostic(SourceDiagnosticSeverity.Warning, location, message);
     }
 
     private void Error(SourceLocation location, string message)
     {
-        _currentDiagnostics.Add(
-            token => SourceDiagnostic.Create(token, SourceDiagnosticSeverity.Error, location, message));
+        Diagnostic(SourceDiagnosticSeverity.Error, location, message);
     }
 
     private void ErrorExpected(string expected)
@@ -332,47 +335,34 @@ internal sealed class LanguageLexer
         {
             LexTrivia(_location, _leading);
 
-            SourceLocation location;
-            SyntaxTokenKind kind;
-
-            if (Peek1() is { } cur)
+            var (location, kind) = Peek1() switch
             {
-                (location, kind) = cur switch
-                {
-                    '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<' or '=' or '!' =>
-                        LexOperatorOrPunctuator(_location),
-                    '.' => LexPunctuator(_location, SyntaxTokenKind.Dot),
-                    ',' => LexPunctuator(_location, SyntaxTokenKind.Comma),
-                    ';' => LexPunctuator(_location, SyntaxTokenKind.Semicolon),
-                    '@' => LexPunctuator(_location, SyntaxTokenKind.At),
-                    '#' => LexPunctuator(_location, SyntaxTokenKind.Hash),
-                    '?' => LexPunctuator(_location, SyntaxTokenKind.Question),
-                    '(' => LexPunctuator(_location, SyntaxTokenKind.OpenParen),
-                    ')' => LexPunctuator(_location, SyntaxTokenKind.CloseParen),
-                    '[' => LexPunctuator(_location, SyntaxTokenKind.OpenBracket),
-                    ']' => LexPunctuator(_location, SyntaxTokenKind.CloseBracket),
-                    '{' => LexPunctuator(_location, SyntaxTokenKind.OpenBrace),
-                    '}' => LexPunctuator(_location, SyntaxTokenKind.CloseBrace),
-                    >= 'A' and <= 'Z' => LexIdentifier(_location, SyntaxTokenKind.UpperIdentifier),
-                    >= 'a' and <= 'z' => LexIdentifier(_location, SyntaxTokenKind.LowerIdentifier),
-                    '_' => LexIdentifier(_location, SyntaxTokenKind.DiscardIdentifier),
-                    >= '0' and <= '9' => LexNumberLiteral(_location),
-                    ':' => LexAtomLiteralOrPunctuator(_location, SyntaxTokenKind.Colon),
-                    '"' => LexStringLiteral(_location),
-                    _ => (_location, SyntaxTokenKind.Unrecognized),
-                };
+                '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<' or '=' or '!' =>
+                    LexOperatorOrPunctuator(_location),
+                '.' => LexPunctuator(_location, SyntaxTokenKind.Dot),
+                ',' => LexPunctuator(_location, SyntaxTokenKind.Comma),
+                ';' => LexPunctuator(_location, SyntaxTokenKind.Semicolon),
+                '@' => LexPunctuator(_location, SyntaxTokenKind.At),
+                '#' => LexPunctuator(_location, SyntaxTokenKind.Hash),
+                '?' => LexPunctuator(_location, SyntaxTokenKind.Question),
+                '(' => LexPunctuator(_location, SyntaxTokenKind.OpenParen),
+                ')' => LexPunctuator(_location, SyntaxTokenKind.CloseParen),
+                '[' => LexPunctuator(_location, SyntaxTokenKind.OpenBracket),
+                ']' => LexPunctuator(_location, SyntaxTokenKind.CloseBracket),
+                '{' => LexPunctuator(_location, SyntaxTokenKind.OpenBrace),
+                '}' => LexPunctuator(_location, SyntaxTokenKind.CloseBrace),
+                >= 'A' and <= 'Z' => LexIdentifier(_location, SyntaxTokenKind.UpperIdentifier),
+                >= 'a' and <= 'z' => LexIdentifier(_location, SyntaxTokenKind.LowerIdentifier),
+                '_' => LexIdentifier(_location, SyntaxTokenKind.DiscardIdentifier),
+                >= '0' and <= '9' => LexNumberLiteral(_location),
+                ':' => LexAtomLiteralOrPunctuator(_location),
+                '"' => LexStringLiteral(_location),
+                null => (_location, SyntaxTokenKind.EndOfInput),
+                _ => LexUnrecognized(_location),
+            };
 
-                if (kind == SyntaxTokenKind.Unrecognized)
-                {
-                    Advance();
-
-                    Error(location, $"Unrecognized character");
-                }
-
+            if (kind != SyntaxTokenKind.EndOfInput)
                 LexTrivia(_location, _trailing);
-            }
-            else
-                (location, kind) = (_location, SyntaxTokenKind.EndOfInput);
 
             tokens.Add(CreateToken(location, kind));
 
@@ -396,16 +386,14 @@ internal sealed class LanguageLexer
 
     private void LexTrivia(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        while (Peek1() is { } cur)
+        while (Peek2() is ({ } ch1, var ch2))
         {
-            switch (cur)
+            switch ((ch1, ch2))
             {
-                case ' ':
-                case '\t':
+                case (' ' or '\t', _):
                     LexWhiteSpace(location, builder);
                     continue;
-                case '\n':
-                case '\r':
+                case ('\n' or '\r', _):
                     LexNewLine(location, builder);
 
                     // Trailing trivia for a token stops when the line ends.
@@ -413,12 +401,11 @@ internal sealed class LanguageLexer
                         break;
                     else
                         continue;
-                default:
-                    if (Peek2() != ('/', '/'))
-                        break;
-
+                case ('/', '/'):
                     LexComment(location, builder);
                     continue;
+                default:
+                    break;
             }
 
             break;
@@ -435,7 +422,7 @@ internal sealed class LanguageLexer
 
     private void LexNewLine(SourceLocation location, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        if (Read(_trivia) == '\r' && Peek1() == '\n')
+        if ((Read(_trivia), Peek1()) == ('\r', '\n'))
             Advance(_trivia);
 
         // Character is incremented in the Read method.
@@ -453,6 +440,15 @@ internal sealed class LanguageLexer
             Advance(_trivia);
 
         builder.Add(CreateTrivia(location, SyntaxTriviaKind.Comment));
+    }
+
+    private (SourceLocation Location, SyntaxTokenKind Kind) LexUnrecognized(SourceLocation location)
+    {
+        Advance();
+
+        Error(location, $"Unrecognized character");
+
+        return (location, SyntaxTokenKind.Unrecognized);
     }
 
     private (SourceLocation Location, SyntaxTokenKind Kind) LexOperatorOrPunctuator(SourceLocation location)
@@ -512,19 +508,18 @@ internal sealed class LanguageLexer
     {
         Advance();
 
-        if (kind == SyntaxTokenKind.Dot && Peek1() == '.')
-        {
-            Advance();
+        if (kind != SyntaxTokenKind.Dot || Peek1() != '.')
+            return (location, kind);
 
-            return (location, SyntaxTokenKind.DotDot);
-        }
+        Advance();
 
-        return (location, kind);
+        return (location, SyntaxTokenKind.DotDot);
     }
 
-    private (SourceLocation Location, SyntaxTokenKind Kind) LexIdentifier(
-        SourceLocation location, SyntaxTokenKind kind)
+    private (SourceLocation Location, SyntaxTokenKind Kind) LexIdentifier(SourceLocation location, SyntaxTokenKind kind)
     {
+        Advance();
+
         switch (kind)
         {
             case SyntaxTokenKind.UpperIdentifier:
@@ -635,19 +630,20 @@ internal sealed class LanguageLexer
         return (location, SyntaxTokenKind.RealLiteral);
     }
 
-    private (SourceLocation Location, SyntaxTokenKind Kind) LexAtomLiteralOrPunctuator(
-        SourceLocation location, SyntaxTokenKind kind)
+    private (SourceLocation Location, SyntaxTokenKind Kind) LexAtomLiteralOrPunctuator(SourceLocation location)
     {
         Advance();
 
-        if (kind == SyntaxTokenKind.Colon && Peek1() == ':')
+        var ch = Peek1();
+
+        if (ch == ':')
         {
             Advance();
 
             return (location, SyntaxTokenKind.ColonColon);
         }
 
-        var ident = Peek1() switch
+        var ident = ch switch
         {
             >= 'A' and <= 'Z' => SyntaxTokenKind.UpperIdentifier,
             >= 'a' and <= 'z' => SyntaxTokenKind.LowerIdentifier,
@@ -657,12 +653,12 @@ internal sealed class LanguageLexer
 
         if (ident is { } k)
         {
-            kind = SyntaxTokenKind.AtomLiteral;
-
             _ = LexIdentifier(location, k);
+
+            return (location, SyntaxTokenKind.AtomLiteral);
         }
 
-        return (location, kind);
+        return (location, SyntaxTokenKind.Colon);
     }
 
     private (SourceLocation Location, SyntaxTokenKind Kind) LexStringLiteral(SourceLocation location)

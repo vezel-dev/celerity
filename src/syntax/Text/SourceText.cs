@@ -21,15 +21,17 @@ public abstract class SourceText : IReadOnlyList<char>
         var builder = new StringBuilder();
         var line = 1;
 
-        while (reader.Count != 0)
+        while (!reader.IsEmpty)
         {
-            var ch = reader.Read();
+            var ch1 = reader.Read();
 
-            _ = builder.Append(ch);
+            _ = builder.Append(ch1);
 
-            if (ch is '\r' or '\n')
+            if (ch1 is '\r' or '\n')
             {
-                if ((ch, reader.Peek1()) == ('\r', (true, '\n')))
+                _ = reader.TryPeek(0, out var ch2);
+
+                if ((ch1, ch2) == ('\r', '\n'))
                     _ = builder.Append(reader.Read());
 
                 yield return new(new(Path, line++, 1), builder.ToString());

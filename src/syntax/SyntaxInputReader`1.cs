@@ -12,7 +12,7 @@ internal sealed class SyntaxInputReader<T>
         }
     }
 
-    public int Count => _items.Count - _position;
+    public bool IsEmpty => _position == _items.Count;
 
     private readonly IReadOnlyList<T> _items;
 
@@ -23,19 +23,20 @@ internal sealed class SyntaxInputReader<T>
         _items = items;
     }
 
-    public (bool Success, T? First) Peek1()
+    public bool TryPeek(int offset, [MaybeNullWhen(false)] out T item)
     {
-        return Count != 0 ? (true, _items[_position]) : default;
-    }
+        var position = _position + offset;
 
-    public (bool Success, T? First, T? Second) Peek2()
-    {
-        return Count >= 2 ? (true, _items[_position], _items[_position + 1]) : default;
-    }
+        if (position < _items.Count)
+        {
+            item = _items[position];
 
-    public (bool Success, T? First, T? Second, T? Third) Peek3()
-    {
-        return Count >= 3 ? (true, _items[_position], _items[_position + 1], _items[_position + 2]) : default;
+            return true;
+        }
+
+        item = default;
+
+        return false;
     }
 
     public T Read()
