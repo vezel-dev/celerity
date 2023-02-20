@@ -151,6 +151,7 @@
     </Type>
 
     <Type Name="AggregateExpression" Base="ValueExpression" Abstract="true">
+        <Node Name="With" Type="Expression" Optional="true" />
         <Nodes Name="Field" Type="AggregateExpressionField" />
     </Type>
 
@@ -161,11 +162,13 @@
     </Type>
 
     <Type Name="RecordExpression" Base="AggregateExpression">
+        <Node Name="With" Type="Expression" Optional="true" Override="true" />
         <Nodes Name="Field" Type="AggregateExpressionField" Override="true" />
     </Type>
 
     <Type Name="ErrorExpression" Base="AggregateExpression">
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Node Name="With" Type="Expression" Optional="true" Override="true" />
         <Nodes Name="Field" Type="AggregateExpressionField" Override="true" />
     </Type>
 

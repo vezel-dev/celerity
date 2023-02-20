@@ -414,9 +414,15 @@
     </Type>
 
     <Type Name="AggregateExpression" Base="ValueExpression" Abstract="true">
+        <Node Name="With" Type="AggregateExpressionWith" Optional="true" />
         <Token Name="OpenBrace" />
         <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" />
         <Token Name="CloseBrace" />
+    </Type>
+
+    <Type Name="AggregateExpressionWith" Parent="AggregateExpression">
+        <Token Name="WithKeyword" />
+        <Node Name="Operand" Type="Expression" />
     </Type>
 
     <Type Name="AggregateExpressionField" Parent="AggregateExpression">
@@ -428,6 +434,7 @@
 
     <Type Name="RecordExpression" Base="AggregateExpression">
         <Token Name="RecKeyword" />
+        <Node Name="With" Type="AggregateExpressionWith" Optional="true" Override="true" />
         <Token Name="OpenBrace" Override="true" />
         <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
@@ -436,6 +443,7 @@
     <Type Name="ErrorExpression" Base="AggregateExpression">
         <Token Name="ErrKeyword" />
         <Token Name="Name" />
+        <Node Name="With" Type="AggregateExpressionWith" Optional="true" Override="true" />
         <Token Name="OpenBrace" Override="true" />
         <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />

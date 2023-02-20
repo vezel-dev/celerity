@@ -47,6 +47,7 @@ public static class SyntaxFacts
             "type" => SyntaxTokenKind.TypeKeyword,
             "use" => SyntaxTokenKind.UseKeyword,
             "while" => SyntaxTokenKind.WhileKeyword,
+            "with" => SyntaxTokenKind.WithKeyword,
             _ => null,
         };
     }
@@ -78,7 +79,6 @@ public static class SyntaxFacts
             "meta" => SyntaxTokenKind.MetaKeyword,
             "quote" => SyntaxTokenKind.QuoteKeyword,
             "unquote" => SyntaxTokenKind.UnquoteKeyword,
-            "with" => SyntaxTokenKind.WithKeyword,
             "yield" => SyntaxTokenKind.YieldKeyword,
             _ => null,
         };
@@ -138,7 +138,8 @@ public static class SyntaxFacts
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
-            SyntaxTokenKind.WhileKeyword => true,
+            SyntaxTokenKind.WhileKeyword or
+            SyntaxTokenKind.WithKeyword => true,
             _ => false,
         };
     }
@@ -174,7 +175,6 @@ public static class SyntaxFacts
             SyntaxTokenKind.MetaKeyword or
             SyntaxTokenKind.QuoteKeyword or
             SyntaxTokenKind.UnquoteKeyword or
-            SyntaxTokenKind.WithKeyword or
             SyntaxTokenKind.YieldKeyword => true,
             _ => false,
         };
@@ -367,6 +367,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.TypeKeyword => "'type' keyword",
             SyntaxTokenKind.UseKeyword => "'use' keyword",
             SyntaxTokenKind.WhileKeyword => "'while' keyword",
+            SyntaxTokenKind.WithKeyword => "'with' keyword",
             SyntaxTokenKind.AgentKeyword => "'agent' keyword",
             SyntaxTokenKind.AnyKeyword => "'any' keyword",
             SyntaxTokenKind.AtomKeyword => "'atom' keyword",

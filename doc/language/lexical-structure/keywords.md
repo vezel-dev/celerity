@@ -43,7 +43,8 @@ normal-keyword ::= 'and' |
                    'try' |
                    'type' |
                    'use' |
-                   'while'
+                   'while' |
+                   'with'
 ```
 
 ```ebnf
@@ -65,6 +66,5 @@ reserved-keyword ::= 'friend' |
                      'meta' |
                      'quote' |
                      'unquote' |
-                     'with' |
                      'yield'
 ```

@@ -1368,6 +1368,7 @@ internal sealed class LanguageParser
     private RecordExpressionSyntax ParseRecordExpression()
     {
         var rec = Read();
+        var with = ParseOptional(SyntaxTokenKind.WithKeyword, static @this => @this.ParseAggregateExpressionWith());
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var (fields, seps) = ParseSeparatedList(
             static @this => @this.ParseAggregateExpressionField(),
@@ -1377,13 +1378,14 @@ internal sealed class LanguageParser
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(rec, open, List(fields, seps), close);
+        return new(rec, with, open, List(fields, seps), close);
     }
 
     private ErrorExpressionSyntax ParseErrorExpression()
     {
         var err = Read();
         var name = Expect(SyntaxTokenKind.UpperIdentifier);
+        var with = ParseOptional(SyntaxTokenKind.WithKeyword, static @this => @this.ParseAggregateExpressionWith());
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var (fields, seps) = ParseSeparatedList(
             static @this => @this.ParseAggregateExpressionField(),
@@ -1393,7 +1395,15 @@ internal sealed class LanguageParser
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(err, name, open, List(fields, seps), close);
+        return new(err, name, with, open, List(fields, seps), close);
+    }
+
+    private AggregateExpressionWithSyntax ParseAggregateExpressionWith()
+    {
+        var with = Read();
+        var operand = ParseExpression();
+
+        return new(with, operand);
     }
 
     private AggregateExpressionFieldSyntax ParseAggregateExpressionField()
