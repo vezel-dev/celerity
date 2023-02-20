@@ -314,7 +314,7 @@ internal sealed class LanguageParser
                 {
                     DrainToMissingDeclaration(false);
 
-                    decls.Add(ParseDeclaration(dattrs, true));
+                    decls.Add(ParseDeclaration(dattrs));
 
                     break;
                 }
@@ -359,7 +359,7 @@ internal sealed class LanguageParser
                 {
                     DrainToMissingStatement(false);
 
-                    decls.Add(ParseDeclaration(attrs, true));
+                    decls.Add(ParseDeclaration(attrs));
 
                     break;
                 }
@@ -368,7 +368,7 @@ internal sealed class LanguageParser
                 {
                     DrainToMissingStatement(false);
 
-                    stmts.Add(ParseStatement(attrs, true));
+                    stmts.Add(ParseStatement(attrs));
 
                     break;
                 }
@@ -430,7 +430,7 @@ internal sealed class LanguageParser
         return new(List(idents, seps));
     }
 
-    private DeclarationSyntax ParseDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes, bool interactive)
+    private DeclarationSyntax ParseDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
         var (tok1, tok2) = Peek2()!;
 
@@ -438,14 +438,14 @@ internal sealed class LanguageParser
         {
             (SyntaxTokenKind.UseKeyword, _) => ParseUseDeclaration(attributes),
             (SyntaxTokenKind.TypeKeyword, _) or
-            (SyntaxTokenKind.PubKeyword, SyntaxTokenKind.OpaqueKeyword or SyntaxTokenKind.TypeKeyword)
-                when !interactive => ParseTypeDeclaration(attributes),
+            (SyntaxTokenKind.PubKeyword, SyntaxTokenKind.OpaqueKeyword or SyntaxTokenKind.TypeKeyword) =>
+                ParseTypeDeclaration(attributes),
             (SyntaxTokenKind.ConstKeyword, _) or
             (SyntaxTokenKind.PubKeyword, SyntaxTokenKind.ConstKeyword) => ParseConstantDeclaration(attributes),
             (SyntaxTokenKind.FnKeyword, _) or
             (SyntaxTokenKind.PubKeyword, SyntaxTokenKind.ExtKeyword or SyntaxTokenKind.FnKeyword) =>
                 ParseFunctionDeclaration(attributes),
-            (SyntaxTokenKind.TestKeyword, _) when !interactive => ParseTestDeclaration(attributes),
+            (SyntaxTokenKind.TestKeyword, _) => ParseTestDeclaration(attributes),
             _ => throw new UnreachableException(),
         };
     }
@@ -953,14 +953,14 @@ internal sealed class LanguageParser
         return new(arrow, type);
     }
 
-    private StatementSyntax ParseStatement(ImmutableArray<AttributeSyntax>.Builder attributes, bool interactive)
+    private StatementSyntax ParseStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
         return Peek1()?.Kind switch
         {
             SyntaxTokenKind.LetKeyword => ParseLetStatement(attributes),
-            SyntaxTokenKind.UseKeyword when !interactive => ParseUseStatement(attributes),
-            SyntaxTokenKind.DeferKeyword when !interactive => ParseDeferStatement(attributes),
-            SyntaxTokenKind.AssertKeyword when !interactive => ParseAssertStatement(attributes),
+            SyntaxTokenKind.UseKeyword => ParseUseStatement(attributes),
+            SyntaxTokenKind.DeferKeyword => ParseDeferStatement(attributes),
+            SyntaxTokenKind.AssertKeyword => ParseAssertStatement(attributes),
             _ => ParseExpressionStatement(attributes),
         };
     }
@@ -1277,7 +1277,7 @@ internal sealed class LanguageParser
                 {
                     DrainToMissingStatement();
 
-                    stmts.Add(ParseStatement(attrs, false));
+                    stmts.Add(ParseStatement(attrs));
 
                     break;
                 }
