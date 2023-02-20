@@ -287,6 +287,11 @@
         <Node Name="Body" Type="Expression" Override="true" />
     </Type>
 
+    <Type Name="TryExpression" Base="ConditionalExpression">
+        <Node Name="Body" Type="Expression" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+    </Type>
+
     <Type Name="LoopExpression" Base="ControlExpression" Abstract="true">
         <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" />
     </Type>
@@ -373,11 +378,7 @@
     <Type Name="CallExpression" Base="PostfixExpression">
         <Node Name="Subject" Type="Expression" Override="true" />
         <Nodes Name="Argument" Type="Expression" />
-        <Node Name="Try" Type="CallExpressionTry" Optional="true" />
-    </Type>
-
-    <Type Name="CallExpressionTry" Parent="CallExpression">
-        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+        <Computed Name="IsPropagating" Type="bool" Body="Syntax.QuestionToken != null" />
         <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
     </Type>

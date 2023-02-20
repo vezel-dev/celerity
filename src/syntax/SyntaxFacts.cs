@@ -43,6 +43,7 @@ public static class SyntaxFacts
             "ret" => SyntaxTokenKind.RetKeyword,
             "tail" => SyntaxTokenKind.TailKeyword,
             "test" => SyntaxTokenKind.TestKeyword,
+            "try" => SyntaxTokenKind.TryKeyword,
             "type" => SyntaxTokenKind.TypeKeyword,
             "use" => SyntaxTokenKind.UseKeyword,
             "while" => SyntaxTokenKind.WhileKeyword,
@@ -76,7 +77,6 @@ public static class SyntaxFacts
             "macro" => SyntaxTokenKind.MacroKeyword,
             "meta" => SyntaxTokenKind.MetaKeyword,
             "quote" => SyntaxTokenKind.QuoteKeyword,
-            "try" => SyntaxTokenKind.TryKeyword,
             "unquote" => SyntaxTokenKind.UnquoteKeyword,
             "with" => SyntaxTokenKind.WithKeyword,
             "yield" => SyntaxTokenKind.YieldKeyword,
@@ -135,6 +135,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.RetKeyword or
             SyntaxTokenKind.TailKeyword or
             SyntaxTokenKind.TestKeyword or
+            SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
             SyntaxTokenKind.WhileKeyword => true,
@@ -172,7 +173,6 @@ public static class SyntaxFacts
             SyntaxTokenKind.MacroKeyword or
             SyntaxTokenKind.MetaKeyword or
             SyntaxTokenKind.QuoteKeyword or
-            SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.UnquoteKeyword or
             SyntaxTokenKind.WithKeyword or
             SyntaxTokenKind.YieldKeyword => true,
@@ -287,6 +287,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.RecvKeyword or
             SyntaxTokenKind.RetKeyword or
             SyntaxTokenKind.TailKeyword or
+            SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.WhileKeyword or
             SyntaxTokenKind.UpperIdentifier or
             SyntaxTokenKind.LowerIdentifier or
@@ -362,6 +363,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.RetKeyword => "'ret' keyword",
             SyntaxTokenKind.TailKeyword => "'tail' keyword",
             SyntaxTokenKind.TestKeyword => "'test' keyword",
+            SyntaxTokenKind.TryKeyword => "'try' keyword",
             SyntaxTokenKind.TypeKeyword => "'type' keyword",
             SyntaxTokenKind.UseKeyword => "'use' keyword",
             SyntaxTokenKind.WhileKeyword => "'while' keyword",

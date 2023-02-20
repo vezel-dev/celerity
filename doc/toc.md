@@ -86,6 +86,7 @@
             * [Receive Expression](language/syntactic-structure/expressions/control/receive.md)
             * [While Expression](language/syntactic-structure/expressions/control/while.md)
             * [For Expression](language/syntactic-structure/expressions/control/for.md)
+            * [Try Expression](language/syntactic-structure/expressions/control/try.md)
             * [Return Expression](language/syntactic-structure/expressions/control/return.md)
             * [Raise Expression](language/syntactic-structure/expressions/control/raise.md)
             * [Next Expression](language/syntactic-structure/expressions/control/next.md)

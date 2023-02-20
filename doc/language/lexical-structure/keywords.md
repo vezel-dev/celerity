@@ -40,6 +40,7 @@ normal-keyword ::= 'and' |
                    'tail' |
                    'test' |
                    'true' |
+                   'try' |
                    'type' |
                    'use' |
                    'while'
@@ -63,7 +64,6 @@ reserved-keyword ::= 'friend' |
                      'macro' |
                      'meta' |
                      'quote' |
-                     'try' |
                      'unquote' |
                      'with' |
                      'yield'

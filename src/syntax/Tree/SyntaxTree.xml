@@ -613,6 +613,15 @@
         <Node Name="Pattern" Type="Pattern" />
     </Type>
 
+    <Type Name="TryExpression" Base="ConditionalExpression">
+        <Token Name="TryKeyword" />
+        <Node Name="Body" Type="Expression" />
+        <Token Name="CatchKeyword" />
+        <Token Name="OpenBrace" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
+        <Token Name="CloseBrace" />
+    </Type>
+
     <Type Name="LoopExpression" Base="ControlExpression" Abstract="true" />
 
     <Type Name="WhileExpression" Base="LoopExpression">
@@ -706,25 +715,13 @@
     <Type Name="CallExpression" Base="PostfixExpression">
         <Node Name="Subject" Type="Expression" Override="true" />
         <Node Name="ArgumentList" Type="CallArgumentList" />
-        <Node Name="Try" Type="CallExpressionTry" Optional="true" />
+        <Token Name="Question" Optional="true" />
     </Type>
 
     <Type Name="CallArgumentList" Parent="CallExpression">
         <Token Name="OpenParen" />
         <Nodes Name="Argument" Type="Expression" Separated="true" />
         <Token Name="CloseParen" />
-    </Type>
-
-    <Type Name="CallExpressionTry" Parent="CallExpression">
-        <Token Name="Question" />
-        <Node Name="Catch" Type="CallExpressionTryCatch" Optional="true" />
-    </Type>
-
-    <Type Name="CallExpressionTryCatch" Parent="CallExpressionTry">
-        <Token Name="CatchKeyword" />
-        <Token Name="OpenBrace" />
-        <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
-        <Token Name="CloseBrace" />
     </Type>
 
     <Type Name="SendExpression" Base="PostfixExpression">

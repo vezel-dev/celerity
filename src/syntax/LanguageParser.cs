@@ -1168,6 +1168,7 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.CondKeyword, _, _) => ParseConditionExpression(),
             (SyntaxTokenKind.MatchKeyword, _, _) => ParseMatchExpression(),
             (SyntaxTokenKind.RecvKeyword, _, _) => ParseReceiveExpression(),
+            (SyntaxTokenKind.TryKeyword, _, _) => ParseTryExpression(),
             (SyntaxTokenKind.WhileKeyword, _, _) => ParseWhileExpression(),
             (SyntaxTokenKind.ForKeyword, _, _) => ParseForExpression(),
             (SyntaxTokenKind.RetKeyword or SyntaxTokenKind.TailKeyword, _, _) => ParseReturnExpression(),
@@ -1584,6 +1585,23 @@ internal sealed class LanguageParser
         return new(pat);
     }
 
+    private TryExpressionSyntax ParseTryExpression()
+    {
+        var @try = Read();
+        var body = ParseExpression();
+        var @catch = Expect(SyntaxTokenKind.CatchKeyword);
+        var open = Expect(SyntaxTokenKind.OpenBrace);
+        var (arms, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpressionPatternArm(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: false,
+            allowTrailing: true);
+        var close = Expect(SyntaxTokenKind.CloseBrace);
+
+        return new(@try, body, @catch, open, List(arms, seps), close);
+    }
+
     private WhileExpressionSyntax ParseWhileExpression()
     {
         var @while = Read();
@@ -1706,9 +1724,9 @@ internal sealed class LanguageParser
     private CallExpressionSyntax ParseCallExpression(ExpressionSyntax subject)
     {
         var args = ParseCallArgumentList();
-        var @try = ParseOptional(SyntaxTokenKind.Question, static @this => @this.ParseCallExpressionTry());
+        var question = Optional(SyntaxTokenKind.Question);
 
-        return new(subject, args, @try);
+        return new(subject, args, question);
     }
 
     private CallArgumentListSyntax ParseCallArgumentList()
@@ -1723,29 +1741,6 @@ internal sealed class LanguageParser
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(args, seps), close);
-    }
-
-    private CallExpressionTrySyntax ParseCallExpressionTry()
-    {
-        var question = Read();
-        var @catch = ParseOptional(SyntaxTokenKind.CatchKeyword, static @this => @this.ParseCallExpressionTryCatch());
-
-        return new(question, @catch);
-    }
-
-    private CallExpressionTryCatchSyntax ParseCallExpressionTryCatch()
-    {
-        var @catch = Read();
-        var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (arms, seps) = ParseSeparatedList(
-            static @this => @this.ParseExpressionPatternArm(),
-            SyntaxTokenKind.Comma,
-            SyntaxTokenKind.CloseBrace,
-            allowEmpty: false,
-            allowTrailing: true);
-        var close = Expect(SyntaxTokenKind.CloseBrace);
-
-        return new(@catch, open, List(arms, seps), close);
     }
 
     private SendExpressionSyntax ParseSendExpression(ExpressionSyntax subject)

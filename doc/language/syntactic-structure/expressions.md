@@ -23,6 +23,7 @@ primary-expression ::= parenthesized-expression |
                        receive-expression |
                        while-expression |
                        for-expression |
+                       try-expression |
                        return-expression |
                        raise-expression |
                        next-expression |
