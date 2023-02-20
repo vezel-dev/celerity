@@ -17,6 +17,7 @@ internal sealed class LanguageAnalyzer : SyntaxWalker<SemanticNode>
         // TODO
         _ = new BlockScope(scope);
         _ = new LambdaScope(scope);
+        _ = new TryScope(scope);
         _ = new LoopScope(scope);
 
         _ = _scope;

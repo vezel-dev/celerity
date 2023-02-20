@@ -11,6 +11,23 @@ internal sealed class LambdaScope : Scope
     {
     }
 
+    public override TryScope? GetEnclosingTry()
+    {
+        // We might be analyzing code like this:
+        //
+        // try {
+        //     let func = fn() -> raise err { };
+        //     func();
+        // } catch {
+        //     _ => 42,
+        // };
+        //
+        // The raise expression in the lambda expression should cause the error to be returned to the unexpectant
+        // caller, causing a panic in this case. The raise should not bind to the outer try expression. So we
+        // short-circuit the scope walk by returning null here.
+        return null;
+    }
+
     public override LoopScope? GetEnclosingLoop()
     {
         // We might be analyzing code like this:

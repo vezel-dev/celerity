@@ -13,6 +13,19 @@ internal class Scope
         Parent = parent;
     }
 
+    public virtual TryScope? GetEnclosingTry()
+    {
+        // Consider:
+        //
+        // try raise err { } catch {
+        //     _ => 42,
+        // };
+        //
+        // When we get to the raise expression, the top of the scope stack will be the TryScope for the try expression.
+        // That is the one we want to bind to, so no special consideration is needed here.
+        return this is TryScope @try ? @try : Parent?.GetEnclosingTry();
+    }
+
     public virtual LoopScope? GetEnclosingLoop()
     {
         // We might be analyzing a bizarre piece of code like this:
