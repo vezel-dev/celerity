@@ -810,11 +810,20 @@ internal sealed class LanguageParser
     private FunctionTypeSyntax ParseFunctionType()
     {
         var fn = Read();
+        var sig = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseFunctionTypeSignature());
+
+        return new(fn, sig);
+    }
+
+    private FunctionTypeSignatureSyntax ParseFunctionTypeSignature()
+    {
+        var open = Read();
         var parms = ParseFunctionTypeParameterList();
         var err = Optional(SyntaxTokenKind.ErrKeyword);
         var type = ParseReturnTypeAnnotation();
+        var close = Expect(SyntaxTokenKind.CloseParen);
 
-        return new(fn, parms, err, type);
+        return new(open, parms, err, type, close);
     }
 
     private FunctionTypeParameterListSyntax ParseFunctionTypeParameterList()

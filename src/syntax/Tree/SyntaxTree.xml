@@ -274,9 +274,15 @@
 
     <Type Name="FunctionType" Base="Type">
         <Token Name="FnKeyword" />
+        <Node Name="Signature" Type="FunctionTypeSignature" Optional="true" />
+    </Type>
+
+    <Type Name="FunctionTypeSignature" Parent="FunctionType">
+        <Token Name="OpenParen" />
         <Node Name="ParameterList" Type="FunctionTypeParameterList" />
         <Token Name="ErrKeyword" Optional="true" />
         <Node Name="ReturnType" Type="ReturnTypeAnnotation" />
+        <Token Name="CloseParen" />
     </Type>
 
     <Type Name="FunctionTypeParameterList" Parent="FunctionType">
