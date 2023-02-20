@@ -555,6 +555,30 @@ internal sealed class LanguageParser
 
     private TypeSyntax ParseType()
     {
+        var type = ParsePrimaryType();
+
+        if (Optional(SyntaxTokenKind.OrKeyword) is { } or)
+        {
+            var (types, seps) = SeparatedBuilder<TypeSyntax>();
+
+            types.Add(type);
+            seps.Add(or);
+            types.Add(ParsePrimaryType());
+
+            while (Optional(SyntaxTokenKind.OrKeyword) is { } sep)
+            {
+                seps.Add(sep);
+                types.Add(ParsePrimaryType());
+            }
+
+            return new UnionTypeSyntax(List(types, seps));
+        }
+
+        return type;
+    }
+
+    private TypeSyntax ParsePrimaryType()
+    {
         var (tok1, tok2, tok3) = Peek3();
         var type = (tok1?.Kind, tok2?.Kind, tok3?.Kind) switch
         {
