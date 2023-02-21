@@ -34,7 +34,7 @@ collection.</PackageDescription>
         <RepositoryUrl>https://github.com/vezel-dev/celerity.git</RepositoryUrl>
         <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
         <SymbolVisibility>Hidden</SymbolVisibility>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 </Project>
