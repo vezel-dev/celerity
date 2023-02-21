@@ -1,6 +1,6 @@
 <Project>
     <ItemGroup Condition="'$(ImplicitUsings)' == 'true' or '$(ImplicitUsings)' == 'enable'">
-        <Using Include="Vezel.Celerity.Syntax" />
-        <Using Include="Vezel.Celerity.Syntax.Tree" />
+        <Using Include="Vezel.Celerity" />
+        <Using Include="Vezel.Celerity.Text" />
     </ItemGroup>
 </Project>

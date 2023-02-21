@@ -29,6 +29,7 @@ bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>
                           PrivateAssets="all" />
     </ItemGroup>
 
+    <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>

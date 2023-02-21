@@ -4,11 +4,6 @@ namespace Vezel.Celerity.Syntax;
 
 public static class SyntaxFacts
 {
-    public static SyntaxTokenKind? GetKeywordKind(scoped ReadOnlySpan<char> text)
-    {
-        return GetNormalKeywordKind(text) ?? GetTypeKeywordKind(text) ?? GetReservedKeywordKind(text);
-    }
-
     public static SyntaxTokenKind? GetNormalKeywordKind(scoped ReadOnlySpan<char> text)
     {
         return text switch
@@ -94,17 +89,11 @@ public static class SyntaxFacts
         };
     }
 
-    public static bool IsKeyword(SyntaxTokenKind kind)
-    {
-        return IsNormalKeyword(kind) || IsTypeKeyword(kind) || IsReservedKeyword(kind);
-    }
-
     public static bool IsNormalKeyword(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
 
-        return kind switch
-        {
+        return kind is
             SyntaxTokenKind.AndKeyword or
             SyntaxTokenKind.AsKeyword or
             SyntaxTokenKind.AssertKeyword or
@@ -139,17 +128,14 @@ public static class SyntaxFacts
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
             SyntaxTokenKind.WhileKeyword or
-            SyntaxTokenKind.WithKeyword => true,
-            _ => false,
-        };
+            SyntaxTokenKind.WithKeyword;
     }
 
     public static bool IsTypeKeyword(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
 
-        return kind switch
-        {
+        return kind is
             SyntaxTokenKind.AgentKeyword or
             SyntaxTokenKind.AnyKeyword or
             SyntaxTokenKind.AtomKeyword or
@@ -159,52 +145,50 @@ public static class SyntaxFacts
             SyntaxTokenKind.NoneKeyword or
             SyntaxTokenKind.RealKeyword or
             SyntaxTokenKind.RefKeyword or
-            SyntaxTokenKind.StrKeyword => true,
-            _ => false,
-        };
+            SyntaxTokenKind.StrKeyword;
     }
 
     public static bool IsReservedKeyword(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
 
-        return kind switch
-        {
+        return kind is
             SyntaxTokenKind.FriendKeyword or
             SyntaxTokenKind.MacroKeyword or
             SyntaxTokenKind.MetaKeyword or
             SyntaxTokenKind.QuoteKeyword or
             SyntaxTokenKind.UnquoteKeyword or
-            SyntaxTokenKind.YieldKeyword => true,
-            _ => false,
-        };
+            SyntaxTokenKind.YieldKeyword;
+    }
+
+    public static bool IsLiteralKeyword(SyntaxTokenKind kind)
+    {
+        Check.Enum(kind);
+
+        return kind is
+            SyntaxTokenKind.NilLiteral or
+            SyntaxTokenKind.BooleanLiteral;
     }
 
     public static bool IsOperator(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
 
-        return kind switch
-        {
+        return kind is
             SyntaxTokenKind.BitwiseOperator or
             SyntaxTokenKind.ShiftOperator or
             SyntaxTokenKind.MultiplicativeOperator or
-            SyntaxTokenKind.AdditiveOperator => true,
-            _ => false,
-        };
+            SyntaxTokenKind.AdditiveOperator;
     }
 
     public static bool IsIdentifier(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
 
-        return kind switch
-        {
+        return kind is
             SyntaxTokenKind.UpperIdentifier or
             SyntaxTokenKind.LowerIdentifier or
-            SyntaxTokenKind.DiscardIdentifier => true,
-            _ => false,
-        };
+            SyntaxTokenKind.DiscardIdentifier;
     }
 
     public static bool IsBindingIdentifier(SyntaxTokenKind kind)
@@ -221,49 +205,43 @@ public static class SyntaxFacts
     {
         Check.Enum(kind);
 
-        return kind switch
-        {
+        return kind is
             SyntaxTokenKind.NilLiteral or
             SyntaxTokenKind.BooleanLiteral or
             SyntaxTokenKind.IntegerLiteral or
             SyntaxTokenKind.RealLiteral or
             SyntaxTokenKind.AtomLiteral or
-            SyntaxTokenKind.StringLiteral => true,
-            _ => false,
-        };
+            SyntaxTokenKind.StringLiteral;
     }
 
     public static bool IsDeclarationStarter(SyntaxTokenKind kind)
     {
-        return kind switch
-        {
+        Check.Enum(kind);
+
+        return kind is
             SyntaxTokenKind.ConstKeyword or
             SyntaxTokenKind.ExtKeyword or
             SyntaxTokenKind.FnKeyword or
             SyntaxTokenKind.PubKeyword or
             SyntaxTokenKind.TestKeyword or
             SyntaxTokenKind.TypeKeyword or
-            SyntaxTokenKind.UseKeyword => true,
-            _ => false,
-        };
+            SyntaxTokenKind.UseKeyword;
     }
 
     public static bool IsStatementStarter(SyntaxTokenKind kind)
     {
-        return kind switch
-        {
+        return kind is
             SyntaxTokenKind.AssertKeyword or
             SyntaxTokenKind.DeferKeyword or
             SyntaxTokenKind.LetKeyword or
-            SyntaxTokenKind.UseKeyword => true,
-            _ => IsExpressionStarter(kind),
-        };
+            SyntaxTokenKind.UseKeyword || IsExpressionStarter(kind);
     }
 
     public static bool IsExpressionStarter(SyntaxTokenKind kind)
     {
-        return kind switch
-        {
+        Check.Enum(kind);
+
+        return kind is
             SyntaxTokenKind.BitwiseOperator or
             SyntaxTokenKind.ShiftOperator or
             SyntaxTokenKind.MultiplicativeOperator or
@@ -297,9 +275,41 @@ public static class SyntaxFacts
             SyntaxTokenKind.IntegerLiteral or
             SyntaxTokenKind.RealLiteral or
             SyntaxTokenKind.AtomLiteral or
-            SyntaxTokenKind.StringLiteral => true,
-            _ => false,
-        };
+            SyntaxTokenKind.StringLiteral;
+    }
+
+    internal static bool IsInternable(SyntaxTokenKind kind)
+    {
+        return kind is
+            SyntaxTokenKind.Equals or
+            SyntaxTokenKind.EqualsEquals or
+            SyntaxTokenKind.ExclamationEquals or
+            SyntaxTokenKind.CloseAngle or
+            SyntaxTokenKind.CloseAngleEquals or
+            SyntaxTokenKind.OpenAngle or
+            SyntaxTokenKind.OpenAngleEquals or
+            SyntaxTokenKind.Dot or
+            SyntaxTokenKind.DotDot or
+            SyntaxTokenKind.Comma or
+            SyntaxTokenKind.Colon or
+            SyntaxTokenKind.ColonColon or
+            SyntaxTokenKind.Semicolon or
+            SyntaxTokenKind.MinusCloseAngle or
+            SyntaxTokenKind.At or
+            SyntaxTokenKind.Hash or
+            SyntaxTokenKind.Question or
+            SyntaxTokenKind.OpenParen or
+            SyntaxTokenKind.CloseParen or
+            SyntaxTokenKind.OpenBracket or
+            SyntaxTokenKind.CloseBracket or
+            SyntaxTokenKind.OpenBrace or
+            SyntaxTokenKind.CloseBrace or
+            SyntaxTokenKind.NilLiteral or
+            SyntaxTokenKind.BooleanLiteral ||
+            IsNormalKeyword(kind) ||
+            IsTypeKeyword(kind) ||
+            IsReservedKeyword(kind) ||
+            IsLiteralKeyword(kind);
     }
 
     internal static string GetFriendlyName(SyntaxTokenKind kind)

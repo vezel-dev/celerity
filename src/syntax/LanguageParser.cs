@@ -1,4 +1,3 @@
-using Vezel.Celerity.Syntax.Text;
 using Vezel.Celerity.Syntax.Tree;
 
 namespace Vezel.Celerity.Syntax;
@@ -7,7 +6,7 @@ internal sealed class LanguageParser
 {
     private readonly string _path;
 
-    private readonly SyntaxInputReader<SyntaxToken> _reader;
+    private readonly ListReader<SyntaxToken> _reader;
 
     private readonly SyntaxMode _mode;
 
@@ -68,7 +67,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        ErrorExpected(missing, next?.Location, "lowercase identifier");
+        ErrorExpected(SyntaxDiagnosticCodes.ExpectedToken, next?.Location, "lowercase identifier");
 
         return missing;
     }
@@ -83,7 +82,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        ErrorExpected(missing, next?.Location, "lowercase or discard identifier");
+        ErrorExpected(SyntaxDiagnosticCodes.ExpectedToken, next?.Location, "lowercase or discard identifier");
 
         return missing;
     }
@@ -103,7 +102,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        ErrorExpected(missing, next?.Location, "literal");
+        ErrorExpected(SyntaxDiagnosticCodes.ExpectedToken, next?.Location, "literal");
 
         return missing;
     }
@@ -124,7 +123,7 @@ internal sealed class LanguageParser
         var missing = Missing();
 
         ErrorExpected(
-            missing,
+            SyntaxDiagnosticCodes.ExpectedToken,
             next?.Location,
             $"{SyntaxFacts.GetFriendlyName(kind1)} or {SyntaxFacts.GetFriendlyName(kind2)}");
 
@@ -140,7 +139,7 @@ internal sealed class LanguageParser
 
         var missing = Missing();
 
-        ErrorExpected(missing, next?.Location, SyntaxFacts.GetFriendlyName(kind));
+        ErrorExpected(SyntaxDiagnosticCodes.ExpectedToken, next?.Location, SyntaxFacts.GetFriendlyName(kind));
 
         return missing;
     }
@@ -166,11 +165,11 @@ internal sealed class LanguageParser
         return new(_path);
     }
 
-    private void ErrorExpected(SyntaxItem item, SourceLocation? location, string expected)
+    private void ErrorExpected(SourceDiagnosticCode code, SourceLocation? location, string expected)
     {
         _diagnostics.Add(
             SourceDiagnostic.Create(
-                item, SourceDiagnosticSeverity.Error, location ?? _eoiLocation, $"Expected {expected}"));
+                code, SourceDiagnosticSeverity.Error, location ?? _eoiLocation, $"Expected {expected}"));
     }
 
     private static ImmutableArray<T>.Builder Builder<T>()
@@ -302,7 +301,10 @@ internal sealed class LanguageParser
                 {
                     var missing = new MissingDeclarationSyntax(DrainList(dattrs), Missing(), DrainList(skipped));
 
-                    ErrorExpected(missing, (skipped.FirstOrDefault() ?? Peek1())?.Location, "declaration");
+                    ErrorExpected(
+                        SyntaxDiagnosticCodes.MissingDeclaration,
+                        (skipped.FirstOrDefault() ?? Peek1())?.Location,
+                        "declaration");
 
                     decls.Add(missing);
                 }
@@ -347,7 +349,10 @@ internal sealed class LanguageParser
                 {
                     var missing = new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), Missing());
 
-                    ErrorExpected(missing, (skipped.FirstOrDefault() ?? Peek1())?.Location, "declaration or statement");
+                    ErrorExpected(
+                        SyntaxDiagnosticCodes.MissingStatement,
+                        (skipped.FirstOrDefault() ?? Peek1())?.Location,
+                        "declaration or statement");
 
                     stmts.Add(missing);
                 }
@@ -612,7 +617,7 @@ internal sealed class LanguageParser
         {
             type = new NominalTypeSyntax(null, Missing(), null);
 
-            ErrorExpected(type, Peek1()?.Location, "type");
+            ErrorExpected(SyntaxDiagnosticCodes.MissingType, Peek1()?.Location, "type");
         }
 
         return type;
@@ -1215,7 +1220,7 @@ internal sealed class LanguageParser
         {
             expr = new IdentifierExpressionSyntax(Missing());
 
-            ErrorExpected(expr, Peek1()?.Location, "expression");
+            ErrorExpected(SyntaxDiagnosticCodes.MissingExpression, Peek1()?.Location, "expression");
         }
 
         return ParsePostfixExpression(expr);
@@ -1268,7 +1273,10 @@ internal sealed class LanguageParser
                 {
                     var missing = new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), Missing());
 
-                    ErrorExpected(missing, (skipped.FirstOrDefault() ?? Peek1())?.Location, "statement");
+                    ErrorExpected(
+                        SyntaxDiagnosticCodes.MissingStatement,
+                        (skipped.FirstOrDefault() ?? Peek1())?.Location,
+                        "statement");
 
                     stmts.Add(missing);
                 }
@@ -1334,7 +1342,7 @@ internal sealed class LanguageParser
             var missing = new MissingStatementSyntax(
                 SyntaxItemList<AttributeSyntax>.Empty, SyntaxItemList<SyntaxToken>.Empty, Missing());
 
-            ErrorExpected(missing, Peek1()?.Location, "statement");
+            ErrorExpected(SyntaxDiagnosticCodes.MissingStatement, Peek1()?.Location, "statement");
 
             stmts.Add(missing);
         }
@@ -1833,7 +1841,7 @@ internal sealed class LanguageParser
         {
             pat = new WildcardPatternSyntax(new VariablePatternBindingSyntax(null, Missing()), null);
 
-            ErrorExpected(pat, Peek1()?.Location, "pattern");
+            ErrorExpected(SyntaxDiagnosticCodes.MissingPattern, Peek1()?.Location, "pattern");
         }
 
         return pat;
@@ -1862,7 +1870,7 @@ internal sealed class LanguageParser
         {
             binding = new VariablePatternBindingSyntax(null, Missing());
 
-            ErrorExpected(binding, next?.Location, "pattern binding");
+            ErrorExpected(SyntaxDiagnosticCodes.MissingPatternBinding, next?.Location, "pattern binding");
         }
 
         return binding;

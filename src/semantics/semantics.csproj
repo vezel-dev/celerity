@@ -31,5 +31,6 @@ checking, as well as the semantic tree representation.</PackageDescription>
         <ProjectReference Include="../syntax/syntax.csproj" />
     </ItemGroup>
 
+    <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>

@@ -1,4 +1,3 @@
-using Vezel.Celerity.Syntax.Text;
 using Vezel.Celerity.Syntax.Tree;
 
 namespace Vezel.Celerity.Syntax;

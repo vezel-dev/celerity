@@ -1,5 +1,3 @@
-using Vezel.Celerity.Syntax.Text;
-
 namespace Vezel.Celerity.Syntax.Tree;
 
 public sealed class SyntaxTrivia : SyntaxItem

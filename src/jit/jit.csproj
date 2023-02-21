@@ -49,6 +49,7 @@ as well as the supporting native library.</PackageDescription>
         </ItemGroup>
     </Target>
 
+    <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
     <Import Project="../runtime/buildTransitive/Vezel.Celerity.Runtime.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />

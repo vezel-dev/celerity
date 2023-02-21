@@ -1,4 +1,6 @@
-namespace Vezel.Celerity.Syntax.Text;
+using Vezel.Celerity.Diagnostics;
+
+namespace Vezel.Celerity.Text;
 
 public abstract class SourceText : IReadOnlyList<char>
 {
@@ -17,7 +19,7 @@ public abstract class SourceText : IReadOnlyList<char>
 
     public IEnumerable<SourceTextLine> EnumerateLines()
     {
-        var reader = new SyntaxInputReader<char>(this);
+        var reader = new ListReader<char>(this);
         var builder = new StringBuilder();
         var line = 1;
 

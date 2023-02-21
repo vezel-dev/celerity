@@ -1,17 +1,14 @@
-using Vezel.Celerity.Syntax.Text;
 using Vezel.Celerity.Syntax.Tree;
 
 namespace Vezel.Celerity.Syntax;
 
 internal sealed class LanguageLexer
 {
-    private readonly SyntaxInputReader<char> _reader;
+    private readonly ListReader<char> _reader;
 
     private readonly SyntaxMode _mode;
 
     private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
-
-    private readonly List<Func<SyntaxToken, SourceDiagnostic>> _currentDiagnostics = new();
 
     private readonly StringBuilder _chars = new();
 
@@ -24,6 +21,8 @@ internal sealed class LanguageLexer
     private readonly ImmutableArray<SyntaxTrivia>.Builder _trailing = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
     private SourceLocation _location;
+
+    private bool _errors;
 
     public LanguageLexer(SourceText text, SyntaxMode mode, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
     {
@@ -60,24 +59,28 @@ internal sealed class LanguageLexer
         return ch;
     }
 
-    private void Diagnostic(SourceDiagnosticSeverity severity, SourceLocation location, string message)
+    private void Diagnostic(
+        SourceDiagnosticCode code, SourceDiagnosticSeverity severity, SourceLocation location, string message)
     {
-        _currentDiagnostics.Add(token => SourceDiagnostic.Create(token, severity, location, message));
+        _diagnostics.Add(SourceDiagnostic.Create(code, severity, location, message));
+
+        if (severity == SourceDiagnosticSeverity.Error)
+            _errors = true;
     }
 
-    private void Warning(SourceLocation location, string message)
+    private void Warning(SourceDiagnosticCode code, SourceLocation location, string message)
     {
-        Diagnostic(SourceDiagnosticSeverity.Warning, location, message);
+        Diagnostic(code, SourceDiagnosticSeverity.Warning, location, message);
     }
 
-    private void Error(SourceLocation location, string message)
+    private void Error(SourceDiagnosticCode code, SourceLocation location, string message)
     {
-        Diagnostic(SourceDiagnosticSeverity.Error, location, message);
+        Diagnostic(code, SourceDiagnosticSeverity.Error, location, message);
     }
 
-    private void ErrorExpected(string expected)
+    private void ErrorExpected(SourceDiagnosticCode code, string expected)
     {
-        Error(_location, $"Expected {expected}");
+        Error(code, _location, $"Expected {expected}");
     }
 
     private SyntaxTrivia CreateTrivia(SourceLocation location, SyntaxTriviaKind kind)
@@ -98,14 +101,19 @@ internal sealed class LanguageLexer
         // We handle keywords and nil/Boolean literals here to avoid an extra allocation while lexing identifiers.
         if (kind == SyntaxTokenKind.LowerIdentifier)
         {
-            if (SyntaxFacts.GetKeywordKind(text) is { } kw)
-                kind = kw;
+            if (SyntaxFacts.GetNormalKeywordKind(text) is { } kw1)
+                kind = kw1;
+            else if (SyntaxFacts.GetTypeKeywordKind(text) is { } kw2)
+                kind = kw2;
+            else if (SyntaxFacts.GetReservedKeywordKind(text) is { } kw3)
+                kind = kw3;
             else if (SyntaxFacts.GetKeywordLiteralKind(text) is { } lit)
                 kind = lit;
         }
 
-        // Intern keywords, nil/Boolean literals, punctuators, and special operators.
-        if (IsInternable(kind))
+        // Intern keywords, nil/Boolean literals, punctuators, and special operators. These all have a fixed textual
+        // representation, as opposed to e.g. identifiers and number literals.
+        if (SyntaxFacts.IsInternable(kind))
             text = string.Intern(text);
 
         var token = new SyntaxToken(
@@ -114,7 +122,7 @@ internal sealed class LanguageLexer
             text,
             kind switch
             {
-                _ when _currentDiagnostics.Count != 0 => null,
+                _ when _errors => null,
                 SyntaxTokenKind.NilLiteral => CreateNil(),
                 SyntaxTokenKind.BooleanLiteral => CreateBoolean(text),
                 SyntaxTokenKind.IntegerLiteral => CreateInteger(location, text),
@@ -129,43 +137,9 @@ internal sealed class LanguageLexer
         _leading.Clear();
         _trailing.Clear();
 
-        _diagnostics.AddRange(_currentDiagnostics.Select(creator => creator(token)));
-        _currentDiagnostics.Clear();
+        _errors = false;
 
         return token;
-    }
-
-    private static bool IsInternable(SyntaxTokenKind kind)
-    {
-        return kind switch
-        {
-            SyntaxTokenKind.Equals or
-            SyntaxTokenKind.EqualsEquals or
-            SyntaxTokenKind.ExclamationEquals or
-            SyntaxTokenKind.CloseAngle or
-            SyntaxTokenKind.CloseAngleEquals or
-            SyntaxTokenKind.OpenAngle or
-            SyntaxTokenKind.OpenAngleEquals or
-            SyntaxTokenKind.Dot or
-            SyntaxTokenKind.DotDot or
-            SyntaxTokenKind.Comma or
-            SyntaxTokenKind.Colon or
-            SyntaxTokenKind.ColonColon or
-            SyntaxTokenKind.Semicolon or
-            SyntaxTokenKind.MinusCloseAngle or
-            SyntaxTokenKind.At or
-            SyntaxTokenKind.Hash or
-            SyntaxTokenKind.Question or
-            SyntaxTokenKind.OpenParen or
-            SyntaxTokenKind.CloseParen or
-            SyntaxTokenKind.OpenBracket or
-            SyntaxTokenKind.CloseBracket or
-            SyntaxTokenKind.OpenBrace or
-            SyntaxTokenKind.CloseBrace or
-            SyntaxTokenKind.NilLiteral or
-            SyntaxTokenKind.BooleanLiteral => true,
-            _ => SyntaxFacts.IsKeyword(kind),
-        };
     }
 
     private static object? CreateNil()
@@ -215,7 +189,7 @@ internal sealed class LanguageLexer
         }
         catch (Exception ex) when (ex is OutOfMemoryException or OverflowException)
         {
-            Error(location, "Integer literal is too large");
+            Error(SyntaxDiagnosticCodes.InvalidIntegerLiteral, location, "Integer literal is too large");
 
             return null;
         }
@@ -233,7 +207,7 @@ internal sealed class LanguageLexer
         if (!double.IsInfinity(value))
             return value;
 
-        Error(location, "Real literal is out of range");
+        Error(SyntaxDiagnosticCodes.InvalidRealLiteral, location, "Real literal is out of range");
 
         return null;
     }
@@ -446,7 +420,7 @@ internal sealed class LanguageLexer
     {
         Advance();
 
-        Error(location, $"Unrecognized character");
+        Error(SyntaxDiagnosticCodes.UnrecognizedCharacter, location, $"Unrecognized character");
 
         return (location, SyntaxTokenKind.Unrecognized);
     }
@@ -475,7 +449,7 @@ internal sealed class LanguageLexer
 
         if (ch1 == '!')
         {
-            ErrorExpected("'='");
+            ErrorExpected(SyntaxDiagnosticCodes.IncompleteExclamationEquals, "'='");
 
             return (location, SyntaxTokenKind.ExclamationEquals);
         }
@@ -560,7 +534,10 @@ internal sealed class LanguageLexer
             var ind = Read();
 
             if (warn)
-                Warning(loc, $"Consider using lowercase base indicator '{char.ToLowerInvariant(ind)}' for clarity");
+                Warning(
+                    SyntaxDiagnosticCodes.LowercaseBaseIndicator,
+                    loc,
+                    $"Consider using lowercase base indicator '{char.ToLowerInvariant(ind)}' for clarity");
         }
 
         bool ConsumeDigits(int radix)
@@ -597,7 +574,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(radix) && radix != 10)
         {
-            ErrorExpected($"base-{radix} digit");
+            ErrorExpected(SyntaxDiagnosticCodes.IncompleteIntegerLiteral, $"base-{radix} digit");
 
             return (location, SyntaxTokenKind.IntegerLiteral);
         }
@@ -610,7 +587,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(10))
         {
-            ErrorExpected("digit");
+            ErrorExpected(SyntaxDiagnosticCodes.IncompleteRealLiteral, "digit");
 
             return (location, SyntaxTokenKind.RealLiteral);
         }
@@ -625,7 +602,7 @@ internal sealed class LanguageLexer
             Advance();
 
         if (!ConsumeDigits(10))
-            ErrorExpected("digit");
+            ErrorExpected(SyntaxDiagnosticCodes.IncompleteRealLiteral, "digit");
 
         return (location, SyntaxTokenKind.RealLiteral);
     }
@@ -671,7 +648,7 @@ internal sealed class LanguageLexer
         {
             if (Peek1() is null or '\n' or '\r')
             {
-                ErrorExpected("closing '\"'");
+                ErrorExpected(SyntaxDiagnosticCodes.UnclosedStringLiteral, "closing '\"'");
 
                 break;
             }
@@ -700,7 +677,8 @@ internal sealed class LanguageLexer
 
                         if (digit is not (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F'))
                         {
-                            ErrorExpected("Unicode escape sequence digit");
+                            ErrorExpected(
+                                SyntaxDiagnosticCodes.IncompleteUnicodeEscapeSequence, "Unicode escape sequence digit");
 
                             break;
                         }
@@ -709,11 +687,14 @@ internal sealed class LanguageLexer
                     }
 
                     if (!Rune.IsValid(int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture)))
-                        Error(loc, $"Invalid Unicode escape sequence");
+                        Error(
+                            SyntaxDiagnosticCodes.InvalidUnicodeEscapeSequence,
+                            loc,
+                            $"Invalid Unicode escape sequence");
 
                     break;
                 default:
-                    ErrorExpected("escape sequence code");
+                    ErrorExpected(SyntaxDiagnosticCodes.IncompleteEscapeSequence, "escape sequence code");
                     break;
             }
         }

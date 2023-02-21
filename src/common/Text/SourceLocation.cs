@@ -1,4 +1,4 @@
-namespace Vezel.Celerity.Syntax.Text;
+namespace Vezel.Celerity.Text;
 
 public readonly struct SourceLocation :
     IEquatable<SourceLocation>, IEqualityOperators<SourceLocation, SourceLocation, bool>
@@ -44,6 +44,6 @@ public readonly struct SourceLocation :
 
     public override string ToString()
     {
-        return $"{Path}({Line},{Character})";
+        return $"{Path}:{Line}:{Character}";
     }
 }

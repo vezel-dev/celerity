@@ -1,4 +1,4 @@
-namespace Vezel.Celerity.Syntax.Text;
+namespace Vezel.Celerity.Text;
 
 public readonly struct SourceTextLine :
     IEquatable<SourceTextLine>, IEqualityOperators<SourceTextLine, SourceTextLine, bool>

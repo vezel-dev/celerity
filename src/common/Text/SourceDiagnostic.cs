@@ -1,10 +1,10 @@
-using Vezel.Celerity.Syntax.Tree;
+using Vezel.Celerity.Diagnostics;
 
-namespace Vezel.Celerity.Syntax.Text;
+namespace Vezel.Celerity.Text;
 
 public sealed class SourceDiagnostic
 {
-    public SyntaxItem Item { get; }
+    public SourceDiagnosticCode Code { get; }
 
     public SourceDiagnosticSeverity Severity { get; }
 
@@ -17,13 +17,13 @@ public sealed class SourceDiagnostic
     public ImmutableArray<SourceDiagnosticNote> Notes { get; }
 
     private SourceDiagnostic(
-        SyntaxItem item,
+        SourceDiagnosticCode code,
         SourceDiagnosticSeverity severity,
         SourceLocation location,
         string message,
         ImmutableArray<SourceDiagnosticNote> notes)
     {
-        Item = item;
+        Code = code;
         Severity = severity;
         Location = location;
         Message = message;
@@ -31,34 +31,35 @@ public sealed class SourceDiagnostic
     }
 
     public static SourceDiagnostic Create(
-        SyntaxItem item,
+        SourceDiagnosticCode code,
         SourceDiagnosticSeverity severity,
         SourceLocation location,
         string message,
         params SourceDiagnosticNote[] notes)
     {
-        return Create(item, severity, location, message, notes.AsEnumerable());
+        return Create(code, severity, location, message, notes.AsEnumerable());
     }
 
     public static SourceDiagnostic Create(
-        SyntaxItem item,
+        SourceDiagnosticCode code,
         SourceDiagnosticSeverity severity,
         SourceLocation location,
         string message,
         IEnumerable<SourceDiagnosticNote> notes)
     {
-        Check.Null(item);
+        Check.Argument(code.Code != null, code);
         Check.Enum(severity);
         Check.Argument(!location.IsMissing, location);
         Check.NullOrEmpty(message);
         Check.Null(notes);
         Check.All(notes, static note => note != null);
 
-        return new(item, severity, location, message, notes.ToImmutableArray());
+        return new(code, severity, location, message, notes.ToImmutableArray());
     }
 
+    [SuppressMessage("", "CA1308")]
     public override string ToString()
     {
-        return $"{Location}: {Severity}: {Message}";
+        return $"{Location}: {Severity.ToString().ToLowerInvariant()}[{Code}]: {Message}";
     }
 }

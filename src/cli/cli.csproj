@@ -31,6 +31,7 @@ This package provides the .NET global tool.</PackageDescription>
         <PackageReference Include="Spectre.Console.Cli" />
     </ItemGroup>
 
+    <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
     <Import Project="../interpreter/buildTransitive/Vezel.Celerity.Interpreter.targets" />
     <Import Project="../jit/buildTransitive/Vezel.Celerity.Jit.targets" />
     <Import Project="../kernel/buildTransitive/Vezel.Celerity.Kernel.targets" />

@@ -1,4 +1,6 @@
-namespace Vezel.Celerity.Syntax.Text;
+using Vezel.Celerity.Diagnostics;
+
+namespace Vezel.Celerity.Text;
 
 public sealed class StringSourceText : SourceText
 {

@@ -31,4 +31,6 @@ as the syntax tree representation.</PackageDescription>
                           OutputItemType="Analyzer"
                           ReferenceOutputAssembly="false" />
     </ItemGroup>
+
+    <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
 </Project>

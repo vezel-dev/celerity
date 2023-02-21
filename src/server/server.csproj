@@ -23,6 +23,7 @@ This package provides the Language Server Protocol implementation.</PackageDescr
         <PackageReference Include="OmniSharp.Extensions.LanguageServer" />
     </ItemGroup>
 
+    <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
     <Import Project="../tooling/buildTransitive/Vezel.Celerity.Tooling.targets" />

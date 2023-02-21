@@ -1,6 +1,6 @@
-namespace Vezel.Celerity.Syntax;
+namespace Vezel.Celerity;
 
-internal sealed class SyntaxInputReader<T>
+internal sealed class ListReader<T>
 {
     public readonly struct Mark
     {
@@ -18,7 +18,7 @@ internal sealed class SyntaxInputReader<T>
 
     private int _position;
 
-    public SyntaxInputReader(IReadOnlyList<T> items)
+    public ListReader(IReadOnlyList<T> items)
     {
         _items = items;
     }
@@ -43,8 +43,6 @@ internal sealed class SyntaxInputReader<T>
     {
         return _items[_position++];
     }
-
-    // These should be used very sparingly. They were mainly intended for dealing with attributes during parsing.
 
     public Mark Save()
     {
