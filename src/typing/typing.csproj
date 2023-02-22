@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <AssemblyName>Vezel.Celerity.Kernel</AssemblyName>
+        <AssemblyName>Vezel.Celerity.Typing</AssemblyName>
         <IsPackable>true</IsPackable>
         <PackageDescription>$(PackageDescription)
 
-This package provides the host operating system interfaces for the runtime
-system.</PackageDescription>
-        <PackageId>Vezel.Celerity.Kernel</PackageId>
-        <RootNamespace>Vezel.Celerity.Kernel</RootNamespace>
+This package provides best-effort gradual type safety analysis based on optional
+type annotations.</PackageDescription>
+        <PackageId>Vezel.Celerity.Typing</PackageId>
+        <RootNamespace>Vezel.Celerity.Typing</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,11 +17,10 @@ system.</PackageDescription>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../runtime/runtime.csproj" />
+        <ProjectReference Include="../semantics/semantics.csproj" />
     </ItemGroup>
 
     <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
-    <Import Project="../runtime/buildTransitive/Vezel.Celerity.Runtime.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
 </Project>

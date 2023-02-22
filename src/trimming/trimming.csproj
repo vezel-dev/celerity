@@ -18,11 +18,14 @@
         <TrimmerRootAssembly Include="Vezel.Celerity.Interpreter" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Jit" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Kernel" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Library" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Quality" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Runtime" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Semantics" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Server" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Syntax" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Tooling" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Typing" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,10 +33,13 @@
         <ProjectReference Include="../interpreter/interpreter.csproj" />
         <ProjectReference Include="../jit/jit.csproj" />
         <ProjectReference Include="../kernel/kernel.csproj" />
+        <ProjectReference Include="../library/library.csproj" />
+        <ProjectReference Include="../quality/quality.csproj" />
         <ProjectReference Include="../runtime/runtime.csproj" />
         <ProjectReference Include="../semantics/semantics.csproj" />
         <ProjectReference Include="../server/server.csproj" />
         <ProjectReference Include="../syntax/syntax.csproj" />
         <ProjectReference Include="../tooling/tooling.csproj" />
+        <ProjectReference Include="../typing/typing.csproj" />
     </ItemGroup>
 </Project>

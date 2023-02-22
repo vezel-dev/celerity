@@ -19,8 +19,13 @@ This project offers the following packages:
   Provides syntactical analyses such as lexing and parsing, as well as the
   syntax tree representation.
 * [Vezel.Celerity.Semantics](https://www.nuget.org/packages/Vezel.Celerity.Semantics):
-  Provides semantic analyses such as symbol binding and type checking, as well
-  as the semantic tree representation.
+  Provides semantic analyses such as scope and symbol binding, as well as the
+  semantic tree representation.
+* [Vezel.Celerity.Typing](https://www.nuget.org/packages/Vezel.Celerity.Typing):
+  Provides best-effort gradual type safety analysis based on optional type
+  annotations.
+* [Vezel.Celerity.Quality](https://www.nuget.org/packages/Vezel.Celerity.Quality):
+  Provides code quality analyses in the form of lints.
 * [Vezel.Celerity.Runtime](https://www.nuget.org/packages/Vezel.Celerity.Runtime):
   Provides shared components of the runtime system such as the bytecode lowerer,
   garbage collector, and agent scheduler.
@@ -31,11 +36,12 @@ This project offers the following packages:
   Provides the optimizing just-in-time compiler for 64-bit systems, as well as
   the supporting native library.
 * [Vezel.Celerity.Kernel](https://www.nuget.org/packages/Vezel.Celerity.Kernel):
-  Provides the language's standard library and host operating system interfaces
-  for the runtime system.
+  Provides the host operating system interfaces for the runtime system.
+* [Vezel.Celerity.Library](https://www.nuget.org/packages/Vezel.Celerity.Library):
+  Provides the language's standard library.
 * [Vezel.Celerity.Tooling](https://www.nuget.org/packages/Vezel.Celerity.Tooling):
-  Provides high-level tooling such as diagnostic rendering and source code
-  formatting.
+  Provides user-oriented tooling such as project management and diagnostic
+  rendering.
 * [Vezel.Celerity.Server](https://www.nuget.org/packages/Vezel.Celerity.Server):
   Provides the Language Server Protocol implementation.
 

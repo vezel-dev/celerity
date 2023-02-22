@@ -4,8 +4,8 @@
         <IsPackable>true</IsPackable>
         <PackageDescription>$(PackageDescription)
 
-This package provides high-level tooling such as diagnostic rendering and source
-code formatting.</PackageDescription>
+This package provides user-oriented tooling such as project management and
+diagnostic rendering.</PackageDescription>
         <PackageId>Vezel.Celerity.Tooling</PackageId>
         <RootNamespace>Vezel.Celerity.Tooling</RootNamespace>
     </PropertyGroup>
@@ -17,7 +17,8 @@ code formatting.</PackageDescription>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../semantics/semantics.csproj" />
+        <ProjectReference Include="../library/library.csproj" />
+        <ProjectReference Include="../quality/quality.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +28,9 @@ code formatting.</PackageDescription>
     </ItemGroup>
 
     <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
+    <Import Project="../library/buildTransitive/Vezel.Celerity.Library.targets" />
+    <Import Project="../quality/buildTransitive/Vezel.Celerity.Quality.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
+    <Import Project="../typing/buildTransitive/Vezel.Celerity.Typing.targets" />
 </Project>

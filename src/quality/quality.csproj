@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <AssemblyName>Vezel.Celerity.Server</AssemblyName>
+        <AssemblyName>Vezel.Celerity.Quality</AssemblyName>
         <IsPackable>true</IsPackable>
         <PackageDescription>$(PackageDescription)
 
-This package provides the Language Server Protocol implementation.</PackageDescription>
-        <PackageId>Vezel.Celerity.Server</PackageId>
-        <RootNamespace>Vezel.Celerity.Server</RootNamespace>
+This package provides code quality analyses in the form of lints.</PackageDescription>
+        <PackageId>Vezel.Celerity.Quality</PackageId>
+        <RootNamespace>Vezel.Celerity.Quality</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,17 +16,11 @@ This package provides the Language Server Protocol implementation.</PackageDescr
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../tooling/tooling.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="OmniSharp.Extensions.LanguageServer" />
+        <ProjectReference Include="../typing/typing.csproj" />
     </ItemGroup>
 
     <Import Project="../common/buildTransitive/Vezel.Celerity.Common.targets" />
-    <Import Project="../quality/buildTransitive/Vezel.Celerity.Quality.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
-    <Import Project="../tooling/buildTransitive/Vezel.Celerity.Tooling.targets" />
     <Import Project="../typing/buildTransitive/Vezel.Celerity.Typing.targets" />
 </Project>

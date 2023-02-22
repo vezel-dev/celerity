@@ -39,9 +39,12 @@ jobs:
                       Vezel.Celerity.Interpreter
                       Vezel.Celerity.Jit
                       Vezel.Celerity.Kernel
+                      Vezel.Celerity.Library
+                      Vezel.Celerity.Quality
                       Vezel.Celerity.Runtime
                       Vezel.Celerity.Semantics
                       Vezel.Celerity.Server
                       Vezel.Celerity.Syntax
                       Vezel.Celerity.Tooling
+                      Vezel.Celerity.Typing
                   keep: 25
