@@ -63,6 +63,7 @@
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
+        <Node Name="Type" Type="Type" Optional="true" />
         <Node Name="Body" Type="Expression" Override="true" />
     </Type>
 
