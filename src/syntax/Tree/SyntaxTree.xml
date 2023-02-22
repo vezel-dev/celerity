@@ -27,11 +27,6 @@
     <Type Name="Attribute">
         <Token Name="At" />
         <Token Name="Name" />
-        <Node Name="Value" Type="AttributeValue" Optional="true" />
-    </Type>
-
-    <Type Name="AttributeValue" Parent="Attribute">
-        <Token Name="Equals" />
         <Token Name="Value" />
     </Type>
 

@@ -20,7 +20,7 @@
 
     <Type Name="Attribute">
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
-        <Computed Name="Value" Type="object?" Body="Syntax.Value?.ValueToken.Value" />
+        <Computed Name="Value" Type="object?" Body="Syntax.ValueToken.Value" />
     </Type>
 
     <Type Name="CodeParameter" Abstract="true">

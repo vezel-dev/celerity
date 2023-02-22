@@ -382,17 +382,9 @@ internal sealed class LanguageParser
     {
         var at = Read();
         var name = ExpectCodeIdentifier();
-        var value = ParseOptional(SyntaxTokenKind.Equals, static @this => @this.ParseAttributeValue());
-
-        return new(at, name, value);
-    }
-
-    private AttributeValueSyntax ParseAttributeValue()
-    {
-        var equals = Read();
         var value = ExpectLiteral();
 
-        return new(equals, value);
+        return new(at, name, value);
     }
 
     private ModulePathSyntax ParseModulePath()
