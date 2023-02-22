@@ -15,10 +15,13 @@ This package provides common functionality used by all Celerity packages.</Packa
         <InternalsVisibleTo Include="Vezel.Celerity.Interpreter" />
         <InternalsVisibleTo Include="Vezel.Celerity.Jit" />
         <InternalsVisibleTo Include="Vezel.Celerity.Kernel" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Library" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Quality" />
         <InternalsVisibleTo Include="Vezel.Celerity.Runtime" />
         <InternalsVisibleTo Include="Vezel.Celerity.Semantics" />
         <InternalsVisibleTo Include="Vezel.Celerity.Server" />
         <InternalsVisibleTo Include="Vezel.Celerity.Syntax" />
         <InternalsVisibleTo Include="Vezel.Celerity.Tooling" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Typing" />
     </ItemGroup>
 </Project>
