@@ -173,17 +173,7 @@ internal sealed class LanguageParser
     private static SyntaxItemList<T> List<T>(ImmutableArray<T>.Builder elements)
         where T : SyntaxItem
     {
-        return new(elements.ToImmutable());
-    }
-
-    private static SyntaxItemList<T> DrainList<T>(ImmutableArray<T>.Builder elements)
-        where T : SyntaxItem
-    {
-        var list = new SyntaxItemList<T>(elements.ToImmutable());
-
-        elements.Clear();
-
-        return list;
+        return new(elements.DrainToImmutable());
     }
 
     private static SeparatedSyntaxItemList<TElement, SyntaxToken> List<TElement>(
@@ -292,7 +282,7 @@ internal sealed class LanguageParser
                     (skipped.FirstOrDefault() ?? Peek1())?.Location,
                     "declaration");
 
-                decls.Add(new MissingDeclarationSyntax(DrainList(dattrs), _missing, DrainList(skipped)));
+                decls.Add(new MissingDeclarationSyntax(List(dattrs), _missing, List(skipped)));
             }
 
             while (Peek1() is { IsEndOfInput: false } next)
@@ -338,7 +328,7 @@ internal sealed class LanguageParser
                     (skipped.FirstOrDefault() ?? Peek1())?.Location,
                     "declaration or statement");
 
-                stmts.Add(new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), _missing));
+                stmts.Add(new MissingStatementSyntax(List(attrs), List(skipped), _missing));
             }
 
             while (Peek1() is { IsEndOfInput: false } next)
@@ -1270,7 +1260,7 @@ internal sealed class LanguageParser
                     (skipped.FirstOrDefault() ?? Peek1())?.Location,
                     "statement");
 
-                stmts.Add(new MissingStatementSyntax(DrainList(attrs), DrainList(skipped), _missing));
+                stmts.Add(new MissingStatementSyntax(List(attrs), List(skipped), _missing));
             }
 
             var decl = false;

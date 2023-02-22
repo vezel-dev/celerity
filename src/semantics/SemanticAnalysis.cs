@@ -32,6 +32,6 @@ public sealed class SemanticAnalysis
 
         _ = new LanguageAnalyzer(scope, diags).VisitNode(root, null!); // TODO
 
-        return new(syntax, null!, diags.ToImmutable());
+        return new(syntax, null!, diags.DrainToImmutable());
     }
 }

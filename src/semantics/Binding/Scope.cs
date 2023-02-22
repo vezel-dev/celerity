@@ -56,7 +56,7 @@ internal class Scope
 
         CollectScopedStatements(builder, static scope => scope.Uses, target);
 
-        return builder.ToImmutable();
+        return builder.DrainToImmutable();
     }
 
     public ImmutableArray<DeferStatementSemantics> CollectDefers(Scope? target)
@@ -65,7 +65,7 @@ internal class Scope
 
         CollectScopedStatements(builder, static scope => scope.Defers, target);
 
-        return builder.ToImmutable();
+        return builder.DrainToImmutable();
     }
 
     protected virtual void CollectScopedStatements<T>(

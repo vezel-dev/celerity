@@ -32,6 +32,6 @@ public sealed class SyntaxAnalysis
                     diags).Lex(),
                 mode,
                 diags).ParseDocument(),
-            diags.ToImmutable());
+            diags.DrainToImmutable());
     }
 }
