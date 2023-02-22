@@ -1,11 +1,7 @@
 namespace Vezel.Celerity.Semantics;
 
-public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<ModulePath, ModulePath, bool>
+public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperators<ModulePath, ModulePath, bool>
 {
-    private const string PathStartChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    private const string PathChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
     public ImmutableArray<string> Components { get; }
 
     public string FullPath { get; }
@@ -18,12 +14,7 @@ public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<Modu
     public ModulePath(IEnumerable<string> components)
     {
         Check.Null(components);
-        Check.All(
-            components,
-            static component =>
-                component.Length != 0 &&
-                PathStartChars.AsSpan().Contains(component[0]) &&
-                component.AsSpan(1).IndexOfAnyExcept(PathChars) == -1);
+        Check.All(components, static component => ComponentRegex().IsMatch(component));
 
         Components = components.ToImmutableArray();
         FullPath = string.Join("::", components);
@@ -53,4 +44,7 @@ public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<Modu
     {
         return FullPath;
     }
+
+    [GeneratedRegex(@"^[A-Z][a-zA-Z0-9]*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    private static partial Regex ComponentRegex();
 }
