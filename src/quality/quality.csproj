@@ -10,6 +10,10 @@ This package provides code quality analyses in the form of lints.</PackageDescri
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Vezel.Celerity.Diagnostics" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="buildTransitive/**"
               Pack="true"
               PackagePath="%(Identity)" />
