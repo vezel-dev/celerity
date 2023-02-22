@@ -39,6 +39,22 @@ public readonly partial struct SourceDiagnosticCode :
         return new(code);
     }
 
+    public static bool TryCreate(string name, out SourceDiagnosticCode code)
+    {
+        Check.Null(name);
+
+        if (CodeRegex().IsMatch(name))
+        {
+            code = new(name);
+
+            return true;
+        }
+
+        code = default;
+
+        return false;
+    }
+
     public static bool operator ==(SourceDiagnosticCode left, SourceDiagnosticCode right) => left.Equals(right);
 
     public static bool operator !=(SourceDiagnosticCode left, SourceDiagnosticCode right) => !left.Equals(right);
