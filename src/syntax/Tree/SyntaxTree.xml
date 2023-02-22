@@ -851,6 +851,14 @@
         <Token Name="CloseBracket" />
     </Type>
 
+    <Type Name="SetPattern" Base="Pattern">
+        <Token Name="Hash" />
+        <Token Name="OpenBrace" />
+        <Nodes Name="Element" Type="Expression" Separated="true" />
+        <Token Name="CloseBrace" />
+        <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
+    </Type>
+
     <Type Name="MapPattern" Base="Pattern">
         <Token Name="Hash" />
         <Token Name="OpenBracket" />
@@ -863,13 +871,5 @@
         <Node Name="Key" Type="Expression" />
         <Token Name="Colon" />
         <Node Name="Value" Type="Pattern" />
-    </Type>
-
-    <Type Name="SetPattern" Base="Pattern">
-        <Token Name="Hash" />
-        <Token Name="OpenBrace" />
-        <Nodes Name="Element" Type="Expression" Separated="true" />
-        <Token Name="CloseBrace" />
-        <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
 </Tree>

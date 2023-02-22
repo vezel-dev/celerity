@@ -470,6 +470,11 @@
         <Nodes Name="Element" Type="Pattern" />
     </Type>
 
+    <Type Name="SetPattern" Base="Pattern">
+        <Nodes Name="Element" Type="Expression" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
     <Type Name="MapPattern" Base="Pattern">
         <Nodes Name="Pair" Type="MapPatternPair" />
         <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
@@ -478,10 +483,5 @@
     <Type Name="MapPatternPair" Parent="MapPattern">
         <Node Name="Key" Type="Expression" />
         <Node Name="Value" Type="Pattern" />
-    </Type>
-
-    <Type Name="SetPattern" Base="Pattern">
-        <Nodes Name="Element" Type="Expression" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
     </Type>
 </Tree>

@@ -257,6 +257,8 @@ internal sealed class LanguageParser
         return result;
     }
 
+    // Documents
+
     public DocumentSyntax ParseDocument()
     {
         return _mode switch
@@ -374,6 +376,8 @@ internal sealed class LanguageParser
         return new(List(decls), List(stmts), eoi);
     }
 
+    // Miscellaneous
+
     private ImmutableArray<AttributeSyntax>.Builder ParseAttributes()
     {
         var attrs = Builder<AttributeSyntax>();
@@ -415,6 +419,8 @@ internal sealed class LanguageParser
 
         return new(List(idents, seps));
     }
+
+    // Declarations
 
     private DeclarationSyntax ParseDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
@@ -538,6 +544,8 @@ internal sealed class LanguageParser
 
         return new(List(attributes), test, name, body);
     }
+
+    // Types
 
     private TypeSyntax ParseType()
     {
@@ -972,6 +980,8 @@ internal sealed class LanguageParser
         return new(arrow, type);
     }
 
+    // Statements
+
     private StatementSyntax ParseStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
         return Peek1()?.Kind switch
@@ -1031,6 +1041,8 @@ internal sealed class LanguageParser
 
         return new(List(attributes), expr, semi);
     }
+
+    // Expressions
 
     private ExpressionSyntax ParseExpression()
     {
@@ -1794,6 +1806,8 @@ internal sealed class LanguageParser
         return new(open, List(args, seps), close);
     }
 
+    // Patterns
+
     private PatternSyntax ParsePattern()
     {
         var (tok1, tok2) = Peek2();
@@ -2048,6 +2062,22 @@ internal sealed class LanguageParser
         return new(open, List(elems, seps), close);
     }
 
+    private SetPatternSyntax ParseSetPattern()
+    {
+        var hash = Read();
+        var open = Expect(SyntaxTokenKind.OpenBrace);
+        var (elems, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
+        var close = Expect(SyntaxTokenKind.CloseBrace);
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
+
+        return new(hash, open, List(elems, seps), close, alias);
+    }
+
     private MapPatternSyntax ParseMapPattern()
     {
         var hash = Read();
@@ -2071,21 +2101,5 @@ internal sealed class LanguageParser
         var value = ParsePattern();
 
         return new(key, colon, value);
-    }
-
-    private SetPatternSyntax ParseSetPattern()
-    {
-        var hash = Read();
-        var open = Expect(SyntaxTokenKind.OpenBrace);
-        var (elems, seps) = ParseSeparatedList(
-            static @this => @this.ParseExpression(),
-            SyntaxTokenKind.Comma,
-            SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
-        var close = Expect(SyntaxTokenKind.CloseBrace);
-        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
-
-        return new(hash, open, List(elems, seps), close, alias);
     }
 }
