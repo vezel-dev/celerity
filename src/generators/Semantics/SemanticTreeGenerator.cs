@@ -87,9 +87,9 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
                 var mod = string.Empty;
 
                 if (type.Abstract)
-                    mod = " abstract";
+                    mod = "abstract";
                 else if (prop.Override)
-                    mod = " override";
+                    mod = "override";
 
                 writer.WriteLine($"{mod} {propType} {propName} {{ get; }}");
             }
