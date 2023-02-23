@@ -27,6 +27,7 @@
         <ProjectReference Include="../interpreter/interpreter.csproj" />
         <ProjectReference Include="../jit/jit.csproj" />
         <ProjectReference Include="../kernel/kernel.csproj" />
+        <ProjectReference Include="../library/library.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -37,6 +38,7 @@
     <Import Project="../interpreter/buildTransitive/Vezel.Celerity.Interpreter.targets" />
     <Import Project="../jit/buildTransitive/Vezel.Celerity.Jit.targets" />
     <Import Project="../kernel/buildTransitive/Vezel.Celerity.Kernel.targets" />
+    <Import Project="../library/buildTransitive/Vezel.Celerity.Library.targets" />
     <Import Project="../runtime/buildTransitive/Vezel.Celerity.Runtime.targets" />
     <Import Project="../semantics/buildTransitive/Vezel.Celerity.Semantics.targets" />
     <Import Project="../syntax/buildTransitive/Vezel.Celerity.Syntax.targets" />
