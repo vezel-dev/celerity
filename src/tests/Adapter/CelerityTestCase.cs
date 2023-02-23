@@ -9,7 +9,7 @@ internal sealed partial class CelerityTestCase
         "..",
         "..",
         "..",
-        "cli",
+        "driver",
         "bin",
         ThisAssembly.AssemblyConfiguration,
         "celerity");
