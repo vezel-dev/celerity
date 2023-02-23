@@ -40,10 +40,11 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
         writer.WriteLine("#nullable enable");
         writer.WriteLine();
-        writer.WriteLine("using Vezel.Celerity.Semantics.Binding;");
-        writer.WriteLine("using Vezel.Celerity.Semantics.Tree;");
+        writer.WriteLine("using Vezel.Celerity.Language.Semantics.Binding;");
+        writer.WriteLine("using Vezel.Celerity.Language.Semantics.Tree;");
+        writer.WriteLine("using Vezel.Celerity.Language.Syntax.Tree;");
         writer.WriteLine();
-        writer.WriteLine("namespace Vezel.Celerity.Semantics.Tree");
+        writer.WriteLine("namespace Vezel.Celerity.Language.Semantics.Tree");
         writer.WriteLine("{");
 
         writer.Indent++;
@@ -319,7 +320,7 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
         if (!type.Abstract)
         {
             writer.WriteLine();
-            writer.WriteLine("namespace Vezel.Celerity.Semantics");
+            writer.WriteLine("namespace Vezel.Celerity.Language.Semantics");
             writer.WriteLine("{");
 
             writer.Indent++;

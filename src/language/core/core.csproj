@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Language</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides language analysis services such as lexing, parsing,
+binding, and linting.</PackageDescription>
+        <PackageId>Vezel.Celerity.Language</PackageId>
+        <RootNamespace>Vezel.Celerity.Language</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="Vezel.Celerity.Buffers" />
+        <Using Include="Vezel.Celerity.Diagnostics" />
+        <Using Include="Vezel.Celerity.Linq" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="Semantics/Tree/SemanticTree.xml" />
+        <AdditionalFiles Include="Syntax/Tree/SyntaxTree.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../common/common.csproj" />
+        <ProjectReference Include="../../generators/generators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <Import Project="../../common/common.targets" />
+</Project>

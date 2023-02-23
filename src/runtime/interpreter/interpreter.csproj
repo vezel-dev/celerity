@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Runtime.Interpreter</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the portable bytecode interpreter which does not require
+dynamic code generation or the supporting native library.</PackageDescription>
+        <PackageId>Vezel.Celerity.Runtime.Interpreter</PackageId>
+        <RootNamespace>Vezel.Celerity.Runtime.Interpreter</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../core/core.csproj" />
+    </ItemGroup>
+
+    <Import Project="../../common/common.targets" />
+    <Import Project="../../language/core/core.targets" />
+    <Import Project="../core/core.targets" />
+</Project>

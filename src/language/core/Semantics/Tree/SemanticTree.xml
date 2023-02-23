@@ -1,0 +1,488 @@
+<Tree xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="https://vezel.dev/celerity/SemanticTree"
+      xsi:schemaLocation="https://vezel.dev/celerity/SemanticTree ../../../../generators/Semantics/SemanticTree.xsd">
+    <!-- Document -->
+
+    <Type Name="Document" Abstract="true" Root="true" />
+
+    <Type Name="ModuleDocument" Base="Document" Root="true">
+        <Nodes Name="Attribute" Type="Attribute" />
+        <Value Name="Path" Type="ModulePath?" />
+        <Nodes Name="Declaration" Type="Declaration" />
+    </Type>
+
+    <Type Name="InteractiveDocument" Base="Document" Root="true">
+        <Nodes Name="Statement" Type="Statement" />
+        <Nodes Name="Declaration" Type="Declaration" />
+    </Type>
+
+    <!-- Miscellaneous -->
+
+    <Type Name="Attribute">
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Computed Name="Value" Type="object?" Body="Syntax.ValueToken.Value" />
+    </Type>
+
+    <Type Name="CodeParameter" Abstract="true">
+        <Nodes Name="Attribute" Type="Attribute" />
+        <Value Name="Symbol" Type="ParameterSymbol?" />
+    </Type>
+
+    <!-- Declarations -->
+
+    <Type Name="Declaration" Parent="Document" Abstract="true">
+        <Nodes Name="Attribute" Type="Attribute" />
+    </Type>
+
+    <Type Name="UseDeclaration" Base="Declaration">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Value Name="Path" Type="ModulePath?" />
+    </Type>
+
+    <Type Name="TypeDeclaration" Base="Declaration">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
+        <Computed Name="IsOpaque" Type="bool" Body="Syntax.OpaqueKeywordToken != null" />
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Nodes Name="Parameter" Type="TypeParameter" />
+        <Node Name="Type" Type="Type" />
+    </Type>
+
+    <Type Name="TypeParameter" Parent="TypeDeclaration">
+        <Nodes Name="Attribute" Type="Attribute" />
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+    </Type>
+
+    <Type Name="CodeDeclaration" Base="Declaration" Parent="Document" Abstract="true">
+        <Value Name="Symbol" Type="DeclarationSymbol?" />
+        <Node Name="Body" Type="Expression" Optional="true" />
+    </Type>
+
+    <Type Name="ConstantDeclaration" Base="CodeDeclaration" Parent="Document">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
+        <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
+        <Node Name="Type" Type="Type" Optional="true" />
+        <Node Name="Body" Type="Expression" Override="true" />
+    </Type>
+
+    <Type Name="FunctionDeclaration" Base="CodeDeclaration" Parent="Document">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
+        <Computed Name="IsExternal" Type="bool" Body="Syntax.ExtKeywordToken != null" />
+        <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
+        <Nodes Name="Parameter" Type="FunctionParameter" />
+        <Computed Name="IsFallible" Type="bool" Body="Syntax.ErrKeywordToken != null" />
+        <Node Name="ReturnType" Type="ReturnType" Optional="true" />
+        <Node Name="Body" Type="BlockExpression" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="FunctionParameter" Base="CodeParameter" Parent="FunctionDeclaration">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Value Name="Symbol" Type="ParameterSymbol?" Override="true" />
+        <Node Name="Type" Type="Type" Optional="true" />
+    </Type>
+
+    <Type Name="TestDeclaration" Base="CodeDeclaration" Parent="Document">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
+        <Node Name="Body" Type="BlockExpression" Override="true" />
+    </Type>
+
+    <!-- Types -->
+
+    <!-- TODO: Should types be represented as nodes or be a higher-level concept like scopes/symbols? -->
+
+    <Type Name="Type" Abstract="true" />
+
+    <Type Name="ReturnType" Abstract="true" />
+
+    <!-- Statements -->
+
+    <Type Name="Statement" Abstract="true">
+        <Nodes Name="Attribute" Type="Attribute" />
+    </Type>
+
+    <Type Name="BindingStatement" Base="Statement" Abstract="true">
+        <Node Name="Pattern" Type="Pattern" />
+        <Node Name="Initializer" Type="Expression" />
+    </Type>
+
+    <Type Name="LetStatement" Base="BindingStatement">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Node Name="Pattern" Type="Pattern" Override="true" />
+        <Node Name="Initializer" Type="Expression" Override="true" />
+    </Type>
+
+    <Type Name="UseStatement" Base="BindingStatement">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Node Name="Pattern" Type="Pattern" Override="true" />
+        <Node Name="Initializer" Type="Expression" Override="true" />
+    </Type>
+
+    <Type Name="DeferStatement" Base="Statement">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Node Name="Expression" Type="Expression" />
+    </Type>
+
+    <Type Name="AssertStatement" Base="Statement">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Node Name="Expression" Type="Expression" />
+    </Type>
+
+    <Type Name="ExpressionStatement" Base="Statement">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Node Name="Expression" Type="Expression" />
+    </Type>
+
+    <!-- Expressions -->
+
+    <Type Name="Expression" Abstract="true" />
+
+    <Type Name="ValueExpression" Base="Expression" Abstract="true" />
+
+    <Type Name="LiteralExpression" Base="ValueExpression">
+        <Computed Name="Value" Type="object?" Body="Syntax.LiteralToken.Value" />
+    </Type>
+
+    <Type Name="ModuleExpression" Base="ValueExpression">
+        <Value Name="Name" Type="string?" />
+        <Value Name="Path" Type="ModulePath" />
+    </Type>
+
+    <Type Name="AggregateExpression" Base="ValueExpression" Abstract="true">
+        <Node Name="With" Type="Expression" Optional="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" />
+    </Type>
+
+    <Type Name="AggregateExpressionField" Parent="AggregateExpression">
+        <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Node Name="Value" Type="Expression" />
+    </Type>
+
+    <Type Name="RecordExpression" Base="AggregateExpression">
+        <Node Name="With" Type="Expression" Optional="true" Override="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Override="true" />
+    </Type>
+
+    <Type Name="ErrorExpression" Base="AggregateExpression">
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Node Name="With" Type="Expression" Optional="true" Override="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Override="true" />
+    </Type>
+
+    <Type Name="TupleExpression" Base="ValueExpression">
+        <Nodes Name="Component" Type="Expression" />
+    </Type>
+
+    <Type Name="ArrayExpression" Base="ValueExpression">
+        <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
+        <Nodes Name="Element" Type="Expression" />
+    </Type>
+
+    <Type Name="SetExpression" Base="ValueExpression">
+        <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
+        <Nodes Name="Element" Type="Expression" />
+    </Type>
+
+    <Type Name="MapExpression" Base="ValueExpression">
+        <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
+        <Nodes Name="Pair" Type="MapExpressionPair" />
+    </Type>
+
+    <Type Name="MapExpressionPair" Parent="MapExpression">
+        <Node Name="Key" Type="Expression" />
+        <Node Name="Value" Type="Expression" />
+    </Type>
+
+    <Type Name="LambdaExpression" Base="ValueExpression">
+        <Nodes Name="Parameter" Type="LambdaParameter" />
+        <Node Name="Body" Type="Expression" />
+    </Type>
+
+    <Type Name="LambdaParameter" Base="CodeParameter" Parent="LambdaExpression">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Value Name="Symbol" Type="ParameterSymbol?" Override="true" />
+    </Type>
+
+    <Type Name="OperatorExpression" Base="Expression" Abstract="true" />
+
+    <Type Name="UnaryExpression" Base="OperatorExpression">
+        <Node Name="Operand" Type="Expression" />
+    </Type>
+
+    <Type Name="BinaryOperatorExpression" Base="OperatorExpression" Abstract="true" />
+
+    <Type Name="AdditiveExpression" Base="BinaryOperatorExpression">
+        <Node Name="LeftOperand" Type="Expression" />
+        <Node Name="RightOperand" Type="Expression" />
+    </Type>
+
+    <Type Name="MultiplicativeExpression" Base="BinaryOperatorExpression">
+        <Node Name="LeftOperand" Type="Expression" />
+        <Node Name="RightOperand" Type="Expression" />
+    </Type>
+
+    <Type Name="BitwiseExpression" Base="BinaryOperatorExpression">
+        <Node Name="LeftOperand" Type="Expression" />
+        <Node Name="RightOperand" Type="Expression" />
+    </Type>
+
+    <Type Name="ShiftExpression" Base="BinaryOperatorExpression">
+        <Node Name="LeftOperand" Type="Expression" />
+        <Node Name="RightOperand" Type="Expression" />
+    </Type>
+
+    <Type Name="LogicalExpression" Base="BinaryOperatorExpression">
+        <Node Name="LeftOperand" Type="Expression" />
+        <Node Name="RightOperand" Type="Expression" />
+    </Type>
+
+    <Type Name="RelationalExpression" Base="BinaryOperatorExpression">
+        <Node Name="LeftOperand" Type="Expression" />
+        <Node Name="RightOperand" Type="Expression" />
+    </Type>
+
+    <Type Name="ControlExpression" Base="Expression" Abstract="true" />
+
+    <Type Name="ConditionalExpression" Base="ControlExpression" Abstract="true" />
+
+    <Type Name="IfExpression" Base="ConditionalExpression">
+        <Node Name="Condition" Type="Expression" />
+        <Node Name="Body" Type="BlockExpression" />
+        <Node Name="Else" Type="BlockExpression" Optional="true" />
+    </Type>
+
+    <Type Name="ConditionExpression" Base="ConditionalExpression">
+        <Nodes Name="Arm" Type="ConditionExpressionArm" />
+    </Type>
+
+    <Type Name="ExpressionArm" Parent="Expression" Abstract="true">
+        <Node Name="Body" Type="Expression" />
+    </Type>
+
+    <Type Name="ConditionExpressionArm" Base="ExpressionArm" Parent="ConditionExpression">
+        <Node Name="Condition" Type="Expression" />
+        <Node Name="Body" Type="Expression" Override="true" />
+    </Type>
+
+    <Type Name="MatchExpression" Base="ConditionalExpression">
+        <Node Name="Operand" Type="Expression" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+    </Type>
+
+    <Type Name="ExpressionPatternArm" Base="ExpressionArm">
+        <Node Name="Pattern" Type="Pattern" />
+        <Node Name="Guard" Type="Expression" Optional="true" />
+        <Node Name="Body" Type="Expression" Override="true" />
+    </Type>
+
+    <Type Name="ReceiveExpression" Base="ConditionalExpression">
+        <Nodes Name="Arm" Type="ReceiveExpressionArm" />
+        <Node Name="Else" Type="BlockExpression" Optional="true" />
+    </Type>
+
+    <Type Name="ReceiveExpressionArm" Base="ExpressionArm" Parent="ReceiveExpression">
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Node Name="Parameter" Type="Pattern" />
+        <Node Name="Guard" Type="Expression" Optional="true" />
+        <Node Name="Body" Type="Expression" Override="true" />
+    </Type>
+
+    <Type Name="TryExpression" Base="ConditionalExpression">
+        <Node Name="Body" Type="Expression" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+    </Type>
+
+    <Type Name="LoopExpression" Base="ControlExpression" Abstract="true">
+        <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" />
+    </Type>
+
+    <Type Name="WhileExpression" Base="LoopExpression">
+        <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" Override="true" />
+        <Node Name="Condition" Type="Expression" />
+        <Node Name="Body" Type="BlockExpression" />
+        <Node Name="Else" Type="BlockExpression" Optional="true" />
+    </Type>
+
+    <Type Name="ForExpression" Base="LoopExpression">
+        <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" Override="true" />
+        <Node Name="Pattern" Type="Pattern" />
+        <Node Name="Collection" Type="Expression" />
+        <Node Name="Body" Type="BlockExpression" />
+        <Node Name="Else" Type="BlockExpression" Optional="true" />
+    </Type>
+
+    <Type Name="BranchExpression" Base="ControlExpression" Abstract="true">
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+    </Type>
+
+    <Type Name="ReturnExpression" Base="BranchExpression">
+        <Computed Name="IsTail" Type="bool" Body="Syntax.TailKeywordToken != null" />
+        <Node Name="Operand" Type="Expression" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
+    </Type>
+
+    <Type Name="RaiseExpression" Base="BranchExpression">
+        <Node Name="Operand" Type="Expression" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
+    </Type>
+
+    <Type Name="LoopBranchExpression" Base="BranchExpression" Abstract="true" />
+
+    <Type Name="NextExpression" Base="LoopBranchExpression">
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
+    </Type>
+
+    <Type Name="BreakExpression" Base="LoopBranchExpression">
+        <Node Name="Result" Type="Expression" Optional="true" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
+    </Type>
+
+    <Type Name="ParenthesizedExpression" Base="Expression">
+        <Node Name="Expression" Type="Expression" />
+    </Type>
+
+    <Type Name="BlockExpression" Base="Expression">
+        <Nodes Name="Statement" Type="Statement" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+    </Type>
+
+    <Type Name="IdentifierExpression" Base="Expression">
+        <Value Name="Symbol" Type="Symbol?" />
+    </Type>
+
+    <Type Name="AssignmentExpression" Base="Expression">
+        <Node Name="LeftOperand" Type="Expression" />
+        <Node Name="RightOperand" Type="Expression" />
+    </Type>
+
+    <Type Name="PostfixExpression" Base="Expression" Abstract="true">
+        <Node Name="Subject" Type="Expression" />
+    </Type>
+
+    <Type Name="FieldExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+    </Type>
+
+    <Type Name="IndexExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
+        <Nodes Name="Argument" Type="Expression" />
+    </Type>
+
+    <Type Name="CallExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
+        <Nodes Name="Argument" Type="Expression" />
+        <Computed Name="IsPropagating" Type="bool" Body="Syntax.QuestionToken != null" />
+        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
+        <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
+    </Type>
+
+    <Type Name="SendExpression" Base="PostfixExpression">
+        <Node Name="Subject" Type="Expression" Override="true" />
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Nodes Name="Argument" Type="Expression" />
+    </Type>
+
+    <!-- Patterns -->
+
+    <Type Name="Pattern" Abstract="true">
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" />
+    </Type>
+
+    <Type Name="PatternBinding" Parent="Pattern" Abstract="true">
+        <Value Name="Symbol" Type="Symbol?" />
+    </Type>
+
+    <Type Name="VariablePatternBinding" Parent="Pattern" Base="PatternBinding">
+        <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
+        <Value Name="Symbol" Type="VariableSymbol?" Override="true" />
+    </Type>
+
+    <Type Name="DiscardPatternBinding" Parent="Pattern" Base="PatternBinding">
+        <Value Name="Symbol" Type="DiscardSymbol?" Override="true" />
+    </Type>
+
+    <Type Name="WildcardPattern" Base="Pattern">
+        <Node Name="Binding" Type="PatternBinding" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="LiteralPattern" Base="Pattern">
+        <Computed Name="IsNegative" Type="bool" Body="Syntax.MinusToken != null" />
+        <Computed Name="Literal" Type="object?" Body="Syntax.LiteralToken.Value" />
+        <Computed Name="Value" Type="object?" Body="IsNegative &amp;&amp; Literal is BigInteger i ? -i : Literal" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="StringPattern" Base="Pattern">
+        <Node Name="MiddleBinding" Type="PatternBinding" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="ModulePattern" Base="Pattern">
+        <Value Name="Name" Type="string?" />
+        <Value Name="Path" Type="ModulePath" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="AggregatePattern" Base="Pattern" Abstract="true">
+        <Nodes Name="Field" Type="AggregatePatternField" />
+    </Type>
+
+    <Type Name="AggregatePatternField" Parent="AggregatePattern">
+        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Node Name="Pattern" Type="Pattern" />
+    </Type>
+
+    <Type Name="RecordPattern" Base="AggregatePattern">
+        <Nodes Name="Field" Type="AggregatePatternField" Override="true" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="ErrorPattern" Base="AggregatePattern">
+        <Computed Name="Name" Type="string?" Body="Syntax.NameToken?.Text" />
+        <Nodes Name="Field" Type="AggregatePatternField" Override="true" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="TuplePattern" Base="Pattern">
+        <Nodes Name="Component" Type="Pattern" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="ArrayPattern" Base="Pattern">
+        <Node Name="LeftClause" Type="ArrayPatternClause" Optional="true" />
+        <Node Name="MiddleBinding" Type="PatternBinding" />
+        <Node Name="RightClause" Type="ArrayPatternClause" Optional="true" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="ArrayPatternClause" Parent="ArrayPattern">
+        <Nodes Name="Element" Type="Pattern" />
+    </Type>
+
+    <Type Name="SetPattern" Base="Pattern">
+        <Nodes Name="Element" Type="Expression" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="MapPattern" Base="Pattern">
+        <Nodes Name="Pair" Type="MapPatternPair" />
+        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+    </Type>
+
+    <Type Name="MapPatternPair" Parent="MapPattern">
+        <Node Name="Key" Type="Expression" />
+        <Node Name="Value" Type="Pattern" />
+    </Type>
+</Tree>

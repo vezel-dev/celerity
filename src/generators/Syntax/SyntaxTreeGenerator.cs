@@ -40,9 +40,9 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
 
         writer.WriteLine("#nullable enable");
         writer.WriteLine();
-        writer.WriteLine("using Vezel.Celerity.Syntax.Tree;");
+        writer.WriteLine("using Vezel.Celerity.Language.Syntax.Tree;");
         writer.WriteLine();
-        writer.WriteLine("namespace Vezel.Celerity.Syntax.Tree");
+        writer.WriteLine("namespace Vezel.Celerity.Language.Syntax.Tree");
         writer.WriteLine("{");
 
         writer.Indent++;
@@ -462,7 +462,7 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
         if (!type.Abstract)
         {
             writer.WriteLine();
-            writer.WriteLine("namespace Vezel.Celerity.Syntax");
+            writer.WriteLine("namespace Vezel.Celerity.Language.Syntax");
             writer.WriteLine("{");
 
             writer.Indent++;

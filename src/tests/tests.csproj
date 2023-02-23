@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../cli/cli.csproj"
+        <ProjectReference Include="../driver/driver.csproj"
                           ReferenceOutputAssembly="false" />
     </ItemGroup>
 

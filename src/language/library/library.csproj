@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Language.Library</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the language's standard library.</PackageDescription>
+        <PackageId>Vezel.Celerity.Language.Library</PackageId>
+        <RootNamespace>Vezel.Celerity.Language.Library</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="**/*.cel" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../common/common.csproj" />
+    </ItemGroup>
+
+    <Import Project="../../common/common.targets" />
+</Project>

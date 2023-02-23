@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Runtime.Kernel</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the host operating system interfaces for the runtime
+system.</PackageDescription>
+        <PackageId>Vezel.Celerity.Runtime.Kernel</PackageId>
+        <RootNamespace>Vezel.Celerity.Runtime.Kernel</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../core/core.csproj" />
+    </ItemGroup>
+
+    <Import Project="../../common/common.targets" />
+    <Import Project="../../language/core/core.targets" />
+    <Import Project="../core/core.targets" />
+</Project>

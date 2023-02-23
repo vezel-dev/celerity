@@ -15,31 +15,25 @@
 
     <ItemGroup>
         <TrimmerRootAssembly Include="Vezel.Celerity.Common" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Interpreter" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Jit" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Kernel" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Library" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Quality" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Runtime" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Semantics" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Server" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Syntax" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Tooling" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Typing" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Runtime.Compiler" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Runtime.Interpreter" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Runtime.Kernel" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Library" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Server" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Tooling" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../common/common.csproj" />
-        <ProjectReference Include="../interpreter/interpreter.csproj" />
-        <ProjectReference Include="../jit/jit.csproj" />
-        <ProjectReference Include="../kernel/kernel.csproj" />
-        <ProjectReference Include="../library/library.csproj" />
-        <ProjectReference Include="../quality/quality.csproj" />
-        <ProjectReference Include="../runtime/runtime.csproj" />
-        <ProjectReference Include="../semantics/semantics.csproj" />
-        <ProjectReference Include="../server/server.csproj" />
-        <ProjectReference Include="../syntax/syntax.csproj" />
-        <ProjectReference Include="../tooling/tooling.csproj" />
-        <ProjectReference Include="../typing/typing.csproj" />
+        <ProjectReference Include="../runtime/compiler/compiler.csproj" />
+        <ProjectReference Include="../runtime/core/core.csproj" />
+        <ProjectReference Include="../runtime/interpreter/interpreter.csproj" />
+        <ProjectReference Include="../runtime/kernel/kernel.csproj" />
+        <ProjectReference Include="../language/core/core.csproj" />
+        <ProjectReference Include="../language/library/library.csproj" />
+        <ProjectReference Include="../language/server/server.csproj" />
+        <ProjectReference Include="../language/tooling/tooling.csproj" />
     </ItemGroup>
 </Project>

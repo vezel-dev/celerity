@@ -1,0 +1,50 @@
+<Project Sdk="Vezel.Zig.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Runtime.Native</AssemblyName>
+        <DefineConstants>
+            $(DefineConstants);
+            _XOPEN_SOURCE;
+            WIN32_LEAN_AND_MEAN
+        </DefineConstants>
+        <!-- TODO: https://github.com/dotnet/msbuild/issues/6672 -->
+        <PackageDefines>false</PackageDefines>
+        <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/3 -->
+        <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/4 -->
+        <RuntimeIdentifiers>
+            linux-arm64;
+            linux-x64;
+            linux-musl-arm64;
+            linux-musl-x64;
+            osx-x64;
+            win-x64
+        </RuntimeIdentifiers>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PreludeHeader Include="celerity.h" />
+    </ItemGroup>
+
+    <Target Name="_GetNativeLibrary"
+            Returns="@(_NativeLibrary)">
+        <ItemGroup>
+            <_NativeLibrary Include="$(TargetPath)"
+                            RuntimeIdentifier="$(RuntimeIdentifier)" />
+        </ItemGroup>
+    </Target>
+
+    <Target Name="_GetNativeLibraries"
+            Returns="@(_NativeLibrary)">
+        <ItemGroup>
+            <_RuntimeIdentifiers Include="$(RuntimeIdentifiers)" />
+            <_Projects Include="$(MSBuildProjectFullPath)"
+                       Properties="RuntimeIdentifier=%(_RuntimeIdentifiers.Identity)" />
+        </ItemGroup>
+
+        <MSBuild Projects="@(_Projects)"
+                 Targets="_GetNativeLibrary"
+                 BuildInParallel="$(BuildInParallel)">
+            <Output TaskParameter="TargetOutputs"
+                    ItemName="_NativeLibrary" />
+        </MSBuild>
+    </Target>
+</Project>
