@@ -14,7 +14,7 @@ public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperat
     public ModulePath(IEnumerable<string> components)
     {
         Check.Null(components);
-        Check.All(components, static component => ComponentRegex().IsMatch(component));
+        Check.All(components, static component => component != null && ComponentRegex().IsMatch(component));
 
         Components = components.ToImmutableArray();
         FullPath = string.Join("::", components);
