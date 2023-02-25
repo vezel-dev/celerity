@@ -15,35 +15,26 @@ This project offers the following packages:
 
 * [celerity](https://www.nuget.org/packages/celerity): Provides the .NET global
   tool.
-* [Vezel.Celerity.Syntax](https://www.nuget.org/packages/Vezel.Celerity.Syntax):
-  Provides syntactical analyses such as lexing and parsing, as well as the
-  syntax tree representation.
-* [Vezel.Celerity.Semantics](https://www.nuget.org/packages/Vezel.Celerity.Semantics):
-  Provides semantic analyses such as scope and symbol binding, as well as the
-  semantic tree representation.
-* [Vezel.Celerity.Typing](https://www.nuget.org/packages/Vezel.Celerity.Typing):
-  Provides best-effort gradual type safety analysis based on optional type
-  annotations.
-* [Vezel.Celerity.Quality](https://www.nuget.org/packages/Vezel.Celerity.Quality):
-  Provides code quality analyses in the form of lints.
+* [Vezel.Celerity.Language](https://www.nuget.org/packages/Vezel.Celerity.Language):
+  Provides language analysis services such as lexing, parsing, binding, and
+  linting.
+* [Vezel.Celerity.Language.Library](https://www.nuget.org/packages/Vezel.Celerity.Language.Library):
+  Provides the language's standard library.
+* [Vezel.Celerity.Language.Tooling](https://www.nuget.org/packages/Vezel.Celerity.Language.Tooling):
+  Provides user-oriented tooling such as project management and diagnostic
+  rendering.
+* [Vezel.Celerity.Language.Server](https://www.nuget.org/packages/Vezel.Celerity.Language.Server):
+  Provides the Language Server Protocol implementation.
 * [Vezel.Celerity.Runtime](https://www.nuget.org/packages/Vezel.Celerity.Runtime):
   Provides shared components of the runtime system such as the bytecode lowerer,
   garbage collector, and agent scheduler.
-* [Vezel.Celerity.Interpreter](https://www.nuget.org/packages/Vezel.Celerity.Interpreter):
-  Provides the portable bytecode interpreter which does not require dynamic code
-  generation or the supporting native library.
-* [Vezel.Celerity.Jit](https://www.nuget.org/packages/Vezel.Celerity.Jit):
-  Provides the optimizing just-in-time compiler for 64-bit systems, as well as
-  the supporting native library.
-* [Vezel.Celerity.Kernel](https://www.nuget.org/packages/Vezel.Celerity.Kernel):
+* [Vezel.Celerity.Runtime.Kernel](https://www.nuget.org/packages/Vezel.Celerity.Runtime.Kernel):
   Provides the host operating system interfaces for the runtime system.
-* [Vezel.Celerity.Library](https://www.nuget.org/packages/Vezel.Celerity.Library):
-  Provides the language's standard library.
-* [Vezel.Celerity.Tooling](https://www.nuget.org/packages/Vezel.Celerity.Tooling):
-  Provides user-oriented tooling such as project management and diagnostic
-  rendering.
-* [Vezel.Celerity.Server](https://www.nuget.org/packages/Vezel.Celerity.Server):
-  Provides the Language Server Protocol implementation.
+* [Vezel.Celerity.Runtime.Interpreter](https://www.nuget.org/packages/Vezel.Celerity.Runtime.Interpreter):
+  Provides the portable bytecode interpreter which does not require dynamic code
+  generation.
+* [Vezel.Celerity.Runtime.Compiler](https://www.nuget.org/packages/Vezel.Celerity.Runtime.Compiler):
+  Provides the optimizing just-in-time compiler for 64-bit systems.
 
 For more information, please visit the
 [project home page](https://docs.vezel.dev/celerity).

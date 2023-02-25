@@ -42,56 +42,44 @@ This project offers the following packages:
 | Package | Description | Downloads |
 | -: | - | :- |
 | [![celerity][cli-img]][cli-pkg] | Provides the .NET global tool. | ![Downloads][cli-dls] |
-| [![Vezel.Celerity.Syntax][syntax-img]][syntax-pkg] | Provides syntactical analyses such as lexing and parsing, as well as the syntax tree representation. | ![Downloads][syntax-dls] |
-| [![Vezel.Celerity.Semantics][semantics-img]][semantics-pkg] | Provides semantic analyses such as scope and symbol binding, as well as the semantic tree representation. | ![Downloads][semantics-dls] |
-| [![Vezel.Celerity.Typing][typing-img]][typing-pkg] | Provides best-effort gradual type safety analysis based on optional type annotations. | ![Downloads][typing-dls] |
-| [![Vezel.Celerity.Quality][quality-img]][quality-pkg] | Provides code quality analyses in the form of lints. | ![Downloads][quality-dls] |
-| [![Vezel.Celerity.Runtime][runtime-img]][runtime-pkg] | Provides shared components of the runtime system such as the bytecode lowerer, garbage collector, and agent scheduler. | ![Downloads][runtime-dls] |
-| [![Vezel.Celerity.Interpreter][interpreter-img]][interpreter-pkg] | Provides the portable bytecode interpreter which does not require dynamic code generation or the supporting native library. | ![Downloads][interpreter-dls] |
-| [![Vezel.Celerity.Jit][jit-img]][jit-pkg] | Provides the optimizing just-in-time compiler for 64-bit systems, as well as the supporting native library. | ![Downloads][jit-dls] |
-| [![Vezel.Celerity.Kernel][kernel-img]][kernel-pkg] | Provides the host operating system interfaces for the runtime system. | ![Downloads][kernel-dls] |
-| [![Vezel.Celerity.Library][library-img]][library-pkg] | Provides the language's standard library. | ![Downloads][library-dls] |
-| [![Vezel.Celerity.Tooling][tooling-img]][tooling-pkg] | Provides user-oriented tooling such as project management and diagnostic rendering. | ![Downloads][tooling-dls] |
-| [![Vezel.Celerity.Server][server-img]][server-pkg] | Provides the Language Server Protocol implementation. | ![Downloads][server-dls] |
+| [![Vezel.Celerity.Language][language-core-img]][language-core-pkg] | Provides language analysis services such as lexing, parsing, binding, and linting. | ![Downloads][language-core-dls] |
+| [![Vezel.Celerity.Language.Library][language-library-img]][language-library-pkg] | Provides the language's standard library. | ![Downloads][language-library-dls] |
+| [![Vezel.Celerity.Language.Tooling][language-tooling-img]][language-tooling-pkg] | Provides user-oriented tooling such as project management and diagnostic rendering. | ![Downloads][language-tooling-dls] |
+| [![Vezel.Celerity.Language.Server][language-server-img]][language-server-pkg] | Provides the Language Server Protocol implementation. | ![Downloads][language-server-dls] |
+| [![Vezel.Celerity.Runtime][runtime-core-img]][runtime-core-pkg] | Provides shared components of the runtime system such as the bytecode lowerer, garbage collector, and agent scheduler. | ![Downloads][runtime-core-dls] |
+| [![Vezel.Celerity.Runtime.Kernel][runtime-kernel-img]][runtime-kernel-pkg] | Provides the host operating system interfaces for the runtime system. | ![Downloads][runtime-kernel-dls] |
+| [![Vezel.Celerity.Runtime.Interpreter][runtime-interpreter-img]][runtime-interpreter-pkg] | Provides the portable bytecode interpreter which does not require dynamic code generation. | ![Downloads][runtime-interpreter-dls] |
+| [![Vezel.Celerity.Runtime.Compiler][runtime-compiler-img]][runtime-compiler-pkg] | Provides the optimizing just-in-time compiler for 64-bit systems. | ![Downloads][runtime-compiler-dls] |
 
 [cli-pkg]: https://www.nuget.org/packages/celerity
-[syntax-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Syntax
-[semantics-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Semantics
-[typing-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Types
-[quality-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Quality
-[runtime-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime
-[interpreter-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Interpreter
-[jit-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Jit
-[kernel-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Kernel
-[library-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Library
-[tooling-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Tooling
-[server-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Server
+[language-core-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Language
+[language-library-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Language.Library
+[language-tooling-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Language.Tooling
+[language-server-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Language.Server
+[runtime-core-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime
+[runtime-kernel-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime.Kernel
+[runtime-interpreter-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime.Interpreter
+[runtime-compiler-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime.Compiler
 
 [cli-img]: https://img.shields.io/nuget/v/celerity?label=celerity
-[syntax-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Syntax?label=Vezel.Celerity.Syntax
-[semantics-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Semantics?label=Vezel.Celerity.Semantics
-[typing-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Types?label=Vezel.Celerity.Types
-[quality-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Quality?label=Vezel.Celerity.Quality
-[runtime-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime?label=Vezel.Celerity.Runtime
-[interpreter-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Interpreter?label=Vezel.Celerity.Interpreter
-[jit-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Jit?label=Vezel.Celerity.Jit
-[kernel-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Kernel?label=Vezel.Celerity.Kernel
-[library-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Library?label=Vezel.Celerity.Library
-[tooling-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Tooling?label=Vezel.Celerity.Tooling
-[server-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Server?label=Vezel.Celerity.Server
+[language-core-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Language?label=Vezel.Celerity.Language
+[language-library-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Language.Library?label=Vezel.Celerity.Language.Library
+[language-tooling-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Language.Tooling?label=Vezel.Celerity.Language.Tooling
+[language-server-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Language.Server?label=Vezel.Celerity.Language.Server
+[runtime-core-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime?label=Vezel.Celerity.Runtime
+[runtime-kernel-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime.Kernel?label=Vezel.Celerity.Runtime.Kernel
+[runtime-interpreter-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime.Interpreter?label=Vezel.Celerity.Runtime.Interpreter
+[runtime-compiler-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime.Compiler?label=Vezel.Celerity.Runtime.Compiler
 
 [cli-dls]: https://img.shields.io/nuget/dt/celerity?label=
-[syntax-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Syntax?label=
-[semantics-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Semantics?label=
-[typing-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Types?label=
-[quality-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Quality?label=
-[runtime-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Runtime?label=
-[interpreter-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Interpreter?label=
-[jit-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Jit?label=
-[kernel-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Kernel?label=
-[library-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Library?label=
-[tooling-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Tooling?label=
-[server-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Server?label=
+[language-core-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Language?label=
+[language-library-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Language.Library?label=
+[language-tooling-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Language.Tooling?label=
+[language-server-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Language.Server?label=
+[runtime-core-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Runtime?label=
+[runtime-kernel-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Runtime.Kernel?label=
+[runtime-interpreter-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Runtime.Interpreter?label=
+[runtime-compiler-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Runtime.Compiler?label=
 
 To install a tool package in a project, run `dotnet tool install <name>`. To
 install it globally, also pass `-g`.
