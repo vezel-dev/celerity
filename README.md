@@ -30,10 +30,9 @@
 productivity and scalability while being easily embeddable in host applications.
 
 **Celerity** is expression-oriented, multi-paradigm, and features optional type
-checking through success typings. Some notable features are pattern matching,
-first-class functions with closures, opt-in mutability, explicit error
-propagation, concurrency based on lightweight agents, and non-suspending garbage
-collection.
+checking. Some notable features are pattern matching, first-class functions with
+closures, opt-in mutability, explicit error propagation, concurrency based on
+lightweight agents, and non-suspending garbage collection.
 
 ## Usage
 
