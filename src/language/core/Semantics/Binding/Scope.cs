@@ -87,8 +87,8 @@ internal class Scope
             return false;
         }
 
-        existing = null;
         entry = creator();
+        existing = null;
 
         return true;
     }
@@ -100,6 +100,6 @@ internal class Scope
 
     public virtual Symbol? ResolveSymbol(string name)
     {
-        return ResolveLocalSymbol(name) is Symbol sym ? sym : Parent?.ResolveLocalSymbol(name);
+        return ResolveLocalSymbol(name) ?? Parent?.ResolveLocalSymbol(name);
     }
 }
