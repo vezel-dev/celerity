@@ -29,12 +29,11 @@ public readonly partial struct SourceDiagnosticCode :
         return new($"E{code}");
     }
 
-    public static SourceDiagnosticCode Create(string code)
+    public static SourceDiagnosticCode Create(string name)
     {
-        Check.Null(code);
-        Check.Argument(CodeRegex().IsMatch(code), code);
+        Check.Argument(TryCreate(name, out var code), name);
 
-        return new(code);
+        return code;
     }
 
     public static bool TryCreate(string name, out SourceDiagnosticCode code)
