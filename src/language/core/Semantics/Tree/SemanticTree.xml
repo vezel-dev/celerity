@@ -46,7 +46,6 @@
         <Computed Name="IsOpaque" Type="bool" Body="Syntax.OpaqueKeywordToken != null" />
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
         <Nodes Name="Parameter" Type="TypeParameter" />
-        <Node Name="Type" Type="Type" />
     </Type>
 
     <Type Name="TypeParameter" Parent="TypeDeclaration">
@@ -63,7 +62,6 @@
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
-        <Node Name="Type" Type="Type" Optional="true" />
         <Node Name="Body" Type="Expression" Override="true" />
     </Type>
 
@@ -74,14 +72,12 @@
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
         <Nodes Name="Parameter" Type="FunctionParameter" />
         <Computed Name="IsFallible" Type="bool" Body="Syntax.ErrKeywordToken != null" />
-        <Node Name="ReturnType" Type="ReturnType" Optional="true" />
         <Node Name="Body" Type="BlockExpression" Optional="true" Override="true" />
     </Type>
 
     <Type Name="FunctionParameter" Base="CodeParameter" Parent="FunctionDeclaration">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Value Name="Symbol" Type="ParameterSymbol?" Override="true" />
-        <Node Name="Type" Type="Type" Optional="true" />
     </Type>
 
     <Type Name="TestDeclaration" Base="CodeDeclaration" Parent="Document">
@@ -89,14 +85,6 @@
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
         <Node Name="Body" Type="BlockExpression" Override="true" />
     </Type>
-
-    <!-- Types -->
-
-    <!-- TODO: Should types be represented as nodes or be a higher-level concept like scopes/symbols? -->
-
-    <Type Name="Type" Abstract="true" />
-
-    <Type Name="ReturnType" Abstract="true" />
 
     <!-- Statements -->
 
