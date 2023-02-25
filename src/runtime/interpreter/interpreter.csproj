@@ -5,7 +5,7 @@
         <PackageDescription>$(PackageDescription)
 
 This package provides the portable bytecode interpreter which does not require
-dynamic code generation or the supporting native library.</PackageDescription>
+dynamic code generation.</PackageDescription>
         <PackageId>Vezel.Celerity.Runtime.Interpreter</PackageId>
         <RootNamespace>Vezel.Celerity.Runtime.Interpreter</RootNamespace>
     </PropertyGroup>
