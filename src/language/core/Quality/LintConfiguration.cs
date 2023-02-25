@@ -4,12 +4,10 @@ namespace Vezel.Celerity.Language.Quality;
 
 public sealed class LintConfiguration
 {
-    private readonly ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?> _severities;
+    public static LintConfiguration Default { get; } =
+        new(ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?>.Empty);
 
-    public LintConfiguration()
-    {
-        _severities = ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?>.Empty;
-    }
+    private readonly ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?> _severities;
 
     private LintConfiguration(ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?> severities)
     {
