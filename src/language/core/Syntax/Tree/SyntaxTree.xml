@@ -58,6 +58,7 @@
         <Token Name="Name" Override="true" />
         <Token Name="Equals" />
         <Node Name="Path" Type="ModulePath" />
+        <Token Name="Semicolon" />
     </Type>
 
     <Type Name="TypeDeclaration" Base="Declaration" Parent="Document">
@@ -69,6 +70,7 @@
         <Node Name="ParameterList" Type="TypeParameterList" Optional="true" />
         <Token Name="Equals" />
         <Node Name="Type" Type="Type" />
+        <Token Name="Semicolon" />
     </Type>
 
     <Type Name="TypeParameterList" Parent="TypeDeclaration">
@@ -94,6 +96,7 @@
         <Node Name="Type" Type="TypeAnnotation" Optional="true" />
         <Token Name="Equals" />
         <Node Name="Body" Type="Expression" Override="true" />
+        <Token Name="Semicolon" />
     </Type>
 
     <Type Name="FunctionDeclaration" Base="CodeDeclaration" Parent="Document">

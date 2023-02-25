@@ -431,8 +431,9 @@ internal sealed class LanguageParser
         var name = Expect(SyntaxTokenKind.UpperIdentifier);
         var equals = Expect(SyntaxTokenKind.Equals);
         var path = ParseModulePath();
+        var semi = Expect(SyntaxTokenKind.Semicolon);
 
-        return new(List(attributes), use, name, equals, path);
+        return new(List(attributes), use, name, equals, path, semi);
     }
 
     private TypeDeclarationSyntax ParseTypeDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
@@ -444,8 +445,9 @@ internal sealed class LanguageParser
         var parms = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseTypeParameterList());
         var equals = Expect(SyntaxTokenKind.Equals);
         var type = ParseType();
+        var semi = Expect(SyntaxTokenKind.Semicolon);
 
-        return new(List(attributes), pub, opaque, kw, name, parms, equals, type);
+        return new(List(attributes), pub, opaque, kw, name, parms, equals, type, semi);
     }
 
     private TypeParameterListSyntax ParseTypeParameterList()
@@ -478,8 +480,9 @@ internal sealed class LanguageParser
         var type = ParseOptional(SyntaxTokenKind.Colon, static @this => @this.ParseTypeAnnotation());
         var equals = Expect(SyntaxTokenKind.Equals);
         var body = ParseExpression();
+        var semi = Expect(SyntaxTokenKind.Semicolon);
 
-        return new(List(attributes), pub, @const, name, type, equals, body);
+        return new(List(attributes), pub, @const, name, type, equals, body, semi);
     }
 
     private FunctionDeclarationSyntax ParseFunctionDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
