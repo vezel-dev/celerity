@@ -311,8 +311,7 @@ internal sealed class LanguageParser
 
     private InteractiveDocumentSyntax ParseInteractiveDocument()
     {
-        var decls = Builder<DeclarationSyntax>();
-        var stmts = Builder<StatementSyntax>();
+        var subs = Builder<SubmissionSyntax>();
 
         while (Peek1() is { IsEndOfInput: false })
         {
@@ -327,34 +326,39 @@ internal sealed class LanguageParser
                 ErrorExpected(
                     StandardDiagnosticCodes.MissingStatement,
                     (skipped.FirstOrDefault() ?? Peek1())?.Location,
-                    "declaration or statement");
+                    "interactive declaration or statement");
 
-                stmts.Add(new MissingStatementSyntax(List(attrs), List(skipped), _missing));
+                subs.Add(
+                    new StatementSubmissionSyntax(new MissingStatementSyntax(List(attrs), List(skipped), _missing)));
             }
 
-            while (Peek1() is { IsEndOfInput: false } next)
+            while (Peek2() is ({ IsEndOfInput: false } next1, var next2))
             {
-                if (SyntaxFacts.IsDeclarationStarter(next.Kind))
+                // See the comment in ParseBlockExpression.
+                if (SyntaxFacts.IsDeclarationStarter(next1.Kind) &&
+                    (next1.Kind, next2?.Kind) is not (
+                        (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen) or
+                        (SyntaxTokenKind.UseKeyword, not SyntaxTokenKind.UpperIdentifier)))
                 {
                     DrainToMissingStatement(false);
 
-                    decls.Add(ParseDeclaration(attrs));
+                    subs.Add(new DeclarationSubmissionSyntax(ParseDeclaration(attrs)));
 
                     break;
                 }
 
-                if (SyntaxFacts.IsStatementStarter(next.Kind))
+                if (SyntaxFacts.IsStatementStarter(next1.Kind))
                 {
                     DrainToMissingStatement(false);
 
-                    stmts.Add(ParseStatement(attrs));
+                    subs.Add(new StatementSubmissionSyntax(ParseStatement(attrs)));
 
                     break;
                 }
 
                 skipped.Add(Read());
 
-                if (next.Kind == SyntaxTokenKind.Semicolon)
+                if (next1.Kind == SyntaxTokenKind.Semicolon)
                     break;
             }
 
@@ -364,7 +368,7 @@ internal sealed class LanguageParser
 
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
 
-        return new(List(decls), List(stmts), eoi);
+        return new(List(subs), eoi);
     }
 
     // Miscellaneous
@@ -1261,7 +1265,7 @@ internal sealed class LanguageParser
 
             var decl = false;
 
-            while (Peek1() is { IsEndOfInput: false } next)
+            while (Peek2() is ({ IsEndOfInput: false } next1, var next2))
             {
                 // We might be looking at a declaration because the user has not yet closed the current block
                 // expression. If so, stop parsing this block so we can properly parse the declaration.
@@ -1274,10 +1278,10 @@ internal sealed class LanguageParser
                 // }
                 //
                 // The fn and use keywords could be confused with declarations. For those cases, we need to look ahead.
-                if (SyntaxFacts.IsDeclarationStarter(next.Kind) &&
-                    Peek2() is not (
-                        ({ Kind: SyntaxTokenKind.FnKeyword }, { Kind: SyntaxTokenKind.OpenParen }) or
-                        ({ Kind: SyntaxTokenKind.UseKeyword }, { Kind: not SyntaxTokenKind.UpperIdentifier })))
+                if (SyntaxFacts.IsDeclarationStarter(next1.Kind) &&
+                    (next1.Kind, next2?.Kind) is not (
+                        (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen) or
+                        (SyntaxTokenKind.UseKeyword, not SyntaxTokenKind.UpperIdentifier)))
                 {
                     DrainToMissingStatement();
 
@@ -1291,7 +1295,7 @@ internal sealed class LanguageParser
                     break;
                 }
 
-                if (SyntaxFacts.IsStatementStarter(next.Kind))
+                if (SyntaxFacts.IsStatementStarter(next1.Kind))
                 {
                     DrainToMissingStatement();
 
@@ -1302,7 +1306,7 @@ internal sealed class LanguageParser
 
                 skipped.Add(Read());
 
-                if (next.Kind == SyntaxTokenKind.Semicolon)
+                if (next1.Kind == SyntaxTokenKind.Semicolon)
                     break;
             }
 

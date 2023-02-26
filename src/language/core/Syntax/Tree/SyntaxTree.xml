@@ -17,8 +17,7 @@
     </Type>
 
     <Type Name="InteractiveDocument" Base="Document" Root="true">
-        <Nodes Name="Declaration" Type="Declaration" />
-        <Nodes Name="Statement" Type="Statement" />
+        <Nodes Name="Submission" Type="Submission" />
         <Token Name="EndOfInput" Override="true" />
     </Type>
 
@@ -37,6 +36,18 @@
     <Type Name="CodeParameter" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
         <Token Name="Name" />
+    </Type>
+
+    <!-- Submissions -->
+
+    <Type Name="Submission" Parent="InteractiveDocument" Abstract="true" />
+
+    <Type Name="DeclarationSubmission" Base="Submission" Parent="InteractiveDocument">
+        <Node Name="Declaration" Type="Declaration" />
+    </Type>
+
+    <Type Name="StatementSubmission" Base="Submission" Parent="InteractiveDocument">
+        <Node Name="Statement" Type="Statement" />
     </Type>
 
     <!-- Declarations -->

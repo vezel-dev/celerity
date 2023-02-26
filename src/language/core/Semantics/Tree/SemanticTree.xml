@@ -12,8 +12,7 @@
     </Type>
 
     <Type Name="InteractiveDocument" Base="Document" Root="true">
-        <Nodes Name="Statement" Type="Statement" />
-        <Nodes Name="Declaration" Type="Declaration" />
+        <Nodes Name="Submission" Type="Submission" />
     </Type>
 
     <!-- Miscellaneous -->
@@ -26,6 +25,18 @@
     <Type Name="CodeParameter" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
         <Value Name="Symbol" Type="ParameterSymbol?" />
+    </Type>
+
+    <!-- Submissions -->
+
+    <Type Name="Submission" Parent="InteractiveDocument" Abstract="true" />
+
+    <Type Name="DeclarationSubmission" Base="Submission" Parent="InteractiveDocument">
+        <Node Name="Declaration" Type="Declaration" />
+    </Type>
+
+    <Type Name="StatementSubmission" Base="Submission" Parent="InteractiveDocument">
+        <Node Name="Statement" Type="Statement" />
     </Type>
 
     <!-- Declarations -->
