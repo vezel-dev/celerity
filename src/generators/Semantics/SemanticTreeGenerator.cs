@@ -297,12 +297,30 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
             writer.WriteLine();
 
-            writer.WriteLine("internal override T Visit<T>(SemanticWalker<T> walker, T state)");
+            writer.WriteLine("internal override void Visit(SemanticVisitor visitor)");
             writer.WriteLine("{");
 
             writer.Indent++;
 
-            writer.WriteLine("return walker.Visit(this, state);");
+            writer.WriteLine("visitor.Visit(this);");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+            writer.WriteLine();
+            writer.WriteLine("internal override T? Visit<T>(SemanticVisitor<T> visitor)");
+
+            writer.Indent++;
+
+            writer.WriteLine("where T : default");
+
+            writer.Indent--;
+
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            writer.WriteLine("return visitor.Visit(this);");
 
             writer.Indent--;
 
@@ -325,19 +343,41 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
             writer.Indent++;
 
-            writer.WriteLine("public abstract partial class SemanticWalker<T>");
+            writer.WriteLine("public abstract partial class SemanticVisitor");
             writer.WriteLine("{");
 
             writer.Indent++;
 
-            writer.WriteLine($"public virtual T Visit({type.Name}Semantics node, T state)");
+            writer.WriteLine($"public virtual void Visit({type.Name}Semantics node)");
             writer.WriteLine("{");
 
             writer.Indent++;
 
             writer.WriteLine("Check.Null(node);");
             writer.WriteLine();
-            writer.WriteLine("return DefaultVisitNode(node, state);");
+            writer.WriteLine("DefaultVisitNode(node);");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+            writer.WriteLine();
+            writer.WriteLine("public abstract partial class SemanticVisitor<T>");
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            writer.WriteLine($"public virtual T? Visit({type.Name}Semantics node)");
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            writer.WriteLine("Check.Null(node);");
+            writer.WriteLine();
+            writer.WriteLine("return DefaultVisitNode(node);");
 
             writer.Indent--;
 

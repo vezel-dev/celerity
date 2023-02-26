@@ -94,5 +94,7 @@ public abstract class SyntaxNode : SyntaxItem
         }
     }
 
-    internal abstract T Visit<T>(SyntaxWalker<T> walker, T state);
+    internal abstract void Visit(SyntaxVisitor visitor);
+
+    internal abstract T? Visit<T>(SyntaxVisitor<T> visitor);
 }

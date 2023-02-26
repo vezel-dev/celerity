@@ -76,5 +76,7 @@ public abstract class SemanticNode
         while (work.Count != 0);
     }
 
-    internal abstract T Visit<T>(SemanticWalker<T> walker, T state);
+    internal abstract void Visit(SemanticVisitor visitor);
+
+    internal abstract T? Visit<T>(SemanticVisitor<T> visitor);
 }

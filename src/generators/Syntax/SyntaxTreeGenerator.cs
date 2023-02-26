@@ -439,12 +439,32 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
 
             writer.WriteLine();
 
-            writer.WriteLine("internal override T Visit<T>(SyntaxWalker<T> walker, T state)");
+            writer.WriteLine("internal override void Visit(SyntaxVisitor visitor)");
             writer.WriteLine("{");
 
             writer.Indent++;
 
-            writer.WriteLine("return walker.Visit(this, state);");
+            writer.WriteLine("visitor.Visit(this);");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+
+            writer.WriteLine();
+
+            writer.WriteLine("internal override T? Visit<T>(SyntaxVisitor<T> visitor)");
+
+            writer.Indent++;
+
+            writer.WriteLine("where T : default");
+
+            writer.Indent--;
+
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            writer.WriteLine("return visitor.Visit(this);");
 
             writer.Indent--;
 
@@ -467,19 +487,41 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
 
             writer.Indent++;
 
-            writer.WriteLine("public abstract partial class SyntaxWalker<T>");
+            writer.WriteLine("public abstract partial class SyntaxVisitor");
             writer.WriteLine("{");
 
             writer.Indent++;
 
-            writer.WriteLine($"public virtual T Visit({type.Name}Syntax node, T state)");
+            writer.WriteLine($"public virtual void Visit({type.Name}Syntax node)");
             writer.WriteLine("{");
 
             writer.Indent++;
 
             writer.WriteLine("Check.Null(node);");
             writer.WriteLine();
-            writer.WriteLine("return DefaultVisitNode(node, state);");
+            writer.WriteLine("DefaultVisitNode(node);");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+
+            writer.Indent--;
+
+            writer.WriteLine("}");
+            writer.WriteLine();
+            writer.WriteLine("public abstract partial class SyntaxVisitor<T>");
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            writer.WriteLine($"public virtual T? Visit({type.Name}Syntax node)");
+            writer.WriteLine("{");
+
+            writer.Indent++;
+
+            writer.WriteLine("Check.Null(node);");
+            writer.WriteLine();
+            writer.WriteLine("return DefaultVisitNode(node);");
 
             writer.Indent--;
 

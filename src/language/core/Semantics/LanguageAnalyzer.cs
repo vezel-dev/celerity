@@ -5,7 +5,7 @@ using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Semantics;
 
-internal sealed class LanguageAnalyzer : SyntaxWalker<SemanticNode>
+internal sealed class LanguageAnalyzer : SyntaxVisitor<SemanticNode>
 {
     private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
 

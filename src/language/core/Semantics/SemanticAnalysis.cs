@@ -33,7 +33,7 @@ public sealed class SemanticAnalysis
 
         diags.AddRange(syntax.Diagnostics);
 
-        _ = new LanguageAnalyzer(scope, diags).VisitNode(root, null!); // TODO
+        _ = new LanguageAnalyzer(scope, diags).VisitNode(root); // TODO
 
         return new(syntax, null!, diags.DrainToImmutable());
     }

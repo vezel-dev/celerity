@@ -7,7 +7,7 @@ namespace Vezel.Celerity.Language.Quality;
 
 internal sealed partial class LanguageLinter
 {
-    private sealed partial class LintWalker : SemanticWalker<object?>
+    private sealed partial class LintVisitor : SemanticVisitor
     {
         private readonly Stack<LintConfiguration> _configurations = new(1);
 
@@ -17,7 +17,7 @@ internal sealed partial class LanguageLinter
 
         private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
 
-        public LintWalker(
+        public LintVisitor(
             ReadOnlyMemory<LintPass> passes,
             LintConfiguration configuration,
             ImmutableArray<SourceDiagnostic>.Builder diagnostics)
@@ -31,12 +31,12 @@ internal sealed partial class LanguageLinter
         {
             _configurations.Push(_configuration);
 
-            _ = VisitNode(document, null);
+            VisitNode(document);
 
             _ = _configurations.Pop();
         }
 
-        protected override object? DefaultVisitNode(SemanticNode node, object? state)
+        protected override void DefaultVisitNode(SemanticNode node)
         {
             bool PushConfiguration(SemanticNodeList<AttributeSemantics> attributes)
             {
@@ -118,12 +118,12 @@ internal sealed partial class LanguageLinter
                     break;
             }
 
-            state = base.DefaultVisitNode(node, state);
+            if (node.HasChildren)
+                foreach (var child in node.Children())
+                    VisitNode(child);
 
             if (pushed)
                 _ = _configurations.Pop();
-
-            return state;
         }
 
         [GeneratedRegex(@"^(.*):(.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
@@ -132,7 +132,7 @@ internal sealed partial class LanguageLinter
 
     private readonly DocumentSemantics _document;
 
-    private readonly LintWalker _walker;
+    private readonly LintVisitor _visitor;
 
     public LanguageLinter(
         DocumentSemantics document,
@@ -144,12 +144,12 @@ internal sealed partial class LanguageLinter
 
         var mode = document is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
 
-        _walker = new(
+        _visitor = new(
             passes.Where(pass => pass.Mode == null || pass.Mode == mode).ToArray(), configuration, diagnostics);
     }
 
     public void Lint()
     {
-        _walker.Lint(_document);
+        _visitor.Lint(_document);
     }
 }
