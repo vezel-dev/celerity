@@ -7,8 +7,3 @@ statement ::= attribute* (let-statement |
                           assert-statement |
                           expression-statement) ';'
 ```
-
-```ebnf
-interactive-statement ::= attribute* (let-statement |
-                                      expression-statement) ';'
-```

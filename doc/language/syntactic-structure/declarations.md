@@ -7,9 +7,3 @@ declaration ::= attribute* (use-declaration |
                             function-declaration |
                             test-declaration)
 ```
-
-```ebnf
-interactive-declaration ::= attribute* (use-declaration |
-                                        constant-declaration |
-                                        function-declaration)
-```
