@@ -336,9 +336,7 @@ internal sealed class LanguageParser
             {
                 // See the comment in ParseBlockExpression.
                 if (SyntaxFacts.IsDeclarationStarter(next1.Kind) &&
-                    (next1.Kind, next2?.Kind) is not (
-                        (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen) or
-                        (SyntaxTokenKind.UseKeyword, not SyntaxTokenKind.UpperIdentifier)))
+                    (next1.Kind, next2?.Kind) is not (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen))
                 {
                     DrainToMissingStatement(false);
 
@@ -977,7 +975,6 @@ internal sealed class LanguageParser
         return Peek1()?.Kind switch
         {
             SyntaxTokenKind.LetKeyword => ParseLetStatement(attributes),
-            SyntaxTokenKind.UseKeyword => ParseUseStatement(attributes),
             SyntaxTokenKind.DeferKeyword => ParseDeferStatement(attributes),
             SyntaxTokenKind.AssertKeyword => ParseAssertStatement(attributes),
             _ => ParseExpressionStatement(attributes),
@@ -1011,17 +1008,6 @@ internal sealed class LanguageParser
         var semi = Expect(SyntaxTokenKind.Semicolon);
 
         return new(List(attributes), let, pat, equals, expr, semi);
-    }
-
-    private UseStatementSyntax ParseUseStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
-    {
-        var use = Read();
-        var pat = ParsePattern();
-        var equals = Expect(SyntaxTokenKind.Equals);
-        var expr = ParseExpression();
-        var semi = Expect(SyntaxTokenKind.Semicolon);
-
-        return new(List(attributes), use, pat, equals, expr, semi);
     }
 
     private ExpressionStatementSyntax ParseExpressionStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
@@ -1270,18 +1256,15 @@ internal sealed class LanguageParser
                 // We might be looking at a declaration because the user has not yet closed the current block
                 // expression. If so, stop parsing this block so we can properly parse the declaration.
                 //
-                // Note these ambiguities:
+                // Note this ambiguity:
                 //
                 // {
                 //     fn() {};
-                //     use _ = foo();
                 // }
                 //
-                // The fn and use keywords could be confused with declarations. For those cases, we need to look ahead.
+                // The fn keyword could be confused with a declaration. For this case, we need to look ahead.
                 if (SyntaxFacts.IsDeclarationStarter(next1.Kind) &&
-                    (next1.Kind, next2?.Kind) is not (
-                        (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen) or
-                        (SyntaxTokenKind.UseKeyword, not SyntaxTokenKind.UpperIdentifier)))
+                    (next1.Kind, next2?.Kind) is not (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen))
                 {
                     DrainToMissingStatement();
 

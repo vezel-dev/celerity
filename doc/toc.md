@@ -56,7 +56,6 @@
         * [Agent Type](language/syntactic-structure/types/agent.md)
     * [Statements](language/syntactic-structure/statements.md)
         * [Let Statement](language/syntactic-structure/statements/let.md)
-        * [Use Statement](language/syntactic-structure/statements/use.md)
         * [Defer Statement](language/syntactic-structure/statements/defer.md)
         * [Assert Statement](language/syntactic-structure/statements/assert.md)
         * [Expression Statement](language/syntactic-structure/statements/expression.md)

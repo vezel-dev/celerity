@@ -50,30 +50,19 @@ internal class Scope
         return Parent is LoopScope loop ? loop : Parent?.GetEnclosingLoop();
     }
 
-    public ImmutableArray<UseStatementSemantics> CollectUses(Scope? target)
-    {
-        var builder = ImmutableArray.CreateBuilder<UseStatementSemantics>();
-
-        CollectScopedStatements(builder, static scope => scope.Uses, target);
-
-        return builder.DrainToImmutable();
-    }
-
     public ImmutableArray<DeferStatementSemantics> CollectDefers(Scope? target)
     {
         var builder = ImmutableArray.CreateBuilder<DeferStatementSemantics>();
 
-        CollectScopedStatements(builder, static scope => scope.Defers, target);
+        CollectDefers(target, builder);
 
         return builder.DrainToImmutable();
     }
 
-    protected virtual void CollectScopedStatements<T>(
-        ImmutableArray<T>.Builder builder, Func<BlockScope, ImmutableArray<T>.Builder> selector, Scope? target)
-        where T : SemanticNode
+    protected virtual void CollectDefers(Scope? target, ImmutableArray<DeferStatementSemantics>.Builder builder)
     {
         if (this != target)
-            Parent?.CollectScopedStatements(builder, selector, target);
+            Parent?.CollectDefers(target, builder);
     }
 
     public bool TryDefineSymbol(string name, Func<Symbol> creator, [MaybeNullWhen(true)] out Symbol existing)

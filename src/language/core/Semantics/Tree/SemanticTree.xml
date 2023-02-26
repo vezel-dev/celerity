@@ -89,21 +89,10 @@
         <Nodes Name="Attribute" Type="Attribute" />
     </Type>
 
-    <Type Name="BindingStatement" Base="Statement" Abstract="true">
+    <Type Name="LetStatement" Base="Statement">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Node Name="Pattern" Type="Pattern" />
         <Node Name="Initializer" Type="Expression" />
-    </Type>
-
-    <Type Name="LetStatement" Base="BindingStatement">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Node Name="Pattern" Type="Pattern" Override="true" />
-        <Node Name="Initializer" Type="Expression" Override="true" />
-    </Type>
-
-    <Type Name="UseStatement" Base="BindingStatement">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Node Name="Pattern" Type="Pattern" Override="true" />
-        <Node Name="Initializer" Type="Expression" Override="true" />
     </Type>
 
     <Type Name="DeferStatement" Base="Statement">
@@ -301,33 +290,28 @@
     </Type>
 
     <Type Name="BranchExpression" Base="ControlExpression" Abstract="true">
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
     </Type>
 
     <Type Name="ReturnExpression" Base="BranchExpression">
         <Computed Name="IsTail" Type="bool" Body="Syntax.TailKeywordToken != null" />
         <Node Name="Operand" Type="Expression" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="RaiseExpression" Base="BranchExpression">
         <Node Name="Operand" Type="Expression" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="LoopBranchExpression" Base="BranchExpression" Abstract="true" />
 
     <Type Name="NextExpression" Base="LoopBranchExpression">
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="BreakExpression" Base="LoopBranchExpression">
         <Node Name="Result" Type="Expression" Optional="true" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" Override="true" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
@@ -337,7 +321,6 @@
 
     <Type Name="BlockExpression" Base="Expression">
         <Nodes Name="Statement" Type="Statement" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
     </Type>
 
@@ -368,7 +351,6 @@
         <Node Name="Subject" Type="Expression" Override="true" />
         <Nodes Name="Argument" Type="Expression" />
         <Computed Name="IsPropagating" Type="bool" Body="Syntax.QuestionToken != null" />
-        <Value Name="Uses" Type="ImmutableArray&lt;UseStatementSemantics&gt;" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
     </Type>
 

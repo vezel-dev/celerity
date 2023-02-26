@@ -364,27 +364,12 @@
         <Token Name="Semicolon" Override="true" />
     </Type>
 
-    <Type Name="BindingStatement" Base="Statement" Abstract="true">
+    <Type Name="LetStatement" Base="Statement">
+        <Nodes Name="Attribute" Type="Attribute" Override="true" />
+        <Token Name="LetKeyword" />
         <Node Name="Pattern" Type="Pattern" />
         <Token Name="Equals" />
         <Node Name="Initializer" Type="Expression" />
-    </Type>
-
-    <Type Name="LetStatement" Base="BindingStatement">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Token Name="LetKeyword" />
-        <Node Name="Pattern" Type="Pattern" Override="true" />
-        <Token Name="Equals" Override="true" />
-        <Node Name="Initializer" Type="Expression" Override="true" />
-        <Token Name="Semicolon" Override="true" />
-    </Type>
-
-    <Type Name="UseStatement" Base="BindingStatement">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Token Name="UseKeyword" />
-        <Node Name="Pattern" Type="Pattern" Override="true" />
-        <Token Name="Equals" Override="true" />
-        <Node Name="Initializer" Type="Expression" Override="true" />
         <Token Name="Semicolon" Override="true" />
     </Type>
 
