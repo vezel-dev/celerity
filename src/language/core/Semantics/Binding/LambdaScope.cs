@@ -1,3 +1,5 @@
+using Vezel.Celerity.Language.Semantics.Tree;
+
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
 internal sealed class LambdaScope : Scope, IScope<LambdaScope>
@@ -45,6 +47,24 @@ internal sealed class LambdaScope : Scope, IScope<LambdaScope>
         // This is erroneous; a break/next expression in a lambda expression cannot bind to a loop outside of the lambda
         // expression. So we short-circuit the scope walk by returning null here.
         return null;
+    }
+
+    protected override void CollectDefers(Scope? target, ImmutableArray<DeferStatementSemantics>.Builder builder)
+    {
+        // Consider this code:
+        //
+        // defer foo();
+        // let func = fn() -> {
+        //     defer bar();
+        //     42;
+        // };
+        // func();
+        // while true {
+        //     // Spin forever...
+        // };
+        //
+        // When func returns, only the inner defer (i.e. the bar call) should run. We short-circuit the scope walk here
+        // to achieve that.
     }
 
     public override Symbol? ResolveSymbol(string name)
