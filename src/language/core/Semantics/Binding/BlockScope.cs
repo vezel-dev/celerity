@@ -2,14 +2,19 @@ using Vezel.Celerity.Language.Semantics.Tree;
 
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
-internal sealed class BlockScope : Scope
+internal sealed class BlockScope : Scope, IScope<BlockScope>
 {
     public ImmutableArray<DeferStatementSemantics>.Builder Defers { get; } =
         ImmutableArray.CreateBuilder<DeferStatementSemantics>();
 
-    public BlockScope(Scope parent)
+    private BlockScope(Scope? parent)
         : base(parent)
     {
+    }
+
+    public static new BlockScope Create(Scope? parent)
+    {
+        return new(parent);
     }
 
     protected override void CollectDefers(Scope? target, ImmutableArray<DeferStatementSemantics>.Builder builder)

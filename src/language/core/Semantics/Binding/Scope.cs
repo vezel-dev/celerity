@@ -2,15 +2,20 @@ using Vezel.Celerity.Language.Semantics.Tree;
 
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
-internal class Scope
+internal class Scope : IScope<Scope>
 {
     public Scope? Parent { get; }
 
     private readonly Dictionary<string, Symbol> _symbols = new();
 
-    public Scope(Scope? parent)
+    protected Scope(Scope? parent)
     {
         Parent = parent;
+    }
+
+    public static Scope Create(Scope? parent)
+    {
+        return new(parent);
     }
 
     public virtual TryScope? GetEnclosingTry()
@@ -65,7 +70,8 @@ internal class Scope
             Parent?.CollectDefers(target, builder);
     }
 
-    public bool TryDefineSymbol(string name, Func<Symbol> creator, [MaybeNullWhen(true)] out Symbol existing)
+    public bool TryDefineSymbol<T>(string name, [MaybeNullWhen(true)] out Symbol existing)
+        where T : LocalSymbol, ILocalSymbol<T>
     {
         ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_symbols, name, out _);
 
@@ -76,7 +82,7 @@ internal class Scope
             return false;
         }
 
-        entry = creator();
+        entry = T.Create();
         existing = null;
 
         return true;

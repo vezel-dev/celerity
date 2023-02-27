@@ -1,14 +1,19 @@
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
-internal sealed class LambdaScope : Scope
+internal sealed class LambdaScope : Scope, IScope<LambdaScope>
 {
     private readonly Dictionary<Symbol, UpvalueSymbol> _upvalues = new();
 
     private int _upvalueSlot;
 
-    internal LambdaScope(Scope parent)
+    private LambdaScope(Scope? parent)
         : base(parent)
     {
+    }
+
+    public static new LambdaScope Create(Scope? parent)
+    {
+        return new(parent);
     }
 
     public override TryScope? GetEnclosingTry()

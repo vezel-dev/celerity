@@ -360,46 +360,48 @@
         <Nodes Name="Argument" Type="Expression" />
     </Type>
 
-    <!-- Patterns -->
+    <!-- Bindings -->
 
-    <Type Name="Pattern" Abstract="true">
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" />
+    <Type Name="Binding" Parent="Pattern" Abstract="true">
+        <Value Name="Symbol" Type="VariableSymbol?" />
     </Type>
 
-    <Type Name="PatternBinding" Parent="Pattern" Abstract="true">
-        <Value Name="Symbol" Type="Symbol?" />
-    </Type>
-
-    <Type Name="VariablePatternBinding" Parent="Pattern" Base="PatternBinding">
+    <Type Name="VariableBinding" Parent="Pattern" Base="Binding">
         <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
         <Value Name="Symbol" Type="VariableSymbol?" Override="true" />
     </Type>
 
-    <Type Name="DiscardPatternBinding" Parent="Pattern" Base="PatternBinding">
-        <Value Name="Symbol" Type="DiscardSymbol?" Override="true" />
+    <Type Name="DiscardBinding" Parent="Pattern" Base="Binding">
+        <Value Name="Symbol" Type="VariableSymbol?" Override="true" />
+    </Type>
+
+    <!-- Patterns -->
+
+    <Type Name="Pattern" Abstract="true">
+        <Node Name="Alias" Type="VariableBinding" Optional="true" />
     </Type>
 
     <Type Name="WildcardPattern" Base="Pattern">
-        <Node Name="Binding" Type="PatternBinding" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Binding" Type="Binding" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="LiteralPattern" Base="Pattern">
         <Computed Name="IsNegative" Type="bool" Body="Syntax.MinusToken != null" />
         <Computed Name="Literal" Type="object?" Body="Syntax.LiteralToken.Value" />
         <Computed Name="Value" Type="object?" Body="IsNegative &amp;&amp; Literal is BigInteger i ? -i : Literal" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="StringPattern" Base="Pattern">
-        <Node Name="MiddleBinding" Type="PatternBinding" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="MiddleBinding" Type="Binding" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="ModulePattern" Base="Pattern">
         <Value Name="Use" Type="UseDeclarationSemantics?" />
         <Value Name="Path" Type="ModulePath" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="AggregatePattern" Base="Pattern" Abstract="true">
@@ -413,25 +415,25 @@
 
     <Type Name="RecordPattern" Base="AggregatePattern">
         <Nodes Name="Field" Type="AggregatePatternField" Override="true" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="ErrorPattern" Base="AggregatePattern">
         <Computed Name="Name" Type="string?" Body="Syntax.NameToken?.Text" />
         <Nodes Name="Field" Type="AggregatePatternField" Override="true" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="TuplePattern" Base="Pattern">
         <Nodes Name="Component" Type="Pattern" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="ArrayPattern" Base="Pattern">
         <Node Name="LeftClause" Type="ArrayPatternClause" Optional="true" />
-        <Node Name="MiddleBinding" Type="PatternBinding" />
+        <Node Name="MiddleBinding" Type="Binding" />
         <Node Name="RightClause" Type="ArrayPatternClause" Optional="true" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="ArrayPatternClause" Parent="ArrayPattern">
@@ -440,12 +442,12 @@
 
     <Type Name="SetPattern" Base="Pattern">
         <Nodes Name="Element" Type="Expression" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="MapPattern" Base="Pattern">
         <Nodes Name="Pair" Type="MapPatternPair" />
-        <Node Name="Alias" Type="VariablePatternBinding" Optional="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="MapPatternPair" Parent="MapPattern">

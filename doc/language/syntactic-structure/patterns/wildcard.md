@@ -1,5 +1,5 @@
 # Wildcard Pattern
 
 ```ebnf
-wildcard-pattern ::= pattern-binding
+wildcard-pattern ::= binding
 ```

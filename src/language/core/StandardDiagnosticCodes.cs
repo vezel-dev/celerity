@@ -37,9 +37,9 @@ public static class StandardDiagnosticCodes
 
     public static SourceDiagnosticCode MissingExpression { get; } = CreateCode();
 
-    public static SourceDiagnosticCode MissingPattern { get; } = CreateCode();
+    public static SourceDiagnosticCode MissingBinding { get; } = CreateCode();
 
-    public static SourceDiagnosticCode MissingPatternBinding { get; } = CreateCode();
+    public static SourceDiagnosticCode MissingPattern { get; } = CreateCode();
 
     private static int _code;
 

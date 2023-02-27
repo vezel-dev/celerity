@@ -1779,6 +1779,44 @@ internal sealed class LanguageParser
         return new(open, List(args, seps), close);
     }
 
+    // Bindings
+
+    private BindingSyntax ParseBinding()
+    {
+        var next = Peek1();
+        var binding = next?.Kind switch
+        {
+            { } kind when kind == SyntaxTokenKind.MutKeyword || SyntaxFacts.IsCodeIdentifier(kind) =>
+                ParseVariableBinding(),
+            SyntaxTokenKind.DiscardIdentifier => ParseDiscardBinding(),
+            _ => default(BindingSyntax),
+        };
+
+        if (binding == null)
+        {
+            ErrorExpected(StandardDiagnosticCodes.MissingBinding, next?.Location, "binding");
+
+            binding = new VariableBindingSyntax(null, _missing);
+        }
+
+        return binding;
+    }
+
+    private VariableBindingSyntax ParseVariableBinding()
+    {
+        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var name = mut != null ? ExpectCodeIdentifier() : Read();
+
+        return new(mut, name);
+    }
+
+    private DiscardBindingSyntax ParseDiscardBinding()
+    {
+        var name = Read();
+
+        return new(name);
+    }
+
     // Patterns
 
     private PatternSyntax ParsePattern()
@@ -1805,7 +1843,7 @@ internal sealed class LanguageParser
         {
             ErrorExpected(StandardDiagnosticCodes.MissingPattern, Peek1()?.Location, "pattern");
 
-            pat = new WildcardPatternSyntax(new VariablePatternBindingSyntax(null, _missing), null);
+            pat = new WildcardPatternSyntax(new VariableBindingSyntax(null, _missing), null);
         }
 
         return pat;
@@ -1814,50 +1852,14 @@ internal sealed class LanguageParser
     private PatternAliasSyntax ParsePatternAlias()
     {
         var @as = Read();
-        var binding = ParseVariablePatternBinding();
+        var binding = ParseVariableBinding();
 
         return new(@as, binding);
     }
 
-    private PatternBindingSyntax ParsePatternBinding()
-    {
-        var next = Peek1();
-        var binding = next?.Kind switch
-        {
-            { } kind when kind == SyntaxTokenKind.MutKeyword || SyntaxFacts.IsCodeIdentifier(kind) =>
-                ParseVariablePatternBinding(),
-            SyntaxTokenKind.DiscardIdentifier => ParseDiscardPatternBinding(),
-            _ => default(PatternBindingSyntax),
-        };
-
-        if (binding == null)
-        {
-            ErrorExpected(StandardDiagnosticCodes.MissingPatternBinding, next?.Location, "pattern binding");
-
-            binding = new VariablePatternBindingSyntax(null, _missing);
-        }
-
-        return binding;
-    }
-
-    private VariablePatternBindingSyntax ParseVariablePatternBinding()
-    {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
-        var name = mut != null ? ExpectCodeIdentifier() : Read();
-
-        return new(mut, name);
-    }
-
-    private DiscardPatternBindingSyntax ParseDiscardPatternBinding()
-    {
-        var name = Read();
-
-        return new(name);
-    }
-
     private PatternSyntax ParseWildcardOrStringOrArrayPattern()
     {
-        var binding = ParsePatternBinding();
+        var binding = ParseBinding();
 
         switch (Peek2())
         {
@@ -1881,7 +1883,7 @@ internal sealed class LanguageParser
         return new(minus, literal, alias);
     }
 
-    private StringPatternSyntax ParseStringPattern(PatternBindingSyntax? binding)
+    private StringPatternSyntax ParseStringPattern(BindingSyntax? binding)
     {
         var leftLit = default(SyntaxToken);
         var leftSep = default(SyntaxToken);
@@ -1900,7 +1902,7 @@ internal sealed class LanguageParser
             if (Optional(SyntaxTokenKind.ColonColon) is { } left)
             {
                 leftSep = left;
-                binding = ParsePatternBinding();
+                binding = ParseBinding();
 
                 if (Optional(SyntaxTokenKind.ColonColon) is { } right)
                 {
@@ -1987,7 +1989,7 @@ internal sealed class LanguageParser
         return new(open, List(comps, seps), close, alias);
     }
 
-    private ArrayPatternSyntax ParseArrayPattern(PatternBindingSyntax? binding)
+    private ArrayPatternSyntax ParseArrayPattern(BindingSyntax? binding)
     {
         var leftClause = default(ArrayPatternClauseSyntax);
         var leftSep = default(SyntaxToken);
@@ -2006,7 +2008,7 @@ internal sealed class LanguageParser
             if (Optional(SyntaxTokenKind.ColonColon) is { } left)
             {
                 leftSep = left;
-                binding = ParsePatternBinding();
+                binding = ParseBinding();
 
                 if (Optional(SyntaxTokenKind.ColonColon) is { } right)
                 {

@@ -745,6 +745,21 @@
         <Token Name="CloseParen" />
     </Type>
 
+    <!-- Bindings -->
+
+    <Type Name="Binding" Parent="Pattern" Abstract="true">
+        <Token Name="Name" />
+    </Type>
+
+    <Type Name="VariableBinding" Parent="Pattern" Base="Binding">
+        <Token Name="MutKeyword" Optional="true" />
+        <Token Name="Name" Override="true" />
+    </Type>
+
+    <Type Name="DiscardBinding" Parent="Pattern" Base="Binding">
+        <Token Name="Name" Override="true" />
+    </Type>
+
     <!-- Patterns -->
 
     <Type Name="Pattern" Abstract="true">
@@ -753,24 +768,11 @@
 
     <Type Name="PatternAlias" Parent="Pattern">
         <Token Name="AsKeyword" />
-        <Node Name="Binding" Type="VariablePatternBinding" />
-    </Type>
-
-    <Type Name="PatternBinding" Parent="Pattern" Abstract="true">
-        <Token Name="Name" />
-    </Type>
-
-    <Type Name="VariablePatternBinding" Parent="Pattern" Base="PatternBinding">
-        <Token Name="MutKeyword" Optional="true" />
-        <Token Name="Name" Override="true" />
-    </Type>
-
-    <Type Name="DiscardPatternBinding" Parent="Pattern" Base="PatternBinding">
-        <Token Name="Name" Override="true" />
+        <Node Name="Binding" Type="VariableBinding" />
     </Type>
 
     <Type Name="WildcardPattern" Base="Pattern">
-        <Node Name="Binding" Type="PatternBinding" />
+        <Node Name="Binding" Type="Binding" />
         <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
 
@@ -783,7 +785,7 @@
     <Type Name="StringPattern" Base="Pattern">
         <Token Name="LeftLiteral" Optional="true" />
         <Token Name="LeftColonColon" Optional="true" />
-        <Node Name="MiddleBinding" Type="PatternBinding" Optional="true" />
+        <Node Name="MiddleBinding" Type="Binding" Optional="true" />
         <Token Name="RightColonColon" Optional="true" />
         <Token Name="RightLiteral" Optional="true" />
         <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
@@ -833,7 +835,7 @@
     <Type Name="ArrayPattern" Base="Pattern">
         <Node Name="LeftClause" Type="ArrayPatternClause" Optional="true" />
         <Token Name="LeftColonColon" Optional="true" />
-        <Node Name="MiddleBinding" Type="PatternBinding" Optional="true" />
+        <Node Name="MiddleBinding" Type="Binding" Optional="true" />
         <Token Name="RightColonColon" Optional="true" />
         <Node Name="RightClause" Type="ArrayPatternClause" Optional="true" />
         <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
