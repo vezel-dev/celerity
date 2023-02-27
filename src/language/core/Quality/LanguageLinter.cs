@@ -31,12 +31,12 @@ internal sealed partial class LanguageLinter
         {
             _configurations.Push(_configuration);
 
-            VisitNode(document);
+            Visit(document);
 
             _ = _configurations.Pop();
         }
 
-        protected override void DefaultVisitNode(SemanticNode node)
+        protected override void DefaultVisit(SemanticNode node)
         {
             bool PushConfiguration(SemanticNodeList<AttributeSemantics> attributes)
             {
@@ -120,7 +120,7 @@ internal sealed partial class LanguageLinter
 
             if (node.HasChildren)
                 foreach (var child in node.Children())
-                    VisitNode(child);
+                    Visit(child);
 
             if (pushed)
                 _ = _configurations.Pop();

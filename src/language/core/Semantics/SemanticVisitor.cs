@@ -4,14 +4,14 @@ namespace Vezel.Celerity.Language.Semantics;
 
 public abstract partial class SemanticVisitor
 {
-    public void VisitNode(SemanticNode node)
+    public void Visit(SemanticNode node)
     {
         Check.Null(node);
 
         node.Visit(this);
     }
 
-    protected virtual void DefaultVisitNode(SemanticNode node)
+    protected virtual void DefaultVisit(SemanticNode node)
     {
         Check.Null(node);
     }

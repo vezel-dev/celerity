@@ -302,7 +302,7 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
             writer.Indent++;
 
-            writer.WriteLine("visitor.Visit(this);");
+            writer.WriteLine($"visitor.Visit{type.Name}(this);");
 
             writer.Indent--;
 
@@ -320,7 +320,7 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
             writer.Indent++;
 
-            writer.WriteLine("return visitor.Visit(this);");
+            writer.WriteLine($"return visitor.Visit{type.Name}(this);");
 
             writer.Indent--;
 
@@ -348,14 +348,14 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
             writer.Indent++;
 
-            writer.WriteLine($"public virtual void Visit({type.Name}Semantics node)");
+            writer.WriteLine($"public virtual void Visit{type.Name}({type.Name}Semantics node)");
             writer.WriteLine("{");
 
             writer.Indent++;
 
             writer.WriteLine("Check.Null(node);");
             writer.WriteLine();
-            writer.WriteLine("DefaultVisitNode(node);");
+            writer.WriteLine("DefaultVisit(node);");
 
             writer.Indent--;
 
@@ -370,14 +370,14 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
             writer.Indent++;
 
-            writer.WriteLine($"public virtual T? Visit({type.Name}Semantics node)");
+            writer.WriteLine($"public virtual T? Visit{type.Name}({type.Name}Semantics node)");
             writer.WriteLine("{");
 
             writer.Indent++;
 
             writer.WriteLine("Check.Null(node);");
             writer.WriteLine();
-            writer.WriteLine("return DefaultVisitNode(node);");
+            writer.WriteLine("return DefaultVisit(node);");
 
             writer.Indent--;
 

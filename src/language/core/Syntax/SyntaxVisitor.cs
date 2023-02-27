@@ -4,14 +4,14 @@ namespace Vezel.Celerity.Language.Syntax;
 
 public abstract partial class SyntaxVisitor
 {
-    public void VisitNode(SyntaxNode node)
+    public void Visit(SyntaxNode node)
     {
         Check.Null(node);
 
         node.Visit(this);
     }
 
-    protected virtual void DefaultVisitNode(SyntaxNode node)
+    protected virtual void DefaultVisit(SyntaxNode node)
     {
         Check.Null(node);
     }
