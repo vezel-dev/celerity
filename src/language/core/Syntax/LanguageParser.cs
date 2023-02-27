@@ -332,11 +332,9 @@ internal sealed class LanguageParser
                     new StatementSubmissionSyntax(new MissingStatementSyntax(List(attrs), List(skipped), _missing)));
             }
 
-            while (Peek2() is ({ IsEndOfInput: false } next1, var next2))
+            while (Peek1() is { IsEndOfInput: false } next)
             {
-                // See the comment in ParseBlockExpression.
-                if (SyntaxFacts.IsDeclarationStarter(next1.Kind) &&
-                    (next1.Kind, next2?.Kind) is not (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen))
+                if (SyntaxFacts.IsInteractiveDeclarationStarter(next.Kind))
                 {
                     DrainToMissingStatement(false);
 
@@ -345,7 +343,7 @@ internal sealed class LanguageParser
                     break;
                 }
 
-                if (SyntaxFacts.IsStatementStarter(next1.Kind))
+                if (SyntaxFacts.IsInteractiveStatementStarter(next.Kind))
                 {
                     DrainToMissingStatement(false);
 
@@ -356,7 +354,7 @@ internal sealed class LanguageParser
 
                 skipped.Add(Read());
 
-                if (next1.Kind == SyntaxTokenKind.Semicolon)
+                if (next.Kind == SyntaxTokenKind.Semicolon)
                     break;
             }
 

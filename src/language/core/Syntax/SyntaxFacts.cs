@@ -224,17 +224,26 @@ public static class SyntaxFacts
             SyntaxTokenKind.FnKeyword or
             SyntaxTokenKind.PubKeyword or
             SyntaxTokenKind.TestKeyword or
-            SyntaxTokenKind.TypeKeyword or
-            SyntaxTokenKind.UseKeyword;
+            SyntaxTokenKind.TypeKeyword || IsInteractiveDeclarationStarter(kind);
+    }
+
+    public static bool IsInteractiveDeclarationStarter(SyntaxTokenKind kind)
+    {
+        Check.Enum(kind);
+
+        return kind == SyntaxTokenKind.UseKeyword;
     }
 
     public static bool IsStatementStarter(SyntaxTokenKind kind)
     {
+        return kind == SyntaxTokenKind.DeferKeyword || IsInteractiveStatementStarter(kind);
+    }
+
+    public static bool IsInteractiveStatementStarter(SyntaxTokenKind kind)
+    {
         return kind is
             SyntaxTokenKind.AssertKeyword or
-            SyntaxTokenKind.DeferKeyword or
-            SyntaxTokenKind.LetKeyword or
-            SyntaxTokenKind.UseKeyword || IsExpressionStarter(kind);
+            SyntaxTokenKind.LetKeyword || IsExpressionStarter(kind);
     }
 
     public static bool IsExpressionStarter(SyntaxTokenKind kind)
