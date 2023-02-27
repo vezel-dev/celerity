@@ -47,7 +47,7 @@
 
     <Type Name="UseDeclaration" Base="Declaration">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
+        <Value Name="Use" Type="UseDeclarationSemantics?" />
         <Value Name="Path" Type="ModulePath?" />
     </Type>
 
@@ -260,7 +260,7 @@
 
     <Type Name="ReceiveExpressionArm" Base="ExpressionArm" Parent="ReceiveExpression">
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
-        <Node Name="Parameter" Type="Pattern" />
+        <Nodes Name="Parameter" Type="Pattern" />
         <Node Name="Guard" Type="Expression" Optional="true" />
         <Node Name="Body" Type="Expression" Override="true" />
     </Type>
@@ -268,6 +268,8 @@
     <Type Name="TryExpression" Base="ConditionalExpression">
         <Node Name="Body" Type="Expression" />
         <Nodes Name="Arm" Type="ExpressionPatternArm" />
+        <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
+        <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
     </Type>
 
     <Type Name="LoopExpression" Base="ControlExpression" Abstract="true">
@@ -275,18 +277,18 @@
     </Type>
 
     <Type Name="WhileExpression" Base="LoopExpression">
-        <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" Override="true" />
         <Node Name="Condition" Type="Expression" />
         <Node Name="Body" Type="BlockExpression" />
         <Node Name="Else" Type="BlockExpression" Optional="true" />
+        <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="ForExpression" Base="LoopExpression">
-        <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" Override="true" />
         <Node Name="Pattern" Type="Pattern" />
         <Node Name="Collection" Type="Expression" />
         <Node Name="Body" Type="BlockExpression" />
         <Node Name="Else" Type="BlockExpression" Optional="true" />
+        <Value Name="Branches" Type="ImmutableArray&lt;LoopBranchExpressionSemantics&gt;" Override="true" />
     </Type>
 
     <Type Name="BranchExpression" Base="ControlExpression" Abstract="true">
@@ -394,7 +396,7 @@
     </Type>
 
     <Type Name="StringPattern" Base="Pattern">
-        <Node Name="MiddleBinding" Type="Binding" />
+        <Node Name="MiddleBinding" Type="Binding" Optional="true" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
@@ -431,7 +433,7 @@
 
     <Type Name="ArrayPattern" Base="Pattern">
         <Node Name="LeftClause" Type="ArrayPatternClause" Optional="true" />
-        <Node Name="MiddleBinding" Type="Binding" />
+        <Node Name="MiddleBinding" Type="Binding" Optional="true" />
         <Node Name="RightClause" Type="ArrayPatternClause" Optional="true" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
