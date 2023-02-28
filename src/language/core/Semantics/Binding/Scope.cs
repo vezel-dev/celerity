@@ -22,7 +22,7 @@ internal class Scope : IScope<Scope>
     {
         // Consider:
         //
-        // try raise err { } catch {
+        // try raise err FooError { } catch {
         //     _ => 42,
         // };
         //
@@ -37,6 +37,7 @@ internal class Scope : IScope<Scope>
         //
         // while true {
         //     while break {
+        //         42;
         //     };
         // };
         //
@@ -70,22 +71,14 @@ internal class Scope : IScope<Scope>
             Parent?.CollectDefers(target, builder);
     }
 
-    public bool TryDefineSymbol<T>(string name, [MaybeNullWhen(true)] out Symbol existing)
+    public bool DefineSymbol<T>(string name, out Symbol result)
         where T : LocalSymbol, ILocalSymbol<T>
     {
-        ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_symbols, name, out _);
+        ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_symbols, name, out var exists);
 
-        if (entry != null)
-        {
-            existing = entry;
+        result = entry ??= T.Create();
 
-            return false;
-        }
-
-        entry = T.Create();
-        existing = null;
-
-        return true;
+        return !exists;
     }
 
     protected Symbol? ResolveLocalSymbol(string name)
@@ -95,6 +88,6 @@ internal class Scope : IScope<Scope>
 
     public virtual Symbol? ResolveSymbol(string name)
     {
-        return ResolveLocalSymbol(name) ?? Parent?.ResolveLocalSymbol(name);
+        return ResolveLocalSymbol(name) ?? Parent?.ResolveSymbol(name);
     }
 }

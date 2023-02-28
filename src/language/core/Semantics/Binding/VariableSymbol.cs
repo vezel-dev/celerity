@@ -1,13 +1,13 @@
 using Vezel.Celerity.Language.Semantics.Tree;
+using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
 public sealed class VariableSymbol : LocalSymbol, ILocalSymbol<VariableSymbol>
 {
-    public override bool IsMutable =>
-        Bindings.Any(decl => decl is VariableBindingSemantics { Syntax.MutKeywordToken: not null });
+    public override bool IsMutable => Bindings.Any(decl => decl is VariableBindingSemantics { IsMutable: true });
 
-    public bool IsDiscard => Name[0] == '_';
+    public override bool IsDiscard => Name[0] == '_';
 
     private VariableSymbol()
     {
@@ -18,9 +18,9 @@ public sealed class VariableSymbol : LocalSymbol, ILocalSymbol<VariableSymbol>
         return new();
     }
 
-    private protected override string GetName(SemanticNode node)
+    private protected override SyntaxToken GetToken(SemanticNode node)
     {
-        return Unsafe.As<BindingSemantics>(node).Syntax.NameToken.Text;
+        return Unsafe.As<CodeDeclarationSemantics>(node).Syntax.NameToken;
     }
 
     internal void AddBinding(BindingSemantics binding)

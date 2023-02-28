@@ -1,9 +1,14 @@
 using Vezel.Celerity.Language.Semantics.Tree;
+using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
 public sealed class DeclarationSymbol : LocalSymbol, ILocalSymbol<DeclarationSymbol>
 {
+    public override bool IsMutable => false;
+
+    public override bool IsDiscard => false;
+
     private DeclarationSymbol()
     {
     }
@@ -13,9 +18,9 @@ public sealed class DeclarationSymbol : LocalSymbol, ILocalSymbol<DeclarationSym
         return new();
     }
 
-    private protected override string GetName(SemanticNode node)
+    private protected override SyntaxToken GetToken(SemanticNode node)
     {
-        return Unsafe.As<CodeDeclarationSemantics>(node).Syntax.NameToken.Text;
+        return Unsafe.As<CodeDeclarationSemantics>(node).Syntax.NameToken;
     }
 
     internal void AddBinding(CodeDeclarationSemantics declaration)
