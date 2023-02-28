@@ -16,17 +16,17 @@ public readonly partial struct SourceDiagnosticCode :
 
     internal static SourceDiagnosticCode CreateSuggestion(int code)
     {
-        return new($"S{code}");
+        return new($"S{code:0000}");
     }
 
     internal static SourceDiagnosticCode CreateWarning(int code)
     {
-        return new($"W{code}");
+        return new($"W{code:0000}");
     }
 
     internal static SourceDiagnosticCode CreateError(int code)
     {
-        return new($"E{code}");
+        return new($"E{code:0000}");
     }
 
     public static SourceDiagnosticCode Create(string name)
