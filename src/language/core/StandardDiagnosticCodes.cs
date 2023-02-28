@@ -26,7 +26,7 @@ public static class StandardDiagnosticCodes
 
     public static SourceDiagnosticCode InvalidUnicodeEscapeSequence { get; } = CreateCode();
 
-    // TODO: Create more specific diagnostics for certain kinds of missing characters.
+    // TODO: Create more specific diagnostics for certain kinds of missing tokens.
     public static SourceDiagnosticCode ExpectedToken { get; } = CreateCode();
 
     public static SourceDiagnosticCode MissingDeclaration { get; } = CreateCode();
@@ -40,6 +40,28 @@ public static class StandardDiagnosticCodes
     public static SourceDiagnosticCode MissingBinding { get; } = CreateCode();
 
     public static SourceDiagnosticCode MissingPattern { get; } = CreateCode();
+
+    public static SourceDiagnosticCode DuplicateUseDeclaration { get; } = CreateCode();
+
+    public static SourceDiagnosticCode DuplicateCodeDeclaration { get; } = CreateCode();
+
+    public static SourceDiagnosticCode DuplicateParameterBinding { get; } = CreateCode();
+
+    public static SourceDiagnosticCode DuplicateVariableBinding { get; } = CreateCode();
+
+    public static SourceDiagnosticCode DuplicateAggregateExpressionField { get; } = CreateCode();
+
+    public static SourceDiagnosticCode MissingEnclosingLoop { get; } = CreateCode();
+
+    public static SourceDiagnosticCode UnresolvedIdentifier { get; } = CreateCode();
+
+    public static SourceDiagnosticCode IllegalTestReference { get; } = CreateCode();
+
+    public static SourceDiagnosticCode InvalidAssignmentTarget { get; } = CreateCode();
+
+    public static SourceDiagnosticCode ImmutableAssignmentTarget { get; } = CreateCode();
+
+    public static SourceDiagnosticCode DuplicateAggregatePatternField { get; } = CreateCode();
 
     private static int _code;
 

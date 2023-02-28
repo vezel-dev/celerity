@@ -1,4 +1,3 @@
-using Vezel.Celerity.Language.Semantics.Binding;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Text;
@@ -27,14 +26,15 @@ public sealed class SemanticAnalysis
     {
         Check.Null(syntax);
 
-        var root = syntax.Document;
-        var scope = new Scope(null);
         var diags = ImmutableArray.CreateBuilder<SourceDiagnostic>();
 
         diags.AddRange(syntax.Diagnostics);
 
-        _ = new LanguageAnalyzer(scope, diags).VisitNode(root); // TODO
-
-        return new(syntax, null!, diags.DrainToImmutable());
+        return new(
+            syntax,
+            new LanguageAnalyzer(
+                syntax.Document,
+                diags).Analyze(),
+            diags.ToImmutable());
     }
 }
