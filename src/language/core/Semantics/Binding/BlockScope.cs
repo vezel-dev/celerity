@@ -5,7 +5,7 @@ namespace Vezel.Celerity.Language.Semantics.Binding;
 internal sealed class BlockScope : Scope, IScope<BlockScope>
 {
     public ImmutableArray<DeferStatementSemantics>.Builder Defers { get; } =
-        ImmutableArray.CreateBuilder<DeferStatementSemantics>();
+        ImmutableArray.CreateBuilder<DeferStatementSemantics>(0);
 
     private BlockScope(Scope? parent)
         : base(parent)
