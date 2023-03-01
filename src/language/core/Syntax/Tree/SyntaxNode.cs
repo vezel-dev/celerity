@@ -1,8 +1,30 @@
+using Vezel.Celerity.Language.Text;
+
 namespace Vezel.Celerity.Language.Syntax.Tree;
 
 public abstract class SyntaxNode : SyntaxItem
 {
     public new SyntaxNode? Parent => Unsafe.As<SyntaxNode?>(base.Parent);
+
+    public override SourceTextSpan Span
+    {
+        get
+        {
+            EnsureSpansInitialized(out var span, out _);
+
+            return span;
+        }
+    }
+
+    public override SourceTextSpan FullSpan
+    {
+        get
+        {
+            EnsureSpansInitialized(out _, out var fullSpan);
+
+            return fullSpan;
+        }
+    }
 
     public override bool HasChildren => HasNodes || HasTokens;
 
@@ -10,8 +32,49 @@ public abstract class SyntaxNode : SyntaxItem
 
     public abstract bool HasTokens { get; }
 
+    private volatile bool _spansInitialized;
+
+    private SourceTextSpan _span;
+
+    private SourceTextSpan _fullSpan;
+
     private protected SyntaxNode()
     {
+    }
+
+    private void EnsureSpansInitialized(out SourceTextSpan span, out SourceTextSpan fullSpan)
+    {
+        if (_spansInitialized)
+        {
+            span = _span;
+            fullSpan = _fullSpan;
+
+            return;
+        }
+
+        var tokens = DescendantTokens().ToArray();
+        var first = tokens[0];
+
+        // With the way the parser works today, a node's first token is either present or all of its tokens are missing;
+        // there is never a situation where the first token is missing but the rest are present.
+        if (!first.IsMissing)
+        {
+            // We are only interested in the last token that is actually present.
+            var last = tokens.Last(tok => !tok.IsMissing);
+
+            var firstSpan = first.Span;
+            var firstFullSpan = first.FullSpan;
+
+            span = new(firstSpan.Start, last.Span.End - firstSpan.Start);
+            fullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
+        }
+        else
+            span = fullSpan = SourceTextSpan.Empty;
+
+        _span = span;
+        _fullSpan = fullSpan;
+
+        _spansInitialized = true;
     }
 
     public new IEnumerable<SyntaxNode> Ancestors()

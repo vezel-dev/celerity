@@ -60,6 +60,17 @@ internal static class Check
         ArgumentException.ThrowIfNullOrEmpty(value, name);
     }
 
+    public static void Range<T>(
+        [DoesNotReturnIf(false)] bool condition,
+        in T value,
+        [CallerArgumentExpression(nameof(value))] string? name = null)
+    {
+        _ = value;
+
+        if (!condition)
+            throw new ArgumentOutOfRangeException(name);
+    }
+
     public static void Enum<T>(T value, [CallerArgumentExpression(nameof(value))] string? name = null)
         where T : struct, Enum
     {

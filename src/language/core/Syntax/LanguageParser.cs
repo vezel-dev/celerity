@@ -5,6 +5,8 @@ namespace Vezel.Celerity.Language.Syntax;
 
 internal sealed class LanguageParser
 {
+    private readonly SourceText _text;
+
     private readonly ListReader<SyntaxToken> _reader;
 
     private readonly SyntaxMode _mode;
@@ -13,19 +15,20 @@ internal sealed class LanguageParser
 
     private readonly SyntaxToken _missing;
 
-    private readonly SourceLocation _eoiLocation;
+    private readonly SourceLocation _eoi;
 
     public LanguageParser(
-        string path,
+        SourceText text,
         IReadOnlyList<SyntaxToken> tokens,
         SyntaxMode mode,
         ImmutableArray<SourceDiagnostic>.Builder diagnostics)
     {
+        _text = text;
         _reader = new(tokens);
         _mode = mode;
         _diagnostics = diagnostics;
-        _missing = new(path);
-        _eoiLocation = tokens[tokens.Count - 1].Location;
+        _missing = new();
+        _eoi = (SourceLocation)GetLocation(tokens[^1])!;
     }
 
     private SyntaxToken? Peek1()
@@ -66,7 +69,7 @@ internal sealed class LanguageParser
         if (next?.Kind is { } kind && SyntaxFacts.IsCodeIdentifier(kind))
             return Read();
 
-        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, next?.Location, "lowercase identifier");
+        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, GetLocation(next), "lowercase identifier");
 
         return _missing;
     }
@@ -79,7 +82,7 @@ internal sealed class LanguageParser
         if (next?.Kind is { } kind && SyntaxFacts.IsBindingIdentifier(kind))
             return Read();
 
-        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, next?.Location, "lowercase or discard identifier");
+        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, GetLocation(next), "lowercase or discard identifier");
 
         return _missing;
     }
@@ -97,7 +100,7 @@ internal sealed class LanguageParser
             SyntaxTokenKind.StringLiteral)
             return Read();
 
-        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, next?.Location, "literal");
+        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, GetLocation(next), "literal");
 
         return _missing;
     }
@@ -117,7 +120,7 @@ internal sealed class LanguageParser
 
         ErrorExpected(
             StandardDiagnosticCodes.ExpectedToken,
-            next?.Location,
+            GetLocation(next),
             $"{SyntaxFacts.GetFriendlyName(kind1)} or {SyntaxFacts.GetFriendlyName(kind2)}");
 
         return _missing;
@@ -130,7 +133,7 @@ internal sealed class LanguageParser
         if (next?.Kind == kind)
             return Read();
 
-        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, next?.Location, SyntaxFacts.GetFriendlyName(kind));
+        ErrorExpected(StandardDiagnosticCodes.ExpectedToken, GetLocation(next), SyntaxFacts.GetFriendlyName(kind));
 
         return _missing;
     }
@@ -155,7 +158,13 @@ internal sealed class LanguageParser
     {
         _diagnostics.Add(
             SourceDiagnostic.Create(
-                code, SourceDiagnosticSeverity.Error, location ?? _eoiLocation, $"Expected {expected}"));
+                code, SourceDiagnosticSeverity.Error, location ?? _eoi, $"Expected {expected}"));
+    }
+
+    private SourceLocation? GetLocation(SyntaxItem? item)
+    {
+        // We cannot use the convenience methods on SyntaxItem during parsing as the Analysis property is unusable.
+        return item != null ? _text.GetLocation(item.Span) : null;
     }
 
     private static ImmutableArray<T>.Builder Builder<T>()
@@ -280,10 +289,10 @@ internal sealed class LanguageParser
 
                 ErrorExpected(
                     StandardDiagnosticCodes.MissingDeclaration,
-                    (skipped.FirstOrDefault() ?? Peek1())?.Location,
+                    GetLocation(skipped.FirstOrDefault() ?? Peek1()),
                     "declaration");
 
-                decls.Add(new MissingDeclarationSyntax(List(dattrs), _missing, List(skipped)));
+                decls.Add(new MissingDeclarationSyntax(List(dattrs), List(skipped), _missing));
             }
 
             while (Peek1() is { IsEndOfInput: false } next)
@@ -325,7 +334,7 @@ internal sealed class LanguageParser
 
                 ErrorExpected(
                     StandardDiagnosticCodes.MissingStatement,
-                    (skipped.FirstOrDefault() ?? Peek1())?.Location,
+                    GetLocation(skipped.FirstOrDefault() ?? Peek1()),
                     "interactive declaration or statement");
 
                 subs.Add(
@@ -590,7 +599,7 @@ internal sealed class LanguageParser
 
         if (type == null)
         {
-            ErrorExpected(StandardDiagnosticCodes.MissingType, Peek1()?.Location, "type");
+            ErrorExpected(StandardDiagnosticCodes.MissingType, GetLocation(Peek1()), "type");
 
             type = new NominalTypeSyntax(null, _missing, null);
         }
@@ -1185,7 +1194,7 @@ internal sealed class LanguageParser
 
         if (expr == null)
         {
-            ErrorExpected(StandardDiagnosticCodes.MissingExpression, Peek1()?.Location, "expression");
+            ErrorExpected(StandardDiagnosticCodes.MissingExpression, GetLocation(Peek1()), "expression");
 
             expr = new IdentifierExpressionSyntax(_missing);
         }
@@ -1241,7 +1250,7 @@ internal sealed class LanguageParser
 
                 ErrorExpected(
                     StandardDiagnosticCodes.MissingStatement,
-                    (skipped.FirstOrDefault() ?? Peek1())?.Location,
+                    GetLocation(skipped.FirstOrDefault() ?? Peek1()),
                     "statement");
 
                 stmts.Add(new MissingStatementSyntax(List(attrs), List(skipped), _missing));
@@ -1301,7 +1310,7 @@ internal sealed class LanguageParser
         // Blocks must have at least one statement.
         if (stmts.Count == 0)
         {
-            ErrorExpected(StandardDiagnosticCodes.MissingStatement, Peek1()?.Location, "statement");
+            ErrorExpected(StandardDiagnosticCodes.MissingStatement, GetLocation(Peek1()), "statement");
 
             stmts.Add(new MissingStatementSyntax(
                 SyntaxItemList<AttributeSyntax>.Empty, SyntaxItemList<SyntaxToken>.Empty, _missing));
@@ -1792,7 +1801,7 @@ internal sealed class LanguageParser
 
         if (binding == null)
         {
-            ErrorExpected(StandardDiagnosticCodes.MissingBinding, next?.Location, "binding");
+            ErrorExpected(StandardDiagnosticCodes.MissingBinding, GetLocation(next), "binding");
 
             binding = new VariableBindingSyntax(null, _missing);
         }
@@ -1839,7 +1848,7 @@ internal sealed class LanguageParser
 
         if (pat == null)
         {
-            ErrorExpected(StandardDiagnosticCodes.MissingPattern, Peek1()?.Location, "pattern");
+            ErrorExpected(StandardDiagnosticCodes.MissingPattern, GetLocation(Peek1()), "pattern");
 
             pat = new WildcardPatternSyntax(new VariableBindingSyntax(null, _missing), null);
         }

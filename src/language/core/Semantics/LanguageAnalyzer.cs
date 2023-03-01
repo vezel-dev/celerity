@@ -51,9 +51,10 @@ internal sealed class LanguageAnalyzer
                 if (decls.Count != 1)
                     Error(
                         StandardDiagnosticCodes.DuplicateUseDeclaration,
-                        decls[0].Syntax.NameToken.Location,
+                        decls[0].Syntax.NameToken.GetLocation(),
                         $"Multiple 'use' declarations for '{name}' in module",
-                        decls.Skip(1).Select(static decl => (decl.Syntax.NameToken.Location, "Also declared here")));
+                        decls.Skip(1).Select(
+                            static decl => (decl.Syntax.NameToken.GetLocation(), "Also declared here")));
 
             foreach (var sym in _duplicates)
             {
@@ -188,7 +189,7 @@ internal sealed class LanguageAnalyzer
 
                 entry ??= new(1);
 
-                entry.Add(name.Location);
+                entry.Add(name.GetLocation());
             }
 
             var note = $"Also {message} here";
@@ -736,7 +737,7 @@ internal sealed class LanguageAnalyzer
             else
                 Error(
                     StandardDiagnosticCodes.MissingEnclosingLoop,
-                    node.NextKeywordToken.Location,
+                    node.NextKeywordToken.GetLocation(),
                     "No enclosing 'while' or 'for' expression for this 'next' expression");
 
             return sema;
@@ -754,7 +755,7 @@ internal sealed class LanguageAnalyzer
             else
                 Error(
                     StandardDiagnosticCodes.MissingEnclosingLoop,
-                    node.BreakKeywordToken.Location,
+                    node.BreakKeywordToken.GetLocation(),
                     "No enclosing 'while' or 'for' expression for this 'break' expression");
 
             return sema;
@@ -812,13 +813,13 @@ internal sealed class LanguageAnalyzer
                 if (sym == null)
                     Error(
                         StandardDiagnosticCodes.UnresolvedIdentifier,
-                        ident.Location,
+                        ident.GetLocation(),
                         $"Unknown symbol name '{ident.Text}'");
                 else if (sym.Bindings.Any(node => node is TestDeclarationSemantics))
                     Error(
                         StandardDiagnosticCodes.IllegalTestReference,
-                        ident.Location,
-                        $"Reference to test declaration '{ident.Text}'");
+                        ident.GetLocation(),
+                        $"Reference to test declaration '{ident.Text}' is illegal");
             }
 
             return new(node, sym);
@@ -836,7 +837,7 @@ internal sealed class LanguageAnalyzer
                     if ((sym = ident.Symbol) is { IsMutable: false })
                         Error(
                             StandardDiagnosticCodes.ImmutableAssignmentTarget,
-                            node.OperatorToken.Location,
+                            node.LeftOperand.GetLocation(),
                             $"Assignment to immutable symbol '{sym.Name}'",
                             sym.GetLocations().Select(static loc => (loc, "Symbol defined here")));
 
@@ -846,7 +847,7 @@ internal sealed class LanguageAnalyzer
                 default:
                     Error(
                         StandardDiagnosticCodes.InvalidAssignmentTarget,
-                        node.OperatorToken.Location,
+                        node.LeftOperand.GetLocation(),
                         "Assignment target must be an identifier, field, or index expression");
                     break;
             }

@@ -6,24 +6,24 @@ public abstract class SemanticNode
 {
     public SyntaxNode Syntax { get; }
 
-    public SemanticNode? Parent { get; private set; }
+    public SemanticAnalysis Analysis =>
+        _parent is SemanticAnalysis analysis ? analysis : Unsafe.As<SemanticNode>(_parent).Analysis;
+
+    // Checking for SemanticAnalysis is faster since it is sealed, while SemanticNode is not.
+    public SemanticNode? Parent => _parent is SemanticAnalysis ? null : Unsafe.As<SemanticNode>(_parent);
 
     public abstract bool HasChildren { get; }
 
-    internal void SetParent(SemanticNode parent)
+    private object _parent = null!;
+
+    internal void SetParent(object parent)
     {
-        Parent = parent;
+        _parent = parent;
     }
 
     private protected SemanticNode(SyntaxNode syntax)
     {
         Syntax = syntax;
-    }
-
-    public DocumentSemantics GetDocument()
-    {
-        // DocumentSemantics is the only semantic node with a null Parent.
-        return Parent != null ? Parent.GetDocument() : Unsafe.As<DocumentSemantics>(this);
     }
 
     public IEnumerable<SemanticNode> Ancestors()

@@ -20,6 +20,8 @@ public sealed class SemanticAnalysis
         Syntax = syntax;
         Document = document;
         Diagnostics = diagnostics;
+
+        document.SetParent(this);
     }
 
     public static SemanticAnalysis Create(SyntaxAnalysis syntax)

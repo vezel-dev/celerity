@@ -24,7 +24,7 @@ public abstract class LocalSymbol : Symbol
     public override IEnumerable<SourceLocation> GetLocations()
     {
         foreach (var binding in _bindings)
-            yield return GetToken(binding).Location;
+            yield return GetToken(binding).GetLocation();
     }
 
     private protected abstract SyntaxToken GetToken(SemanticNode node);

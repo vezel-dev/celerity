@@ -59,8 +59,8 @@
 
     <Type Name="MissingDeclaration" Base="Declaration" Parent="Document">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Token Name="Name" Override="true" />
         <Tokens Name="Skipped" />
+        <Token Name="Name" Override="true" />
     </Type>
 
     <Type Name="UseDeclaration" Base="Declaration" Parent="Document">

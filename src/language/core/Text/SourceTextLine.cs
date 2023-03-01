@@ -3,14 +3,17 @@ namespace Vezel.Celerity.Language.Text;
 public readonly struct SourceTextLine :
     IEquatable<SourceTextLine>, IEqualityOperators<SourceTextLine, SourceTextLine, bool>
 {
-    public SourceLocation Location { get; }
+    public SourceText Text { get; }
 
-    public string Text { get; }
+    public SourceTextSpan Span { get; }
 
-    internal SourceTextLine(SourceLocation location, string text)
+    public int Line { get; }
+
+    internal SourceTextLine(SourceText text, SourceTextSpan span, int line)
     {
-        Location = location;
         Text = text;
+        Span = span;
+        Line = line;
     }
 
     public static bool operator ==(SourceTextLine left, SourceTextLine right) => left.Equals(right);
@@ -19,7 +22,7 @@ public readonly struct SourceTextLine :
 
     public bool Equals(SourceTextLine other)
     {
-        return (Location, Text) == (other.Location, other.Text);
+        return (Text, Span, Line) == (other.Text, other.Span, other.Line);
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
@@ -29,11 +32,11 @@ public readonly struct SourceTextLine :
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Location, Text);
+        return HashCode.Combine(Text, Span, Line);
     }
 
     public override string ToString()
     {
-        return Text;
+        return Text.ToString(Span);
     }
 }

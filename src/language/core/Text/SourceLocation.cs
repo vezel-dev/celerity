@@ -3,24 +3,25 @@ namespace Vezel.Celerity.Language.Text;
 public readonly struct SourceLocation :
     IEquatable<SourceLocation>, IEqualityOperators<SourceLocation, SourceLocation, bool>
 {
-    public string Path { get; }
+    public static SourceLocation Missing { get; }
 
-    public int Line { get; }
+    public string? Path { get; }
 
-    public int Character { get; }
+    public SourceTextSpan Span { get; }
 
-    public bool IsMissing => (Line, Character) == (0, 0);
+    public SourceTextLinePosition Start { get; }
 
-    internal SourceLocation(string path)
-        : this(path, 0, 0)
-    {
-    }
+    public SourceTextLinePosition End { get; }
 
-    internal SourceLocation(string path, int line, int character)
+    [MemberNotNullWhen(false, "Path")]
+    public bool IsMissing => Path == null;
+
+    internal SourceLocation(string path, SourceTextSpan span, SourceTextLinePosition start, SourceTextLinePosition end)
     {
         Path = path;
-        Line = line;
-        Character = character;
+        Span = span;
+        Start = start;
+        End = end;
     }
 
     public static bool operator ==(SourceLocation left, SourceLocation right) => left.Equals(right);
@@ -29,7 +30,7 @@ public readonly struct SourceLocation :
 
     public bool Equals(SourceLocation other)
     {
-        return (Path, Line, Character) == (other.Path, other.Line, other.Character);
+        return (Path, Span, Start, End) == (other.Path, other.Span, other.Start, other.End);
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
@@ -39,11 +40,11 @@ public readonly struct SourceLocation :
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Path, Line, Character);
+        return HashCode.Combine(Path, Span, Start, End);
     }
 
     public override string ToString()
     {
-        return $"{Path}:{Line}:{Character}";
+        return $"{Path} ({Start})-({End})";
     }
 }

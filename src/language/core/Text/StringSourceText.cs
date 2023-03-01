@@ -32,8 +32,8 @@ public sealed class StringSourceText : SourceText
         return Value.GetEnumerator();
     }
 
-    public override string ToString()
+    public override string ToString(SourceTextSpan span)
     {
-        return Value;
+        return Value.Substring(span.Start, span.Length);
     }
 }

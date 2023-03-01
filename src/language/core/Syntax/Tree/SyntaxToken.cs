@@ -6,9 +6,23 @@ public sealed class SyntaxToken : SyntaxItem
 {
     public new SyntaxNode Parent => Unsafe.As<SyntaxNode>(base.Parent!);
 
-    public override bool HasChildren => !LeadingTrivia.IsEmpty || !TrailingTrivia.IsEmpty;
+    public override SourceTextSpan Span => _position == -1 ? SourceTextSpan.Empty : new(_position, Text.Length);
 
-    public SourceLocation Location { get; }
+    public override SourceTextSpan FullSpan
+    {
+        get
+        {
+            if (_position == -1)
+                return SourceTextSpan.Empty;
+
+            var start = LeadingTrivia.FirstOrDefault()?.FullSpan.Start ?? _position;
+            var length = TrailingTrivia.LastOrDefault()?.FullSpan.End - start ?? Text.Length;
+
+            return new(start, length);
+        }
+    }
+
+    public override bool HasChildren => !LeadingTrivia.IsEmpty || !TrailingTrivia.IsEmpty;
 
     public SyntaxTokenKind Kind { get; }
 
@@ -26,9 +40,11 @@ public sealed class SyntaxToken : SyntaxItem
 
     public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
 
-    internal SyntaxToken(string path)
+    private readonly int _position;
+
+    internal SyntaxToken()
         : this(
-            new(path),
+            -1,
             SyntaxTokenKind.Missing,
             "<error>",
             null,
@@ -38,14 +54,14 @@ public sealed class SyntaxToken : SyntaxItem
     }
 
     internal SyntaxToken(
-        SourceLocation location,
+        int position,
         SyntaxTokenKind kind,
         string text,
         object? value,
         ImmutableArray<SyntaxTrivia> leading,
         ImmutableArray<SyntaxTrivia> trailing)
     {
-        Location = location;
+        _position = position;
         Kind = kind;
         Text = text;
         Value = value;

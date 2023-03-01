@@ -41,6 +41,7 @@ public sealed class LowercaseBaseIndicatorPass : LintPass
             return;
 
         context.CreateDiagnostic(
-            token.Location, $"Consider using lowercase base indicator '{text[..2].ToLowerInvariant()}' for clarity");
+            token.GetLocation(),
+            $"Consider using lowercase base indicator '{text[..2].ToLowerInvariant()}' for clarity");
     }
 }

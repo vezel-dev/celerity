@@ -25,10 +25,12 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
         var text = new StringSourceText(settings.File, await File.ReadAllTextAsync(settings.File));
         var syntax = SyntaxAnalysis.Create(text, SyntaxMode.Module);
         var semantics = SemanticAnalysis.Create(syntax);
+
         var lines = text
-            .EnumerateLines()
-            .Select((line, i) => (Line: i + 1, Text: line.Text.ReplaceLineEndings(string.Empty)))
+            .Lines
+            .Select(line => (Line: line.Line, Text: line.ToString().ReplaceLineEndings(string.Empty)))
             .ToArray();
+        var margin = lines[^1].Line.ToString(culture).Length;
 
         foreach (var diag in semantics.Diagnostics)
         {
@@ -38,8 +40,6 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
                     foreach (var (line, text) in lines)
                         PrintLine(line, text, null);
             }
-
-            var margin = lines[^1].Line.ToString(culture).Length;
 
             void PrintLine(int line, string text, string? style)
             {
@@ -55,9 +55,13 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
             const int Context = 3;
 
             var location = diag.Location;
-            var leading = lines.Where(t => t.Line >= location.Line - Context && t.Line < location.Line).ToArray();
-            var target = lines.SingleOrDefault(t => t.Line == location.Line);
-            var trailing = lines.Where(t => t.Line > location.Line && t.Line <= location.Line + Context).ToArray();
+            var start = location.Start;
+            var end = location.End;
+
+            var leading = lines.Where(t => t.Line >= start.Line - Context && t.Line < start.Line).ToArray();
+            var targets = lines.Where(t => t.Line >= start.Line && t.Line <= end.Line).ToArray();
+            var trailing = lines.Where(t => t.Line > end.Line && t.Line <= end.Line + Context).ToArray();
+
             var color = diag.Severity switch
             {
                 SourceDiagnosticSeverity.Suggestion => "green",
@@ -69,9 +73,33 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
             AnsiConsole.MarkupLine(culture, $"[{color}]{{0}}[/]", diag.ToString().EscapeMarkup());
 
             PrintContext(leading);
-            PrintLine(target.Line, target.Text, "bold");
 
-            AnsiConsole.MarkupLine(culture, $"[{color}]   {{0, {margin + location.Character}}}[/]", "^");
+            foreach (var target in targets)
+            {
+                PrintLine(target.Line, target.Text, "bold");
+
+                var sb = new StringBuilder();
+
+                var isStart = target.Line == start.Line;
+                var isEnd = target.Line == end.Line;
+
+                for (var i = 0; i < target.Text.Length; i++)
+                {
+                    var gtStart = i >= start.Character;
+                    var ltEnd = i < end.Character;
+
+                    _ = sb.Append((isStart, isEnd, gtStart, ltEnd) switch
+                    {
+                        (false, false, _, _) or
+                        (true, true, true, true) or
+                        (true, false, true, _) or
+                        (false, true, _, true) => '^',
+                        _ => ' ',
+                    });
+                }
+
+                AnsiConsole.MarkupLine(culture, $"[{color}]    {{0, {margin}}}[/]", sb.ToString().EscapeMarkup());
+            }
 
             PrintContext(trailing);
 

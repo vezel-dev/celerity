@@ -18,7 +18,7 @@ public static class StandardDiagnosticCodes
 
     public static SourceDiagnosticCode InvalidRealLiteral { get; } = CreateCode();
 
-    public static SourceDiagnosticCode UnclosedStringLiteral { get; } = CreateCode();
+    public static SourceDiagnosticCode IncompleteStringLiteral { get; } = CreateCode();
 
     public static SourceDiagnosticCode IncompleteEscapeSequence { get; } = CreateCode();
 

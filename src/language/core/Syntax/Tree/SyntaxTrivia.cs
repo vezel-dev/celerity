@@ -6,17 +6,21 @@ public sealed class SyntaxTrivia : SyntaxItem
 {
     public new SyntaxToken Parent => Unsafe.As<SyntaxToken>(base.Parent!);
 
-    public override bool HasChildren => false;
+    public override SourceTextSpan Span => FullSpan;
 
-    public SourceLocation Location { get; }
+    public override SourceTextSpan FullSpan => new(_position, Text.Length);
+
+    public override bool HasChildren => false;
 
     public SyntaxTriviaKind Kind { get; }
 
     public string Text { get; }
 
-    internal SyntaxTrivia(SourceLocation location, SyntaxTriviaKind kind, string text)
+    private readonly int _position;
+
+    internal SyntaxTrivia(int position, SyntaxTriviaKind kind, string text)
     {
-        Location = location;
+        _position = position;
         Kind = kind;
         Text = text;
     }

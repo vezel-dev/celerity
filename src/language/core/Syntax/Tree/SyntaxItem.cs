@@ -1,24 +1,40 @@
+using Vezel.Celerity.Language.Text;
+
 namespace Vezel.Celerity.Language.Syntax.Tree;
 
 public abstract class SyntaxItem
 {
-    public SyntaxItem? Parent { get; private set; }
+    public SyntaxAnalysis Analysis =>
+        _parent is SyntaxAnalysis analysis ? analysis : Unsafe.As<SyntaxItem>(_parent).Analysis;
+
+    // Checking for SyntaxAnalysis is faster since it is sealed, while SyntaxItem is not.
+    public SyntaxItem? Parent => _parent is SyntaxAnalysis ? null : Unsafe.As<SyntaxItem>(_parent);
+
+    public abstract SourceTextSpan Span { get; }
+
+    public abstract SourceTextSpan FullSpan { get; }
 
     public abstract bool HasChildren { get; }
 
-    internal void SetParent(SyntaxItem parent)
+    private object _parent = null!;
+
+    internal void SetParent(object parent)
     {
-        Parent = parent;
+        _parent = parent;
     }
 
     private protected SyntaxItem()
     {
     }
 
-    public DocumentSyntax GetDocument()
+    public SourceLocation GetLocation()
     {
-        // DocumentNode is the only syntax item with a null Parent.
-        return Parent != null ? Parent.GetDocument() : Unsafe.As<DocumentSyntax>(this);
+        return Analysis.Text.GetLocation(Span);
+    }
+
+    public SourceLocation GetFullLocation()
+    {
+        return Analysis.Text.GetLocation(FullSpan);
     }
 
     public IEnumerable<SyntaxItem> Ancestors()
