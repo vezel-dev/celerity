@@ -2,8 +2,6 @@ namespace Vezel.Celerity.Language.Text;
 
 public sealed class SourceTextLineList : IReadOnlyList<SourceTextLine>
 {
-    // TODO: We should eventually be a bit more sophisticated with the lazy computation of this list.
-
     public struct Enumerator : IEnumerator<SourceTextLine>
     {
         public SourceTextLine Current => _enumerator.Current;
