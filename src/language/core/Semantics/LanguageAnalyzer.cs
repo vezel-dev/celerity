@@ -908,7 +908,7 @@ internal sealed class LanguageAnalyzer
 
             if (node.NameToken is { IsMissing: false } name)
             {
-                if (!_scope.DefineSymbol<ParameterSymbol>(name.Text, out var sym2))
+                if (!_scope.DefineSymbol<VariableSymbol>(name.Text, out var sym2))
                     _duplicates.Add(sym2);
 
                 sym = Unsafe.As<VariableSymbol>(sym2); // Only variables will be defined at this stage.
@@ -923,7 +923,7 @@ internal sealed class LanguageAnalyzer
 
         public override DiscardBindingSemantics VisitDiscardBinding(DiscardBindingSyntax node)
         {
-            if (!_scope.DefineSymbol<ParameterSymbol>(node.NameToken.Text, out var sym))
+            if (!_scope.DefineSymbol<VariableSymbol>(node.NameToken.Text, out var sym))
                 _duplicates.Add(sym);
 
             var sym2 = Unsafe.As<VariableSymbol>(sym); // Only variables will be defined at this stage.
