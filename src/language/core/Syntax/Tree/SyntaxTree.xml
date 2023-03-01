@@ -52,18 +52,18 @@
 
     <!-- Declarations -->
 
-    <Type Name="Declaration" Parent="Document" Abstract="true">
+    <Type Name="Declaration" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
         <Token Name="Name" />
     </Type>
 
-    <Type Name="MissingDeclaration" Base="Declaration" Parent="Document">
+    <Type Name="MissingDeclaration" Base="Declaration">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Tokens Name="Skipped" />
         <Token Name="Name" Override="true" />
     </Type>
 
-    <Type Name="UseDeclaration" Base="Declaration" Parent="Document">
+    <Type Name="UseDeclaration" Base="Declaration">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="UseKeyword" />
         <Token Name="Name" Override="true" />
@@ -72,7 +72,7 @@
         <Token Name="Semicolon" />
     </Type>
 
-    <Type Name="TypeDeclaration" Base="Declaration" Parent="Document">
+    <Type Name="TypeDeclaration" Base="Declaration" Parent="ModuleDocument">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="OpaqueKeyword" Optional="true" />
@@ -95,11 +95,11 @@
         <Token Name="Name" />
     </Type>
 
-    <Type Name="CodeDeclaration" Base="Declaration" Parent="Document" Abstract="true">
+    <Type Name="CodeDeclaration" Base="Declaration" Parent="ModuleDocument" Abstract="true">
         <Node Name="Body" Type="Expression" Optional="true" />
     </Type>
 
-    <Type Name="ConstantDeclaration" Base="CodeDeclaration" Parent="Document">
+    <Type Name="ConstantDeclaration" Base="CodeDeclaration" Parent="ModuleDocument">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="ConstKeyword" />
@@ -110,7 +110,7 @@
         <Token Name="Semicolon" />
     </Type>
 
-    <Type Name="FunctionDeclaration" Base="CodeDeclaration" Parent="Document">
+    <Type Name="FunctionDeclaration" Base="CodeDeclaration" Parent="ModuleDocument">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="ExtKeyword" Optional="true" />
@@ -134,7 +134,7 @@
         <Node Name="Type" Type="TypeAnnotation" Optional="true" />
     </Type>
 
-    <Type Name="TestDeclaration" Base="CodeDeclaration" Parent="Document">
+    <Type Name="TestDeclaration" Base="CodeDeclaration" Parent="ModuleDocument">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="TestKeyword" />
         <Token Name="Name" Override="true" />

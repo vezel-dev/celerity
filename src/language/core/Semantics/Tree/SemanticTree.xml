@@ -41,7 +41,7 @@
 
     <!-- Declarations -->
 
-    <Type Name="Declaration" Parent="Document" Abstract="true">
+    <Type Name="Declaration" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
     </Type>
 
@@ -51,19 +51,19 @@
         <Value Name="Path" Type="ModulePath?" />
     </Type>
 
-    <Type Name="CodeDeclaration" Base="Declaration" Parent="Document" Abstract="true">
+    <Type Name="CodeDeclaration" Base="Declaration" Parent="ModuleDocument" Abstract="true">
         <Value Name="Symbol" Type="DeclarationSymbol?" />
         <Node Name="Body" Type="Expression" Optional="true" />
     </Type>
 
-    <Type Name="ConstantDeclaration" Base="CodeDeclaration" Parent="Document">
+    <Type Name="ConstantDeclaration" Base="CodeDeclaration" Parent="ModuleDocument">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
         <Node Name="Body" Type="Expression" Override="true" />
     </Type>
 
-    <Type Name="FunctionDeclaration" Base="CodeDeclaration" Parent="Document">
+    <Type Name="FunctionDeclaration" Base="CodeDeclaration" Parent="ModuleDocument">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
         <Computed Name="IsExternal" Type="bool" Body="Syntax.ExtKeywordToken != null" />
@@ -77,7 +77,7 @@
         <Value Name="Symbol" Type="ParameterSymbol?" Override="true" />
     </Type>
 
-    <Type Name="TestDeclaration" Base="CodeDeclaration" Parent="Document">
+    <Type Name="TestDeclaration" Base="CodeDeclaration" Parent="ModuleDocument">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
         <Node Name="Body" Type="BlockExpression" Override="true" />
