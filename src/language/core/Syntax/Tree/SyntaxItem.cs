@@ -69,4 +69,14 @@ public abstract class SyntaxItem
     public abstract IEnumerable<SyntaxItem> Children();
 
     public abstract IEnumerable<SyntaxItem> Descendants();
+
+    public override string ToString()
+    {
+        return Analysis.Text.ToString(Span);
+    }
+
+    public string ToFullString()
+    {
+        return Analysis.Text.ToString(FullSpan);
+    }
 }

@@ -93,9 +93,4 @@ public sealed class SyntaxToken : SyntaxItem
     {
         return Children();
     }
-
-    public override string ToString()
-    {
-        return Text;
-    }
 }

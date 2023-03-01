@@ -44,9 +44,4 @@ public sealed class SyntaxTrivia : SyntaxItem
     {
         return Array.Empty<SyntaxItem>();
     }
-
-    public override string ToString()
-    {
-        return Text;
-    }
 }
