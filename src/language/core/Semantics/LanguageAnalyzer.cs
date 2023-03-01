@@ -381,8 +381,6 @@ internal sealed class LanguageAnalyzer
 
         public override LetStatementSemantics VisitLetStatement(LetStatementSyntax node)
         {
-            using var ctx = PushScope<Scope>();
-
             var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
 
             // We visit the initializer first so that it cannot refer to variables bound in the pattern, as in:
