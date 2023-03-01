@@ -9,13 +9,14 @@ public sealed class ParameterSymbol : LocalSymbol, ILocalSymbol<ParameterSymbol>
 
     public override bool IsDiscard => Name[0] == '_';
 
-    private ParameterSymbol()
+    private ParameterSymbol(string name)
+        : base(name)
     {
     }
 
-    public static ParameterSymbol Create()
+    static ParameterSymbol ILocalSymbol<ParameterSymbol>.Create(string name)
     {
-        return new();
+        return new(name);
     }
 
     private protected override SyntaxToken GetToken(SemanticNode node)

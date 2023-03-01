@@ -13,7 +13,7 @@ internal sealed class LambdaScope : Scope, IScope<LambdaScope>
     {
     }
 
-    public static new LambdaScope Create(Scope? parent)
+    static LambdaScope IScope<LambdaScope>.Create(Scope? parent)
     {
         return new(parent);
     }

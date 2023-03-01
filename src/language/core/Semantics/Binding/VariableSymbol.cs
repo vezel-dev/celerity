@@ -9,13 +9,14 @@ public sealed class VariableSymbol : LocalSymbol, ILocalSymbol<VariableSymbol>
 
     public override bool IsDiscard => Name[0] == '_';
 
-    private VariableSymbol()
+    private VariableSymbol(string name)
+        : base(name)
     {
     }
 
-    public static VariableSymbol Create()
+    static VariableSymbol ILocalSymbol<VariableSymbol>.Create(string name)
     {
-        return new();
+        return new(name);
     }
 
     private protected override SyntaxToken GetToken(SemanticNode node)

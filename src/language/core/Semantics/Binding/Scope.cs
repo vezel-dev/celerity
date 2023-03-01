@@ -8,12 +8,12 @@ internal class Scope : IScope<Scope>
 
     private readonly Dictionary<string, Symbol> _symbols = new();
 
-    protected Scope(Scope? parent)
+    protected internal Scope(Scope? parent)
     {
         Parent = parent;
     }
 
-    public static Scope Create(Scope? parent)
+    static Scope IScope<Scope>.Create(Scope? parent)
     {
         return new(parent);
     }
@@ -76,7 +76,7 @@ internal class Scope : IScope<Scope>
     {
         ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_symbols, name, out var exists);
 
-        result = entry ??= T.Create();
+        result = entry ??= T.Create(name);
 
         return !exists;
     }

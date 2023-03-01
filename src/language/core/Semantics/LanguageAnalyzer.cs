@@ -36,7 +36,7 @@ internal sealed class LanguageAnalyzer
 
         private readonly List<Symbol> _duplicates = new();
 
-        private Scope _scope = Scope.Create(null);
+        private Scope _scope = new(null);
 
         public AnalysisVisitor(ImmutableArray<SourceDiagnostic>.Builder diagnostics)
         {

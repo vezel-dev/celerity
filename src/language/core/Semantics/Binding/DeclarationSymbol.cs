@@ -9,13 +9,14 @@ public sealed class DeclarationSymbol : LocalSymbol, ILocalSymbol<DeclarationSym
 
     public override bool IsDiscard => false;
 
-    private DeclarationSymbol()
+    private DeclarationSymbol(string name)
+        : base(name)
     {
     }
 
-    public static DeclarationSymbol Create()
+    static DeclarationSymbol ILocalSymbol<DeclarationSymbol>.Create(string name)
     {
-        return new();
+        return new(name);
     }
 
     private protected override SyntaxToken GetToken(SemanticNode node)

@@ -10,15 +10,16 @@ public abstract class LocalSymbol : Symbol
 
     public override ImmutableArray<AssignmentExpressionSemantics> Assignments => _assignments;
 
-    public override string Name => GetToken(Bindings[0]).Text;
+    public override string Name { get; }
 
     private ImmutableArray<SemanticNode> _bindings = ImmutableArray<SemanticNode>.Empty;
 
     private ImmutableArray<AssignmentExpressionSemantics> _assignments =
         ImmutableArray<AssignmentExpressionSemantics>.Empty;
 
-    private protected LocalSymbol()
+    private protected LocalSymbol(string name)
     {
+        Name = name;
     }
 
     public override IEnumerable<SourceLocation> GetLocations()

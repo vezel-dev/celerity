@@ -15,7 +15,7 @@ internal sealed class TryScope : Scope, IScope<TryScope>
     {
     }
 
-    public static new TryScope Create(Scope? parent)
+    static TryScope IScope<TryScope>.Create(Scope? parent)
     {
         return new(parent);
     }

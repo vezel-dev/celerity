@@ -12,7 +12,7 @@ internal sealed class LoopScope : Scope, IScope<LoopScope>
     {
     }
 
-    public static new LoopScope Create(Scope? parent)
+    static LoopScope IScope<LoopScope>.Create(Scope? parent)
     {
         return new(parent);
     }

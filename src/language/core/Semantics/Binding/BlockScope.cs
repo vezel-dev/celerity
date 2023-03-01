@@ -12,7 +12,7 @@ internal sealed class BlockScope : Scope, IScope<BlockScope>
     {
     }
 
-    public static new BlockScope Create(Scope? parent)
+    static BlockScope IScope<BlockScope>.Create(Scope? parent)
     {
         return new(parent);
     }
