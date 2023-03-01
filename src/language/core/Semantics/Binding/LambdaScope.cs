@@ -4,6 +4,9 @@ namespace Vezel.Celerity.Language.Semantics.Binding;
 
 internal sealed class LambdaScope : Scope, IScope<LambdaScope>
 {
+    public ImmutableArray<ThisExpressionSemantics>.Builder ThisExpressions { get; } =
+        ImmutableArray.CreateBuilder<ThisExpressionSemantics>(0);
+
     private readonly Dictionary<Symbol, UpvalueSymbol> _upvalues = new();
 
     private int _upvalueSlot;

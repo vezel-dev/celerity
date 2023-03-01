@@ -51,6 +51,8 @@ public static class StandardDiagnosticCodes
 
     public static SourceDiagnosticCode DuplicateAggregateExpressionField { get; } = CreateCode();
 
+    public static SourceDiagnosticCode MissingEnclosingLambda { get; } = CreateCode();
+
     public static SourceDiagnosticCode MissingEnclosingLoop { get; } = CreateCode();
 
     public static SourceDiagnosticCode UnresolvedIdentifier { get; } = CreateCode();

@@ -504,9 +504,15 @@ internal sealed class LanguageAnalyzer
             var parms = ConvertList(
                 node.ParameterList.Parameters.Elements, static (@this, param) => @this.VisitLambdaParameter(param));
             var body = VisitExpression(node.Body);
+            var refs = ctx.Scope.ThisExpressions.ToImmutable();
 
             // TODO: Should we attach the upvalues array?
-            return new(node, parms, body);
+            var sema = new LambdaExpressionSemantics(node, parms, body, refs);
+
+            foreach (var @this in refs)
+                @this.Lambda = sema;
+
+            return sema;
         }
 
         public override LambdaParameterSemantics VisitLambdaParameter(LambdaParameterSyntax node)
@@ -654,8 +660,8 @@ internal sealed class LanguageAnalyzer
 
             var body = VisitExpression(node.Body);
             var arms = ConvertList(node.Arms.Elements, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
-            var calls = ctx.Scope.Calls.DrainToImmutable();
-            var raises = ctx.Scope.Raises.DrainToImmutable();
+            var calls = ctx.Scope.CallExpressions.DrainToImmutable();
+            var raises = ctx.Scope.RaiseExpressions.DrainToImmutable();
             var sema = new TryExpressionSemantics(node, body, arms, calls, raises);
 
             foreach (var call in calls)
@@ -674,7 +680,7 @@ internal sealed class LanguageAnalyzer
             var cond = VisitExpression(node.Condition);
             var body = VisitBlockExpression(node.Body);
             var @else = node.Else is { } e ? VisitBlockExpression(e.Body) : null;
-            var branches = ctx.Scope.Branches.DrainToImmutable();
+            var branches = ctx.Scope.BranchExpressions.DrainToImmutable();
             var sema = new WhileExpressionSemantics(node, cond, body, @else, branches);
 
             foreach (var branch in branches)
@@ -696,7 +702,7 @@ internal sealed class LanguageAnalyzer
             var pat = VisitPattern(node.Pattern);
             var body = VisitBlockExpression(node.Body);
             var @else = node.Else is { } e ? VisitBlockExpression(e.Body) : null;
-            var branches = ctx.Scope.Branches.DrainToImmutable();
+            var branches = ctx.Scope.BranchExpressions.DrainToImmutable();
             var sema = new ForExpressionSemantics(node, pat, collection, body, @else, branches);
 
             foreach (var branch in branches)
@@ -719,7 +725,7 @@ internal sealed class LanguageAnalyzer
             var defers = _scope.CollectDefers(null);
             var sema = new RaiseExpressionSemantics(node, oper, defers);
 
-            _scope.GetEnclosingTry()?.Raises.Add(sema);
+            _scope.GetEnclosingTry()?.RaiseExpressions.Add(sema);
 
             return sema;
         }
@@ -731,12 +737,12 @@ internal sealed class LanguageAnalyzer
             var sema = new NextExpressionSemantics(node, defers);
 
             if (loop != null)
-                loop.Branches.Add(sema);
+                loop.BranchExpressions.Add(sema);
             else
                 Error(
                     StandardDiagnosticCodes.MissingEnclosingLoop,
                     node.NextKeywordToken.GetLocation(),
-                    "No enclosing 'while' or 'for' expression for this 'next' expression");
+                    "No enclosing 'while' or 'for' expression for 'next' expression");
 
             return sema;
         }
@@ -749,12 +755,12 @@ internal sealed class LanguageAnalyzer
             var sema = new BreakExpressionSemantics(node, result, defers);
 
             if (loop != null)
-                loop.Branches.Add(sema);
+                loop.BranchExpressions.Add(sema);
             else
                 Error(
                     StandardDiagnosticCodes.MissingEnclosingLoop,
                     node.BreakKeywordToken.GetLocation(),
-                    "No enclosing 'while' or 'for' expression for this 'break' expression");
+                    "No enclosing 'while' or 'for' expression for 'break' expression");
 
             return sema;
         }
@@ -774,7 +780,7 @@ internal sealed class LanguageAnalyzer
             // Let statements are somewhat special in that they introduce a 'horizontal' scope in the tree; that is,
             // bindings in a let statement become available to siblings to the right of the let statement.
             var lets = new List<ScopeContext<Scope>>();
-            var defers = ctx.Scope.Defers;
+            var defers = ctx.Scope.DeferStatements;
 
             foreach (var stmt in node.Statements)
             {
@@ -821,6 +827,22 @@ internal sealed class LanguageAnalyzer
             }
 
             return new(node, sym);
+        }
+
+        public override ThisExpressionSemantics VisitThisExpression(ThisExpressionSyntax node)
+        {
+            var lambda = _scope.GetEnclosingLambda();
+            var sema = new ThisExpressionSemantics(node);
+
+            if (lambda != null)
+                lambda.ThisExpressions.Add(sema);
+            else
+                Error(
+                    StandardDiagnosticCodes.MissingEnclosingLambda,
+                    node.ThisKeywordToken.GetLocation(),
+                    "No enclosing lambda expression for 'this' expression");
+
+            return sema;
         }
 
         public override AssignmentExpressionSemantics VisitAssignmentExpression(AssignmentExpressionSyntax node)
@@ -881,7 +903,7 @@ internal sealed class LanguageAnalyzer
                 : ImmutableArray<DeferStatementSemantics>.Empty;
             var sema = new CallExpressionSemantics(node, subject, args, defers);
 
-            _scope.GetEnclosingTry()?.Calls.Add(sema);
+            _scope.GetEnclosingTry()?.CallExpressions.Add(sema);
 
             return sema;
         }

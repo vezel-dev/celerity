@@ -38,6 +38,7 @@ public static class SyntaxFacts
             "ret" => SyntaxTokenKind.RetKeyword,
             "tail" => SyntaxTokenKind.TailKeyword,
             "test" => SyntaxTokenKind.TestKeyword,
+            "this" => SyntaxTokenKind.ThisKeyword,
             "try" => SyntaxTokenKind.TryKeyword,
             "type" => SyntaxTokenKind.TypeKeyword,
             "use" => SyntaxTokenKind.UseKeyword,
@@ -124,6 +125,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.RetKeyword or
             SyntaxTokenKind.TailKeyword or
             SyntaxTokenKind.TestKeyword or
+            SyntaxTokenKind.ThisKeyword or
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.TypeKeyword or
             SyntaxTokenKind.UseKeyword or
@@ -274,6 +276,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.RecvKeyword or
             SyntaxTokenKind.RetKeyword or
             SyntaxTokenKind.TailKeyword or
+            SyntaxTokenKind.ThisKeyword or
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.WhileKeyword or
             SyntaxTokenKind.UpperIdentifier or
@@ -382,6 +385,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.RetKeyword => "'ret' keyword",
             SyntaxTokenKind.TailKeyword => "'tail' keyword",
             SyntaxTokenKind.TestKeyword => "'test' keyword",
+            SyntaxTokenKind.ThisKeyword => "'this' keyword",
             SyntaxTokenKind.TryKeyword => "'try' keyword",
             SyntaxTokenKind.TypeKeyword => "'type' keyword",
             SyntaxTokenKind.UseKeyword => "'use' keyword",

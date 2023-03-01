@@ -62,6 +62,7 @@ public enum SyntaxTokenKind
     RetKeyword,
     TailKeyword,
     TestKeyword,
+    ThisKeyword,
     TryKeyword,
     TypeKeyword,
     UseKeyword,

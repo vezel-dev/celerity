@@ -92,6 +92,7 @@
             * [Break Expression](language/syntactic-structure/expressions/control/break.md)
         * [Parenthesized Expression](language/syntactic-structure/expressions/parenthesized.md)
         * [Block Expression](language/syntactic-structure/expressions/block.md)
+        * [This Expression](language/syntactic-structure/expressions/this.md)
         * [Identifier Expression](language/syntactic-structure/expressions/identifier.md)
         * [Assignment Expression](language/syntactic-structure/expressions/assignment.md)
         * [Field Expression](language/syntactic-structure/expressions/field.md)

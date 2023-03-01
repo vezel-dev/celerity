@@ -1170,6 +1170,7 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.OpenBrace, _, _) => ParseBlockExpression(),
             ({ } ident, _, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseIdentifierExpression(),
             ({ } literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralExpression(),
+            (SyntaxTokenKind.ThisKeyword, _, _) => ParseThisExpression(),
             (SyntaxTokenKind.UpperIdentifier, _, _) => ParseModuleExpression(),
             (SyntaxTokenKind.RecKeyword, _, _) => ParseRecordExpression(),
             (SyntaxTokenKind.ErrKeyword, _, _) => ParseErrorExpression(),
@@ -1328,6 +1329,13 @@ internal sealed class LanguageParser
         var name = Read();
 
         return new(name);
+    }
+
+    private ThisExpressionSyntax ParseThisExpression()
+    {
+        var @this = Read();
+
+        return new(@this);
     }
 
     private LiteralExpressionSyntax ParseLiteralExpression()

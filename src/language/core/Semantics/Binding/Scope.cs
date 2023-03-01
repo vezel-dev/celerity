@@ -18,6 +18,24 @@ internal class Scope : IScope<Scope>
         return new(parent);
     }
 
+    public LambdaScope? GetEnclosingLambda()
+    {
+        // Consider:
+        //
+        // fn() -> this();
+        //
+        // When we get to the this expression, the top of the scope stack will be the LambdaScope for the lambda
+        // expression. That is the one we want to bind to, so no special consideration is needed here.
+        //
+        // Also consider:
+        //
+        // fn() -> fn() -> this();
+        //
+        // In this case, the this expression should bind to the inner lambda expression; there is no way to refer to an
+        // outer lambda expression with a this expression.
+        return this is LambdaScope lambda ? lambda : Parent?.GetEnclosingLambda();
+    }
+
     public virtual TryScope? GetEnclosingTry()
     {
         // Consider:

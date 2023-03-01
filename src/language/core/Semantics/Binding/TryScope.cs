@@ -4,10 +4,10 @@ namespace Vezel.Celerity.Language.Semantics.Binding;
 
 internal sealed class TryScope : Scope, IScope<TryScope>
 {
-    public ImmutableArray<CallExpressionSemantics>.Builder Calls { get; } =
+    public ImmutableArray<CallExpressionSemantics>.Builder CallExpressions { get; } =
         ImmutableArray.CreateBuilder<CallExpressionSemantics>();
 
-    public ImmutableArray<RaiseExpressionSemantics>.Builder Raises { get; } =
+    public ImmutableArray<RaiseExpressionSemantics>.Builder RaiseExpressions { get; } =
         ImmutableArray.CreateBuilder<RaiseExpressionSemantics>();
 
     private TryScope(Scope? parent)

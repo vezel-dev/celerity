@@ -689,6 +689,10 @@
         <Token Name="CloseBrace" />
     </Type>
 
+    <Type Name="ThisExpression" Base="Expression">
+        <Token Name="ThisKeyword" />
+    </Type>
+
     <Type Name="IdentifierExpression" Base="Expression">
         <Token Name="Identifier" />
     </Type>

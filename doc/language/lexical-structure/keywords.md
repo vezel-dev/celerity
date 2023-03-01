@@ -39,6 +39,7 @@ normal-keyword ::= 'and' |
                    'ret' |
                    'tail' |
                    'test' |
+                   'this' |
                    'true' |
                    'try' |
                    'type' |

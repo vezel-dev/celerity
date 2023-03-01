@@ -4,7 +4,7 @@ namespace Vezel.Celerity.Language.Semantics.Binding;
 
 internal sealed class BlockScope : Scope, IScope<BlockScope>
 {
-    public ImmutableArray<DeferStatementSemantics>.Builder Defers { get; } =
+    public ImmutableArray<DeferStatementSemantics>.Builder DeferStatements { get; } =
         ImmutableArray.CreateBuilder<DeferStatementSemantics>(0);
 
     private BlockScope(Scope? parent)
@@ -32,8 +32,8 @@ internal sealed class BlockScope : Scope, IScope<BlockScope>
         //
         // When foo returns, all four functions must be called in reverse order, i.e. d, c, b, a. This is why we add
         // the statements to the builder in reverse, so we get d, c and then b, a.
-        for (var i = Defers.Count - 1; i >= 0; i--)
-            builder.Add(Defers[i]);
+        for (var i = DeferStatements.Count - 1; i >= 0; i--)
+            builder.Add(DeferStatements[i]);
 
         base.CollectDefers(target, builder);
     }
