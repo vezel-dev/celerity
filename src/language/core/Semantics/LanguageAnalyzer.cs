@@ -836,7 +836,7 @@ internal sealed class LanguageAnalyzer
                         Error(
                             StandardDiagnosticCodes.ImmutableAssignmentTarget,
                             node.LeftOperand.GetLocation(),
-                            $"Assignment to immutable symbol '{sym.Name}'",
+                            $"Assignment to immutable symbol '{ident.Syntax.IdentifierToken.Text}'",
                             sym.GetLocations().Select(static loc => (loc, "Symbol defined here")));
 
                     break;
