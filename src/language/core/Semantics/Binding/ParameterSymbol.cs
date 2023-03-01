@@ -20,7 +20,7 @@ public sealed class ParameterSymbol : LocalSymbol, ILocalSymbol<ParameterSymbol>
 
     private protected override SyntaxToken GetToken(SemanticNode node)
     {
-        return Unsafe.As<CodeDeclarationSemantics>(node).Syntax.NameToken;
+        return Unsafe.As<CodeParameterSemantics>(node).Syntax.NameToken;
     }
 
     internal void AddBinding(CodeParameterSemantics parameter)

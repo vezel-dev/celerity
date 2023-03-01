@@ -20,7 +20,7 @@ public sealed class VariableSymbol : LocalSymbol, ILocalSymbol<VariableSymbol>
 
     private protected override SyntaxToken GetToken(SemanticNode node)
     {
-        return Unsafe.As<CodeDeclarationSemantics>(node).Syntax.NameToken;
+        return Unsafe.As<BindingSemantics>(node).Syntax.NameToken;
     }
 
     internal void AddBinding(BindingSemantics binding)
