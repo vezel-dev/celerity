@@ -59,11 +59,11 @@ public abstract class SyntaxNode : SyntaxItem
         // there is never a situation where the first token is missing but the rest are present.
         if (!first.IsMissing)
         {
-            // We are only interested in the last token that is actually present.
-            var last = tokens.Last(tok => !tok.IsMissing);
-
             var firstSpan = first.Span;
             var firstFullSpan = first.FullSpan;
+
+            // We are only interested in the last token that is actually present.
+            var last = tokens.Last(tok => !tok.IsMissing);
 
             span = new(firstSpan.Start, last.Span.End - firstSpan.Start);
             fullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
@@ -103,50 +103,67 @@ public abstract class SyntaxNode : SyntaxItem
 
     public override IEnumerable<SyntaxItem> Descendants()
     {
-        var work = new Queue<SyntaxItem>();
+        var work = new Stack<SyntaxItem>();
 
-        work.Enqueue(this);
+        work.Push(this);
 
         do
         {
-            var current = work.Dequeue();
+            var current = work.Pop();
+
+            if (current != this)
+                yield return current;
 
             if (current.HasChildren)
-                foreach (var child in current.Children())
-                    work.Enqueue(child);
-
-            yield return current;
+                foreach (var child in current.Children().Reverse())
+                    work.Push(child);
         }
         while (work.Count != 0);
     }
 
     public IEnumerable<SyntaxNode> DescendantNodes()
     {
-        var work = new Queue<SyntaxNode>();
+        var work = new Stack<SyntaxNode>();
 
-        work.Enqueue(this);
+        work.Push(this);
 
         do
         {
-            var current = work.Dequeue();
+            var current = work.Pop();
+
+            if (current != this)
+                yield return current;
 
             if (current.HasNodes)
-                foreach (var child in current.ChildNodes())
-                    work.Enqueue(child);
-
-            yield return current;
+                foreach (var child in current.ChildNodes().Reverse())
+                    work.Push(child);
         }
         while (work.Count != 0);
     }
 
     public IEnumerable<SyntaxToken> DescendantTokens()
     {
-        // Not much we can do better here.
-        return Descendants().OfType<SyntaxToken>();
+        var work = new Stack<SyntaxItem>();
+
+        work.Push(this);
+
+        do
+        {
+            var current = work.Pop();
+
+            // Only yield tokens, and avoid descending into trivia (which would allocate unnecessary enumerators).
+            if (current is SyntaxToken token)
+                yield return token;
+            else if (current is SyntaxNode { HasChildren: true })
+                foreach (var child in current.Children().Reverse())
+                    work.Push(child);
+        }
+        while (work.Count != 0);
     }
 
     public IEnumerable<SyntaxTrivia> DescendantTrivia()
     {
+        // Avoid enumerator allocations by explicitly accessing the trivia on tokens.
         foreach (var token in DescendantTokens())
         {
             foreach (var leading in token.LeadingTrivia)
