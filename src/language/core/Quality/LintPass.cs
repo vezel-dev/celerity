@@ -9,7 +9,8 @@ public abstract class LintPass
 {
     public static ImmutableArray<LintPass> DefaultPasses { get; } =
         ImmutableArray.Create<LintPass>(
-            UppercaseBaseIndicatorPass.Instance);
+            UppercaseBaseIndicatorPass.Instance,
+            UndocumentedPublicDeclarationPass.Instance);
 
     public SourceDiagnosticCode Code { get; }
 
