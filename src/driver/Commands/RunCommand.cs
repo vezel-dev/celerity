@@ -25,14 +25,15 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
         var text = new StringSourceText(settings.File, await File.ReadAllTextAsync(settings.File));
         var syntax = SyntaxAnalysis.Create(text, SyntaxMode.Module);
         var semantics = SemanticAnalysis.Create(syntax);
+        var lint = LintAnalysis.Create(semantics, LintPass.DefaultPasses, LintConfiguration.Default);
 
         var lines = text
             .Lines
-            .Select(line => (Line: line.Line, Text: line.ToString().ReplaceLineEndings(string.Empty)))
+            .Select(line => (Line: line.Line + 1, Text: line.ToString().ReplaceLineEndings(string.Empty)))
             .ToArray();
         var margin = lines[^1].Line.ToString(culture).Length;
 
-        foreach (var diag in semantics.Diagnostics)
+        void PrintWindow(SourceLocation location, string severity, string color, string message)
         {
             void PrintContext(IReadOnlyList<(int Line, string Text)> lines)
             {
@@ -43,8 +44,7 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
 
             void PrintLine(int line, string text, string? style)
             {
-                AnsiConsole.Markup(culture, $"[blue]{{0, {margin}}}[/]", line);
-                AnsiConsole.Markup("[grey] | [/]");
+                AnsiConsole.Markup(culture, $"[blue]{{0, {margin}}}[/][grey] | [/]", line);
 
                 if (style != null)
                     AnsiConsole.MarkupLine(culture, $"[{style}]{{0}}[/]", text.EscapeMarkup());
@@ -52,25 +52,29 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
                     AnsiConsole.WriteLine(text);
             }
 
-            const int Context = 3;
-
-            var location = diag.Location;
             var start = location.Start;
             var end = location.End;
 
-            var leading = lines.Where(t => t.Line >= start.Line - Context && t.Line < start.Line).ToArray();
-            var targets = lines.Where(t => t.Line >= start.Line && t.Line <= end.Line).ToArray();
-            var trailing = lines.Where(t => t.Line > end.Line && t.Line <= end.Line + Context).ToArray();
+            var startLine = start.Line + 1;
+            var endLine = end.Line + 1;
 
-            var color = diag.Severity switch
-            {
-                SourceDiagnosticSeverity.Suggestion => "green",
-                SourceDiagnosticSeverity.Warning => "yellow",
-                SourceDiagnosticSeverity.Error => "red",
-                _ => throw new UnreachableException(),
-            };
+            const int Context = 3;
 
-            AnsiConsole.MarkupLine(culture, $"[{color}]{{0}}[/]", diag.ToString().EscapeMarkup());
+            var leading = lines.Where(t => t.Line >= startLine - Context && t.Line < startLine).ToArray();
+            var targets = lines.Where(t => t.Line >= startLine && t.Line <= endLine).ToArray();
+            var trailing = lines.Where(t => t.Line > endLine && t.Line <= endLine + Context).ToArray();
+
+            AnsiConsole.MarkupLine(
+                culture, $"[{color}]{{0}}:[/] {{1}}", severity.EscapeMarkup(), message.EscapeMarkup());
+            AnsiConsole.MarkupLine(
+                culture,
+                "[grey]{0}>[/] [blue]{1} ({2},{3})-({4},{5})[/]",
+                new string('-', margin + 1),
+                location.Path!.EscapeMarkup(),
+                startLine,
+                start.Character + 1,
+                endLine,
+                end.Character + 1);
 
             PrintContext(leading);
 
@@ -80,8 +84,8 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
 
                 var sb = new StringBuilder();
 
-                var isStart = target.Line == start.Line;
-                var isEnd = target.Line == end.Line;
+                var isStart = target.Line == startLine;
+                var isEnd = target.Line == endLine;
 
                 for (var i = 0; i < target.Text.Length; i++)
                 {
@@ -98,10 +102,32 @@ internal sealed class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
                     });
                 }
 
-                AnsiConsole.MarkupLine(culture, $"[{color}]    {{0, {margin}}}[/]", sb.ToString().EscapeMarkup());
+                AnsiConsole.MarkupLine(
+                    culture,
+                    $"[grey]{{0, {margin}}} : [/][{color}]{{1}}[/]",
+                    string.Empty,
+                    sb.ToString().EscapeMarkup());
             }
 
             PrintContext(trailing);
+        }
+
+        foreach (var diag in lint.Diagnostics)
+        {
+            PrintWindow(
+                diag.Location,
+                $"{diag.Severity}[{diag.Code}]",
+                diag.Severity switch
+                {
+                    SourceDiagnosticSeverity.Suggestion => "green",
+                    SourceDiagnosticSeverity.Warning => "yellow",
+                    SourceDiagnosticSeverity.Error => "red",
+                    _ => throw new UnreachableException(),
+                },
+                diag.Message);
+
+            foreach (var note in diag.Notes)
+                PrintWindow(note.Location, "Note", "aqua", note.Message);
 
             AnsiConsole.WriteLine();
         }
