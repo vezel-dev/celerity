@@ -46,11 +46,12 @@ internal sealed partial class LanguageLinter
                 foreach (var attr in attributes)
                 {
                     if (attr is not { Name: "lint", Value: ReadOnlyMemory<byte> utf8 } ||
-                        SeverityRegex().Match(Encoding.UTF8.GetString(utf8.Span)) is not { Success: true } match ||
-                        !SourceDiagnosticCode.TryCreate(match.Groups[1].Value, out var code))
+                        Encoding.UTF8.GetString(utf8.Span).Split(':', StringSplitOptions.RemoveEmptyEntries) is
+                            not [var left, var right] ||
+                        !SourceDiagnosticCode.TryCreate(left, out var code))
                         continue;
 
-                    var (severity, valid) = match.Groups[2].ValueSpan switch
+                    var (severity, valid) = right switch
                     {
                         "none" => (null, true),
                         "warning" => (SourceDiagnosticSeverity.Warning, true),
@@ -126,9 +127,6 @@ internal sealed partial class LanguageLinter
             if (pushed)
                 _ = _configurations.Pop();
         }
-
-        [GeneratedRegex(@"^(.*):(.*)$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
-        private static partial Regex SeverityRegex();
     }
 
     private readonly DocumentSemantics _document;
