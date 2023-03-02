@@ -7,6 +7,8 @@ public abstract class Symbol
 {
     public abstract ImmutableArray<SemanticNode> Bindings { get; }
 
+    public abstract ImmutableArray<IdentifierExpressionSemantics> References { get; }
+
     public abstract ImmutableArray<AssignmentExpressionSemantics> Assignments { get; }
 
     public abstract string Name { get; }
@@ -20,6 +22,8 @@ public abstract class Symbol
     }
 
     public abstract IEnumerable<SourceLocation> GetLocations();
+
+    internal abstract void AddReference(IdentifierExpressionSemantics identifier);
 
     internal abstract void AddAssignment(AssignmentExpressionSemantics assignment);
 }

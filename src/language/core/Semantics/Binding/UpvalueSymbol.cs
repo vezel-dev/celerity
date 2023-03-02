@@ -11,6 +11,8 @@ public sealed class UpvalueSymbol : Symbol
 
     public override ImmutableArray<SemanticNode> Bindings => Parent.Bindings;
 
+    public override ImmutableArray<IdentifierExpressionSemantics> References => Parent.References;
+
     public override ImmutableArray<AssignmentExpressionSemantics> Assignments => Parent.Assignments;
 
     public override string Name => Parent.Name;
@@ -28,6 +30,11 @@ public sealed class UpvalueSymbol : Symbol
     public override IEnumerable<SourceLocation> GetLocations()
     {
         return Parent.GetLocations();
+    }
+
+    internal override void AddReference(IdentifierExpressionSemantics identifier)
+    {
+        Parent.AddReference(identifier);
     }
 
     internal override void AddAssignment(AssignmentExpressionSemantics assignment)

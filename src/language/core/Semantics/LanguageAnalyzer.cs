@@ -826,7 +826,11 @@ internal sealed class LanguageAnalyzer
                         $"Reference to test declaration '{ident.Text}' is illegal");
             }
 
-            return new(node, sym);
+            var sema = new IdentifierExpressionSemantics(node, sym);
+
+            sym?.AddReference(sema);
+
+            return sema;
         }
 
         public override ThisExpressionSemantics VisitThisExpression(ThisExpressionSyntax node)

@@ -8,11 +8,16 @@ public abstract class LocalSymbol : Symbol
 {
     public override ImmutableArray<SemanticNode> Bindings => _bindings;
 
+    public override ImmutableArray<IdentifierExpressionSemantics> References => _references;
+
     public override ImmutableArray<AssignmentExpressionSemantics> Assignments => _assignments;
 
     public override string Name { get; }
 
     private ImmutableArray<SemanticNode> _bindings = ImmutableArray<SemanticNode>.Empty;
+
+    private ImmutableArray<IdentifierExpressionSemantics> _references =
+        ImmutableArray<IdentifierExpressionSemantics>.Empty;
 
     private ImmutableArray<AssignmentExpressionSemantics> _assignments =
         ImmutableArray<AssignmentExpressionSemantics>.Empty;
@@ -33,6 +38,11 @@ public abstract class LocalSymbol : Symbol
     private protected void AddBinding(SemanticNode node)
     {
         _bindings = _bindings.Add(node);
+    }
+
+    internal override void AddReference(IdentifierExpressionSemantics identifier)
+    {
+        _references = _references.Add(identifier);
     }
 
     internal override void AddAssignment(AssignmentExpressionSemantics assignment)
