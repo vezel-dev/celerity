@@ -76,6 +76,6 @@ public readonly partial struct SourceDiagnosticCode :
         return Code;
     }
 
-    [GeneratedRegex(@"^[a-z]+(-[a-z]+)*?$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"^[a-z]+(-[a-z]+)*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
     private static partial Regex CodeRegex();
 }
