@@ -53,17 +53,15 @@ public abstract class SyntaxNode : SyntaxItem
         }
 
         var tokens = DescendantTokens().ToArray();
-        var first = tokens[0];
+        var first = tokens.FirstOrDefault(tok => !tok.IsMissing);
 
-        // With the way the parser works today, a node's first token is either present or all of its tokens are missing;
-        // there is never a situation where the first token is missing but the rest are present.
-        if (!first.IsMissing)
+        if (first != null)
         {
+            // This could end up being the same as the first token.
+            var last = tokens.Last(tok => !tok.IsMissing);
+
             var firstSpan = first.Span;
             var firstFullSpan = first.FullSpan;
-
-            // We are only interested in the last token that is actually present.
-            var last = tokens.Last(tok => !tok.IsMissing);
 
             span = new(firstSpan.Start, last.Span.End - firstSpan.Start);
             fullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
