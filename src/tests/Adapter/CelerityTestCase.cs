@@ -133,7 +133,7 @@ internal sealed partial class CelerityTestCase
             // Normalize line endings, and file paths in diagnostics.
             return DiagnosticRegex().Replace(
                 output.ToString().ReplaceLineEndings().Trim(),
-                m => m.Groups[1].Value.Replace("\\", "/", StringComparison.Ordinal) + m.Groups[2].Value);
+                m => $"{m.Groups[1]}{m.Groups[2].Value.Replace(@"\", "/", StringComparison.Ordinal)}{m.Groups[3]}");
         }
 
         var stdout2 = NormalizeOutput(stdout);
@@ -159,6 +159,8 @@ internal sealed partial class CelerityTestCase
         };
     }
 
-    [GeneratedRegex(@"^(.*)(\(\d+,\d+\): \w*: .*)$", RegexOptions.Multiline | RegexOptions.CultureInvariant)]
+    [GeneratedRegex(
+        @"^(\w+(\[.+\])?: .+\n----*> )(.+)( \(\d+,\d+\)-\(\d+,\d+\))$",
+        RegexOptions.Multiline | RegexOptions.CultureInvariant)]
     private static partial Regex DiagnosticRegex();
 }
