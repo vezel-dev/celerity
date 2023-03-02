@@ -16,7 +16,8 @@ internal sealed class CheckCommand : AsyncCommand<CheckCommand.CheckCommandSetti
 
         var errors = false;
 
-        foreach (var file in Directory.EnumerateFiles(settings.Directory ?? Environment.CurrentDirectory))
+        foreach (var file in Directory.EnumerateFiles(
+            settings.Directory ?? Environment.CurrentDirectory, "*.cel", SearchOption.AllDirectories))
         {
             var text = new StringSourceText(file, await File.ReadAllTextAsync(file));
             var lint = LintAnalysis.Create(
