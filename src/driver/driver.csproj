@@ -16,7 +16,6 @@ This package provides the .NET global tool.</PackageDescription>
 
     <ItemGroup>
         <Using Include="CommandLine" />
-        <Using Include="Spectre.Console" />
     </ItemGroup>
 
     <ItemGroup>
@@ -29,8 +28,7 @@ This package provides the .NET global tool.</PackageDescription>
 
     <ItemGroup>
         <PackageReference Include="CommandLineParser" />
-        <PackageReference Include="RadLine" />
-        <PackageReference Include="Spectre.Console" />
+        <PackageReference Include="Vezel.Cathode.Hosting" />
     </ItemGroup>
 
     <Import Project="../common/common.targets" />

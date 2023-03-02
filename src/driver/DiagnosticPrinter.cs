@@ -4,32 +4,49 @@ internal static class DiagnosticPrinter
 {
     // TODO: Move all of this to Vezel.Celerity.Language.Tooling.
 
-    public static void Print(SourceText text, ImmutableArray<SourceDiagnostic> diagnostics)
+    private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
+
+    private static readonly bool _interactive = Terminal.TerminalOut.IsInteractive;
+
+    private static async ValueTask WriteControlAsync(string sequence)
     {
-        var culture = CultureInfo.InvariantCulture;
+        if (_interactive)
+            await Terminal.ErrorAsync(sequence);
+    }
+
+    public static async ValueTask PrintAsync(SourceText text, ImmutableArray<SourceDiagnostic> diagnostics)
+    {
         var lines = text
             .Lines
             .Select(line => (Line: line.Line + 1, Text: line.ToString().ReplaceLineEndings(string.Empty)))
             .ToArray();
-        var margin = lines[^1].Line.ToString(culture).Length;
+        var margin = lines[^1].Line.ToString(_culture).Length;
 
-        void PrintWindow(SourceLocation location, string severity, string color, string message)
+        async ValueTask PrintWindowAsync(
+            SourceLocation location, string severity, (byte R, byte G, byte B) color, string message)
         {
-            void PrintContext(IReadOnlyList<(int Line, string Text)> lines)
+            async ValueTask PrintContextAsync(IReadOnlyList<(int Line, string Text)> lines)
             {
                 if (!lines.All(t => string.IsNullOrWhiteSpace(t.Text)))
                     foreach (var (line, text) in lines)
-                        PrintLine(line, text, null);
+                        await PrintLineAsync(line, text, null);
             }
 
-            void PrintLine(int line, string text, string? style)
+            async ValueTask PrintLineAsync(int line, string text, string? sequence)
             {
-                AnsiConsole.Markup(culture, $"[blue]{{0, {margin}}}[/][grey] | [/]", line);
+                await WriteControlAsync(ControlSequences.SetForegroundColor(100, 175, 225));
+                await Terminal.ErrorAsync(line.ToString(_culture).PadLeft(margin));
+                await WriteControlAsync(ControlSequences.SetForegroundColor(128, 128, 128));
+                await Terminal.ErrorAsync(" | ");
+                await WriteControlAsync(ControlSequences.ResetAttributes());
 
-                if (style != null)
-                    AnsiConsole.MarkupLine(culture, $"[{style}]{{0}}[/]", text.EscapeMarkup());
-                else
-                    AnsiConsole.WriteLine(text);
+                if (sequence != null)
+                    await WriteControlAsync(sequence);
+
+                await Terminal.ErrorLineAsync(text);
+
+                if (sequence != null)
+                    await WriteControlAsync(ControlSequences.ResetAttributes());
             }
 
             var start = location.Start;
@@ -41,33 +58,33 @@ internal static class DiagnosticPrinter
             const int Context = 3;
 
             var leading = lines.Where(t => t.Line >= startLine - Context && t.Line < startLine).ToArray();
-            var targets = lines.Where(t => t.Line >= startLine && t.Line <= endLine).ToArray();
+            var affected = lines.Where(t => t.Line >= startLine && t.Line <= endLine).ToArray();
             var trailing = lines.Where(t => t.Line > endLine && t.Line <= endLine + Context).ToArray();
 
-            AnsiConsole.MarkupLine(
-                culture, $"[{color}]{{0}}:[/] {{1}}", severity.EscapeMarkup(), message.EscapeMarkup());
-            AnsiConsole.MarkupLine(
-                culture,
-                "[grey]{0}>[/] [blue]{1} ({2},{3})-({4},{5})[/]",
-                new string('-', margin + 1),
-                location.Path!.EscapeMarkup(),
-                startLine,
-                start.Character + 1,
-                endLine,
-                end.Character + 1);
+            await WriteControlAsync(ControlSequences.SetForegroundColor(color.R, color.G, color.B));
+            await Terminal.ErrorAsync($"{severity}: ");
+            await WriteControlAsync(ControlSequences.ResetAttributes());
+            await Terminal.ErrorLineAsync(message);
 
-            PrintContext(leading);
+            await WriteControlAsync(ControlSequences.SetForegroundColor(128, 128, 128));
+            await Terminal.ErrorAsync($"{new string('-', margin + 1)}> ");
+            await WriteControlAsync(ControlSequences.SetForegroundColor(100, 175, 225));
+            await Terminal.ErrorLineAsync(
+                $"{location.Path} ({startLine},{start.Character + 1})-({endLine},{end.Character + 1})");
+            await WriteControlAsync(ControlSequences.ResetAttributes());
 
-            foreach (var target in targets)
+            await PrintContextAsync(leading);
+
+            foreach (var (line, text) in affected)
             {
-                PrintLine(target.Line, target.Text, "bold");
+                await PrintLineAsync(line, text, ControlSequences.SetDecorations(intense: true));
 
                 var sb = new StringBuilder();
 
-                var isStart = target.Line == startLine;
-                var isEnd = target.Line == endLine;
+                var isStart = line == startLine;
+                var isEnd = line == endLine;
 
-                for (var i = 0; i < target.Text.Length; i++)
+                for (var i = 0; i < text.Length; i++)
                 {
                     var gtStart = i >= start.Character;
                     var ltEnd = i < end.Character;
@@ -82,34 +99,34 @@ internal static class DiagnosticPrinter
                     });
                 }
 
-                AnsiConsole.MarkupLine(
-                    culture,
-                    $"[grey]{{0, {margin}}} : [/][{color}]{{1}}[/]",
-                    string.Empty,
-                    sb.ToString().EscapeMarkup());
+                await WriteControlAsync(ControlSequences.SetForegroundColor(128, 128, 128));
+                await Terminal.ErrorAsync($"{new string(' ', margin)} : ");
+                await WriteControlAsync(ControlSequences.SetForegroundColor(color.R, color.G, color.B));
+                await Terminal.ErrorLineAsync(sb.ToString());
+                await WriteControlAsync(ControlSequences.ResetAttributes());
             }
 
-            PrintContext(trailing);
+            await PrintContextAsync(trailing);
         }
 
         foreach (var diag in diagnostics)
         {
-            PrintWindow(
+            await PrintWindowAsync(
                 diag.Location,
                 $"{diag.Severity}[{diag.Code}]",
                 diag.Severity switch
                 {
-                    SourceDiagnosticSeverity.Suggestion => "green",
-                    SourceDiagnosticSeverity.Warning => "yellow",
-                    SourceDiagnosticSeverity.Error => "red",
+                    SourceDiagnosticSeverity.Suggestion => (0, 225, 0),
+                    SourceDiagnosticSeverity.Warning => (225, 225, 0),
+                    SourceDiagnosticSeverity.Error => (225, 0, 0),
                     _ => throw new UnreachableException(),
                 },
                 diag.Message);
 
             foreach (var note in diag.Notes)
-                PrintWindow(note.Location, "Note", "aqua", note.Message);
+                await PrintWindowAsync(note.Location, "Note", (0, 225, 225), note.Message);
 
-            AnsiConsole.WriteLine();
+            await Terminal.ErrorLineAsync();
         }
     }
 }

@@ -7,9 +7,9 @@ internal sealed class ServeVerb : Verb
     [Value(0, HelpText = "Source code directory.")]
     public required string? Directory { get; init; }
 
-    public override Task<int> RunAsync()
+    public override ValueTask<int> RunAsync()
     {
         // TODO: Implement this.
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }

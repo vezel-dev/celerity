@@ -44,12 +44,10 @@
                         Version="6.4.0" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
                         Version="0.19.7" />
-        <PackageVersion Include="RadLine"
-                        Version="0.6.0" />
         <PackageVersion Include="Spdx"
                         Version="0.8.0" />
-        <PackageVersion Include="Spectre.Console"
-                        Version="0.46.0" />
+        <PackageVersion Include="Vezel.Cathode.Hosting"
+                        Version="0.9.156" />
         <PackageVersion Include="Wcwidth"
                         Version="1.0.0" />
         <PackageVersion Include="xunit"

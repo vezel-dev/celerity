@@ -20,7 +20,6 @@
         <Using Include="BenchmarkDotNet.Validators" />
         <Using Include="CommandLine" />
         <Using Include="Perfolizer.Horology" />
-        <Using Include="Spectre.Console" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,7 +32,7 @@
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" />
         <PackageReference Include="CommandLineParser" />
-        <PackageReference Include="Spectre.Console" />
+        <PackageReference Include="Vezel.Cathode.Hosting" />
     </ItemGroup>
 
     <Import Project="../common/common.targets" />

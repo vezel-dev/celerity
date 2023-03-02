@@ -7,7 +7,7 @@ internal sealed class CheckVerb : Verb
     [Value(0, HelpText = "Source code directory.")]
     public required string? Directory { get; init; }
 
-    public override async Task<int> RunAsync()
+    public override async ValueTask<int> RunAsync()
     {
         // TODO: Replace all of this.
 
@@ -23,7 +23,7 @@ internal sealed class CheckVerb : Verb
                 LintPass.DefaultPasses,
                 LintConfiguration.Default);
 
-            DiagnosticPrinter.Print(text, lint.Diagnostics);
+            await DiagnosticPrinter.PrintAsync(text, lint.Diagnostics);
 
             errors |= lint.HasErrors;
         }

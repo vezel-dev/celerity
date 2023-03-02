@@ -10,9 +10,9 @@ internal sealed class FormatVerb : Verb
     [Option('f', "fix", HelpText = "Enable automatic fixing.")]
     public required bool Fix { get; init; }
 
-    public override Task<int> RunAsync()
+    public override ValueTask<int> RunAsync()
     {
         // TODO: Implement this.
-        return Task.FromResult(0);
+        return ValueTask.FromResult(0);
     }
 }
