@@ -59,19 +59,20 @@ public abstract class SemanticNode
 
     public IEnumerable<SemanticNode> Descendants()
     {
-        var work = new Queue<SemanticNode>();
+        var work = new Stack<SemanticNode>();
 
-        work.Enqueue(this);
+        work.Push(this);
 
         do
         {
-            var current = work.Dequeue();
+            var current = work.Pop();
+
+            if (current != this)
+                yield return current;
 
             if (current.HasChildren)
-                foreach (var child in current.Children())
-                    work.Enqueue(child);
-
-            yield return current;
+                foreach (var child in current.Children().Reverse())
+                    work.Push(child);
         }
         while (work.Count != 0);
     }
