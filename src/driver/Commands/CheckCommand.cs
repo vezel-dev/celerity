@@ -10,10 +10,26 @@ internal sealed class CheckCommand : AsyncCommand<CheckCommand.CheckCommandSetti
         public string? Directory { get; init; }
     }
 
-    public override Task<int> ExecuteAsync(CommandContext context, CheckCommandSettings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, CheckCommandSettings settings)
     {
-        // TODO
+        // TODO: Replace all of this.
 
-        return Task.FromResult(0);
+        var errors = false;
+
+        foreach (var file in Directory.EnumerateFiles(settings.Directory ?? Environment.CurrentDirectory))
+        {
+            var text = new StringSourceText(file, await File.ReadAllTextAsync(file));
+            var lint = LintAnalysis.Create(
+                SemanticAnalysis.Create(
+                    SyntaxAnalysis.Create(text, SyntaxMode.Module)),
+                LintPass.DefaultPasses,
+                LintConfiguration.Default);
+
+            DiagnosticPrinter.Print(text, lint.Diagnostics);
+
+            errors |= lint.HasErrors;
+        }
+
+        return errors ? 1 : 0;
     }
 }
