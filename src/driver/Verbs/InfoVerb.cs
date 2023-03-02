@@ -1,16 +1,16 @@
-namespace Vezel.Celerity.Driver.Commands;
+namespace Vezel.Celerity.Driver.Verbs;
 
 [SuppressMessage("", "CA1812")]
-internal sealed class InfoCommand : AsyncCommand
+[Verb("info", HelpText = "Print Celerity runtime environment information.")]
+internal sealed class InfoVerb : Verb
 {
-    public override Task<int> ExecuteAsync(CommandContext context)
+    public override Task<int> RunAsync()
     {
         var culture = CultureInfo.InvariantCulture;
 
         AnsiConsole.MarkupLine("[greenyellow]Celerity[/]");
 
-        // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
-#pragma warning disable CS0436
+#pragma warning disable CS0436 // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
         AnsiConsole.MarkupLineInterpolated(
             culture, $"[lightsteelblue]Version:[/] [white]{ThisAssembly.AssemblyInformationalVersion}[/]");
         AnsiConsole.MarkupLineInterpolated(

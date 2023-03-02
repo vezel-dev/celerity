@@ -1,53 +1,24 @@
-using Vezel.Celerity.Driver.Commands;
-using Vezel.Celerity.Driver.Commands.Format;
+using Vezel.Celerity.Driver.Verbs;
 
-var app = new CommandApp<RunCommand>();
-
-app.Configure(cfg =>
+using var parser = new Parser(settings =>
 {
-    // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
-#pragma warning disable CS0436
-    _ = cfg
-        .SetApplicationName(ThisAssembly.AssemblyName)
-        .PropagateExceptions();
-#pragma warning restore CS0436
-
-    _ = cfg
-        .AddCommand<CheckCommand>("check")
-        .WithDescription("Perform semantic analysis on Celerity code.");
-
-    cfg.AddBranch("format", format =>
-    {
-        format.SetDescription("Check or fix Celerity code formatting.");
-
-        _ = format
-            .AddCommand<FormatCheckCommand>("check")
-            .WithDescription("Check Celerity code formatting.");
-
-        _ = format
-            .AddCommand<FormatFixCommand>("fix")
-            .WithDescription("Fix Celerity code formatting.");
-    });
-
-    _ = cfg
-        .AddCommand<InfoCommand>("info")
-        .WithDescription("Print Celerity runtime environment information.");
-
-    _ = cfg
-        .AddCommand<ReplCommand>("repl")
-        .WithDescription("Start an interactive Celerity session.");
-
-    _ = cfg
-        .AddCommand<RunCommand>("run")
-        .WithDescription("Run a Celerity program.");
-
-    _ = cfg
-        .AddCommand<ServerCommand>("server")
-        .WithDescription("Host the Celerity language server.");
-
-    _ = cfg
-        .AddCommand<TestCommand>("test")
-        .WithDescription("Run unit tests in Celerity code.");
+    settings.GetoptMode = true;
+    settings.PosixlyCorrect = true;
+    settings.CaseSensitive = false;
+    settings.CaseInsensitiveEnumValues = true;
+    settings.HelpWriter = Console.Error;
 });
 
-return await app.RunAsync(args);
+return await parser
+    .ParseArguments(
+        args,
+#pragma warning disable CS0436 // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
+        typeof(ThisAssembly)
+#pragma warning restore CS0436
+            .Assembly
+            .DefinedTypes
+            .Where(t => t.GetCustomAttribute<VerbAttribute>() != null)
+            .ToArray())
+    .MapResult(
+        verb => Unsafe.As<Verb>(verb).RunAsync(),
+        _ => Task.FromResult(1));
