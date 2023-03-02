@@ -11,12 +11,12 @@ internal sealed class CheckVerb : Verb
     {
         // TODO: Replace all of this.
 
+        var directory = Directory ?? Environment.CurrentDirectory;
         var errors = false;
 
-        foreach (var file in System.IO.Directory.EnumerateFiles(
-            Directory ?? Environment.CurrentDirectory, "*.cel", SearchOption.AllDirectories))
+        foreach (var file in System.IO.Directory.EnumerateFiles(directory, "*.cel", SearchOption.AllDirectories))
         {
-            var text = new StringSourceText(file, await File.ReadAllTextAsync(file));
+            var text = new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file));
             var lint = LintAnalysis.Create(
                 SemanticAnalysis.Create(
                     SyntaxAnalysis.Create(text, SyntaxMode.Module)),
