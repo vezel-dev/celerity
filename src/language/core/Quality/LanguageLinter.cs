@@ -52,13 +52,14 @@ internal sealed partial class LanguageLinter
 
                     var (severity, valid) = match.Groups[2].ValueSpan switch
                     {
-                        var name when Enum.TryParse<SourceDiagnosticSeverity>(name, out var sev) => (sev, true),
                         "none" => (null, true),
+                        "warning" => (SourceDiagnosticSeverity.Warning, true),
+                        "error" => (SourceDiagnosticSeverity.Error, true),
                         _ => (default(SourceDiagnosticSeverity?), false),
                     };
 
                     if (valid)
-                        current = current.WithSeverity(code, severity);
+                        replacement = current.WithSeverity(code, severity);
                 }
 
                 if (replacement != current)
