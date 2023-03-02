@@ -4,4 +4,9 @@ namespace Vezel.Celerity.Benchmarks;
 [SuppressMessage("", "CA1822")]
 public partial class CelerityBenchmarks
 {
+    [Benchmark]
+    public void Dummy()
+    {
+        // TODO: Remove this when adding actual benchmarks.
+    }
 }

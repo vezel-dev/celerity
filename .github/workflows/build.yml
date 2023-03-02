@@ -42,4 +42,4 @@ jobs:
             - name: Run tests
               run: |
                   dotnet test -c ${{ matrix.cfg }} --no-build
-#                  dotnet run --project src/benchmarks -c ${{ matrix.cfg }} --no-build
+                  dotnet run --project src/benchmarks -c ${{ matrix.cfg }} --no-build
