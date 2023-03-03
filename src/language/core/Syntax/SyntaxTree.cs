@@ -19,7 +19,10 @@ public sealed class SyntaxTree
     {
         Text = text;
         Root = root;
-        Diagnostics = diagnostics.Select(creator => creator(this)).ToImmutableArray();
+        Diagnostics = diagnostics
+            .Select(creator => creator(this))
+            .OrderBy(diag => diag.Span)
+            .ToImmutableArray();
 
         root.SetParent(this);
     }

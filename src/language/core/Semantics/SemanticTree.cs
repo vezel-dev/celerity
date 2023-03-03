@@ -28,7 +28,10 @@ public sealed class SemanticTree
         Check.Null(syntax);
 
         var diags = ImmutableArray.CreateBuilder<Diagnostic>(0);
+        var root = new LanguageAnalyzer(syntax, diags).Analyze();
 
-        return new(syntax, new LanguageAnalyzer(syntax, diags).Analyze(), diags.DrainToImmutable());
+        diags.Sort((x, y) => x.Span.CompareTo(y.Span));
+
+        return new(syntax, root, diags.DrainToImmutable());
     }
 }
