@@ -1,27 +1,27 @@
-using Vezel.Celerity.Language.Text;
+using Vezel.Celerity.Language.Diagnostics;
 
 namespace Vezel.Celerity.Language.Quality;
 
 public sealed class LintConfiguration
 {
     public static LintConfiguration Default { get; } =
-        new(ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?>.Empty);
+        new(ImmutableDictionary<DiagnosticCode, DiagnosticSeverity?>.Empty);
 
-    private readonly ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?> _severities;
+    private readonly ImmutableDictionary<DiagnosticCode, DiagnosticSeverity?> _severities;
 
-    private LintConfiguration(ImmutableDictionary<SourceDiagnosticCode, SourceDiagnosticSeverity?> severities)
+    private LintConfiguration(ImmutableDictionary<DiagnosticCode, DiagnosticSeverity?> severities)
     {
         _severities = severities;
     }
 
-    public bool TryGetSeverity(SourceDiagnosticCode code, out SourceDiagnosticSeverity? severity)
+    public bool TryGetSeverity(DiagnosticCode code, out DiagnosticSeverity? severity)
     {
         Check.Argument(code.Code != null, code);
 
         return _severities.TryGetValue(code, out severity);
     }
 
-    public LintConfiguration WithSeverity(SourceDiagnosticCode code, SourceDiagnosticSeverity? severity)
+    public LintConfiguration WithSeverity(DiagnosticCode code, DiagnosticSeverity? severity)
     {
         Check.Argument(code.Code != null, code);
         Check.Enum(severity);
@@ -29,7 +29,7 @@ public sealed class LintConfiguration
         return new(_severities.SetItem(code, severity));
     }
 
-    public LintConfiguration WithoutSeverity(SourceDiagnosticCode code)
+    public LintConfiguration WithoutSeverity(DiagnosticCode code)
     {
         Check.Argument(code.Code != null, code);
 

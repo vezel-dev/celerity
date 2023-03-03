@@ -27,10 +27,10 @@ public abstract class LocalSymbol : Symbol
         Name = name;
     }
 
-    public override IEnumerable<SourceLocation> GetLocations()
+    public override IEnumerable<SourceTextSpan> GetSpans()
     {
         foreach (var binding in _bindings)
-            yield return GetToken(binding).GetLocation();
+            yield return GetToken(binding).Span;
     }
 
     private protected abstract SyntaxToken GetToken(SemanticNode node);

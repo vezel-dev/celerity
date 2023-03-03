@@ -1,7 +1,7 @@
+using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
-using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Quality;
 
@@ -9,29 +9,33 @@ internal sealed partial class LanguageLinter
 {
     private sealed partial class LintVisitor : SemanticVisitor
     {
-        private readonly Stack<LintConfiguration> _configurations = new(1);
+        private readonly SemanticTree _tree;
 
         private readonly ReadOnlyMemory<LintPass> _passes;
 
         private readonly LintConfiguration _configuration;
 
-        private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
+        private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
+
+        private readonly Stack<LintConfiguration> _configurations = new(1);
 
         public LintVisitor(
+            SemanticTree tree,
             ReadOnlyMemory<LintPass> passes,
             LintConfiguration configuration,
-            ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+            ImmutableArray<Diagnostic>.Builder diagnostics)
         {
+            _tree = tree;
             _passes = passes;
             _configuration = configuration;
             _diagnostics = diagnostics;
         }
 
-        public void Lint(DocumentSemantics document)
+        public void Lint()
         {
             _configurations.Push(_configuration);
 
-            Visit(document);
+            Visit(_tree.Root);
 
             _ = _configurations.Pop();
         }
@@ -48,15 +52,15 @@ internal sealed partial class LanguageLinter
                     if (attr is not { Name: "lint", Value: ReadOnlyMemory<byte> utf8 } ||
                         Encoding.UTF8.GetString(utf8.Span).Split(':', StringSplitOptions.RemoveEmptyEntries) is
                             not [var left, var right] ||
-                        !SourceDiagnosticCode.TryCreate(left, out var code))
+                        !DiagnosticCode.TryCreate(left, out var code))
                         continue;
 
                     var (severity, valid) = right switch
                     {
                         "none" => (null, true),
-                        "warning" => (SourceDiagnosticSeverity.Warning, true),
-                        "error" => (SourceDiagnosticSeverity.Error, true),
-                        _ => (default(SourceDiagnosticSeverity?), false),
+                        "warning" => (DiagnosticSeverity.Warning, true),
+                        "error" => (DiagnosticSeverity.Error, true),
+                        _ => (default(DiagnosticSeverity?), false),
                     };
 
                     if (valid)
@@ -97,7 +101,7 @@ internal sealed partial class LanguageLinter
                     if (severity is not { } sev)
                         continue;
 
-                    runner(pass, new(pass.Code, sev, _diagnostics), node);
+                    runner(pass, new(_tree.Syntax, pass.Code, sev, _diagnostics), node);
                 }
             }
 
@@ -129,26 +133,22 @@ internal sealed partial class LanguageLinter
         }
     }
 
-    private readonly DocumentSemantics _document;
-
     private readonly LintVisitor _visitor;
 
     public LanguageLinter(
-        DocumentSemantics document,
+        SemanticTree tree,
         IEnumerable<LintPass> passes,
         LintConfiguration configuration,
-        ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+        ImmutableArray<Diagnostic>.Builder diagnostics)
     {
-        _document = document;
-
-        var mode = document is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
+        var mode = tree.Root is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
 
         _visitor = new(
-            passes.Where(pass => pass.Mode == null || pass.Mode == mode).ToArray(), configuration, diagnostics);
+            tree, passes.Where(pass => pass.Mode == null || pass.Mode == mode).ToArray(), configuration, diagnostics);
     }
 
     public void Lint()
     {
-        _visitor.Lint(_document);
+        _visitor.Lint();
     }
 }

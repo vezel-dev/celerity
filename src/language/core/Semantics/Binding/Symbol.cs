@@ -21,9 +21,14 @@ public abstract class Symbol
     {
     }
 
-    public abstract IEnumerable<SourceLocation> GetLocations();
+    public abstract IEnumerable<SourceTextSpan> GetSpans();
 
     internal abstract void AddReference(IdentifierExpressionSemantics identifier);
 
     internal abstract void AddAssignment(AssignmentExpressionSemantics assignment);
+
+    public override sealed string ToString()
+    {
+        return Name;
+    }
 }

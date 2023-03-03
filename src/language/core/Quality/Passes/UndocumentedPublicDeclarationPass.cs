@@ -1,7 +1,7 @@
+using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Syntax.Tree;
-using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Quality.Passes;
 
@@ -12,7 +12,7 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
     private UndocumentedPublicDeclarationPass()
         : base(
             "undocumented-public-declaration",
-            SourceDiagnosticSeverity.Warning,
+            DiagnosticSeverity.Warning,
             LintTargets.Document | LintTargets.Declaration,
             SyntaxMode.Module)
     {
@@ -54,13 +54,9 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
     }
 
     private static void CheckDocumentationAttribute(
-        LintContext context,
-        string kind,
-        SyntaxItem item,
-        IEnumerable<string> attributes,
-        string name)
+        LintContext context, string kind, SyntaxItem item, IEnumerable<string> attributes, string name)
     {
         if (!attributes.Any(t => t == "doc"))
-            context.CreateDiagnostic(item.GetLocation(), $"{kind} '{name}' should be decorated with a 'doc' attribute");
+            context.ReportDiagnostic(item.Span, $"{kind} '{name}' should be decorated with a 'doc' attribute");
     }
 }

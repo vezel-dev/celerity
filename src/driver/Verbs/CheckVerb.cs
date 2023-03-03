@@ -17,15 +17,19 @@ internal sealed class CheckVerb : Verb
         foreach (var file in System.IO.Directory.EnumerateFiles(directory, "*.cel", SearchOption.AllDirectories))
         {
             var text = new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file));
-            var lint = LintAnalysis.Create(
-                SemanticAnalysis.Create(
-                    SyntaxAnalysis.Create(text, SyntaxMode.Module)),
-                LintPass.DefaultPasses,
-                LintConfiguration.Default);
+            var syntax = SyntaxTree.Parse(text, SyntaxMode.Module);
+            var semantics = SemanticTree.Analyze(syntax);
+            var lint = LintAnalysis.Create(semantics, LintPass.DefaultPasses, LintConfiguration.Default);
+            var diags = syntax
+                .Diagnostics
+                .Concat(semantics.Diagnostics)
+                .Concat(lint.Diagnostics)
+                .OrderBy(diag => diag.Span)
+                .ToArray();
 
             await DiagnosticPrinter.PrintAsync(text, lint.Diagnostics);
 
-            errors |= lint.HasErrors;
+            errors |= diags.Any(diag => diag.IsError);
         }
 
         return errors ? 1 : 0;

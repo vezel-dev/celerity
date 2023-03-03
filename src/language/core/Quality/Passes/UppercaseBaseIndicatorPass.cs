@@ -1,7 +1,7 @@
+using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Syntax.Tree;
-using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Quality.Passes;
 
@@ -12,7 +12,7 @@ public sealed class UppercaseBaseIndicatorPass : LintPass
     private UppercaseBaseIndicatorPass()
         : base(
             "uppercase-base-indicator",
-            SourceDiagnosticSeverity.Warning,
+            DiagnosticSeverity.Warning,
             LintTargets.Expression | LintTargets.Pattern,
             SyntaxMode.Module)
     {
@@ -38,8 +38,7 @@ public sealed class UppercaseBaseIndicatorPass : LintPass
         if (token.Kind == SyntaxTokenKind.IntegerLiteral &&
             text.Length >= 2 &&
             text.AsSpan(0, 2) is "0B" or "0O" or "0X")
-            context.CreateDiagnostic(
-                token.GetLocation(),
-                $"Consider using lowercase base indicator '{text[..2].ToLowerInvariant()}' for clarity");
+            context.ReportDiagnostic(
+                token.Span, $"Consider using lowercase base indicator '{text[..2].ToLowerInvariant()}' for clarity");
     }
 }

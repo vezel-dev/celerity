@@ -1,7 +1,7 @@
+using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Quality.Passes;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
-using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Quality;
 
@@ -12,20 +12,20 @@ public abstract class LintPass
             UppercaseBaseIndicatorPass.Instance,
             UndocumentedPublicDeclarationPass.Instance);
 
-    public SourceDiagnosticCode Code { get; }
+    public DiagnosticCode Code { get; }
 
-    public SourceDiagnosticSeverity? Severity { get; }
+    public DiagnosticSeverity? Severity { get; }
 
     public LintTargets Targets { get; }
 
     public SyntaxMode? Mode { get; }
 
-    protected LintPass(string code, SourceDiagnosticSeverity? severity, LintTargets targets, SyntaxMode? mode)
+    protected LintPass(string code, DiagnosticSeverity? severity, LintTargets targets, SyntaxMode? mode)
     {
         Check.Enum(severity);
         Check.Enum(mode);
 
-        Code = SourceDiagnosticCode.Create(code);
+        Code = DiagnosticCode.Create(code);
         Severity = severity;
         Targets = targets;
         Mode = mode;

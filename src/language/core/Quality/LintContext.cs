@@ -1,3 +1,5 @@
+using Vezel.Celerity.Language.Diagnostics;
+using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Quality;
@@ -5,37 +7,46 @@ namespace Vezel.Celerity.Language.Quality;
 [SuppressMessage("", "CA1815")]
 public readonly struct LintContext
 {
-    private readonly SourceDiagnosticCode _code;
+    private readonly SyntaxTree _tree;
 
-    private readonly SourceDiagnosticSeverity _severity;
+    private readonly DiagnosticCode _code;
 
-    private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
+    private readonly DiagnosticSeverity _severity;
+
+    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
 
     internal LintContext(
-        SourceDiagnosticCode code,
-        SourceDiagnosticSeverity severity,
-        ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+        SyntaxTree tree,
+        DiagnosticCode code,
+        DiagnosticSeverity severity,
+        ImmutableArray<Diagnostic>.Builder diagnostics)
     {
+        _tree = tree;
         _code = code;
         _severity = severity;
         _diagnostics = diagnostics;
     }
 
-    public void CreateDiagnostic(
-        SourceLocation location, string message, params (SourceLocation Location, string Message)[] notes)
+    public void ReportDiagnostic(
+        SourceTextSpan span, string message, params (SourceTextSpan Span, string Message)[] notes)
     {
-        CreateDiagnostic(location, message, notes.AsEnumerable());
+        ReportDiagnostic(span, message, notes.AsEnumerable());
     }
 
-    public void CreateDiagnostic(
-        SourceLocation location, string message, IEnumerable<(SourceLocation Location, string Message)> notes)
+    public void ReportDiagnostic(
+        SourceTextSpan span, string message, IEnumerable<(SourceTextSpan Span, string Message)> notes)
     {
+        Check.NullOrEmpty(message);
+        Check.Null(notes);
+        Check.All(notes, static note => note.Message != null);
+
         _diagnostics.Add(
-            SourceDiagnostic.Create(
+            new(
+                _tree,
+                span,
                 _code,
                 _severity,
-                location,
                 message,
-                notes.Select(t => SourceDiagnosticNote.Create(t.Location, t.Message))));
+                notes.Select(t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
     }
 }

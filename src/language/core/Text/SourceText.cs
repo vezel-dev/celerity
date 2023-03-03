@@ -61,7 +61,7 @@ public abstract class SourceText : IReadOnlyList<char>
         });
     }
 
-    public SourceLocation GetLocation(SourceTextSpan span)
+    public SourceTextLocation GetLocation(SourceTextSpan span)
     {
         var lines = Lines;
 

@@ -27,9 +27,9 @@ public sealed class UpvalueSymbol : Symbol
         Slot = slot;
     }
 
-    public override IEnumerable<SourceLocation> GetLocations()
+    public override IEnumerable<SourceTextSpan> GetSpans()
     {
-        return Parent.GetLocations();
+        return Parent.GetSpans();
     }
 
     internal override void AddReference(IdentifierExpressionSemantics identifier)

@@ -12,10 +12,12 @@ internal sealed class RunVerb : Verb
         // TODO: Replace all of this.
 
         var text = new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File));
-        var semantics = SemanticAnalysis.Create(SyntaxAnalysis.Create(text, SyntaxMode.Module));
+        var syntax = SyntaxTree.Parse(text, SyntaxMode.Module);
+        var semantics = SemanticTree.Analyze(syntax);
+        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(diag => diag.Span).ToArray();
 
-        await DiagnosticPrinter.PrintAsync(text, semantics.Diagnostics);
+        await DiagnosticPrinter.PrintAsync(text, diags);
 
-        return semantics.HasErrors ? 1 : 0;
+        return diags.Any(diag => diag.IsError) ? 1 : 0;
     }
 }

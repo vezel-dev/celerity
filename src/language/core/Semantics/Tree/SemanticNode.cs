@@ -6,11 +6,10 @@ public abstract class SemanticNode
 {
     public SyntaxNode Syntax { get; }
 
-    public SemanticAnalysis Analysis =>
-        _parent is SemanticAnalysis analysis ? analysis : Unsafe.As<SemanticNode>(_parent).Analysis;
+    public SemanticTree Tree => _parent is SemanticTree tree ? tree : Unsafe.As<SemanticNode>(_parent).Tree;
 
-    // Checking for SemanticAnalysis is faster since it is sealed, while SemanticNode is not.
-    public SemanticNode? Parent => _parent is SemanticAnalysis ? null : Unsafe.As<SemanticNode>(_parent);
+    // Checking for SemanticTree is faster since it is sealed, while SemanticNode is not.
+    public SemanticNode? Parent => _parent is SemanticTree ? null : Unsafe.As<SemanticNode>(_parent);
 
     public abstract bool HasChildren { get; }
 
@@ -80,4 +79,14 @@ public abstract class SemanticNode
     internal abstract void Visit(SemanticVisitor visitor);
 
     internal abstract T? Visit<T>(SemanticVisitor<T> visitor);
+
+    public override sealed string ToString()
+    {
+        return Syntax.ToString();
+    }
+
+    public string ToFullString()
+    {
+        return Syntax.ToFullString();
+    }
 }

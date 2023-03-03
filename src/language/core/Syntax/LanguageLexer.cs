@@ -1,3 +1,4 @@
+using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Syntax.Tree;
 using Vezel.Celerity.Language.Text;
 
@@ -13,7 +14,7 @@ internal sealed class LanguageLexer
 
     private readonly SyntaxMode _mode;
 
-    private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
+    private readonly List<Func<SyntaxTree, Diagnostic>> _diagnostics;
 
     private readonly StringBuilder _chars = new();
 
@@ -29,7 +30,7 @@ internal sealed class LanguageLexer
 
     private bool _errors;
 
-    public LanguageLexer(SourceText text, SyntaxMode mode, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+    public LanguageLexer(SourceText text, SyntaxMode mode, List<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
         _text = text;
         _reader = new(text);
@@ -63,16 +64,21 @@ internal sealed class LanguageLexer
         return ch;
     }
 
-    private void Error(SourceDiagnosticCode code, int position, string message)
+    private void Error(int position, DiagnosticCode code, string message)
     {
-        Error(code, position, _position - position, message);
+        Error(position, _position - position, code, message);
     }
 
-    private void Error(SourceDiagnosticCode code, int position, int length, string message)
+    private void Error(int position, int length, DiagnosticCode code, string message)
     {
-        _diagnostics.Add(
-            SourceDiagnostic.Create(
-                code, SourceDiagnosticSeverity.Error, _text.GetLocation(new(position, length)), message));
+        _diagnostics.Add(tree =>
+            new(
+                tree,
+                new(position, length),
+                code,
+                DiagnosticSeverity.Error,
+                message,
+                ImmutableArray<DiagnosticNote>.Empty));
 
         _errors = true;
     }
@@ -180,7 +186,7 @@ internal sealed class LanguageLexer
         }
         catch (Exception ex) when (ex is OutOfMemoryException or OverflowException)
         {
-            Error(StandardDiagnosticCodes.InvalidIntegerLiteral, position, text.Length, "Integer literal is too large");
+            Error(position, text.Length, StandardDiagnosticCodes.InvalidIntegerLiteral, "Integer literal is too large");
 
             return null;
         }
@@ -198,7 +204,7 @@ internal sealed class LanguageLexer
         if (!double.IsInfinity(value))
             return value;
 
-        Error(StandardDiagnosticCodes.InvalidRealLiteral, position, text.Length, "Real literal is out of range");
+        Error(position, text.Length, StandardDiagnosticCodes.InvalidRealLiteral, "Real literal is out of range");
 
         return null;
     }
@@ -408,7 +414,7 @@ internal sealed class LanguageLexer
     {
         Advance();
 
-        Error(StandardDiagnosticCodes.UnrecognizedCharacter, position, 1, "Unrecognized character");
+        Error(position, 1, StandardDiagnosticCodes.UnrecognizedCharacter, "Unrecognized character");
 
         return (position, SyntaxTokenKind.Unrecognized);
     }
@@ -437,7 +443,7 @@ internal sealed class LanguageLexer
 
         if (ch1 == '!')
         {
-            Error(StandardDiagnosticCodes.IncompleteExclamationEquals, position, "Incomplete '!=' operator");
+            Error(position, StandardDiagnosticCodes.IncompleteExclamationEquals, "Incomplete '!=' operator");
 
             return (position, SyntaxTokenKind.ExclamationEquals);
         }
@@ -554,7 +560,7 @@ internal sealed class LanguageLexer
         if (!ConsumeDigits(radix) && radix != 10)
         {
             Error(
-                StandardDiagnosticCodes.IncompleteIntegerLiteral, position, $"Incomplete base-{radix} integer literal");
+                position, StandardDiagnosticCodes.IncompleteIntegerLiteral, $"Incomplete base-{radix} integer literal");
 
             return (position, SyntaxTokenKind.IntegerLiteral);
         }
@@ -567,7 +573,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(10))
         {
-            Error(StandardDiagnosticCodes.IncompleteRealLiteral, position, "Incomplete real literal");
+            Error(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
             return (position, SyntaxTokenKind.RealLiteral);
         }
@@ -582,7 +588,7 @@ internal sealed class LanguageLexer
             Advance();
 
         if (!ConsumeDigits(10))
-            Error(StandardDiagnosticCodes.IncompleteRealLiteral, position, "Incomplete real literal");
+            Error(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
         return (position, SyntaxTokenKind.RealLiteral);
     }
@@ -628,7 +634,7 @@ internal sealed class LanguageLexer
         {
             if (Peek1() is null or '\n' or '\r')
             {
-                Error(StandardDiagnosticCodes.IncompleteStringLiteral, position, "Incomplete string literal");
+                Error(position, StandardDiagnosticCodes.IncompleteStringLiteral, "Incomplete string literal");
 
                 break;
             }
@@ -659,8 +665,8 @@ internal sealed class LanguageLexer
                         if (digit is not (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F'))
                         {
                             Error(
-                                StandardDiagnosticCodes.IncompleteUnicodeEscapeSequence,
                                 codePos,
+                                StandardDiagnosticCodes.IncompleteUnicodeEscapeSequence,
                                 "Incomplete Unicode escape sequence");
 
                             break;
@@ -671,14 +677,14 @@ internal sealed class LanguageLexer
 
                     if (!Rune.IsValid(int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture)))
                         Error(
-                            StandardDiagnosticCodes.InvalidUnicodeEscapeSequence,
                             codePos,
                             UnicodeEscapeSequenceLength,
+                            StandardDiagnosticCodes.InvalidUnicodeEscapeSequence,
                             $"Invalid Unicode escape sequence");
 
                     break;
                 default:
-                    Error(StandardDiagnosticCodes.IncompleteEscapeSequence, chPos, "Incomplete escape sequence");
+                    Error(chPos, StandardDiagnosticCodes.IncompleteEscapeSequence, "Incomplete escape sequence");
                     break;
             }
         }

@@ -1,3 +1,4 @@
+using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics.Binding;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
@@ -29,7 +30,9 @@ internal sealed class LanguageAnalyzer
             }
         }
 
-        private readonly ImmutableArray<SourceDiagnostic>.Builder _diagnostics;
+        private readonly SyntaxTree _tree;
+
+        private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
 
         private readonly Dictionary<string, (List<UseDeclarationSemantics> Declarations, ModulePath? Path)> _uses =
             new();
@@ -38,23 +41,24 @@ internal sealed class LanguageAnalyzer
 
         private Scope _scope = new(null);
 
-        public AnalysisVisitor(ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+        public AnalysisVisitor(SyntaxTree tree, ImmutableArray<Diagnostic>.Builder diagnostics)
         {
+            _tree = tree;
             _diagnostics = diagnostics;
         }
 
-        public DocumentSemantics Analyze(DocumentSyntax syntax)
+        public DocumentSemantics Analyze()
         {
-            var semantics = VisitDocument(syntax);
+            var semantics = VisitDocument(_tree.Root);
 
             foreach (var (name, (decls, _)) in _uses)
                 if (decls.Count != 1)
                     Error(
+                        decls[0].Syntax.NameToken.Span,
                         StandardDiagnosticCodes.DuplicateUseDeclaration,
-                        decls[0].Syntax.NameToken.GetLocation(),
                         $"Multiple 'use' declarations for '{name}' in module",
                         decls.Skip(1).Select(
-                            static decl => (decl.Syntax.NameToken.GetLocation(), "Also declared here")));
+                            static decl => (decl.Syntax.NameToken.Span, "Also declared here")));
 
             foreach (var sym in _duplicates)
             {
@@ -75,9 +79,9 @@ internal sealed class LanguageAnalyzer
                     _ => throw new UnreachableException(),
                 };
 
-                var locs = sym.GetLocations().ToArray();
+                var spans = sym.GetSpans().ToArray();
 
-                Error(code, locs[0], msg, locs.Skip(1).Select(loc => (loc, note)));
+                Error(spans[0], code, msg, spans.Skip(1).Select(span => (span, note)));
             }
 
             return semantics;
@@ -90,26 +94,27 @@ internal sealed class LanguageAnalyzer
         }
 
         private void Error(
-            SourceDiagnosticCode code,
-            SourceLocation location,
+            SourceTextSpan span,
+            DiagnosticCode code,
             string message)
         {
-            Error(code, location, message, Array.Empty<(SourceLocation, string)>());
+            Error(span, code, message, Array.Empty<(SourceTextSpan, string)>());
         }
 
         private void Error(
-            SourceDiagnosticCode code,
-            SourceLocation location,
+            SourceTextSpan span,
+            DiagnosticCode code,
             string message,
-            IEnumerable<(SourceLocation Location, string Message)> notes)
+            IEnumerable<(SourceTextSpan Span, string Message)> notes)
         {
             _diagnostics.Add(
-                SourceDiagnostic.Create(
+                new(
+                    _tree,
+                    span,
                     code,
-                    SourceDiagnosticSeverity.Error,
-                    location,
+                    DiagnosticSeverity.Error,
                     message,
-                    notes.Select(static t => SourceDiagnosticNote.Create(t.Location, t.Message))));
+                    notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
         }
 
         private static ModulePath? CreateModulePath(ModulePathSyntax path)
@@ -178,7 +183,7 @@ internal sealed class LanguageAnalyzer
             if (fields.Count == 0)
                 return;
 
-            var map = new Dictionary<string, List<SourceLocation>>(fields.Count);
+            var map = new Dictionary<string, List<SourceTextSpan>>(fields.Count);
 
             foreach (var field in fields)
             {
@@ -189,18 +194,18 @@ internal sealed class LanguageAnalyzer
 
                 entry ??= new(1);
 
-                entry.Add(name.GetLocation());
+                entry.Add(name.Span);
             }
 
             var note = $"Also {message} here";
 
-            foreach (var (name, locs) in map)
-                if (locs.Count != 1)
+            foreach (var (name, spans) in map)
+                if (spans.Count != 1)
                     Error(
+                        spans[0],
                         StandardDiagnosticCodes.DuplicateAggregateExpressionField,
-                        locs[0],
                         $"{type} field '{name}' is {message} multiple times",
-                        locs.Skip(1).Select(loc => (loc, note)));
+                        spans.Skip(1).Select(span => (span, note)));
         }
 
         // Document
@@ -740,8 +745,8 @@ internal sealed class LanguageAnalyzer
                 loop.BranchExpressions.Add(sema);
             else
                 Error(
+                    node.NextKeywordToken.Span,
                     StandardDiagnosticCodes.MissingEnclosingLoop,
-                    node.NextKeywordToken.GetLocation(),
                     "No enclosing 'while' or 'for' expression for 'next' expression");
 
             return sema;
@@ -758,8 +763,8 @@ internal sealed class LanguageAnalyzer
                 loop.BranchExpressions.Add(sema);
             else
                 Error(
+                    node.BreakKeywordToken.Span,
                     StandardDiagnosticCodes.MissingEnclosingLoop,
-                    node.BreakKeywordToken.GetLocation(),
                     "No enclosing 'while' or 'for' expression for 'break' expression");
 
             return sema;
@@ -816,13 +821,13 @@ internal sealed class LanguageAnalyzer
 
                 if (sym == null)
                     Error(
+                        ident.Span,
                         StandardDiagnosticCodes.UnresolvedIdentifier,
-                        ident.GetLocation(),
                         $"Unknown symbol name '{ident.Text}'");
                 else if (sym.Bindings.Any(node => node is TestDeclarationSemantics))
                     Error(
+                        ident.Span,
                         StandardDiagnosticCodes.IllegalTestReference,
-                        ident.GetLocation(),
                         $"Reference to test declaration '{ident.Text}' is illegal");
             }
 
@@ -842,8 +847,8 @@ internal sealed class LanguageAnalyzer
                 lambda.ThisExpressions.Add(sema);
             else
                 Error(
+                    node.ThisKeywordToken.Span,
                     StandardDiagnosticCodes.MissingEnclosingLambda,
-                    node.ThisKeywordToken.GetLocation(),
                     "No enclosing lambda expression for 'this' expression");
 
             return sema;
@@ -860,18 +865,18 @@ internal sealed class LanguageAnalyzer
                 case IdentifierExpressionSemantics ident:
                     if ((sym = ident.Symbol) is { IsMutable: false })
                         Error(
+                            node.LeftOperand.Span,
                             StandardDiagnosticCodes.ImmutableAssignmentTarget,
-                            node.LeftOperand.GetLocation(),
                             $"Assignment to immutable symbol '{ident.Syntax.IdentifierToken.Text}'",
-                            sym.GetLocations().Select(static loc => (loc, "Symbol defined here")));
+                            sym.GetSpans().Select(static loc => (loc, "Symbol defined here")));
 
                     break;
                 case FieldExpressionSemantics or IndexExpressionSemantics:
                     break;
                 default:
                     Error(
+                        node.LeftOperand.Span,
                         StandardDiagnosticCodes.InvalidAssignmentTarget,
-                        node.LeftOperand.GetLocation(),
                         "Assignment target must be an identifier, field, or index expression");
                     break;
             }
@@ -1079,18 +1084,15 @@ internal sealed class LanguageAnalyzer
         }
     }
 
-    private readonly DocumentSyntax _syntax;
+    private readonly AnalysisVisitor _visitor;
 
-    private readonly AnalysisVisitor _walker;
-
-    public LanguageAnalyzer(DocumentSyntax syntax, ImmutableArray<SourceDiagnostic>.Builder diagnostics)
+    public LanguageAnalyzer(SyntaxTree tree, ImmutableArray<Diagnostic>.Builder diagnostics)
     {
-        _syntax = syntax;
-        _walker = new(diagnostics);
+        _visitor = new(tree, diagnostics);
     }
 
     public DocumentSemantics Analyze()
     {
-        return _walker.Analyze(_syntax);
+        return _visitor.Analyze();
     }
 }

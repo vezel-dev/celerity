@@ -4,11 +4,10 @@ namespace Vezel.Celerity.Language.Syntax.Tree;
 
 public abstract class SyntaxItem
 {
-    public SyntaxAnalysis Analysis =>
-        _parent is SyntaxAnalysis analysis ? analysis : Unsafe.As<SyntaxItem>(_parent).Analysis;
+    public SyntaxTree Tree => _parent is SyntaxTree tree ? tree : Unsafe.As<SyntaxItem>(_parent).Tree;
 
-    // Checking for SyntaxAnalysis is faster since it is sealed, while SyntaxItem is not.
-    public SyntaxItem? Parent => _parent is SyntaxAnalysis ? null : Unsafe.As<SyntaxItem>(_parent);
+    // Checking for SyntaxTree is faster since it is sealed, while SyntaxItem is not.
+    public SyntaxItem? Parent => _parent is SyntaxTree ? null : Unsafe.As<SyntaxItem>(_parent);
 
     public abstract SourceTextSpan Span { get; }
 
@@ -18,23 +17,23 @@ public abstract class SyntaxItem
 
     private object _parent = null!;
 
+    private protected SyntaxItem()
+    {
+    }
+
     internal void SetParent(object parent)
     {
         _parent = parent;
     }
 
-    private protected SyntaxItem()
+    public SourceTextLocation GetLocation()
     {
+        return Tree.Text.GetLocation(Span);
     }
 
-    public SourceLocation GetLocation()
+    public SourceTextLocation GetFullLocation()
     {
-        return Analysis.Text.GetLocation(Span);
-    }
-
-    public SourceLocation GetFullLocation()
-    {
-        return Analysis.Text.GetLocation(FullSpan);
+        return Tree.Text.GetLocation(FullSpan);
     }
 
     public IEnumerable<SyntaxItem> Ancestors()
@@ -70,13 +69,13 @@ public abstract class SyntaxItem
 
     public abstract IEnumerable<SyntaxItem> Descendants();
 
-    public override string ToString()
+    public override sealed string ToString()
     {
-        return Analysis.Text.ToString(Span);
+        return Tree.Text.ToString(Span);
     }
 
     public string ToFullString()
     {
-        return Analysis.Text.ToString(FullSpan);
+        return Tree.Text.ToString(FullSpan);
     }
 }

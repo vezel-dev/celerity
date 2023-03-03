@@ -1,33 +1,33 @@
+using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics;
-using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Quality;
 
 public sealed class LintAnalysis
 {
-    public SemanticAnalysis Semantics { get; }
+    public SemanticTree Semantics { get; }
 
-    public ImmutableArray<SourceDiagnostic> Diagnostics { get; }
+    public ImmutableArray<Diagnostic> Diagnostics { get; }
 
     public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
 
-    private LintAnalysis(SemanticAnalysis semantics, ImmutableArray<SourceDiagnostic> diagnostics)
+    private LintAnalysis(SemanticTree semantics, ImmutableArray<Diagnostic> diagnostics)
     {
         Semantics = semantics;
         Diagnostics = diagnostics;
     }
 
     public static LintAnalysis Create(
-        SemanticAnalysis semantics, IEnumerable<LintPass> passes, LintConfiguration configuration)
+        SemanticTree semantics, IEnumerable<LintPass> passes, LintConfiguration configuration)
     {
         Check.Null(semantics);
         Check.Null(passes);
         Check.All(passes, static pass => pass != null);
         Check.Null(configuration);
 
-        var diags = semantics.Diagnostics.ToBuilder();
+        var diags = ImmutableArray.CreateBuilder<Diagnostic>(0);
 
-        new LanguageLinter(semantics.Document, passes, configuration, diags).Lint();
+        new LanguageLinter(semantics, passes, configuration, diags).Lint();
 
         return new(semantics, diags.DrainToImmutable());
     }

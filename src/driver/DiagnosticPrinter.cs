@@ -14,7 +14,7 @@ internal static class DiagnosticPrinter
             await Terminal.ErrorAsync(sequence);
     }
 
-    public static async ValueTask PrintAsync(SourceText text, ImmutableArray<SourceDiagnostic> diagnostics)
+    public static async ValueTask PrintAsync(SourceText text, IEnumerable<Diagnostic> diagnostics)
     {
         var lines = text
             .Lines
@@ -23,7 +23,7 @@ internal static class DiagnosticPrinter
         var margin = lines[^1].Line.ToString(_culture).Length;
 
         async ValueTask PrintWindowAsync(
-            SourceLocation location, string severity, (byte R, byte G, byte B) color, string message)
+            SourceTextLocation location, string severity, (byte R, byte G, byte B) color, string message)
         {
             async ValueTask PrintContextAsync(IEnumerable<(int Line, string Text)> lines)
             {
@@ -107,19 +107,19 @@ internal static class DiagnosticPrinter
         foreach (var diag in diagnostics)
         {
             await PrintWindowAsync(
-                diag.Location,
+                diag.GetLocation(),
                 $"{diag.Severity}[{diag.Code}]",
                 diag.Severity switch
                 {
-                    SourceDiagnosticSeverity.Suggestion => (0, 225, 0),
-                    SourceDiagnosticSeverity.Warning => (225, 225, 0),
-                    SourceDiagnosticSeverity.Error => (225, 0, 0),
+                    DiagnosticSeverity.Suggestion => (0, 225, 0),
+                    DiagnosticSeverity.Warning => (225, 225, 0),
+                    DiagnosticSeverity.Error => (225, 0, 0),
                     _ => throw new UnreachableException(),
                 },
                 diag.Message);
 
             foreach (var note in diag.Notes)
-                await PrintWindowAsync(note.Location, "Note", (0, 225, 225), note.Message);
+                await PrintWindowAsync(note.GetLocation(), "Note", (0, 225, 225), note.Message);
 
             await Terminal.ErrorLineAsync();
         }

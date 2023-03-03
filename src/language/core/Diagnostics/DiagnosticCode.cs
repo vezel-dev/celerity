@@ -1,42 +1,40 @@
-namespace Vezel.Celerity.Language.Text;
+namespace Vezel.Celerity.Language.Diagnostics;
 
-public readonly partial struct SourceDiagnosticCode :
-    IEquatable<SourceDiagnosticCode>, IEqualityOperators<SourceDiagnosticCode, SourceDiagnosticCode, bool>
+public readonly partial struct DiagnosticCode :
+    IEquatable<DiagnosticCode>, IEqualityOperators<DiagnosticCode, DiagnosticCode, bool>
 {
-    public static SourceDiagnosticCode InternalError { get; } = CreateError(0000);
-
     public string Code { get; }
 
     public bool IsStandard => char.IsAsciiLetterUpper(Code[0]);
 
-    private SourceDiagnosticCode(string code)
+    private DiagnosticCode(string code)
     {
         Code = code;
     }
 
-    internal static SourceDiagnosticCode CreateSuggestion(int code)
+    internal static DiagnosticCode CreateSuggestion(int code)
     {
         return new($"S{code:0000}");
     }
 
-    internal static SourceDiagnosticCode CreateWarning(int code)
+    internal static DiagnosticCode CreateWarning(int code)
     {
         return new($"W{code:0000}");
     }
 
-    internal static SourceDiagnosticCode CreateError(int code)
+    internal static DiagnosticCode CreateError(int code)
     {
         return new($"E{code:0000}");
     }
 
-    public static SourceDiagnosticCode Create(string name)
+    public static DiagnosticCode Create(string name)
     {
         Check.Argument(TryCreate(name, out var code), name);
 
         return code;
     }
 
-    public static bool TryCreate(string name, out SourceDiagnosticCode code)
+    public static bool TryCreate(string name, out DiagnosticCode code)
     {
         Check.Null(name);
 
@@ -52,18 +50,18 @@ public readonly partial struct SourceDiagnosticCode :
         return false;
     }
 
-    public static bool operator ==(SourceDiagnosticCode left, SourceDiagnosticCode right) => left.Equals(right);
+    public static bool operator ==(DiagnosticCode left, DiagnosticCode right) => left.Equals(right);
 
-    public static bool operator !=(SourceDiagnosticCode left, SourceDiagnosticCode right) => !left.Equals(right);
+    public static bool operator !=(DiagnosticCode left, DiagnosticCode right) => !left.Equals(right);
 
-    public bool Equals(SourceDiagnosticCode other)
+    public bool Equals(DiagnosticCode other)
     {
         return Code == other.Code;
     }
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return obj is SourceDiagnosticCode other && Equals(other);
+        return obj is DiagnosticCode other && Equals(other);
     }
 
     public override int GetHashCode()
