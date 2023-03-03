@@ -25,11 +25,10 @@ internal static class DiagnosticPrinter
         async ValueTask PrintWindowAsync(
             SourceLocation location, string severity, (byte R, byte G, byte B) color, string message)
         {
-            async ValueTask PrintContextAsync(IReadOnlyList<(int Line, string Text)> lines)
+            async ValueTask PrintContextAsync(IEnumerable<(int Line, string Text)> lines)
             {
-                if (!lines.All(t => string.IsNullOrWhiteSpace(t.Text)))
-                    foreach (var (line, text) in lines)
-                        await PrintLineAsync(line, text, null);
+                foreach (var (line, text) in lines)
+                    await PrintLineAsync(line, text, null);
             }
 
             async ValueTask PrintLineAsync(int line, string text, string? sequence)
@@ -49,22 +48,16 @@ internal static class DiagnosticPrinter
                     await WriteControlAsync(ControlSequences.ResetAttributes());
             }
 
+            await WriteControlAsync(ControlSequences.SetForegroundColor(color.R, color.G, color.B));
+            await Terminal.ErrorAsync($"{severity}: ");
+            await WriteControlAsync(ControlSequences.ResetAttributes());
+            await Terminal.ErrorLineAsync(message);
+
             var start = location.Start;
             var end = location.End;
 
             var startLine = start.Line + 1;
             var endLine = end.Line + 1;
-
-            const int Context = 3;
-
-            var leading = lines.Where(t => t.Line >= startLine - Context && t.Line < startLine).ToArray();
-            var affected = lines.Where(t => t.Line >= startLine && t.Line <= endLine).ToArray();
-            var trailing = lines.Where(t => t.Line > endLine && t.Line <= endLine + Context).ToArray();
-
-            await WriteControlAsync(ControlSequences.SetForegroundColor(color.R, color.G, color.B));
-            await Terminal.ErrorAsync($"{severity}: ");
-            await WriteControlAsync(ControlSequences.ResetAttributes());
-            await Terminal.ErrorLineAsync(message);
 
             await WriteControlAsync(ControlSequences.SetForegroundColor(128, 128, 128));
             await Terminal.ErrorAsync($"{new string('-', margin + 1)}> ");
@@ -73,9 +66,11 @@ internal static class DiagnosticPrinter
                 $"{location.Path} ({startLine},{start.Character + 1})-({endLine},{end.Character + 1})");
             await WriteControlAsync(ControlSequences.ResetAttributes());
 
-            await PrintContextAsync(leading);
+            const int Context = 3;
 
-            foreach (var (line, text) in affected)
+            await PrintContextAsync(lines.Where(t => t.Line >= startLine - Context && t.Line < startLine));
+
+            foreach (var (line, text) in lines.Where(t => t.Line >= startLine && t.Line <= endLine))
             {
                 await PrintLineAsync(line, text, ControlSequences.SetDecorations(intense: true));
 
@@ -106,7 +101,7 @@ internal static class DiagnosticPrinter
                 await WriteControlAsync(ControlSequences.ResetAttributes());
             }
 
-            await PrintContextAsync(trailing);
+            await PrintContextAsync(lines.Where(t => t.Line > endLine && t.Line <= endLine + Context));
         }
 
         foreach (var diag in diagnostics)
