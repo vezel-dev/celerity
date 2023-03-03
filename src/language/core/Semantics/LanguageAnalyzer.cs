@@ -37,6 +37,8 @@ internal sealed class LanguageAnalyzer
         private readonly Dictionary<string, (List<UseDeclarationSemantics> Declarations, ModulePath? Path)> _uses =
             new();
 
+        private readonly List<IdentifierExpressionSemantics> _identifiers = new();
+
         private readonly List<Symbol> _duplicates = new();
 
         private Scope _scope = new(null);
@@ -82,6 +84,22 @@ internal sealed class LanguageAnalyzer
                 var spans = sym.GetSpans().ToArray();
 
                 Error(spans[0], code, msg, spans.Skip(1).Select(span => (span, note)));
+            }
+
+            foreach (var ident in _identifiers)
+            {
+                var sym = ident.Symbol!;
+
+                if (!sym.Bindings.Any(node => node is TestDeclarationSemantics))
+                    continue;
+
+                var name = ident.Syntax.IdentifierToken;
+
+                Error(
+                    name.Span,
+                    StandardDiagnosticCodes.IllegalTestReference,
+                    $"Reference to test declaration '{name.Text}' is illegal",
+                    sym.GetSpans().Select(static span => (span, "Symbol declared here")));
             }
 
             return semantics;
@@ -824,16 +842,15 @@ internal sealed class LanguageAnalyzer
                         ident.Span,
                         StandardDiagnosticCodes.UnresolvedIdentifier,
                         $"Unknown symbol name '{ident.Text}'");
-                else if (sym.Bindings.Any(node => node is TestDeclarationSemantics))
-                    Error(
-                        ident.Span,
-                        StandardDiagnosticCodes.IllegalTestReference,
-                        $"Reference to test declaration '{ident.Text}' is illegal");
             }
 
             var sema = new IdentifierExpressionSemantics(node, sym);
 
-            sym?.AddReference(sema);
+            if (sym != null)
+            {
+                sym.AddReference(sema);
+                _identifiers.Add(sema);
+            }
 
             return sema;
         }
