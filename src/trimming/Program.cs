@@ -1,3 +1,3 @@
-Console.WriteLine("What are you doing? 👀");
+Terminal.OutLine("What are you doing? 👀");
 
 return 1;
