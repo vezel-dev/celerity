@@ -85,16 +85,6 @@ public abstract class SyntaxNode : SyntaxItem
         return base.AncestorsAndSelf().UnsafeCast<SyntaxNode>();
     }
 
-    public new IEnumerable<SyntaxNode> Siblings()
-    {
-        return base.Siblings().UnsafeCast<SyntaxNode>();
-    }
-
-    public new IEnumerable<SyntaxNode> SiblingsAndSelf()
-    {
-        return base.SiblingsAndSelf().UnsafeCast<SyntaxNode>();
-    }
-
     public abstract IEnumerable<SyntaxNode> ChildNodes();
 
     public IEnumerable<SyntaxNode> ChildNodesAndSelf()
