@@ -34,6 +34,18 @@ public readonly struct SourceTextSpan :
 
     public static bool operator >=(SourceTextSpan left, SourceTextSpan right) => left.CompareTo(right) >= 0;
 
+    public bool Contains(int position)
+    {
+        Check.Range(position >= 0, position);
+
+        return position >= Start && position < End;
+    }
+
+    public bool Contains(SourceTextSpan span)
+    {
+        return span.Start >= Start && span.End <= End;
+    }
+
     public int CompareTo(SourceTextSpan other)
     {
         var diff = Start - other.Start;
