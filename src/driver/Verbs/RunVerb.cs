@@ -15,7 +15,7 @@ internal sealed class RunVerb : Verb
             new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File)),
             SyntaxMode.Module);
         var semantics = SemanticTree.Analyze(syntax);
-        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(diag => diag.Span).ToArray();
+        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).ToArray();
 
         await DiagnosticPrinter.PrintAsync(diags);
 

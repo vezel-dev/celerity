@@ -21,12 +21,7 @@ internal sealed class CheckVerb : Verb
                 SyntaxMode.Module);
             var semantics = SemanticTree.Analyze(syntax);
             var lint = LintAnalysis.Create(semantics, LintPass.DefaultPasses, LintConfiguration.Default);
-            var diags = syntax
-                .Diagnostics
-                .Concat(semantics.Diagnostics)
-                .Concat(lint.Diagnostics)
-                .OrderBy(diag => diag.Span)
-                .ToArray();
+            var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).Concat(lint.Diagnostics).ToArray();
 
             await DiagnosticPrinter.PrintAsync(lint.Diagnostics);
 
