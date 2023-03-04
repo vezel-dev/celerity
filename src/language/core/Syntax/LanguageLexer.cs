@@ -85,11 +85,14 @@ internal sealed class LanguageLexer
 
     private SyntaxTrivia CreateTrivia(int position, SyntaxTriviaKind kind)
     {
-        var trivia = new SyntaxTrivia(position, kind, _trivia.ToString());
+        var text = _trivia.ToString();
 
         _ = _trivia.Clear();
 
-        return trivia;
+        return new SyntaxTrivia(
+            position,
+            kind,
+            kind is SyntaxTriviaKind.ShebangLine or SyntaxTriviaKind.NewLine ? string.Intern(text) : text);
     }
 
     private SyntaxToken CreateToken(int position, SyntaxTokenKind kind)
