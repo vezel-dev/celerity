@@ -67,7 +67,23 @@ public abstract class SyntaxItem
 
     public abstract IEnumerable<SyntaxItem> Children();
 
+    public IEnumerable<SyntaxItem> ChildrenAndSelf()
+    {
+        yield return this;
+
+        foreach (var child in Children())
+            yield return child;
+    }
+
     public abstract IEnumerable<SyntaxItem> Descendants();
+
+    public IEnumerable<SyntaxItem> DescendantsAndSelf()
+    {
+        yield return this;
+
+        foreach (var descendant in Descendants())
+            yield return descendant;
+    }
 
     public override sealed string ToString()
     {

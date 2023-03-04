@@ -97,6 +97,14 @@ public abstract class SyntaxNode : SyntaxItem
 
     public abstract IEnumerable<SyntaxNode> ChildNodes();
 
+    public IEnumerable<SyntaxNode> ChildNodesAndSelf()
+    {
+        yield return this;
+
+        foreach (var child in ChildNodes())
+            yield return child;
+    }
+
     public abstract IEnumerable<SyntaxToken> ChildTokens();
 
     public override IEnumerable<SyntaxItem> Descendants()
@@ -137,6 +145,14 @@ public abstract class SyntaxNode : SyntaxItem
                     work.Push(child);
         }
         while (work.Count != 0);
+    }
+
+    public IEnumerable<SyntaxNode> DescendantNodesAndSelf()
+    {
+        yield return this;
+
+        foreach (var descendant in DescendantNodes())
+            yield return descendant;
     }
 
     public IEnumerable<SyntaxToken> DescendantTokens()

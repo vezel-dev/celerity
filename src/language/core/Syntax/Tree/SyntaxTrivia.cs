@@ -40,8 +40,18 @@ public sealed class SyntaxTrivia : SyntaxItem
         return Array.Empty<SyntaxItem>();
     }
 
+    public new IEnumerable<SyntaxTrivia> ChildrenAndSelf()
+    {
+        return base.ChildrenAndSelf().UnsafeCast<SyntaxTrivia>();
+    }
+
     public override IEnumerable<SyntaxItem> Descendants()
     {
         return Array.Empty<SyntaxItem>();
+    }
+
+    public new IEnumerable<SyntaxTrivia> DescendantsAndSelf()
+    {
+        return base.DescendantsAndSelf().UnsafeCast<SyntaxTrivia>();
     }
 }
