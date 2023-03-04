@@ -2,6 +2,8 @@ namespace Vezel.Celerity.Driver;
 
 internal static class DiagnosticPrinter
 {
+    private const int ContextLines = 3;
+
     // TODO: Move all of this to Vezel.Celerity.Language.Tooling.
 
     private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
@@ -66,9 +68,7 @@ internal static class DiagnosticPrinter
                 $"{location.Path} ({startLine},{start.Character + 1})-({endLine},{end.Character + 1})");
             await WriteControlAsync(ControlSequences.ResetAttributes());
 
-            const int Context = 3;
-
-            await PrintContextAsync(lines.Where(t => t.Line >= startLine - Context && t.Line < startLine));
+            await PrintContextAsync(lines.Where(t => t.Line >= startLine - ContextLines && t.Line < startLine));
 
             foreach (var (line, text) in lines.Where(t => t.Line >= startLine && t.Line <= endLine))
             {
@@ -79,20 +79,39 @@ internal static class DiagnosticPrinter
                 var isStart = line == startLine;
                 var isEnd = line == endLine;
 
+                var visible = false;
+
                 for (var i = 0; i < text.Length; i++)
                 {
                     var gtStart = i >= start.Character;
                     var ltEnd = i < end.Character;
 
-                    _ = sb.Append((isStart, isEnd, gtStart, ltEnd) switch
+                    var ch = (isStart, isEnd, gtStart, ltEnd) switch
                     {
                         (false, false, _, _) or
                         (true, true, true, true) or
                         (true, false, true, _) or
                         (false, true, _, true) => '^',
                         _ => ' ',
-                    });
+                    };
+
+                    if (ch == '^')
+                        visible = true;
+
+                    _ = sb.Append(ch);
                 }
+
+                // Edge case: In various situations, a diagnostic can point to lines in such a way that no visible
+                // character on that line gets a caret under it. For example, consider a line that consists of nothing
+                // but the CR/LF sequence; we have stripped that earlier so it will not be processed in the loop above.
+                // Another case is a file that ends abruptly when a token was expected; there, the diagnostic will point
+                // just past the end of the source text.
+                //
+                // The fix is straightforward: If a line is affected by a diagnostic but has not had a caret printed
+                // yet, we just print one past the end of the line. It will point to a white space character that we
+                // just pretend exists. (This is how most text editors seem to handle this case as well.)
+                if (!visible)
+                    _ = sb.Append('^');
 
                 await WriteControlAsync(ControlSequences.SetForegroundColor(128, 128, 128));
                 await Terminal.ErrorAsync($"{new string(' ', margin)} : ");
@@ -101,7 +120,7 @@ internal static class DiagnosticPrinter
                 await WriteControlAsync(ControlSequences.ResetAttributes());
             }
 
-            await PrintContextAsync(lines.Where(t => t.Line > endLine && t.Line <= endLine + Context));
+            await PrintContextAsync(lines.Where(t => t.Line > endLine && t.Line <= endLine + ContextLines));
         }
 
         foreach (var diag in diagnostics)
