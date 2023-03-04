@@ -17,7 +17,6 @@ diagnostic rendering.</PackageDescription>
     <ItemGroup>
         <PackageReference Include="NuGet.Versioning" />
         <PackageReference Include="Spdx" />
-        <PackageReference Include="Wcwidth" />
     </ItemGroup>
 
     <Import Project="../../common/common.targets" />
