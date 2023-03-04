@@ -36,12 +36,6 @@
                         Version="17.5.0" />
         <PackageVersion Include="Microsoft.TestPlatform.ObjectModel"
                         Version="17.5.0" />
-        <PackageVersion Include="Microsoft.Windows.CsWin32"
-                        Version="0.2.188-beta" />
-        <PackageVersion Include="Microsoft.Windows.SDK.Win32Docs"
-                        Version="0.1.12-alpha" />
-        <PackageVersion Include="Microsoft.Windows.SDK.Win32Metadata"
-                        Version="41.0.25-preview" />
         <PackageVersion Include="NuGet.Versioning"
                         Version="6.4.0" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
