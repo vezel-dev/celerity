@@ -12,8 +12,6 @@ public sealed class SemanticTree
 
     public ImmutableArray<Diagnostic> Diagnostics { get; }
 
-    public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
-
     private SemanticTree(SyntaxTree syntax, DocumentSemantics root, ImmutableArray<Diagnostic> diagnostics)
     {
         Syntax = syntax;

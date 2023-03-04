@@ -13,8 +13,6 @@ public sealed class SyntaxTree
 
     public ImmutableArray<Diagnostic> Diagnostics { get; }
 
-    public bool HasErrors => Diagnostics.Any(diag => diag.IsError);
-
     private SyntaxTree(SourceText text, DocumentSyntax root, IEnumerable<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
         Text = text;
