@@ -56,6 +56,14 @@ public abstract class SemanticNode
 
     public abstract IEnumerable<SemanticNode> Children();
 
+    public IEnumerable<SemanticNode> ChildrenAndSelf()
+    {
+        yield return this;
+
+        foreach (var child in Children())
+            yield return child;
+    }
+
     public IEnumerable<SemanticNode> Descendants()
     {
         var work = new Stack<SemanticNode>();
@@ -74,6 +82,14 @@ public abstract class SemanticNode
                     work.Push(child);
         }
         while (work.Count != 0);
+    }
+
+    public IEnumerable<SemanticNode> DescendantsAndSelf()
+    {
+        yield return this;
+
+        foreach (var descendant in Descendants())
+            yield return descendant;
     }
 
     internal abstract void Visit(SemanticVisitor visitor);
