@@ -14,7 +14,8 @@ internal sealed class CheckVerb : Verb
         var directory = Directory ?? Environment.CurrentDirectory;
         var errors = false;
 
-        foreach (var file in System.IO.Directory.EnumerateFiles(directory, "*.cel", SearchOption.AllDirectories))
+        foreach (var file in System.IO.Directory
+            .EnumerateFiles(directory, "*.cel", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
         {
             var syntax = SyntaxTree.Parse(
                 new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file)),
