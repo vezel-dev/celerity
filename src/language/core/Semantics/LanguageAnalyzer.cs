@@ -53,7 +53,7 @@ internal sealed class LanguageAnalyzer
         {
             var semantics = VisitDocument(_tree.Root);
 
-            foreach (var (name, (decls, _)) in _uses.OrderBy(kvp => kvp.Key))
+            foreach (var (name, (decls, _)) in _uses.OrderBy(kvp => kvp.Key, StringComparer.Ordinal))
                 if (decls.Count != 1)
                     Error(
                         decls[0].Syntax.NameToken.Span,
