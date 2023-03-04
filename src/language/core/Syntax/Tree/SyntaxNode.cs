@@ -6,7 +6,7 @@ public abstract class SyntaxNode : SyntaxItem
 {
     public new SyntaxNode? Parent => Unsafe.As<SyntaxNode?>(base.Parent);
 
-    public override SourceTextSpan Span
+    public override sealed SourceTextSpan Span
     {
         get
         {
@@ -16,7 +16,7 @@ public abstract class SyntaxNode : SyntaxItem
         }
     }
 
-    public override SourceTextSpan FullSpan
+    public override sealed SourceTextSpan FullSpan
     {
         get
         {
@@ -26,7 +26,7 @@ public abstract class SyntaxNode : SyntaxItem
         }
     }
 
-    public override bool HasChildren => HasNodes || HasTokens;
+    public override sealed bool HasChildren => HasNodes || HasTokens;
 
     public abstract bool HasNodes { get; }
 
@@ -97,7 +97,7 @@ public abstract class SyntaxNode : SyntaxItem
 
     public abstract IEnumerable<SyntaxToken> ChildTokens();
 
-    public override IEnumerable<SyntaxItem> Descendants()
+    public override sealed IEnumerable<SyntaxItem> Descendants()
     {
         var work = new Stack<SyntaxItem>();
 
