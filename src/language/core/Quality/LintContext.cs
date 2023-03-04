@@ -36,6 +36,7 @@ public readonly struct LintContext
     public void ReportDiagnostic(
         SourceTextSpan span, string message, IEnumerable<(SourceTextSpan Span, string Message)> notes)
     {
+        Check.Argument(!span.IsEmpty, span);
         Check.NullOrEmpty(message);
         Check.Null(notes);
         Check.All(notes, static note => note.Message != null);
