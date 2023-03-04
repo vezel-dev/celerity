@@ -2,9 +2,9 @@ namespace Vezel.Celerity.Driver;
 
 internal static class DiagnosticPrinter
 {
-    private const int ContextLines = 3;
-
     // TODO: Move all of this to Vezel.Celerity.Language.Tooling.
+
+    private const int ContextLines = 3;
 
     private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
 
@@ -16,16 +16,15 @@ internal static class DiagnosticPrinter
             await Terminal.ErrorAsync(sequence);
     }
 
-    public static async ValueTask PrintAsync(SourceText text, IEnumerable<Diagnostic> diagnostics)
+    public static async ValueTask PrintAsync(IEnumerable<Diagnostic> diagnostics)
     {
-        var lines = text
-            .Lines
-            .Select(line => (Line: line.Line + 1, Text: line.ToString().ReplaceLineEndings(string.Empty)))
-            .ToArray();
-        var margin = lines[^1].Line.ToString(_culture).Length;
-
         async ValueTask PrintWindowAsync(
-            SourceTextLocation location, string severity, (byte R, byte G, byte B) color, string message)
+            IReadOnlyList<(int Line, string Text)> lines,
+            int margin,
+            SourceTextLocation location,
+            string severity,
+            (byte R, byte G, byte B) color,
+            string message)
         {
             async ValueTask PrintContextAsync(IEnumerable<(int Line, string Text)> lines)
             {
@@ -125,7 +124,17 @@ internal static class DiagnosticPrinter
 
         foreach (var diag in diagnostics)
         {
+            var lines = diag
+                .Tree
+                .GetText()
+                .Lines
+                .Select(line => (Line: line.Line + 1, Text: line.ToString().ReplaceLineEndings(string.Empty)))
+                .ToArray();
+            var margin = lines[^1].Line.ToString(_culture).Length;
+
             await PrintWindowAsync(
+                lines,
+                margin,
                 diag.GetLocation(),
                 $"{diag.Severity}[{diag.Code}]",
                 diag.Severity switch
@@ -138,7 +147,7 @@ internal static class DiagnosticPrinter
                 diag.Message);
 
             foreach (var note in diag.Notes)
-                await PrintWindowAsync(note.GetLocation(), "Note", (0, 225, 225), note.Message);
+                await PrintWindowAsync(lines, margin, note.GetLocation(), "Note", (0, 225, 225), note.Message);
 
             await Terminal.ErrorLineAsync();
         }

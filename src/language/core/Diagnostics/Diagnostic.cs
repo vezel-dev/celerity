@@ -40,7 +40,7 @@ public sealed class Diagnostic
 
     public SourceTextLocation GetLocation()
     {
-        return Tree.Text.GetLocation(Span);
+        return Tree.GetText().GetLocation(Span);
     }
 
     [SuppressMessage("", "CA1308")]

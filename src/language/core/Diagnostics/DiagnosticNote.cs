@@ -23,7 +23,7 @@ public sealed class DiagnosticNote
 
     public SourceTextLocation GetLocation()
     {
-        return Parent.Tree.Text.GetLocation(Span);
+        return Parent.Tree.GetText().GetLocation(Span);
     }
 
     public override string ToString()

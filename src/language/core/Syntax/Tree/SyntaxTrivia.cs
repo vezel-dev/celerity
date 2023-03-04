@@ -14,6 +14,7 @@ public sealed class SyntaxTrivia : SyntaxItem
 
     public SyntaxTriviaKind Kind { get; }
 
+    [SuppressMessage("", "CA1721")]
     public string Text { get; }
 
     private readonly int _position;
@@ -53,5 +54,15 @@ public sealed class SyntaxTrivia : SyntaxItem
     public new IEnumerable<SyntaxTrivia> DescendantsAndSelf()
     {
         return base.DescendantsAndSelf().UnsafeCast<SyntaxTrivia>();
+    }
+
+    public override string ToString()
+    {
+        return ToFullString();
+    }
+
+    public override string ToFullString()
+    {
+        return Text;
     }
 }

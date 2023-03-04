@@ -6,14 +6,14 @@ public sealed class SyntaxToken : SyntaxItem
 {
     public new SyntaxNode Parent => Unsafe.As<SyntaxNode>(base.Parent!);
 
-    public override SourceTextSpan Span => _position == -1 ? SourceTextSpan.Empty : new(_position, Text.Length);
+    public override SourceTextSpan Span => _position == -1 ? default : new(_position, Text.Length);
 
     public override SourceTextSpan FullSpan
     {
         get
         {
             if (_position == -1)
-                return SourceTextSpan.Empty;
+                return default;
 
             var start = LeadingTrivia.FirstOrDefault()?.FullSpan.Start ?? _position;
             var length = TrailingTrivia.LastOrDefault()?.FullSpan.End - start ?? Text.Length;
@@ -32,6 +32,7 @@ public sealed class SyntaxToken : SyntaxItem
 
     public bool IsUnrecognized => Kind == SyntaxTokenKind.Unrecognized;
 
+    [SuppressMessage("", "CA1721")]
     public string Text { get; }
 
     public object? Value { get; }
@@ -92,5 +93,28 @@ public sealed class SyntaxToken : SyntaxItem
     public override IEnumerable<SyntaxTrivia> Descendants()
     {
         return Children();
+    }
+
+    public override string ToString()
+    {
+        return Text;
+    }
+
+    public override string ToFullString()
+    {
+        if (LeadingTrivia.IsEmpty && TrailingTrivia.IsEmpty)
+            return ToString();
+
+        var sb = new StringBuilder();
+
+        foreach (var leading in LeadingTrivia)
+            _ = sb.Append(leading);
+
+        _ = sb.Append(Text);
+
+        foreach (var trailing in TrailingTrivia)
+            _ = sb.Append(trailing);
+
+        return sb.ToString();
     }
 }

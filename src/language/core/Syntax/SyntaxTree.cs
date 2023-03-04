@@ -6,21 +6,20 @@ namespace Vezel.Celerity.Language.Syntax;
 
 public sealed class SyntaxTree
 {
-    // TODO: We should eventually get rid of this. When we need the source text, we can reconstruct it from the tree.
-    public SourceText Text { get; }
+    public string Path { get; }
 
     public DocumentSyntax Root { get; }
 
     public ImmutableArray<Diagnostic> Diagnostics { get; }
 
+    private SoftReference<SourceText> _text;
+
     private SyntaxTree(SourceText text, DocumentSyntax root, IEnumerable<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
-        Text = text;
+        _text = new(text);
+        Path = text.Path;
         Root = root;
-        Diagnostics = diagnostics
-            .Select(creator => creator(this))
-            .OrderBy(diag => diag.Span)
-            .ToImmutableArray();
+        Diagnostics = diagnostics.Select(creator => creator(this)).OrderBy(diag => diag.Span).ToImmutableArray();
 
         root.SetParent(this);
     }
@@ -34,5 +33,13 @@ public sealed class SyntaxTree
 
         return new(
             text, new LanguageParser(new LanguageLexer(text, mode, diags).Lex(), mode, diags).ParseDocument(), diags);
+    }
+
+    public SourceText GetText()
+    {
+        if ((SourceText?)_text is not { } text)
+            _text = new(text = Root.GetFullText());
+
+        return text;
     }
 }

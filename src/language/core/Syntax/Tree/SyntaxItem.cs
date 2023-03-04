@@ -28,12 +28,12 @@ public abstract class SyntaxItem
 
     public SourceTextLocation GetLocation()
     {
-        return Tree.Text.GetLocation(Span);
+        return Tree.GetText().GetLocation(Span);
     }
 
     public SourceTextLocation GetFullLocation()
     {
-        return Tree.Text.GetLocation(FullSpan);
+        return Tree.GetText().GetLocation(FullSpan);
     }
 
     public IEnumerable<SyntaxItem> Ancestors()
@@ -85,13 +85,17 @@ public abstract class SyntaxItem
             yield return descendant;
     }
 
-    public override sealed string ToString()
+    public SourceText GetText()
     {
-        return Tree.Text.ToString(Span);
+        return new StringSourceText(Tree.Path, ToString());
     }
 
-    public string ToFullString()
+    public SourceText GetFullText()
     {
-        return Tree.Text.ToString(FullSpan);
+        return new StringSourceText(Tree.Path, ToFullString());
     }
+
+    public abstract override string ToString();
+
+    public abstract string ToFullString();
 }

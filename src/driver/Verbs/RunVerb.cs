@@ -11,12 +11,13 @@ internal sealed class RunVerb : Verb
     {
         // TODO: Replace all of this.
 
-        var text = new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File));
-        var syntax = SyntaxTree.Parse(text, SyntaxMode.Module);
+        var syntax = SyntaxTree.Parse(
+            new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File)),
+            SyntaxMode.Module);
         var semantics = SemanticTree.Analyze(syntax);
         var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(diag => diag.Span).ToArray();
 
-        await DiagnosticPrinter.PrintAsync(text, diags);
+        await DiagnosticPrinter.PrintAsync(diags);
 
         return diags.Any(diag => diag.IsError) ? 1 : 0;
     }

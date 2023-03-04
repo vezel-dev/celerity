@@ -16,8 +16,9 @@ internal sealed class CheckVerb : Verb
 
         foreach (var file in System.IO.Directory.EnumerateFiles(directory, "*.cel", SearchOption.AllDirectories))
         {
-            var text = new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file));
-            var syntax = SyntaxTree.Parse(text, SyntaxMode.Module);
+            var syntax = SyntaxTree.Parse(
+                new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file)),
+                SyntaxMode.Module);
             var semantics = SemanticTree.Analyze(syntax);
             var lint = LintAnalysis.Create(semantics, LintPass.DefaultPasses, LintConfiguration.Default);
             var diags = syntax
@@ -27,7 +28,7 @@ internal sealed class CheckVerb : Verb
                 .OrderBy(diag => diag.Span)
                 .ToArray();
 
-            await DiagnosticPrinter.PrintAsync(text, lint.Diagnostics);
+            await DiagnosticPrinter.PrintAsync(lint.Diagnostics);
 
             errors |= diags.Any(diag => diag.IsError);
         }

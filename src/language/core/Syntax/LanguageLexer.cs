@@ -8,8 +8,6 @@ internal sealed class LanguageLexer
 {
     private const int UnicodeEscapeSequenceLength = 6;
 
-    private readonly SourceText _text;
-
     private readonly ListReader<char> _reader;
 
     private readonly SyntaxMode _mode;
@@ -32,7 +30,6 @@ internal sealed class LanguageLexer
 
     public LanguageLexer(SourceText text, SyntaxMode mode, List<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
-        _text = text;
         _reader = new(text);
         _mode = mode;
         _diagnostics = diagnostics;

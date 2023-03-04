@@ -6,25 +6,9 @@ public abstract class SyntaxNode : SyntaxItem
 {
     public new SyntaxNode? Parent => Unsafe.As<SyntaxNode?>(base.Parent);
 
-    public override sealed SourceTextSpan Span
-    {
-        get
-        {
-            EnsureSpansInitialized(out var span, out _);
+    public override sealed SourceTextSpan Span => EnsureSpansInitialized().Span;
 
-            return span;
-        }
-    }
-
-    public override sealed SourceTextSpan FullSpan
-    {
-        get
-        {
-            EnsureSpansInitialized(out _, out var fullSpan);
-
-            return fullSpan;
-        }
-    }
+    public override sealed SourceTextSpan FullSpan => EnsureSpansInitialized().FullSpan;
 
     public override sealed bool HasChildren => HasNodes || HasTokens;
 
@@ -42,18 +26,16 @@ public abstract class SyntaxNode : SyntaxItem
     {
     }
 
-    private void EnsureSpansInitialized(out SourceTextSpan span, out SourceTextSpan fullSpan)
+    private (SourceTextSpan Span, SourceTextSpan FullSpan) EnsureSpansInitialized()
     {
         if (_spansInitialized)
-        {
-            span = _span;
-            fullSpan = _fullSpan;
-
-            return;
-        }
+            return (_span, _fullSpan);
 
         var tokens = DescendantTokens().ToArray();
         var first = tokens.FirstOrDefault(tok => !tok.IsMissing);
+
+        SourceTextSpan span;
+        SourceTextSpan fullSpan;
 
         if (first != null)
         {
@@ -67,12 +49,14 @@ public abstract class SyntaxNode : SyntaxItem
             fullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
         }
         else
-            span = fullSpan = SourceTextSpan.Empty;
+            span = fullSpan = default;
 
         _span = span;
         _fullSpan = fullSpan;
 
         _spansInitialized = true;
+
+        return (span, fullSpan);
     }
 
     public new IEnumerable<SyntaxNode> Ancestors()
@@ -167,9 +151,10 @@ public abstract class SyntaxNode : SyntaxItem
 
     public IEnumerable<SyntaxTrivia> DescendantTrivia()
     {
-        // Avoid enumerator allocations by explicitly accessing the trivia on tokens.
         foreach (var token in DescendantTokens())
         {
+            // Avoid enumerator allocations by explicitly accessing the trivia on tokens.
+
             foreach (var leading in token.LeadingTrivia)
                 yield return leading;
 
@@ -181,4 +166,46 @@ public abstract class SyntaxNode : SyntaxItem
     internal abstract void Visit(SyntaxVisitor visitor);
 
     internal abstract T? Visit<T>(SyntaxVisitor<T> visitor);
+
+    public override sealed string ToString()
+    {
+        return ToString(false);
+    }
+
+    public override sealed string ToFullString()
+    {
+        return ToString(true);
+    }
+
+    private string ToString(bool full)
+    {
+        var sb = new StringBuilder();
+
+        var tokens = DescendantTokens().ToArray();
+        var first = tokens.FirstOrDefault(tok => !tok.IsMissing);
+
+        if (first == null)
+            return string.Empty;
+
+        // This could end up being the same as the first token.
+        var last = tokens.LastOrDefault(tok => !tok.IsMissing);
+
+        foreach (var token in tokens)
+        {
+            if (token.IsMissing)
+                continue;
+
+            if (token != first || full)
+                foreach (var leading in token.LeadingTrivia)
+                    _ = sb.Append(leading);
+
+            _ = sb.Append(token);
+
+            if (token != last || full)
+                foreach (var trailing in token.TrailingTrivia)
+                    _ = sb.Append(trailing);
+        }
+
+        return sb.ToString();
+    }
 }
