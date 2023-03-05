@@ -4,9 +4,9 @@ public sealed class SourceTextLineList : IReadOnlyList<SourceTextLine>
 {
     public struct Enumerator : IEnumerator<SourceTextLine>
     {
-        public SourceTextLine Current => _enumerator.Current;
+        public readonly SourceTextLine Current => _enumerator.Current;
 
-        object IEnumerator.Current => Current;
+        readonly object IEnumerator.Current => Current;
 
         private ImmutableArray<SourceTextLine>.Enumerator _enumerator;
 
@@ -15,7 +15,7 @@ public sealed class SourceTextLineList : IReadOnlyList<SourceTextLine>
             _enumerator = enumerator;
         }
 
-        public void Dispose()
+        readonly void IDisposable.Dispose()
         {
         }
 
@@ -24,7 +24,7 @@ public sealed class SourceTextLineList : IReadOnlyList<SourceTextLine>
             return _enumerator.MoveNext();
         }
 
-        public void Reset()
+        readonly void IEnumerator.Reset()
         {
             throw new NotSupportedException();
         }

@@ -6,9 +6,9 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
 {
     public struct Enumerator : IEnumerator<T>
     {
-        public T Current => _enumerator.Current;
+        public readonly T Current => _enumerator.Current;
 
-        object IEnumerator.Current => Current;
+        readonly object IEnumerator.Current => Current;
 
         private ImmutableArray<T>.Enumerator _enumerator;
 
@@ -17,7 +17,7 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
             _enumerator = enumerator;
         }
 
-        public void Dispose()
+        readonly void IDisposable.Dispose()
         {
         }
 
@@ -26,7 +26,7 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
             return _enumerator.MoveNext();
         }
 
-        public void Reset()
+        void IEnumerator.Reset()
         {
             throw new NotSupportedException();
         }
@@ -35,6 +35,8 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
     public static SyntaxItemList<T> Empty { get; } = new(ImmutableArray<T>.Empty);
 
     public int Count => _items.Length;
+
+    public bool IsEmpty => Count == 0;
 
     public T this[int index] => _items[index];
 

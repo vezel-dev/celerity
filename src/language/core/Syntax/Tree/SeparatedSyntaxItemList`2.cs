@@ -22,9 +22,9 @@ public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnly
 
         private SyntaxItem? _current;
 
-        public SyntaxItem Current => _current ?? throw new InvalidOperationException();
+        public readonly SyntaxItem Current => _current ?? throw new InvalidOperationException();
 
-        object IEnumerator.Current => Current;
+        readonly object IEnumerator.Current => Current;
 
         internal Enumerator(
             SyntaxItemList<TElement>.Enumerator elements, SyntaxItemList<TSeparator>.Enumerator separators)
@@ -33,7 +33,7 @@ public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnly
             _separators = separators;
         }
 
-        public void Dispose()
+        readonly void IDisposable.Dispose()
         {
         }
 
@@ -60,7 +60,7 @@ public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnly
             }
         }
 
-        public void Reset()
+        readonly void IEnumerator.Reset()
         {
             throw new NotSupportedException();
         }
@@ -74,6 +74,8 @@ public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnly
     public SyntaxItemList<TSeparator> Separators { get; }
 
     public int Count => Elements.Count + Separators.Count;
+
+    public bool IsEmpty => Count == 0;
 
     internal SeparatedSyntaxItemList(SyntaxItemList<TElement> elements, SyntaxItemList<TSeparator> separators)
     {
