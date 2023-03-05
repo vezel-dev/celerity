@@ -12,7 +12,6 @@ binding, and linting.</PackageDescription>
 
     <ItemGroup>
         <Using Include="DotNext.Runtime" />
-        <Using Include="Humanizer" />
         <Using Include="Vezel.Celerity.Buffers" />
         <Using Include="Vezel.Celerity.Diagnostics" />
         <Using Include="Vezel.Celerity.Linq" />
@@ -32,7 +31,6 @@ binding, and linting.</PackageDescription>
 
     <ItemGroup>
         <PackageReference Include="DotNext" />
-        <PackageReference Include="Humanizer.Core" />
     </ItemGroup>
 
     <Import Project="../../common/common.targets" />
