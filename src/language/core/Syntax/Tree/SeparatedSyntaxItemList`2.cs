@@ -1,8 +1,7 @@
 namespace Vezel.Celerity.Language.Syntax.Tree;
 
-[SuppressMessage("", "CA1710")]
 [SuppressMessage("", "CA1815")]
-public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnlyCollection<SyntaxItem>
+public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnlyList<SyntaxItem>
     where TElement : SyntaxItem
     where TSeparator : SyntaxItem
 {
@@ -39,25 +38,18 @@ public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnly
 
         public bool MoveNext()
         {
+            bool result;
+
             // There will always be a separator between any two elements, but the last element may have a dangling
             // separator.
-            switch (_state)
+            (_state, _current, result) = _state switch
             {
-                case State.Element when _elements.MoveNext():
-                    _state = State.Separator;
-                    _current = _elements.Current;
+                State.Element when _elements.MoveNext() => (State.Separator, _elements.Current, true),
+                State.Separator when _separators.MoveNext() => (State.Element, _separators.Current, true),
+                _ => (_state, default(SyntaxItem), false),
+            };
 
-                    return true;
-                case State.Separator when _separators.MoveNext():
-                    _state = State.Element;
-                    _current = _separators.Current;
-
-                    return true;
-                default:
-                    _current = null;
-
-                    return false;
-            }
+            return result;
         }
 
         readonly void IEnumerator.Reset()
@@ -73,15 +65,30 @@ public readonly struct SeparatedSyntaxItemList<TElement, TSeparator> : IReadOnly
 
     public SyntaxItemList<TSeparator> Separators { get; }
 
+    public bool IsDefault => Elements.IsDefault;
+
     public int Count => Elements.Count + Separators.Count;
 
     public bool IsEmpty => Count == 0;
+
+    public bool IsDefaultOrEmpty => Elements.IsDefaultOrEmpty;
+
+    public SyntaxItem this[int index] => index % 2 == 0 ? Elements[index] : Separators[index];
 
     internal SeparatedSyntaxItemList(SyntaxItemList<TElement> elements, SyntaxItemList<TSeparator> separators)
     {
         Elements = elements;
         Separators = separators;
     }
+
+    public static implicit operator SeparatedSyntaxItemList<TElement, SyntaxItem>(
+        SeparatedSyntaxItemList<TElement, TSeparator> list) => new(list.Elements, list.Separators);
+
+    public static implicit operator SeparatedSyntaxItemList<SyntaxItem, TSeparator>(
+        SeparatedSyntaxItemList<TElement, TSeparator> list) => new(list.Elements, list.Separators);
+
+    public static implicit operator SeparatedSyntaxItemList<SyntaxItem, SyntaxItem>(
+        SeparatedSyntaxItemList<TElement, TSeparator> list) => new(list.Elements, list.Separators);
 
     public Enumerator GetEnumerator()
     {

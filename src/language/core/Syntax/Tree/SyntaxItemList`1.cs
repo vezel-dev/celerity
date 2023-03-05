@@ -34,9 +34,13 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
 
     public static SyntaxItemList<T> Empty { get; } = new(ImmutableArray<T>.Empty);
 
+    public bool IsDefault => _items.IsDefault;
+
     public int Count => _items.Length;
 
-    public bool IsEmpty => Count == 0;
+    public bool IsEmpty => _items.IsEmpty;
+
+    public bool IsDefaultOrEmpty => _items.IsDefaultOrEmpty;
 
     public T this[int index] => _items[index];
 
@@ -46,6 +50,9 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
     {
         _items = items;
     }
+
+    public static implicit operator SyntaxItemList<SyntaxItem>(SyntaxItemList<T> list) =>
+        new(ImmutableArray<SyntaxItem>.CastUp(list._items));
 
     public Enumerator GetEnumerator()
     {

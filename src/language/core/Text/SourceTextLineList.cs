@@ -72,9 +72,9 @@ public sealed class SourceTextLineList : IReadOnlyList<SourceTextLine>
         return new(line.Line, position - line.Span.Start);
     }
 
-    public int GetPosition(SourceTextLinePosition linePosition)
+    public int GetPosition(SourceTextLinePosition position)
     {
-        return this[linePosition.Line].Span.Start + linePosition.Character;
+        return this[position.Line].Span.Start + position.Character;
     }
 
     public Enumerator GetEnumerator()
