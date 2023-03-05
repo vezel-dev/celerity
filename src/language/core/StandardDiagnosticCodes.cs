@@ -28,7 +28,6 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode InvalidUnicodeEscapeSequence { get; } = CreateCode();
 
-    // TODO: Create more specific diagnostics for certain kinds of missing tokens.
     public static DiagnosticCode ExpectedToken { get; } = CreateCode();
 
     public static DiagnosticCode MissingDeclaration { get; } = CreateCode();
