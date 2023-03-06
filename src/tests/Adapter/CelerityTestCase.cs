@@ -133,7 +133,8 @@ internal sealed partial class CelerityTestCase
             // Normalize line endings, and file paths in diagnostics.
             return DiagnosticRegex().Replace(
                 output.ToString().ReplaceLineEndings().Trim(),
-                m => $"{m.Groups[1]}{m.Groups[2].Value.Replace(@"\", "/", StringComparison.Ordinal)}{m.Groups[3]}");
+                static m =>
+                    $"{m.Groups[1]}{m.Groups[2].Value.Replace(@"\", "/", StringComparison.Ordinal)}{m.Groups[3]}");
         }
 
         var stdout2 = NormalizeOutput(stdout);

@@ -53,7 +53,7 @@ internal sealed class LanguageAnalyzer
         {
             var semantics = VisitDocument(_tree.Root);
 
-            foreach (var (name, (decls, _)) in _uses.OrderBy(kvp => kvp.Key, StringComparer.Ordinal))
+            foreach (var (name, (decls, _)) in _uses.OrderBy(static kvp => kvp.Key, StringComparer.Ordinal))
                 if (decls.Count != 1)
                     Error(
                         decls[0].Syntax.NameToken.Span,
@@ -90,7 +90,7 @@ internal sealed class LanguageAnalyzer
             {
                 var sym = ident.Symbol!;
 
-                if (!sym.Bindings.Any(node => node is TestDeclarationSemantics))
+                if (!sym.Bindings.Any(static node => node is TestDeclarationSemantics))
                     continue;
 
                 var name = ident.Syntax.IdentifierToken;

@@ -26,7 +26,7 @@ internal sealed class CheckVerb : Verb
 
             await DiagnosticPrinter.PrintAsync(lint.Diagnostics);
 
-            errors |= diags.Any(diag => diag.IsError);
+            errors |= diags.Any(static diag => diag.IsError);
         }
 
         return errors ? 1 : 0;

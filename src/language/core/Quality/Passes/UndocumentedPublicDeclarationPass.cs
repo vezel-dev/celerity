@@ -25,13 +25,17 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
 
         if (module.Path is { } path)
             CheckDocumentationAttribute(
-                context, "Module", syntax.Path, module.Attributes.Select(attr => attr.Name), path.ToString());
+                context, "Module", syntax.Path, module.Attributes.Select(static attr => attr.Name), path.ToString());
 
         // Types are not part of the semantic tree, but we still want to check public types.
         foreach (var decl in syntax.Declarations)
             if (decl is TypeDeclarationSyntax { PubKeywordToken: { }, NameToken: { IsMissing: false } name })
                 CheckDocumentationAttribute(
-                    context, "Public type", name, decl.Attributes.Select(attr => attr.NameToken.Text), name.Text);
+                    context,
+                    "Public type",
+                    name,
+                    decl.Attributes.Select(static attr => attr.NameToken.Text),
+                    name.Text);
     }
 
     protected internal override void Run(LintContext context, DeclarationSemantics declaration)
@@ -50,13 +54,13 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
 
         if (pub && !name!.IsMissing)
             CheckDocumentationAttribute(
-                context, kind!, name, declaration.Attributes.Select(attr => attr.Name), name.Text);
+                context, kind!, name, declaration.Attributes.Select(static attr => attr.Name), name.Text);
     }
 
     private static void CheckDocumentationAttribute(
         LintContext context, string kind, SyntaxItem item, IEnumerable<string> attributes, string name)
     {
-        if (!attributes.Any(t => t == "doc"))
+        if (!attributes.Any(static t => t == "doc"))
             context.ReportDiagnostic(item.Span, $"{kind} '{name}' should be decorated with a 'doc' attribute");
     }
 }

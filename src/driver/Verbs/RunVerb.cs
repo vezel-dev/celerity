@@ -19,6 +19,6 @@ internal sealed class RunVerb : Verb
 
         await DiagnosticPrinter.PrintAsync(diags);
 
-        return diags.Any(diag => diag.IsError) ? 1 : 0;
+        return diags.Any(static diag => diag.IsError) ? 1 : 0;
     }
 }

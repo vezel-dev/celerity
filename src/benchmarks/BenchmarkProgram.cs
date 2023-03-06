@@ -5,7 +5,7 @@ internal sealed class BenchmarkProgram : IProgram
 {
     public static Task RunAsync(ProgramContext context)
     {
-        using var parser = new Parser(settings =>
+        using var parser = new Parser(static settings =>
         {
             settings.GetoptMode = true;
             settings.PosixlyCorrect = true;
@@ -18,13 +18,13 @@ internal sealed class BenchmarkProgram : IProgram
             parser
                 .ParseArguments<BenchmarkOptions>(context.Arguments.ToArray())
                 .MapResult(
-                    opts =>
+                    static opts =>
                         BenchmarkSwitcher
                             .FromAssembly(typeof(ThisAssembly).Assembly)
                             .RunAll(new CelerityBenchmarkConfig(opts.Test, opts.Filter))
                             .Any(s => s.HasCriticalValidationErrors)
                             ? 1
                             : 0,
-                    _ => 1));
+                    static _ => 1));
     }
 }

@@ -48,6 +48,6 @@ public readonly struct LintContext
                 _code,
                 _severity,
                 message,
-                notes.Select(t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
+                notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
     }
 }

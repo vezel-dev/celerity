@@ -44,7 +44,7 @@ public sealed class SourceTextLineList : IReadOnlyList<SourceTextLine>
     {
         Text = text;
         _lines = lines;
-        _positions = _lines.Select(line => line.Span.Start).ToArray();
+        _positions = _lines.Select(static line => line.Span.Start).ToArray();
     }
 
     public int IndexOf(int position)

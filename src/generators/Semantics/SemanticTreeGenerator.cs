@@ -8,7 +8,7 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(
             context.AdditionalTextsProvider
                 .Where(static at => Path.GetFileName(at.Path) == "SemanticTree.xml"),
-            (ctx, file) =>
+            static (ctx, file) =>
             {
                 var text = file.GetText(ctx.CancellationToken)!.ToString();
                 var settings = new XmlReaderSettings
@@ -113,13 +113,13 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
         }
         else
         {
-            var nodes = props.Where(p => p is SemanticTreeNodeProperty or SemanticTreeNodesProperty).ToArray();
+            var nodes = props.Where(static p => p is SemanticTreeNodeProperty or SemanticTreeNodesProperty).ToArray();
 
             writer.Write("public override bool HasChildren");
 
             if (nodes.Length == 0)
                 writer.WriteLine(" => false;");
-            else if (nodes.Any(p => p is SemanticTreeNodeProperty { Optional: false }))
+            else if (nodes.Any(static p => p is SemanticTreeNodeProperty { Optional: false }))
                 writer.WriteLine(" => true;");
             else
             {
@@ -172,7 +172,7 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
 
             writer.WriteLine();
 
-            var fields = props.Where(p => p is not SemanticTreeComputedProperty).ToArray();
+            var fields = props.Where(static p => p is not SemanticTreeComputedProperty).ToArray();
 
             if (fields.Length != 0)
             {

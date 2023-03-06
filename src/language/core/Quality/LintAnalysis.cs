@@ -29,7 +29,7 @@ public sealed class LintAnalysis
 
         new LanguageLinter(semantics, passes, configuration, diags).Lint();
 
-        diags.Sort((x, y) => x.Span.CompareTo(y.Span));
+        diags.Sort(static (x, y) => x.Span.CompareTo(y.Span));
 
         return new(semantics, diags.DrainToImmutable());
     }

@@ -7,7 +7,7 @@ internal sealed class DriverProgram : IProgram
 {
     public static async Task RunAsync(ProgramContext context)
     {
-        using var parser = new Parser(settings =>
+        using var parser = new Parser(static settings =>
         {
             settings.GetoptMode = true;
             settings.PosixlyCorrect = true;
@@ -24,10 +24,10 @@ internal sealed class DriverProgram : IProgram
 #pragma warning restore CS0436
                     .Assembly
                     .DefinedTypes
-                    .Where(t => t.GetCustomAttribute<VerbAttribute>() != null)
+                    .Where(static type => type.GetCustomAttribute<VerbAttribute>() != null)
                     .ToArray())
             .MapResult(
-                verb => Unsafe.As<Verb>(verb).RunAsync(),
-                _ => ValueTask.FromResult(1));
+                static verb => Unsafe.As<Verb>(verb).RunAsync(),
+                static _ => ValueTask.FromResult(1));
     }
 }

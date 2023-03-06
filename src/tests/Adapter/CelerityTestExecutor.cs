@@ -14,7 +14,7 @@ public sealed class CelerityTestExecutor : ITestExecutor
         ArgumentNullException.ThrowIfNull(runContext);
         ArgumentNullException.ThrowIfNull(frameworkHandle);
 
-        RunTests(tests.Select(t => (CelerityTestLoader.Tests[t.FullyQualifiedName], t)), frameworkHandle);
+        RunTests(tests.Select(static t => (CelerityTestLoader.Tests[t.FullyQualifiedName], t)), frameworkHandle);
     }
 
     public void RunTests(IEnumerable<string>? sources, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
@@ -23,7 +23,7 @@ public sealed class CelerityTestExecutor : ITestExecutor
         ArgumentNullException.ThrowIfNull(runContext);
         ArgumentNullException.ThrowIfNull(frameworkHandle);
 
-        RunTests(CelerityTestLoader.Tests.Values.Select(x => (x, x.Convert())), frameworkHandle);
+        RunTests(CelerityTestLoader.Tests.Values.Select(static t => (t, t.Convert())), frameworkHandle);
     }
 
     private void RunTests(

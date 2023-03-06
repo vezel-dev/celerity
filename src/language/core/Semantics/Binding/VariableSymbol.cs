@@ -5,7 +5,7 @@ namespace Vezel.Celerity.Language.Semantics.Binding;
 
 public sealed class VariableSymbol : LocalSymbol, ILocalSymbol<VariableSymbol>
 {
-    public override bool IsMutable => Bindings.Any(decl => decl is VariableBindingSemantics { IsMutable: true });
+    public override bool IsMutable => Bindings.Any(static decl => decl is VariableBindingSemantics { IsMutable: true });
 
     public override bool IsDiscard => Name[0] == '_';
 

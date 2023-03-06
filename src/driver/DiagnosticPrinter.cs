@@ -128,7 +128,7 @@ internal static class DiagnosticPrinter
                 .Tree
                 .GetText()
                 .Lines
-                .Select(line => (Line: line.Line + 1, Text: line.ToString().ReplaceLineEndings(string.Empty)))
+                .Select(static line => (Line: line.Line + 1, Text: line.ToString().ReplaceLineEndings(string.Empty)))
                 .ToArray();
             var margin = lines[^1].Line.ToString(_culture).Length;
 

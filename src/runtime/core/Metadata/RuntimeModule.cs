@@ -43,9 +43,9 @@ public sealed class RuntimeModule : RuntimeMetadata
         foreach (var lambda in lambdas)
             functions.Add(new(this, lambda));
 
-        Constants = constants.ToImmutableDictionary(constant => constant.Name, constant => constant);
-        Functions = functions.ToImmutableDictionary(function => function.Name, function => function);
-        Tests = tests.ToImmutableDictionary(test => test.Name, test => test);
+        Constants = constants.ToImmutableDictionary(static constant => constant.Name, static constant => constant);
+        Functions = functions.ToImmutableDictionary(static function => function.Name, static function => function);
+        Tests = tests.ToImmutableDictionary(static test => test.Name, static test => test);
     }
 
     internal int AllocateLambdaId()

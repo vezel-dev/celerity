@@ -8,7 +8,7 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(
             context.AdditionalTextsProvider
                 .Where(static at => Path.GetFileName(at.Path) == "SyntaxTree.xml"),
-            (ctx, file) =>
+            static (ctx, file) =>
             {
                 var text = file.GetText(ctx.CancellationToken)!.ToString();
                 var settings = new XmlReaderSettings
@@ -88,13 +88,13 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
         }
         else
         {
-            var nodes = props.Where(p => p.CanContainNodes).ToArray();
+            var nodes = props.Where(static p => p.CanContainNodes).ToArray();
 
             writer.Write("public override bool HasNodes");
 
             if (nodes.Length == 0)
                 writer.WriteLine(" => false;");
-            else if (nodes.Any(p => p is SyntaxTreeNodeProperty { Optional: false }))
+            else if (nodes.Any(static p => p is SyntaxTreeNodeProperty { Optional: false }))
                 writer.WriteLine(" => true;");
             else
             {
@@ -153,7 +153,7 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
 
             if (tokens.Length == 0)
                 writer.WriteLine(" => false;");
-            else if (tokens.Any(p => p is SyntaxTreeTokenProperty { Optional: false }))
+            else if (tokens.Any(static p => p is SyntaxTreeTokenProperty { Optional: false }))
                 writer.WriteLine(" => true;");
             else
             {
