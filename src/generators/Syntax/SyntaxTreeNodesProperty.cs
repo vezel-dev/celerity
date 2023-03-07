@@ -14,9 +14,9 @@ public sealed class SyntaxTreeNodesProperty : SyntaxTreeProperty
 
     internal override string GetTypeName()
     {
-        var type = $"{Type}Syntax";
+        var type = $"SyntaxItemList<{Type}Syntax>";
 
-        return Separated ? $"SeparatedSyntaxItemList<{type}, SyntaxToken>" : $"SyntaxItemList<{type}>";
+        return Separated ? $"Separated{type}" : type;
     }
 
     internal override string GetPropertyName()

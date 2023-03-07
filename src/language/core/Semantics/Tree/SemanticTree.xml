@@ -68,7 +68,7 @@
         <Computed Name="IsPublic" Type="bool" Body="Syntax.PubKeywordToken != null" />
         <Computed Name="IsExternal" Type="bool" Body="Syntax.ExtKeywordToken != null" />
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
-        <Nodes Name="Parameter" Type="FunctionParameter" />
+        <Nodes Name="Parameter" Type="FunctionParameter" Separated="true" />
         <Node Name="Body" Type="BlockExpression" Optional="true" Override="true" />
     </Type>
 
@@ -127,7 +127,7 @@
 
     <Type Name="AggregateExpression" Base="ValueExpression" Abstract="true">
         <Node Name="With" Type="Expression" Optional="true" />
-        <Nodes Name="Field" Type="AggregateExpressionField" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" />
     </Type>
 
     <Type Name="AggregateExpressionField" Parent="AggregateExpression">
@@ -138,32 +138,32 @@
 
     <Type Name="RecordExpression" Base="AggregateExpression">
         <Node Name="With" Type="Expression" Optional="true" Override="true" />
-        <Nodes Name="Field" Type="AggregateExpressionField" Override="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
     </Type>
 
     <Type Name="ErrorExpression" Base="AggregateExpression">
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
         <Node Name="With" Type="Expression" Optional="true" Override="true" />
-        <Nodes Name="Field" Type="AggregateExpressionField" Override="true" />
+        <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
     </Type>
 
     <Type Name="TupleExpression" Base="ValueExpression">
-        <Nodes Name="Component" Type="Expression" />
+        <Nodes Name="Component" Type="Expression" Separated="true" />
     </Type>
 
     <Type Name="ArrayExpression" Base="ValueExpression">
         <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
-        <Nodes Name="Element" Type="Expression" />
+        <Nodes Name="Element" Type="Expression" Separated="true" />
     </Type>
 
     <Type Name="SetExpression" Base="ValueExpression">
         <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
-        <Nodes Name="Element" Type="Expression" />
+        <Nodes Name="Element" Type="Expression" Separated="true" />
     </Type>
 
     <Type Name="MapExpression" Base="ValueExpression">
         <Computed Name="IsMutable" Type="bool" Body="Syntax.MutKeywordToken != null" />
-        <Nodes Name="Pair" Type="MapExpressionPair" />
+        <Nodes Name="Pair" Type="MapExpressionPair" Separated="true" />
     </Type>
 
     <Type Name="MapExpressionPair" Parent="MapExpression">
@@ -172,7 +172,7 @@
     </Type>
 
     <Type Name="LambdaExpression" Base="ValueExpression">
-        <Nodes Name="Parameter" Type="LambdaParameter" />
+        <Nodes Name="Parameter" Type="LambdaParameter" Separated="true" />
         <Node Name="Body" Type="Expression" />
         <Value Name="References" Type="ImmutableArray&lt;ThisExpressionSemantics&gt;" />
     </Type>
@@ -231,7 +231,7 @@
     </Type>
 
     <Type Name="ConditionExpression" Base="ConditionalExpression">
-        <Nodes Name="Arm" Type="ConditionExpressionArm" />
+        <Nodes Name="Arm" Type="ConditionExpressionArm" Separated="true" />
     </Type>
 
     <Type Name="ExpressionArm" Parent="Expression" Abstract="true">
@@ -245,7 +245,7 @@
 
     <Type Name="MatchExpression" Base="ConditionalExpression">
         <Node Name="Operand" Type="Expression" />
-        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
     </Type>
 
     <Type Name="ExpressionPatternArm" Base="ExpressionArm">
@@ -255,20 +255,24 @@
     </Type>
 
     <Type Name="ReceiveExpression" Base="ConditionalExpression">
-        <Nodes Name="Arm" Type="ReceiveExpressionArm" />
+        <Nodes Name="Arm" Type="ReceiveExpressionArm" Separated="true" />
         <Node Name="Else" Type="BlockExpression" Optional="true" />
     </Type>
 
     <Type Name="ReceiveExpressionArm" Base="ExpressionArm" Parent="ReceiveExpression">
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
-        <Nodes Name="Parameter" Type="Pattern" />
+        <Nodes Name="Parameter" Type="ReceiveParameter" Separated="true" />
         <Node Name="Guard" Type="Expression" Optional="true" />
         <Node Name="Body" Type="Expression" Override="true" />
     </Type>
 
+    <Type Name="ReceiveParameter" Parent="ReceiveExpressionArm">
+        <Node Name="Pattern" Type="Pattern" />
+    </Type>
+
     <Type Name="TryExpression" Base="ConditionalExpression">
         <Node Name="Body" Type="Expression" />
-        <Nodes Name="Arm" Type="ExpressionPatternArm" />
+        <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
         <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
         <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
     </Type>
@@ -349,12 +353,12 @@
 
     <Type Name="IndexExpression" Base="PostfixExpression">
         <Node Name="Subject" Type="Expression" Override="true" />
-        <Nodes Name="Argument" Type="Expression" />
+        <Nodes Name="Argument" Type="Expression" Separated="true" />
     </Type>
 
     <Type Name="CallExpression" Base="PostfixExpression">
         <Node Name="Subject" Type="Expression" Override="true" />
-        <Nodes Name="Argument" Type="Expression" />
+        <Nodes Name="Argument" Type="Expression" Separated="true" />
         <Computed Name="IsPropagating" Type="bool" Body="Syntax.QuestionToken != null" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
     </Type>
@@ -362,7 +366,7 @@
     <Type Name="SendExpression" Base="PostfixExpression">
         <Node Name="Subject" Type="Expression" Override="true" />
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
-        <Nodes Name="Argument" Type="Expression" />
+        <Nodes Name="Argument" Type="Expression" Separated="true" />
     </Type>
 
     <!-- Bindings -->
@@ -410,7 +414,7 @@
     </Type>
 
     <Type Name="AggregatePattern" Base="Pattern" Abstract="true">
-        <Nodes Name="Field" Type="AggregatePatternField" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" />
     </Type>
 
     <Type Name="AggregatePatternField" Parent="AggregatePattern">
@@ -419,18 +423,18 @@
     </Type>
 
     <Type Name="RecordPattern" Base="AggregatePattern">
-        <Nodes Name="Field" Type="AggregatePatternField" Override="true" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" Override="true" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="ErrorPattern" Base="AggregatePattern">
         <Computed Name="Name" Type="string?" Body="Syntax.NameToken?.Text" />
-        <Nodes Name="Field" Type="AggregatePatternField" Override="true" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" Override="true" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="TuplePattern" Base="Pattern">
-        <Nodes Name="Component" Type="Pattern" />
+        <Nodes Name="Component" Type="Pattern" Separated="true" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
@@ -442,16 +446,16 @@
     </Type>
 
     <Type Name="ArrayPatternClause" Parent="ArrayPattern">
-        <Nodes Name="Element" Type="Pattern" />
+        <Nodes Name="Element" Type="Pattern" Separated="true" />
     </Type>
 
     <Type Name="SetPattern" Base="Pattern">
-        <Nodes Name="Element" Type="Expression" />
+        <Nodes Name="Element" Type="Expression" Separated="true" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="MapPattern" Base="Pattern">
-        <Nodes Name="Pair" Type="MapPatternPair" />
+        <Nodes Name="Pair" Type="MapPatternPair" Separated="true" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 

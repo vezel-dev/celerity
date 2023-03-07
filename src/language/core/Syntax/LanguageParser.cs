@@ -182,11 +182,11 @@ internal sealed class LanguageParser
         return new(elements.DrainToImmutable());
     }
 
-    private static SeparatedSyntaxItemList<TElement, SyntaxToken> List<TElement>(
+    private static SeparatedSyntaxItemList<TElement> List<TElement>(
         ImmutableArray<TElement>.Builder elements, ImmutableArray<SyntaxToken>.Builder separators)
         where TElement : SyntaxItem
     {
-        return new(List(elements), List(separators));
+        return new(elements.DrainToImmutable(), separators.DrainToImmutable());
     }
 
     private T? ParseOptional<T>(SyntaxTokenKind kind, Func<LanguageParser, T> parser)
@@ -1308,7 +1308,7 @@ internal sealed class LanguageParser
             ErrorExpected(Peek1()?.Span, StandardDiagnosticCodes.MissingStatement, "statement");
 
             stmts.Add(new MissingStatementSyntax(
-                SyntaxItemList<AttributeSyntax>.Empty, SyntaxItemList<SyntaxToken>.Empty, Missing()));
+                List(Builder<AttributeSyntax>()), List(Builder<SyntaxToken>()), Missing()));
         }
 
         var close = Expect(SyntaxTokenKind.CloseBrace);

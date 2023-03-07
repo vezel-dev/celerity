@@ -15,14 +15,14 @@ public class RuntimeFunction : RuntimeMember
     }
 
     internal RuntimeFunction(RuntimeModule module, LambdaExpressionSemantics function)
-        : this(module, $"λ{module.AllocateLambdaId()}", SemanticNodeList<AttributeSemantics>.Empty, function.Parameters)
+        : this(module, $"λ{module.AllocateLambdaId()}", Array.Empty<AttributeSemantics>(), function.Parameters)
     {
     }
 
     private RuntimeFunction(
         RuntimeModule module,
         string name,
-        SemanticNodeList<AttributeSemantics> attributes,
+        IEnumerable<AttributeSemantics> attributes,
         IEnumerable<CodeParameterSemantics> parameters)
         : base(module, name, attributes)
     {

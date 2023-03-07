@@ -118,8 +118,11 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
                         case SyntaxTreeNodeProperty:
                             writer.WriteLine($"if ({propName} != null)");
                             break;
+                        case SyntaxTreeNodesProperty { Separated: true } p:
+                            writer.WriteLine($"if ({propName}.Elements.Length != 0)");
+                            break;
                         case SyntaxTreeNodesProperty p:
-                            writer.WriteLine($"if ({propName}{(p.Separated ? ".Elements" : string.Empty)}.Count != 0)");
+                            writer.WriteLine($"if ({propName}.Count != 0)");
                             break;
                     }
 
@@ -175,7 +178,7 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
                     switch (prop)
                     {
                         case SyntaxTreeNodesProperty:
-                            writer.WriteLine($"if ({propName}.Separators.Count != 0)");
+                            writer.WriteLine($"if ({propName}.Separators.Length != 0)");
                             break;
                         case SyntaxTreeTokenProperty:
                             writer.WriteLine($"if ({propName} != null)");
@@ -230,7 +233,15 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
                 writer.Indent++;
 
                 foreach (var prop in props)
-                    writer.WriteLine($"{prop.GetPropertyName()} = {prop.GetParameterName()};");
+                {
+                    var param = prop.GetParameterName();
+
+                    writer.Write($"{prop.GetPropertyName()} = ");
+                    writer.WriteLine(
+                        prop is SyntaxTreeNodesProperty or SyntaxTreeTokensProperty
+                            ? $"new({param}, this);"
+                            : $"{param};");
+                }
 
                 foreach (var prop in props)
                 {
@@ -246,18 +257,11 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
                         case SyntaxTreeNodeProperty or SyntaxTreeTokenProperty:
                             writer.WriteLine($"{param}.SetParent(this);");
                             break;
-                        case SyntaxTreeNodesProperty or SyntaxTreeTokensProperty:
-                            writer.WriteLine($"foreach (var item in {param})");
-
-                            writer.Indent++;
-
-                            writer.WriteLine("item.SetParent(this);");
-
-                            writer.Indent--;
-
-                            break;
                     }
                 }
+
+                writer.WriteLine();
+                writer.WriteLine("Initialize();");
 
                 writer.Indent--;
 

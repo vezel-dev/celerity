@@ -3,20 +3,22 @@ using Vezel.Celerity.Language.Text;
 namespace Vezel.Celerity.Language.Syntax.Tree;
 
 [SuppressMessage("", "CA1815")]
-public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
+public readonly struct SeparatedSyntaxItemList<T> : IReadOnlyList<SyntaxItem>
     where T : SyntaxItem
 {
-    public struct Enumerator : IEnumerator<T>
+    public struct Enumerator : IEnumerator<SyntaxItem>
     {
-        public readonly T Current => _enumerator.Current;
+        private readonly SeparatedSyntaxItemList<T> _list;
+
+        private int _index = -1;
+
+        public readonly SyntaxItem Current => _list[_index];
 
         readonly object IEnumerator.Current => Current;
 
-        private ImmutableArray<T>.Enumerator _enumerator;
-
-        internal Enumerator(ImmutableArray<T>.Enumerator enumerator)
+        internal Enumerator(SeparatedSyntaxItemList<T> list)
         {
-            _enumerator = enumerator;
+            _list = list;
         }
 
         readonly void IDisposable.Dispose()
@@ -25,10 +27,10 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
 
         public bool MoveNext()
         {
-            return _enumerator.MoveNext();
+            return ++_index < _list.Count;
         }
 
-        void IEnumerator.Reset()
+        readonly void IEnumerator.Reset()
         {
             throw new NotSupportedException();
         }
@@ -42,42 +44,47 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
 
     public SourceTextSpan FullSpan { get; }
 
-    public bool IsDefault => _items.IsDefault;
+    public ImmutableArray<T> Elements { get; }
 
-    public int Count => _items.Length;
+    public ImmutableArray<SyntaxToken> Separators { get; }
 
-    public bool IsEmpty => _items.IsEmpty;
+    public bool IsDefault => Elements.IsDefault;
 
-    public bool IsDefaultOrEmpty => _items.IsDefaultOrEmpty;
+    public int Count => Elements.Length + Separators.Length;
 
-    public T this[int index] => _items[index];
+    public bool IsEmpty => Count == 0;
 
-    private readonly ImmutableArray<T> _items;
+    public bool IsDefaultOrEmpty => Elements.IsDefaultOrEmpty;
+
+    public SyntaxItem this[int index] => index % 2 == 0 ? Elements[index] : Separators[index];
 
     // This constructs a partially-initialized list. It is only intended for use in LanguageParser.
-    internal SyntaxItemList(ImmutableArray<T> items)
-        : this(items, null!)
+    internal SeparatedSyntaxItemList(ImmutableArray<T> elements, ImmutableArray<SyntaxToken> separators)
+        : this(elements, separators, null!)
     {
     }
 
     // This constructs a fully-initialized list (with Parent and Span/FullSpan set). Used by generated node classes.
-    internal SyntaxItemList(SyntaxItemList<T> list, SyntaxItem parent)
-        : this(list._items, parent)
+    internal SeparatedSyntaxItemList(SeparatedSyntaxItemList<T> list, SyntaxItem parent)
+        : this(list.Elements, list.Separators, parent)
     {
     }
 
-    private SyntaxItemList(ImmutableArray<T> items, SyntaxItem parent)
+    private SeparatedSyntaxItemList(
+        ImmutableArray<T> elements, ImmutableArray<SyntaxToken> separators, SyntaxItem parent)
     {
         Parent = parent;
-        _items = items;
+        Elements = elements;
+        Separators = separators;
 
         if (parent == null)
             return;
 
-        if (!items.IsEmpty)
+        // There cannot be separators without elements.
+        if (!elements.IsEmpty)
         {
-            var first = items[0];
-            var last = items[^1];
+            var first = elements[0];
+            var last = (SyntaxItem)(separators.Length == elements.Length ? separators[^1] : elements[^1]);
 
             var firstSpan = first.Span;
             var firstFullSpan = first.FullSpan;
@@ -86,16 +93,19 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
             FullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
         }
 
-        foreach (var item in items)
-            item.SetParent(parent);
+        foreach (var element in elements)
+            element.SetParent(parent);
+
+        foreach (var separator in separators)
+            separator.SetParent(parent);
     }
 
     public Enumerator GetEnumerator()
     {
-        return new(_items.GetEnumerator());
+        return new(this);
     }
 
-    IEnumerator<T> IEnumerable<T>.GetEnumerator()
+    IEnumerator<SyntaxItem> IEnumerable<SyntaxItem>.GetEnumerator()
     {
         return GetEnumerator();
     }

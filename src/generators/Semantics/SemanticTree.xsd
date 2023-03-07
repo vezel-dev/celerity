@@ -29,6 +29,7 @@
                                     <xsd:complexType>
                                         <xsd:attribute name="Name" type="xsd:Name" use="required" />
                                         <xsd:attribute name="Type" type="xsd:Name" use="required" />
+                                        <xsd:attribute name="Separated" type="xsd:boolean" />
                                         <xsd:attribute name="Override" type="xsd:boolean" />
                                     </xsd:complexType>
                                 </xsd:element>

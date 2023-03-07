@@ -6,17 +6,15 @@ public abstract class SyntaxNode : SyntaxItem
 {
     public new SyntaxNode? Parent => Unsafe.As<SyntaxNode?>(base.Parent);
 
-    public override sealed SourceTextSpan Span => EnsureSpansInitialized().Span;
+    public override sealed SourceTextSpan Span => _span;
 
-    public override sealed SourceTextSpan FullSpan => EnsureSpansInitialized().FullSpan;
+    public override sealed SourceTextSpan FullSpan => _fullSpan;
 
     public override sealed bool HasChildren => HasNodes || HasTokens;
 
     public abstract bool HasNodes { get; }
 
     public abstract bool HasTokens { get; }
-
-    private volatile bool _spansInitialized;
 
     private SourceTextSpan _span;
 
@@ -26,37 +24,21 @@ public abstract class SyntaxNode : SyntaxItem
     {
     }
 
-    private (SourceTextSpan Span, SourceTextSpan FullSpan) EnsureSpansInitialized()
+    // Called by constructors in generated node classes.
+    private protected void Initialize()
     {
-        if (_spansInitialized)
-            return (_span, _fullSpan);
+        if (!HasChildren)
+            return;
 
-        var tokens = DescendantTokens().ToArray();
-        var first = tokens.FirstOrDefault(tok => !tok.IsMissing);
+        var children = Children().ToArray();
+        var first = children[0];
+        var last = children[^1];
 
-        SourceTextSpan span;
-        SourceTextSpan fullSpan;
+        var firstSpan = first.Span;
+        var firstFullSpan = first.FullSpan;
 
-        if (first != null)
-        {
-            // This could end up being the same as the first token.
-            var last = tokens.Last(tok => !tok.IsMissing);
-
-            var firstSpan = first.Span;
-            var firstFullSpan = first.FullSpan;
-
-            span = new(firstSpan.Start, last.Span.End - firstSpan.Start);
-            fullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
-        }
-        else
-            span = fullSpan = default;
-
-        _span = span;
-        _fullSpan = fullSpan;
-
-        _spansInitialized = true;
-
-        return (span, fullSpan);
+        _span = new(firstSpan.Start, last.Span.End - firstSpan.Start);
+        _fullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
     }
 
     public new IEnumerable<SyntaxNode> Ancestors()
@@ -169,43 +151,24 @@ public abstract class SyntaxNode : SyntaxItem
 
     public override sealed string ToString()
     {
-        return ToString(false);
+        return base.ToString();
     }
 
     public override sealed string ToFullString()
     {
-        return ToString(true);
+        return base.ToFullString();
     }
 
-    private string ToString(bool full)
+    internal override void ToString(StringBuilder builder, bool leading, bool trailing)
     {
-        var sb = new StringBuilder();
+        if (!HasChildren)
+            return;
 
-        var tokens = DescendantTokens().ToArray();
-        var first = tokens.FirstOrDefault(tok => !tok.IsMissing);
+        var children = Children().ToArray();
+        var first = children[0];
+        var last = children[^1];
 
-        if (first == null)
-            return string.Empty;
-
-        // This could end up being the same as the first token.
-        var last = tokens.LastOrDefault(tok => !tok.IsMissing);
-
-        foreach (var token in tokens)
-        {
-            if (token.IsMissing)
-                continue;
-
-            if (token != first || full)
-                foreach (var leading in token.LeadingTrivia)
-                    _ = sb.Append(leading);
-
-            _ = sb.Append(token);
-
-            if (token != last || full)
-                foreach (var trailing in token.TrailingTrivia)
-                    _ = sb.Append(trailing);
-        }
-
-        return sb.ToString();
+        foreach (var child in children)
+            child.ToString(builder, leading || child != first, trailing || child != last);
     }
 }

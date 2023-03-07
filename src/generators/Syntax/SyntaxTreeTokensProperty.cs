@@ -11,7 +11,7 @@ public sealed class SyntaxTreeTokensProperty : SyntaxTreeProperty
 
     internal override string GetTypeName()
     {
-        return Separated ? "SeparatedSyntaxItemList<SyntaxToken, SyntaxToken>" : "SyntaxItemList<SyntaxToken>";
+        return Separated ? "SeparatedSyntaxItemList<SyntaxToken>" : "SyntaxItemList<SyntaxToken>";
     }
 
     internal override string GetPropertyName()

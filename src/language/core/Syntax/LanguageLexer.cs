@@ -131,8 +131,8 @@ internal sealed class LanguageLexer
                 SyntaxTokenKind.StringLiteral => CreateString(text),
                 _ => null,
             },
-            _leading.DrainToImmutable(),
-            _trailing.DrainToImmutable());
+            new(_leading.DrainToImmutable()),
+            new(_trailing.DrainToImmutable()));
 
         _errors = false;
 

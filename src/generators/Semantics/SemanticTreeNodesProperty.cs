@@ -5,9 +5,14 @@ public sealed class SemanticTreeNodesProperty : SemanticTreeProperty
     [XmlAttribute]
     public required string Type { get; init; }
 
+    [XmlAttribute]
+    public required bool Separated { get; init; }
+
     internal override string GetTypeName()
     {
-        return $"SemanticNodeList<{Type}Semantics>";
+        var type = $"SemanticNodeList<{Type}Semantics, {Type}Syntax>";
+
+        return Separated ? $"Separated{type}" : type;
     }
 
     internal override string GetPropertyName()

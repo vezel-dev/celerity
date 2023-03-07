@@ -15,8 +15,8 @@ public sealed class SyntaxToken : SyntaxItem
             if (_position == -1)
                 return default;
 
-            var start = LeadingTrivia.FirstOrDefault()?.FullSpan.Start ?? _position;
-            var length = TrailingTrivia.LastOrDefault()?.FullSpan.End - start ?? Text.Length;
+            var start = LeadingTrivia.Count != 0 ? LeadingTrivia[0].FullSpan.Start : _position;
+            var length = TrailingTrivia.Count != 0 ? TrailingTrivia[^1].FullSpan.End - start : Text.Length;
 
             return new(start, length);
         }
@@ -37,9 +37,9 @@ public sealed class SyntaxToken : SyntaxItem
 
     public object? Value { get; }
 
-    public ImmutableArray<SyntaxTrivia> LeadingTrivia { get; }
+    public SyntaxItemList<SyntaxTrivia> LeadingTrivia { get; }
 
-    public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
+    public SyntaxItemList<SyntaxTrivia> TrailingTrivia { get; }
 
     private readonly int _position;
 
@@ -49,8 +49,8 @@ public sealed class SyntaxToken : SyntaxItem
             SyntaxTokenKind.Missing,
             "<error>",
             null,
-            ImmutableArray<SyntaxTrivia>.Empty,
-            ImmutableArray<SyntaxTrivia>.Empty)
+            new(ImmutableArray<SyntaxTrivia>.Empty),
+            new(ImmutableArray<SyntaxTrivia>.Empty))
     {
     }
 
@@ -59,21 +59,15 @@ public sealed class SyntaxToken : SyntaxItem
         SyntaxTokenKind kind,
         string text,
         object? value,
-        ImmutableArray<SyntaxTrivia> leading,
-        ImmutableArray<SyntaxTrivia> trailing)
+        SyntaxItemList<SyntaxTrivia> leading,
+        SyntaxItemList<SyntaxTrivia> trailing)
     {
         _position = position;
         Kind = kind;
         Text = text;
         Value = value;
-        LeadingTrivia = leading;
-        TrailingTrivia = trailing;
-
-        foreach (var trivia in leading)
-            trivia.SetParent(this);
-
-        foreach (var trivia in trailing)
-            trivia.SetParent(this);
+        LeadingTrivia = new(leading, this);
+        TrailingTrivia = new(trailing, this);
     }
 
     public new IEnumerable<SyntaxNode> Ancestors()
@@ -102,19 +96,19 @@ public sealed class SyntaxToken : SyntaxItem
 
     public override string ToFullString()
     {
-        if (LeadingTrivia.IsEmpty && TrailingTrivia.IsEmpty)
-            return ToString();
+        return LeadingTrivia.IsEmpty && TrailingTrivia.IsEmpty ? ToString() : base.ToFullString();
+    }
 
-        var sb = new StringBuilder();
+    internal override void ToString(StringBuilder builder, bool leading, bool trailing)
+    {
+        if (leading)
+            foreach (var trivia in LeadingTrivia)
+                _ = builder.Append(trivia);
 
-        foreach (var leading in LeadingTrivia)
-            _ = sb.Append(leading);
+        _ = builder.Append(Text);
 
-        _ = sb.Append(Text);
-
-        foreach (var trailing in TrailingTrivia)
-            _ = sb.Append(trailing);
-
-        return sb.ToString();
+        if (trailing)
+            foreach (var trivia in TrailingTrivia)
+                _ = builder.Append(trivia);
     }
 }

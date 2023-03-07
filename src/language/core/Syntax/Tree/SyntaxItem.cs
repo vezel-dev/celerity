@@ -26,16 +26,6 @@ public abstract class SyntaxItem
         _parent = parent;
     }
 
-    public SourceTextLocation GetLocation()
-    {
-        return Tree.GetText().GetLocation(Span);
-    }
-
-    public SourceTextLocation GetFullLocation()
-    {
-        return Tree.GetText().GetLocation(FullSpan);
-    }
-
     public IEnumerable<SyntaxItem> Ancestors()
     {
         return Parent?.AncestorsAndSelf() ?? Array.Empty<SyntaxItem>();
@@ -85,6 +75,16 @@ public abstract class SyntaxItem
             yield return descendant;
     }
 
+    public SourceTextLocation GetLocation()
+    {
+        return Tree.GetText().GetLocation(Span);
+    }
+
+    public SourceTextLocation GetFullLocation()
+    {
+        return Tree.GetText().GetLocation(FullSpan);
+    }
+
     public SourceText GetText()
     {
         return new StringSourceText(Tree.Path, ToString());
@@ -95,7 +95,23 @@ public abstract class SyntaxItem
         return new StringSourceText(Tree.Path, ToFullString());
     }
 
-    public abstract override string ToString();
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
 
-    public abstract string ToFullString();
+        ToString(sb, false, false);
+
+        return sb.ToString();
+    }
+
+    public virtual string ToFullString()
+    {
+        var sb = new StringBuilder();
+
+        ToString(sb, true, true);
+
+        return sb.ToString();
+    }
+
+    internal abstract void ToString(StringBuilder builder, bool leading, bool trailing);
 }

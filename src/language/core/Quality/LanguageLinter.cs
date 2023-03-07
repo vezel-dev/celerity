@@ -2,6 +2,7 @@ using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
+using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Quality;
 
@@ -42,7 +43,7 @@ internal sealed partial class LanguageLinter
 
         protected override void DefaultVisit(SemanticNode node)
         {
-            bool PushConfiguration(SemanticNodeList<AttributeSemantics> attributes)
+            bool PushConfiguration(SemanticNodeList<AttributeSemantics, AttributeSyntax> attributes)
             {
                 var current = _configurations.Peek();
                 var replacement = current;

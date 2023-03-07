@@ -199,30 +199,19 @@ public sealed class SemanticTreeGenerator : IIncrementalGenerator
                 writer.Indent++;
 
                 foreach (var prop in fields)
-                    writer.WriteLine($"{prop.GetPropertyName()} = {prop.GetParameterName()};");
-
-                foreach (var prop in fields)
                 {
-                    writer.WriteLine();
-
                     var param = prop.GetParameterName();
 
-                    switch (prop)
-                    {
-                        case SemanticTreeNodeProperty p:
-                            writer.WriteLine($"{param}{(p.Optional ? "?" : string.Empty)}.SetParent(this);");
-                            break;
-                        case SemanticTreeNodesProperty:
-                            writer.WriteLine($"foreach (var item in {param})");
+                    writer.Write(
+                        $"{prop.GetPropertyName()} = ");
+                    writer.WriteLine(prop is SemanticTreeNodesProperty ? $"new({param}, this);" : $"{param};");
+                }
 
-                            writer.Indent++;
-
-                            writer.WriteLine("item.SetParent(this);");
-
-                            writer.Indent--;
-
-                            break;
-                    }
+                foreach (var prop in fields.OfType<SemanticTreeNodeProperty>())
+                {
+                    writer.WriteLine();
+                    writer.WriteLine(
+                        $"{prop.GetParameterName()}{(prop.Optional ? "?" : string.Empty)}.SetParent(this);");
                 }
 
                 writer.Indent--;

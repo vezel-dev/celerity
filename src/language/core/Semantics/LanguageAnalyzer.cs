@@ -153,12 +153,7 @@ internal sealed class LanguageAnalyzer
 
         private static string[] SanitizeModulePath(ModulePathSyntax path)
         {
-            return path
-                .ComponentTokens
-                .Elements
-                .Where(static t => !t.IsMissing)
-                .Select(static t => t.Text)
-                .ToArray();
+            return path.ComponentTokens.Elements.Where(static t => !t.IsMissing).Select(static t => t.Text).ToArray();
         }
 
         private static ImmutableArray<T>.Builder Builder<T>(int capacity)
@@ -167,36 +162,61 @@ internal sealed class LanguageAnalyzer
             return ImmutableArray.CreateBuilder<T>(capacity);
         }
 
-        private static SemanticNodeList<T> List<T>(ImmutableArray<T>.Builder elements)
-            where T : SemanticNode
+        private static SemanticNodeList<TSemantics, TSyntax> List<TSemantics, TSyntax>(
+            SyntaxItemList<TSyntax> syntax, ImmutableArray<TSemantics>.Builder elements)
+            where TSemantics : SemanticNode
+            where TSyntax : SyntaxNode
         {
-            return new(elements.DrainToImmutable());
+            return new(syntax, elements.DrainToImmutable());
         }
 
-        private SemanticNodeList<TTo> ConvertList<TFrom, TTo>(
-            SyntaxItemList<TFrom> list,
-            Func<AnalysisVisitor, TFrom, TTo> converter,
-            Func<TFrom, bool>? predicate = null)
-            where TFrom : SyntaxNode
-            where TTo : SemanticNode
+        private SemanticNodeList<TSemantics, TSyntax> ConvertList<TSyntax, TSemantics>(
+            SyntaxItemList<TSyntax> syntax,
+            Func<AnalysisVisitor, TSyntax, TSemantics> converter,
+            Func<TSyntax, bool>? predicate = null)
+            where TSyntax : SyntaxNode
+            where TSemantics : SemanticNode
         {
-            if (list.Count == 0)
-                return SemanticNodeList<TTo>.Empty;
+            if (syntax.Count == 0)
+                return new(syntax, ImmutableArray<TSemantics>.Empty);
 
-            predicate ??= _ => true;
+            predicate ??= static _ => true;
 
-            var builder = Builder<TTo>(list.Count);
+            var builder = Builder<TSemantics>(syntax.Count);
 
-            foreach (var node in list)
+            foreach (var node in syntax)
                 if (predicate(node))
                     builder.Add(converter(this, node));
 
-            return List(builder);
+            return List(syntax, builder);
         }
 
-        private void CheckDuplicateFields<T>(
-            SemanticNodeList<T> fields, Func<T, SyntaxToken> selector, string type, string message)
-            where T : SemanticNode
+        private SeparatedSemanticNodeList<TSemantics, TSyntax> ConvertList<TSyntax, TSemantics>(
+            SeparatedSyntaxItemList<TSyntax> syntax,
+            Func<AnalysisVisitor, TSyntax, TSemantics> converter)
+            where TSyntax : SyntaxNode
+            where TSemantics : SemanticNode
+        {
+            var elements = syntax.Elements;
+
+            if (elements.Length == 0)
+                return new(syntax, ImmutableArray<TSemantics>.Empty);
+
+            var builder = Builder<TSemantics>(elements.Length);
+
+            foreach (var node in elements)
+                builder.Add(converter(this, node));
+
+            return new(syntax, builder.DrainToImmutable());
+        }
+
+        private void CheckDuplicateFields<TSemantics, TSyntax>(
+            SeparatedSemanticNodeList<TSemantics, TSyntax> fields,
+            Func<TSemantics, SyntaxToken> selector,
+            string type,
+            string message)
+            where TSemantics : SemanticNode
+            where TSyntax : SyntaxNode
         {
             if (fields.Count == 0)
                 return;
@@ -349,7 +369,7 @@ internal sealed class LanguageAnalyzer
             using var ctx = PushScope<Scope>();
 
             var parms = ConvertList(
-                node.ParameterList.Parameters.Elements, static (@this, param) => @this.VisitFunctionParameter(param));
+                node.ParameterList.Parameters, static (@this, param) => @this.VisitFunctionParameter(param));
             var body = node.Body is { } b ? VisitBlockExpression(b) : null;
             var sema = new FunctionDeclarationSemantics(node, attrs, sym, parms, body);
 
@@ -466,8 +486,7 @@ internal sealed class LanguageAnalyzer
 
         public override RecordExpressionSemantics VisitRecordExpression(RecordExpressionSyntax node)
         {
-            var fields = ConvertList(
-                node.Fields.Elements, static (@this, field) => @this.VisitAggregateExpressionField(field));
+            var fields = ConvertList(node.Fields, static (@this, field) => @this.VisitAggregateExpressionField(field));
 
             CheckDuplicateFields(fields, static field => field.Syntax.NameToken, "Record", "assigned");
 
@@ -477,7 +496,7 @@ internal sealed class LanguageAnalyzer
         public override ErrorExpressionSemantics VisitErrorExpression(ErrorExpressionSyntax node)
         {
             var fields = ConvertList(
-                node.Fields.Elements, static (@this, field) => @this.VisitAggregateExpressionField(field));
+                node.Fields, static (@this, field) => @this.VisitAggregateExpressionField(field));
 
             CheckDuplicateFields(fields, static field => field.Syntax.NameToken, "Error", "assigned");
 
@@ -486,28 +505,28 @@ internal sealed class LanguageAnalyzer
 
         public override TupleExpressionSemantics VisitTupleExpression(TupleExpressionSyntax node)
         {
-            var comps = ConvertList(node.Components.Elements, static (@this, comp) => @this.VisitExpression(comp));
+            var comps = ConvertList(node.Components, static (@this, comp) => @this.VisitExpression(comp));
 
             return new(node, comps);
         }
 
         public override ArrayExpressionSemantics VisitArrayExpression(ArrayExpressionSyntax node)
         {
-            var elems = ConvertList(node.Elements.Elements, static (@this, elem) => @this.VisitExpression(elem));
+            var elems = ConvertList(node.Elements, static (@this, elem) => @this.VisitExpression(elem));
 
             return new(node, elems);
         }
 
         public override SetExpressionSemantics VisitSetExpression(SetExpressionSyntax node)
         {
-            var elems = ConvertList(node.Elements.Elements, static (@this, elem) => @this.VisitExpression(elem));
+            var elems = ConvertList(node.Elements, static (@this, elem) => @this.VisitExpression(elem));
 
             return new(node, elems);
         }
 
         public override MapExpressionSemantics VisitMapExpression(MapExpressionSyntax node)
         {
-            var pairs = ConvertList(node.Pairs.Elements, static (@this, pair) => @this.VisitMapExpressionPair(pair));
+            var pairs = ConvertList(node.Pairs, static (@this, pair) => @this.VisitMapExpressionPair(pair));
 
             return new(node, pairs);
         }
@@ -525,7 +544,7 @@ internal sealed class LanguageAnalyzer
             using var ctx = PushScope<LambdaScope>();
 
             var parms = ConvertList(
-                node.ParameterList.Parameters.Elements, static (@this, param) => @this.VisitLambdaParameter(param));
+                node.ParameterList.Parameters, static (@this, param) => @this.VisitLambdaParameter(param));
             var body = VisitExpression(node.Body);
             var refs = ctx.Scope.ThisExpressions.ToImmutable();
 
@@ -625,7 +644,7 @@ internal sealed class LanguageAnalyzer
 
         public override ConditionExpressionSemantics VisitConditionExpression(ConditionExpressionSyntax node)
         {
-            var arms = ConvertList(node.Arms.Elements, static (@this, arm) => @this.VisitConditionExpressionArm(arm));
+            var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitConditionExpressionArm(arm));
 
             return new(node, arms);
         }
@@ -641,7 +660,7 @@ internal sealed class LanguageAnalyzer
         public override MatchExpressionSemantics VisitMatchExpression(MatchExpressionSyntax node)
         {
             var oper = VisitExpression(node.Operand);
-            var arms = ConvertList(node.Arms.Elements, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
+            var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
 
             return new(node, oper, arms);
         }
@@ -659,7 +678,7 @@ internal sealed class LanguageAnalyzer
 
         public override ReceiveExpressionSemantics VisitReceiveExpression(ReceiveExpressionSyntax node)
         {
-            var arms = ConvertList(node.Arms.Elements, static (@this, arm) => @this.VisitReceiveExpressionArm(arm));
+            var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitReceiveExpressionArm(arm));
             var @else = node.Else is { } e ? VisitBlockExpression(e.Body) : null;
 
             return new(node, arms, @else);
@@ -670,11 +689,18 @@ internal sealed class LanguageAnalyzer
             using var ctx = PushScope<Scope>();
 
             var parms = ConvertList(
-                node.ParameterList.Parameters.Elements, static (@this, param) => @this.VisitPattern(param.Pattern));
+                node.ParameterList.Parameters, static (@this, param) => @this.VisitReceiveParameter(param));
             var guard = node.Guard is { } g ? VisitExpression(g.Condition) : null;
             var body = VisitExpression(node.Body);
 
             return new(node, parms, guard, body);
+        }
+
+        public override ReceiveParameterSemantics VisitReceiveParameter(ReceiveParameterSyntax node)
+        {
+            var pat = VisitPattern(node.Pattern);
+
+            return new(node, pat);
         }
 
         public override TryExpressionSemantics VisitTryExpression(TryExpressionSyntax node)
@@ -682,7 +708,7 @@ internal sealed class LanguageAnalyzer
             using var ctx = PushScope<TryScope>();
 
             var body = VisitExpression(node.Body);
-            var arms = ConvertList(node.Arms.Elements, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
+            var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
             var calls = ctx.Scope.CallExpressions.DrainToImmutable();
             var raises = ctx.Scope.RaiseExpressions.DrainToImmutable();
             var sema = new TryExpressionSemantics(node, body, arms, calls, raises);
@@ -826,7 +852,7 @@ internal sealed class LanguageAnalyzer
 
             defers.Reverse();
 
-            return new(node, List(stmts), defers.DrainToImmutable());
+            return new(node, List(node.Statements, stmts), defers.DrainToImmutable());
         }
 
         public override IdentifierExpressionSemantics VisitIdentifierExpression(IdentifierExpressionSyntax node)
@@ -913,8 +939,7 @@ internal sealed class LanguageAnalyzer
         public override IndexExpressionSemantics VisitIndexExpression(IndexExpressionSyntax node)
         {
             var subject = VisitExpression(node.Subject);
-            var args = ConvertList(
-                node.ArgumentList.Arguments.Elements, static (@this, arg) => @this.VisitExpression(arg));
+            var args = ConvertList(node.ArgumentList.Arguments, static (@this, arg) => @this.VisitExpression(arg));
 
             return new(node, subject, args);
         }
@@ -922,8 +947,7 @@ internal sealed class LanguageAnalyzer
         public override CallExpressionSemantics VisitCallExpression(CallExpressionSyntax node)
         {
             var subject = VisitExpression(node.Subject);
-            var args = ConvertList(
-                node.ArgumentList.Arguments.Elements, static (@this, arg) => @this.VisitExpression(arg));
+            var args = ConvertList(node.ArgumentList.Arguments, static (@this, arg) => @this.VisitExpression(arg));
             var defers = node.QuestionToken != null
                 ? _scope.CollectDefers(null)
                 : ImmutableArray<DeferStatementSemantics>.Empty;
@@ -937,8 +961,7 @@ internal sealed class LanguageAnalyzer
         public override SendExpressionSemantics VisitSendExpression(SendExpressionSyntax node)
         {
             var subject = VisitExpression(node.Subject);
-            var args = ConvertList(
-                node.ArgumentList.Arguments.Elements, static (@this, arg) => @this.VisitExpression(arg));
+            var args = ConvertList(node.ArgumentList.Arguments, static (@this, arg) => @this.VisitExpression(arg));
 
             return new(node, subject, args);
         }
@@ -1029,8 +1052,7 @@ internal sealed class LanguageAnalyzer
 
         public override RecordPatternSemantics VisitRecordPattern(RecordPatternSyntax node)
         {
-            var fields = ConvertList(
-                node.Fields.Elements, static (@this, field) => @this.VisitAggregatePatternField(field));
+            var fields = ConvertList(node.Fields, static (@this, field) => @this.VisitAggregatePatternField(field));
 
             CheckDuplicateFields(fields, static field => field.Syntax.NameToken, "Record", "matched");
 
@@ -1041,8 +1063,7 @@ internal sealed class LanguageAnalyzer
 
         public override ErrorPatternSemantics VisitErrorPattern(ErrorPatternSyntax node)
         {
-            var fields = ConvertList(
-                node.Fields.Elements, static (@this, field) => @this.VisitAggregatePatternField(field));
+            var fields = ConvertList(node.Fields, static (@this, field) => @this.VisitAggregatePatternField(field));
 
             CheckDuplicateFields(fields, static field => field.Syntax.NameToken, "Error", "matched");
 
@@ -1053,7 +1074,7 @@ internal sealed class LanguageAnalyzer
 
         public override TuplePatternSemantics VisitTuplePattern(TuplePatternSyntax node)
         {
-            var comps = ConvertList(node.Components.Elements, static (@this, comp) => @this.VisitPattern(comp));
+            var comps = ConvertList(node.Components, static (@this, comp) => @this.VisitPattern(comp));
             var alias = node.Alias is { } a ? VisitVariableBinding(a.Binding) : null;
 
             return new(node, comps, alias);
@@ -1071,14 +1092,14 @@ internal sealed class LanguageAnalyzer
 
         public override ArrayPatternClauseSemantics VisitArrayPatternClause(ArrayPatternClauseSyntax node)
         {
-            var elems = ConvertList(node.Elements.Elements, static (@this, elem) => @this.VisitPattern(elem));
+            var elems = ConvertList(node.Elements, static (@this, elem) => @this.VisitPattern(elem));
 
             return new(node, elems);
         }
 
         public override MapPatternSemantics VisitMapPattern(MapPatternSyntax node)
         {
-            var pairs = ConvertList(node.Pairs.Elements, static (@this, pair) => @this.VisitMapPatternPair(pair));
+            var pairs = ConvertList(node.Pairs, static (@this, pair) => @this.VisitMapPatternPair(pair));
             var alias = node.Alias is { } a ? VisitVariableBinding(a.Binding) : null;
 
             return new(node, pairs, alias);
@@ -1094,7 +1115,7 @@ internal sealed class LanguageAnalyzer
 
         public override SetPatternSemantics VisitSetPattern(SetPatternSyntax node)
         {
-            var elems = ConvertList(node.Elements.Elements, static (@this, elem) => @this.VisitExpression(elem));
+            var elems = ConvertList(node.Elements, static (@this, elem) => @this.VisitExpression(elem));
             var alias = node.Alias is { } a ? VisitVariableBinding(a.Binding) : null;
 
             return new(node, elems, alias);

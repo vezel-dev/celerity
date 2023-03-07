@@ -65,4 +65,9 @@ public sealed class SyntaxTrivia : SyntaxItem
     {
         return Text;
     }
+
+    internal override void ToString(StringBuilder builder, bool leading, bool trailing)
+    {
+        _ = builder.Append(Text);
+    }
 }
