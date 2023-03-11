@@ -10,9 +10,9 @@
     <Type Name="ModuleDocument" Base="Document" Root="true">
         <Nodes Name="Attribute" Type="Attribute" />
         <Token Name="ModKeyword" />
-        <Node Name="Path" Type="ModulePath" />
-        <Token Name="Semicolon" />
+        <Token Name="OpenBrace" />
         <Nodes Name="Declaration" Type="Declaration" />
+        <Token Name="CloseBrace" />
         <Token Name="EndOfInput" Override="true" />
     </Type>
 
@@ -54,19 +54,17 @@
 
     <Type Name="Declaration" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
-        <Token Name="Name" />
     </Type>
 
     <Type Name="MissingDeclaration" Base="Declaration">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Tokens Name="Skipped" />
-        <Token Name="Name" Override="true" />
     </Type>
 
     <Type Name="UseDeclaration" Base="Declaration">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="UseKeyword" />
-        <Token Name="Name" Override="true" />
+        <Token Name="Name" />
         <Token Name="Equals" />
         <Node Name="Path" Type="ModulePath" />
         <Token Name="Semicolon" />
@@ -77,7 +75,7 @@
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="OpaqueKeyword" Optional="true" />
         <Token Name="TypeKeyword" />
-        <Token Name="Name" Override="true" />
+        <Token Name="Name" />
         <Node Name="ParameterList" Type="TypeParameterList" Optional="true" />
         <Token Name="Equals" />
         <Node Name="Type" Type="Type" />
@@ -96,6 +94,7 @@
     </Type>
 
     <Type Name="CodeDeclaration" Base="Declaration" Parent="ModuleDocument" Abstract="true">
+        <Token Name="Name" />
         <Node Name="Body" Type="Expression" Optional="true" />
     </Type>
 

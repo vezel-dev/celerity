@@ -7,7 +7,6 @@
 
     <Type Name="ModuleDocument" Base="Document" Root="true">
         <Nodes Name="Attribute" Type="Attribute" />
-        <Value Name="Path" Type="ModulePath?" />
         <Nodes Name="Declaration" Type="Declaration" />
     </Type>
 

@@ -135,25 +135,21 @@ internal sealed class LanguageAnalyzer
                     notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
         }
 
-        private static ModulePath? CreateModulePath(ModulePathSyntax path)
-        {
-            return SanitizeModulePath(path) is { Length: not 0 } comps ? new(comps) : null;
-        }
-
         private (UseDeclarationSemantics? Use, ModulePath? Path) ResolveModulePath(ModulePathSyntax path)
         {
-            var comps = SanitizeModulePath(path);
+            var comps = path
+                .ComponentTokens
+                .Elements
+                .Where(static t => !t.IsMissing)
+                .Select(static t => t.Text)
+                .ToArray();
 
-            return comps.Length == 1 && _uses.TryGetValue(comps[0], out var tup)
-                ? (tup.Declarations[0], tup.Path)
-                : comps.Length != 0
-                    ? (null, new(comps))
-                    : (null, null);
-        }
-
-        private static string[] SanitizeModulePath(ModulePathSyntax path)
-        {
-            return path.ComponentTokens.Elements.Where(static t => !t.IsMissing).Select(static t => t.Text).ToArray();
+            return comps.Length switch
+            {
+                0 => (null, null),
+                1 when _uses.TryGetValue(comps[0], out var tup) => (tup.Declarations[0], tup.Path),
+                _ => (null, new(comps)),
+            };
         }
 
         private static ImmutableArray<T>.Builder Builder<T>(int capacity)
@@ -256,7 +252,6 @@ internal sealed class LanguageAnalyzer
         public override ModuleDocumentSemantics VisitModuleDocument(ModuleDocumentSyntax node)
         {
             var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
-            var path = CreateModulePath(node.Path);
 
             // Consider:
             //
@@ -279,7 +274,7 @@ internal sealed class LanguageAnalyzer
                 static (@this, decl) => @this.VisitDeclaration(decl),
                 static decl => decl is UseDeclarationSyntax or CodeDeclarationSyntax);
 
-            return new(node, attrs, path, decls);
+            return new(node, attrs, decls);
         }
 
         public override InteractiveDocumentSemantics VisitInteractiveDocument(InteractiveDocumentSyntax node)

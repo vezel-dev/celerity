@@ -267,13 +267,12 @@ internal sealed class LanguageParser
 
     private ModuleDocumentSyntax ParseModuleDocument()
     {
-        var mattrs = ParseAttributes();
+        var attrs = ParseAttributes();
         var mod = Expect(SyntaxTokenKind.ModKeyword);
-        var path = ParseModulePath();
-        var semi = Expect(SyntaxTokenKind.Semicolon);
+        var open = Expect(SyntaxTokenKind.OpenBrace);
         var decls = Builder<DeclarationSyntax>();
 
-        while (Peek1() is { IsEndOfInput: false })
+        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
         {
             var dattrs = ParseAttributes();
             var skipped = Builder<SyntaxToken>();
@@ -288,7 +287,7 @@ internal sealed class LanguageParser
                     StandardDiagnosticCodes.MissingDeclaration,
                     "declaration");
 
-                decls.Add(new MissingDeclarationSyntax(List(dattrs), List(skipped), Missing()));
+                decls.Add(new MissingDeclarationSyntax(List(dattrs), List(skipped)));
             }
 
             while (Peek1() is { IsEndOfInput: false } next)
@@ -309,9 +308,10 @@ internal sealed class LanguageParser
             DrainToMissingDeclaration(true);
         }
 
+        var close = Expect(SyntaxTokenKind.CloseBrace);
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
 
-        return new(List(mattrs), mod, path, semi, List(decls), eoi);
+        return new(List(attrs), mod, open, List(decls), close, eoi);
     }
 
     private InteractiveDocumentSyntax ParseInteractiveDocument()

@@ -23,9 +23,8 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
         var module = Unsafe.As<ModuleDocumentSemantics>(document);
         var syntax = module.Syntax;
 
-        if (module.Path is { } path)
-            CheckDocumentationAttribute(
-                context, "Module", syntax.Path, module.Attributes.Select(static attr => attr.Name), path.ToString());
+        CheckDocumentationAttribute(
+            context, "Module", syntax.ModKeywordToken, module.Attributes.Select(static attr => attr.Name), null);
 
         // Types are not part of the semantic tree, but we still want to check public types.
         foreach (var decl in syntax.Declarations)
@@ -58,9 +57,11 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
     }
 
     private static void CheckDocumentationAttribute(
-        LintContext context, string kind, SyntaxItem item, IEnumerable<string> attributes, string name)
+        LintContext context, string kind, SyntaxItem item, IEnumerable<string> attributes, string? name)
     {
         if (!attributes.Any(static t => t == "doc"))
-            context.ReportDiagnostic(item.Span, $"{kind} '{name}' should be decorated with a 'doc' attribute");
+            context.ReportDiagnostic(
+                item.Span,
+                $"{kind}{(name != null ? $" '{name}'" : string.Empty)} should be decorated with a 'doc' attribute");
     }
 }

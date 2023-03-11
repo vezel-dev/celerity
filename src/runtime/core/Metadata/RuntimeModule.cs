@@ -13,12 +13,13 @@ public sealed class RuntimeModule : RuntimeMetadata
     private int _lambdaId;
 
     internal RuntimeModule(
+        ModulePath path,
         ModuleDocumentSemantics module,
         IEnumerable<CodeDeclarationSemantics> declarations,
         IEnumerable<LambdaExpressionSemantics> lambdas)
         : base(module.Attributes)
     {
-        Path = module.Path!;
+        Path = path;
 
         var constants = new List<RuntimeConstant>();
         var functions = new List<RuntimeFunction>();
