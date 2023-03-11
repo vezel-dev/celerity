@@ -810,7 +810,7 @@ internal sealed class LanguageAnalyzer
                 loop.BranchExpressions.Add(sema);
             else
                 Error(
-                    node.NextKeywordToken.Span,
+                    node.Span,
                     StandardDiagnosticCodes.MissingEnclosingLoop,
                     "No enclosing 'while' or 'for' expression for 'next' expression");
 
@@ -836,7 +836,7 @@ internal sealed class LanguageAnalyzer
             }
             else
                 Error(
-                    node.BreakKeywordToken.Span,
+                    node.Span,
                     StandardDiagnosticCodes.MissingEnclosingLoop,
                     "No enclosing 'while' or 'for' expression for 'break' expression");
 
@@ -919,7 +919,7 @@ internal sealed class LanguageAnalyzer
                 lambda.ThisExpressions.Add(sema);
             else
                 Error(
-                    node.ThisKeywordToken.Span,
+                    node.Span,
                     StandardDiagnosticCodes.MissingEnclosingLambda,
                     "No enclosing lambda expression for 'this' expression");
 
