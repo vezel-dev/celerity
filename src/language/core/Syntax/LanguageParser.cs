@@ -422,8 +422,9 @@ internal sealed class LanguageParser
                 ParseTypeDeclaration(attributes),
             (SyntaxTokenKind.ConstKeyword, _) or
             (SyntaxTokenKind.PubKeyword, SyntaxTokenKind.ConstKeyword) => ParseConstantDeclaration(attributes),
-            (SyntaxTokenKind.FnKeyword, _) or
-            (SyntaxTokenKind.PubKeyword, SyntaxTokenKind.ExtKeyword or SyntaxTokenKind.FnKeyword) =>
+            (SyntaxTokenKind.ErrKeyword or SyntaxTokenKind.ExtKeyword or SyntaxTokenKind.FnKeyword, _) or
+            (SyntaxTokenKind.PubKeyword,
+             SyntaxTokenKind.ErrKeyword or SyntaxTokenKind.ExtKeyword or SyntaxTokenKind.FnKeyword) =>
                 ParseFunctionDeclaration(attributes),
             (SyntaxTokenKind.TestKeyword, _) => ParseTestDeclaration(attributes),
             _ => throw new UnreachableException(),
@@ -494,14 +495,14 @@ internal sealed class LanguageParser
     {
         var pub = Optional(SyntaxTokenKind.PubKeyword);
         var ext = Optional(SyntaxTokenKind.ExtKeyword);
+        var err = Optional(SyntaxTokenKind.ErrKeyword);
         var fn = Expect(SyntaxTokenKind.FnKeyword);
         var name = ExpectCodeIdentifier();
         var parms = ParseFunctionParameterList();
-        var err = Optional(SyntaxTokenKind.ErrKeyword);
         var type = ParseOptional(SyntaxTokenKind.MinusCloseAngle, static @this => @this.ParseReturnTypeAnnotation());
         var body = ext == null ? ParseBlockExpression() : null;
 
-        return new(List(attributes), pub, ext, fn, name, parms, err, type, body);
+        return new(List(attributes), pub, ext, err, fn, name, parms, type, body);
     }
 
     private FunctionParameterListSyntax ParseFunctionParameterList()
@@ -578,6 +579,7 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.RefKeyword, _, _) => ParseReferenceType(),
             (SyntaxTokenKind.HandleKeyword, _, _) => ParseHandleType(),
             (SyntaxTokenKind.ModKeyword, _, _) => ParseModuleType(),
+            (SyntaxTokenKind.ErrKeyword, SyntaxTokenKind.FnKeyword, _) => ParseFunctionType(),
             (SyntaxTokenKind.RecKeyword, _, _) => ParseRecordType(),
             (SyntaxTokenKind.ErrKeyword, _, _) => ParseErrorType(),
             (SyntaxTokenKind.OpenParen, _, _) => ParseTupleType(),
@@ -587,7 +589,7 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBrace) => ParseSetType(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket, _) or
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket) => ParseMapType(),
-            (SyntaxTokenKind.FnKeyword, _, _) => ParseFunctionType(),
+            (SyntaxTokenKind.FnKeyword, _, _) or
             (SyntaxTokenKind.AgentKeyword, _, _) => ParseAgentType(),
             (SyntaxTokenKind.UpperIdentifier or SyntaxTokenKind.LowerIdentifier, _, _) => ParseNominalType(),
             _ => default(TypeSyntax),
@@ -818,10 +820,13 @@ internal sealed class LanguageParser
 
     private FunctionTypeSyntax ParseFunctionType()
     {
+        var err = Optional(SyntaxTokenKind.ErrKeyword);
         var fn = Read();
-        var sig = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseFunctionTypeSignature());
+        var sig = err != null
+            ? ParseFunctionTypeSignature()
+            : ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseFunctionTypeSignature());
 
-        return new(fn, sig);
+        return new(err, fn, sig);
     }
 
     private FunctionTypeSignatureSyntax ParseFunctionTypeSignature()
@@ -967,8 +972,17 @@ internal sealed class LanguageParser
     {
         var arrow = Read();
         var type = ParseReturnType();
+        var raise = ParseOptional(SyntaxTokenKind.RaiseKeyword, static @this => @this.ParseReturnTypeAnnotationRaise());
 
-        return new(arrow, type);
+        return new(arrow, type, raise);
+    }
+
+    private ReturnTypeAnnotationRaiseSyntax ParseReturnTypeAnnotationRaise()
+    {
+        var raise = Read();
+        var type = ParseType();
+
+        return new(raise, type);
     }
 
     // Statements
@@ -1166,6 +1180,8 @@ internal sealed class LanguageParser
             ({ } literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralExpression(),
             (SyntaxTokenKind.ThisKeyword, _, _) => ParseThisExpression(),
             (SyntaxTokenKind.UpperIdentifier, _, _) => ParseModuleExpression(),
+            (SyntaxTokenKind.FnKeyword, _, _) or
+            (SyntaxTokenKind.ErrKeyword, SyntaxTokenKind.FnKeyword, _) => ParseLambdaExpression(),
             (SyntaxTokenKind.RecKeyword, _, _) => ParseRecordExpression(),
             (SyntaxTokenKind.ErrKeyword, _, _) => ParseErrorExpression(),
             (SyntaxTokenKind.OpenBracket, _, _) or
@@ -1174,7 +1190,6 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBrace) => ParseSetExpression(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket, _) or
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket) => ParseMapExpression(),
-            (SyntaxTokenKind.FnKeyword, _, _) => ParseLambdaExpression(),
             (SyntaxTokenKind.IfKeyword, _, _) => ParseIfExpression(),
             (SyntaxTokenKind.CondKeyword, _, _) => ParseConditionExpression(),
             (SyntaxTokenKind.MatchKeyword, _, _) => ParseMatchExpression(),
@@ -1453,12 +1468,13 @@ internal sealed class LanguageParser
 
     private LambdaExpressionSyntax ParseLambdaExpression()
     {
+        var err = Optional(SyntaxTokenKind.ErrKeyword);
         var fn = Read();
         var parms = ParseLambdaParameterList();
         var arrow = Expect(SyntaxTokenKind.MinusCloseAngle);
         var body = ParseExpression();
 
-        return new(fn, parms, arrow, body);
+        return new(err, fn, parms, arrow, body);
     }
 
     private LambdaParameterListSyntax ParseLambdaParameterList()

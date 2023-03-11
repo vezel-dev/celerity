@@ -222,6 +222,7 @@ public static class SyntaxFacts
 
         return kind is
             SyntaxTokenKind.ConstKeyword or
+            SyntaxTokenKind.ErrKeyword or
             SyntaxTokenKind.ExtKeyword or
             SyntaxTokenKind.FnKeyword or
             SyntaxTokenKind.PubKeyword or

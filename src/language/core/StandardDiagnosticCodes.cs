@@ -54,6 +54,8 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode MissingEnclosingLambda { get; } = CreateCode();
 
+    public static DiagnosticCode ErrorInInfallibleContext { get; } = CreateCode();
+
     public static DiagnosticCode MissingEnclosingLoop { get; } = CreateCode();
 
     public static DiagnosticCode UnresolvedIdentifier { get; } = CreateCode();

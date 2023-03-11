@@ -2,7 +2,7 @@ using Vezel.Celerity.Language.Semantics.Tree;
 
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
-internal sealed class LambdaScope : Scope, IScope<LambdaScope>
+internal sealed class LambdaScope : FunctionScope, IScope<LambdaScope>
 {
     public ImmutableArray<ThisExpressionSemantics>.Builder ThisExpressions { get; } =
         ImmutableArray.CreateBuilder<ThisExpressionSemantics>(0);

@@ -361,7 +361,9 @@ internal sealed class LanguageAnalyzer
                 ? Unsafe.As<DeclarationSymbol>(_scope.ResolveSymbol(name.Text)!)
                 : null;
 
-            using var ctx = PushScope<Scope>();
+            using var ctx = PushScope<FunctionScope>();
+
+            ctx.Scope.IsFallible = node.ErrKeywordToken != null;
 
             var parms = ConvertList(
                 node.ParameterList.Parameters, static (@this, param) => @this.VisitFunctionParameter(param));
@@ -537,6 +539,8 @@ internal sealed class LanguageAnalyzer
         public override LambdaExpressionSemantics VisitLambdaExpression(LambdaExpressionSyntax node)
         {
             using var ctx = PushScope<LambdaScope>();
+
+            ctx.Scope.IsFallible = node.ErrKeywordToken != null;
 
             var parms = ConvertList(
                 node.ParameterList.Parameters, static (@this, param) => @this.VisitLambdaParameter(param));
@@ -793,7 +797,13 @@ internal sealed class LanguageAnalyzer
             var defers = _scope.CollectDefers(null);
             var sema = new RaiseExpressionSemantics(node, oper, defers);
 
-            _scope.GetEnclosingTry()?.RaiseExpressions.Add(sema);
+            if (_scope.GetEnclosingTry() is { } @try)
+                @try.RaiseExpressions.Add(sema);
+            else if (_scope.GetEnclosingFunction() is not { IsFallible: true })
+                Error(
+                    node.Span,
+                    StandardDiagnosticCodes.ErrorInInfallibleContext,
+                    "'raise' expression in infallible context is invalid");
 
             return sema;
         }
@@ -902,10 +912,10 @@ internal sealed class LanguageAnalyzer
 
         public override ThisExpressionSemantics VisitThisExpression(ThisExpressionSyntax node)
         {
-            var lambda = _scope.GetEnclosingLambda();
+            var function = _scope.GetEnclosingFunction();
             var sema = new ThisExpressionSemantics(node);
 
-            if (lambda != null)
+            if (function is LambdaScope lambda)
                 lambda.ThisExpressions.Add(sema);
             else
                 Error(
@@ -972,8 +982,16 @@ internal sealed class LanguageAnalyzer
                 : ImmutableArray<DeferStatementSemantics>.Empty;
             var sema = new CallExpressionSemantics(node, subject, args, defers);
 
-            if (sema.IsPropagating)
-                _scope.GetEnclosingTry()?.CallExpressions.Add(sema);
+            if (!sema.IsPropagating)
+                return sema;
+
+            if (_scope.GetEnclosingTry() is { } @try)
+                @try.CallExpressions.Add(sema);
+            else if (_scope.GetEnclosingFunction() is not { IsFallible: true })
+                Error(
+                    node.Span,
+                    StandardDiagnosticCodes.ErrorInInfallibleContext,
+                    "Error-propagating call expression in infallible context is invalid");
 
             return sema;
         }

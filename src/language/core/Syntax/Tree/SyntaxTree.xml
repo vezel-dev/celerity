@@ -113,10 +113,10 @@
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="PubKeyword" Optional="true" />
         <Token Name="ExtKeyword" Optional="true" />
+        <Token Name="ErrKeyword" Optional="true" />
         <Token Name="FnKeyword" />
         <Token Name="Name" Override="true" />
         <Node Name="ParameterList" Type="FunctionParameterList" />
-        <Token Name="ErrKeyword" Optional="true" />
         <Node Name="ReturnType" Type="ReturnTypeAnnotation" Optional="true" />
         <Node Name="Body" Type="BlockExpression" Optional="true" Override="true" />
     </Type>
@@ -281,6 +281,7 @@
     </Type>
 
     <Type Name="FunctionType" Base="Type">
+        <Token Name="ErrKeyword" Optional="true" />
         <Token Name="FnKeyword" />
         <Node Name="Signature" Type="FunctionTypeSignature" Optional="true" />
     </Type>
@@ -348,6 +349,12 @@
     <Type Name="ReturnTypeAnnotation">
         <Token Name="Arrow" />
         <Node Name="Type" Type="ReturnType" />
+        <Node Name="Raise" Type="ReturnTypeAnnotationRaise" Optional="true" />
+    </Type>
+
+    <Type Name="ReturnTypeAnnotationRaise" Parent="ReturnTypeAnnotation">
+        <Token Name="RaiseKeyword" />
+        <Node Name="Type" Type="Type" />
     </Type>
 
     <!-- Statements -->
@@ -478,6 +485,7 @@
     </Type>
 
     <Type Name="LambdaExpression" Base="ValueExpression">
+        <Token Name="ErrKeyword" Optional="true" />
         <Token Name="FnKeyword" />
         <Node Name="ParameterList" Type="LambdaParameterList" />
         <Token Name="Arrow" />
