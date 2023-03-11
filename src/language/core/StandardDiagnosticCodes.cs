@@ -56,6 +56,8 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode MissingEnclosingLoop { get; } = CreateCode();
 
+    public static DiagnosticCode MissingEnclosingLoopElseClause { get; } = CreateCode();
+
     public static DiagnosticCode UnresolvedIdentifier { get; } = CreateCode();
 
     public static DiagnosticCode IllegalTestReference { get; } = CreateCode();

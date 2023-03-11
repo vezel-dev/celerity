@@ -733,6 +733,7 @@ internal sealed class LanguageAnalyzer
             using (var ctx = PushScope<LoopScope>())
             {
                 scope = ctx.Scope;
+                scope.HasElse = node.Else != null;
 
                 cond = VisitExpression(node.Condition);
                 body = VisitBlockExpression(node.Body);
@@ -758,6 +759,7 @@ internal sealed class LanguageAnalyzer
             using (var ctx = PushScope<LoopScope>())
             {
                 scope = ctx.Scope;
+                scope.HasElse = node.Else != null;
 
                 // We visit the collection first so that it cannot refer to variables bound in the pattern, as in:
                 //
@@ -823,7 +825,15 @@ internal sealed class LanguageAnalyzer
             var sema = new BreakExpressionSemantics(node, result, defers);
 
             if (loop != null)
+            {
                 loop.BranchExpressions.Add(sema);
+
+                if (result != null && !loop.HasElse)
+                    Error(
+                        node.Span,
+                        StandardDiagnosticCodes.MissingEnclosingLoopElseClause,
+                        "'break as' expression in loop without 'else' clause is illegal");
+            }
             else
                 Error(
                     node.BreakKeywordToken.Span,
