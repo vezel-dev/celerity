@@ -700,12 +700,19 @@ internal sealed class LanguageAnalyzer
 
         public override TryExpressionSemantics VisitTryExpression(TryExpressionSyntax node)
         {
-            using var ctx = PushScope<TryScope>();
+            TryScope scope;
+            ExpressionSemantics body;
 
-            var body = VisitExpression(node.Body);
+            using (var ctx = PushScope<TryScope>())
+            {
+                scope = ctx.Scope;
+
+                body = VisitExpression(node.Body);
+            }
+
             var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
-            var calls = ctx.Scope.CallExpressions.DrainToImmutable();
-            var raises = ctx.Scope.RaiseExpressions.DrainToImmutable();
+            var calls = scope.CallExpressions.DrainToImmutable();
+            var raises = scope.RaiseExpressions.DrainToImmutable();
             var sema = new TryExpressionSemantics(node, body, arms, calls, raises);
 
             foreach (var call in calls)
@@ -719,12 +726,20 @@ internal sealed class LanguageAnalyzer
 
         public override WhileExpressionSemantics VisitWhileExpression(WhileExpressionSyntax node)
         {
-            using var ctx = PushScope<LoopScope>();
+            LoopScope scope;
+            ExpressionSemantics cond;
+            BlockExpressionSemantics body;
 
-            var cond = VisitExpression(node.Condition);
-            var body = VisitBlockExpression(node.Body);
+            using (var ctx = PushScope<LoopScope>())
+            {
+                scope = ctx.Scope;
+
+                cond = VisitExpression(node.Condition);
+                body = VisitBlockExpression(node.Body);
+            }
+
             var @else = node.Else is { } e ? VisitBlockExpression(e.Body) : null;
-            var branches = ctx.Scope.BranchExpressions.DrainToImmutable();
+            var branches = scope.BranchExpressions.DrainToImmutable();
             var sema = new WhileExpressionSemantics(node, cond, body, @else, branches);
 
             foreach (var branch in branches)
@@ -735,18 +750,27 @@ internal sealed class LanguageAnalyzer
 
         public override ForExpressionSemantics VisitForExpression(ForExpressionSyntax node)
         {
-            using var ctx = PushScope<LoopScope>();
+            LoopScope scope;
+            ExpressionSemantics collection;
+            PatternSemantics pat;
+            BlockExpressionSemantics body;
 
-            // We visit the collection first so that it cannot refer to variables bound in the pattern, as in:
-            //
-            // for x in x {
-            //     42;
-            // };
-            var collection = VisitExpression(node.Collection);
-            var pat = VisitPattern(node.Pattern);
-            var body = VisitBlockExpression(node.Body);
+            using (var ctx = PushScope<LoopScope>())
+            {
+                scope = ctx.Scope;
+
+                // We visit the collection first so that it cannot refer to variables bound in the pattern, as in:
+                //
+                // for x in x {
+                //     42;
+                // };
+                collection = VisitExpression(node.Collection);
+                pat = VisitPattern(node.Pattern);
+                body = VisitBlockExpression(node.Body);
+            }
+
             var @else = node.Else is { } e ? VisitBlockExpression(e.Body) : null;
-            var branches = ctx.Scope.BranchExpressions.DrainToImmutable();
+            var branches = scope.BranchExpressions.DrainToImmutable();
             var sema = new ForExpressionSemantics(node, pat, collection, body, @else, branches);
 
             foreach (var branch in branches)
