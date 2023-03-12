@@ -40,7 +40,7 @@ public abstract class SourceText : IReadOnlyList<char>
             {
                 var ch1 = Read();
 
-                if (ch1 is '\r' or '\n')
+                if (TextFacts.IsNewLine(ch1))
                 {
                     _ = reader.TryPeek(0, out var ch2);
 

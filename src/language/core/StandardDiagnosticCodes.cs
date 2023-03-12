@@ -10,6 +10,10 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode UnrecognizedCharacter { get; } = CreateCode();
 
+    public static DiagnosticCode UnsupportedWhiteSpaceCharacter { get; } = CreateCode();
+
+    public static DiagnosticCode UnsupportedNewLineCharacter { get; } = CreateCode();
+
     public static DiagnosticCode IncompleteExclamationEquals { get; } = CreateCode();
 
     public static DiagnosticCode IncompleteIntegerLiteral { get; } = CreateCode();

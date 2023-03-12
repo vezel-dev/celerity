@@ -28,6 +28,10 @@ internal sealed class LanguageLexer
 
     private bool _errors;
 
+    private bool _whiteSpaceDiagnostic;
+
+    private bool _newLineDiagnostic;
+
     public LanguageLexer(SourceText text, SyntaxMode mode, List<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
         _reader = new(text);
@@ -61,12 +65,12 @@ internal sealed class LanguageLexer
         return ch;
     }
 
-    private void Error(int position, DiagnosticCode code, string message)
+    private void TokenError(int position, DiagnosticCode code, string message)
     {
-        Error(position, _position - position, code, message);
+        TokenError(position, _position - position, code, message);
     }
 
-    private void Error(int position, int length, DiagnosticCode code, string message)
+    private void TokenError(int position, int length, DiagnosticCode code, string message)
     {
         _diagnostics.Add(tree =>
             new(
@@ -78,6 +82,23 @@ internal sealed class LanguageLexer
                 ImmutableArray<DiagnosticNote>.Empty));
 
         _errors = true;
+    }
+
+    private void TriviaError(ref bool flag, int position, DiagnosticCode code, string message)
+    {
+        if (flag)
+            return;
+
+        _diagnostics.Add(tree =>
+            new(
+                tree,
+                new(position, 1),
+                code,
+                DiagnosticSeverity.Error,
+                message,
+                ImmutableArray<DiagnosticNote>.Empty));
+
+        flag = true;
     }
 
     private SyntaxTrivia CreateTrivia(int position, SyntaxTriviaKind kind)
@@ -186,7 +207,8 @@ internal sealed class LanguageLexer
         }
         catch (Exception ex) when (ex is OutOfMemoryException or OverflowException)
         {
-            Error(position, text.Length, StandardDiagnosticCodes.InvalidIntegerLiteral, "Integer literal is too large");
+            TokenError(
+                position, text.Length, StandardDiagnosticCodes.InvalidIntegerLiteral, "Integer literal is too large");
 
             return null;
         }
@@ -204,7 +226,7 @@ internal sealed class LanguageLexer
         if (!double.IsInfinity(value))
             return value;
 
-        Error(position, text.Length, StandardDiagnosticCodes.InvalidRealLiteral, "Real literal is out of range");
+        TokenError(position, text.Length, StandardDiagnosticCodes.InvalidRealLiteral, "Real literal is out of range");
 
         return null;
     }
@@ -349,7 +371,7 @@ internal sealed class LanguageLexer
         Advance(_trivia);
         Advance(_trivia);
 
-        while (Peek1() is not (null or '\n' or '\r'))
+        while (Peek1() is { } ch && !TextFacts.IsNewLine(ch))
             Advance(_trivia);
 
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.ShebangLine));
@@ -361,21 +383,25 @@ internal sealed class LanguageLexer
         {
             switch ((ch1, ch2))
             {
-                case (' ' or '\t', _):
-                    LexWhiteSpace(position, builder);
-                    continue;
-                case ('\n' or '\r', _):
-                    LexNewLine(position, builder);
-
-                    // Trailing trivia for a token stops when the line ends.
-                    if (builder == _trailing)
-                        break;
-                    else
-                        continue;
                 case ('/', '/'):
                     LexComment(position, builder);
                     continue;
                 default:
+                    if (TextFacts.IsWhiteSpace(ch1))
+                    {
+                        LexWhiteSpace(position, builder);
+                        continue;
+                    }
+
+                    if (TextFacts.IsNewLine(ch1))
+                    {
+                        LexNewLine(position, builder);
+
+                        // Trailing trivia for a token stops when the line ends.
+                        if (builder != _trailing)
+                            continue;
+                    }
+
                     break;
             }
 
@@ -385,16 +411,33 @@ internal sealed class LanguageLexer
 
     private void LexWhiteSpace(int position, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        while (Peek1() is ' ' or '\t')
+        while (Peek1() is { } ch && TextFacts.IsWhiteSpace(ch))
+        {
+            if (ch != ' ')
+                TriviaError(
+                    ref _whiteSpaceDiagnostic,
+                    _position,
+                    StandardDiagnosticCodes.UnsupportedWhiteSpaceCharacter,
+                    "Input is using unsupported white space characters (only ASCII space is supported)");
+
             Advance(_trivia);
+        }
 
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.WhiteSpace));
     }
 
     private void LexNewLine(int position, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        if ((Read(_trivia), Peek1()) == ('\r', '\n'))
+        var ch = Read(_trivia);
+
+        if ((ch, Peek1()) == ('\r', '\n'))
             Advance(_trivia);
+        else if (ch is not ('\n' or '\r'))
+            TriviaError(
+                ref _newLineDiagnostic,
+                position,
+                StandardDiagnosticCodes.UnsupportedNewLineCharacter,
+                "Input is using unsupported new-line characters (only LF and CRLF are supported)");
 
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.NewLine));
     }
@@ -404,7 +447,7 @@ internal sealed class LanguageLexer
         Advance(_trivia);
         Advance(_trivia);
 
-        while (Peek1() is not (null or '\n' or '\r'))
+        while (Peek1() is { } ch && !TextFacts.IsNewLine(ch))
             Advance(_trivia);
 
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.Comment));
@@ -414,7 +457,7 @@ internal sealed class LanguageLexer
     {
         Advance();
 
-        Error(position, 1, StandardDiagnosticCodes.UnrecognizedCharacter, "Unrecognized character");
+        TokenError(position, 1, StandardDiagnosticCodes.UnrecognizedCharacter, "Unrecognized character");
 
         return (position, SyntaxTokenKind.Unrecognized);
     }
@@ -443,7 +486,7 @@ internal sealed class LanguageLexer
 
         if (ch1 == '!')
         {
-            Error(position, StandardDiagnosticCodes.IncompleteExclamationEquals, "Incomplete '!=' operator");
+            TokenError(position, StandardDiagnosticCodes.IncompleteExclamationEquals, "Incomplete '!=' operator");
 
             return (position, SyntaxTokenKind.ExclamationEquals);
         }
@@ -559,7 +602,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(radix) && radix != 10)
         {
-            Error(
+            TokenError(
                 position, StandardDiagnosticCodes.IncompleteIntegerLiteral, $"Incomplete base-{radix} integer literal");
 
             return (position, SyntaxTokenKind.IntegerLiteral);
@@ -573,7 +616,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(10))
         {
-            Error(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
+            TokenError(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
             return (position, SyntaxTokenKind.RealLiteral);
         }
@@ -588,7 +631,7 @@ internal sealed class LanguageLexer
             Advance();
 
         if (!ConsumeDigits(10))
-            Error(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
+            TokenError(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
         return (position, SyntaxTokenKind.RealLiteral);
     }
@@ -632,15 +675,18 @@ internal sealed class LanguageLexer
 
         while (true)
         {
-            if (Peek1() is null or '\n' or '\r')
+            var ch = Peek1();
+
+            if (ch == null || TextFacts.IsNewLine((char)ch))
             {
-                Error(position, StandardDiagnosticCodes.IncompleteStringLiteral, "Incomplete string literal");
+                TokenError(position, StandardDiagnosticCodes.IncompleteStringLiteral, "Incomplete string literal");
 
                 break;
             }
 
             var chPos = _position;
-            var ch = Read();
+
+            Advance();
 
             if (ch == '"')
                 break;
@@ -664,7 +710,7 @@ internal sealed class LanguageLexer
 
                         if (digit is not (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F'))
                         {
-                            Error(
+                            TokenError(
                                 codePos,
                                 StandardDiagnosticCodes.IncompleteUnicodeEscapeSequence,
                                 "Incomplete Unicode escape sequence");
@@ -676,7 +722,7 @@ internal sealed class LanguageLexer
                     }
 
                     if (!Rune.IsValid(int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture)))
-                        Error(
+                        TokenError(
                             codePos,
                             UnicodeEscapeSequenceLength,
                             StandardDiagnosticCodes.InvalidUnicodeEscapeSequence,
@@ -684,7 +730,7 @@ internal sealed class LanguageLexer
 
                     break;
                 default:
-                    Error(chPos, StandardDiagnosticCodes.IncompleteEscapeSequence, "Incomplete escape sequence");
+                    TokenError(chPos, StandardDiagnosticCodes.IncompleteEscapeSequence, "Incomplete escape sequence");
                     break;
             }
         }
