@@ -73,6 +73,15 @@ internal static class DiagnosticPrinter
             {
                 await PrintLineAsync(line, text, ControlSequences.SetDecorations(intense: true));
 
+                // Edge case: If a diagnostic points to the new-line character on line A, its SourceTextLocation.End
+                // will point to the first character of the following line B. This causes line B to be included in this
+                // loop. But since no characters on that line are actually affected, we print no caret. This causes the
+                // edge case logic below to kick in, resulting in a nonsensical caret at the end of line B.
+                //
+                // Deal with this by avoiding printing the caret line.
+                if (line == endLine && end.Character == 0)
+                    continue;
+
                 var sb = new StringBuilder();
 
                 var isStart = line == startLine;
@@ -102,7 +111,7 @@ internal static class DiagnosticPrinter
 
                 // Edge case: In various situations, a diagnostic can point to lines in such a way that no visible
                 // character on that line gets a caret under it. For example, consider a line that consists of nothing
-                // but the CR/LF sequence; we have stripped that earlier so it will not be processed in the loop above.
+                // but the CR/LF sequence; we have stripped that earlier so it will not be processed in this loop.
                 // Another case is a file that ends abruptly when a token was expected; there, the diagnostic will point
                 // just past the end of the source text.
                 //
