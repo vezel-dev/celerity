@@ -21,6 +21,18 @@ internal sealed class LambdaScope : FunctionScope, IScope<LambdaScope>
         return new(parent);
     }
 
+    public ImmutableArray<UpvalueSymbol> CollectUpvalues()
+    {
+        var builder = ImmutableArray.CreateBuilder<UpvalueSymbol>(_upvalues.Count);
+
+        foreach (var (_, sym) in _upvalues)
+            builder.Add(sym);
+
+        builder.Sort((x, y) => x.Slot.CompareTo(y.Slot));
+
+        return builder.DrainToImmutable();
+    }
+
     public override TryScope? GetEnclosingTry()
     {
         // We might be analyzing code like this:

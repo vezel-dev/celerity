@@ -362,13 +362,16 @@ internal sealed class LanguageAnalyzer
                 : null;
 
             using var ctx = PushScope<FunctionScope>();
+            var scope = ctx.Scope;
 
-            ctx.Scope.IsFallible = node.ErrKeywordToken != null;
+            scope.IsFallible = node.ErrKeywordToken != null;
 
             var parms = ConvertList(
                 node.ParameterList.Parameters, static (@this, param) => @this.VisitFunctionParameter(param));
             var body = node.Body is { } b ? VisitBlockExpression(b) : null;
-            var sema = new FunctionDeclarationSemantics(node, attrs, sym, parms, body);
+            var calls = scope.CallExpressions.DrainToImmutable();
+            var raises = scope.RaiseExpressions.DrainToImmutable();
+            var sema = new FunctionDeclarationSemantics(node, attrs, sym, parms, body, calls, raises);
 
             sym?.AddBinding(sema);
 
@@ -539,16 +542,19 @@ internal sealed class LanguageAnalyzer
         public override LambdaExpressionSemantics VisitLambdaExpression(LambdaExpressionSyntax node)
         {
             using var ctx = PushScope<LambdaScope>();
+            var scope = ctx.Scope;
 
-            ctx.Scope.IsFallible = node.ErrKeywordToken != null;
+            scope.IsFallible = node.ErrKeywordToken != null;
 
             var parms = ConvertList(
                 node.ParameterList.Parameters, static (@this, param) => @this.VisitLambdaParameter(param));
             var body = VisitExpression(node.Body);
-            var refs = ctx.Scope.ThisExpressions.ToImmutable();
+            var upvalues = scope.CollectUpvalues();
+            var refs = scope.ThisExpressions.ToImmutable();
+            var calls = scope.CallExpressions.DrainToImmutable();
+            var raises = scope.RaiseExpressions.DrainToImmutable();
 
-            // TODO: Should we attach the upvalues array?
-            var sema = new LambdaExpressionSemantics(node, parms, body, refs);
+            var sema = new LambdaExpressionSemantics(node, parms, body, upvalues, refs, calls, raises);
 
             foreach (var @this in refs)
                 @this.Lambda = sema;
