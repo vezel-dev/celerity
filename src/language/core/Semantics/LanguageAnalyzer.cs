@@ -972,7 +972,8 @@ internal sealed class LanguageAnalyzer
                 : ImmutableArray<DeferStatementSemantics>.Empty;
             var sema = new CallExpressionSemantics(node, subject, args, defers);
 
-            _scope.GetEnclosingTry()?.CallExpressions.Add(sema);
+            if (sema.IsPropagating)
+                _scope.GetEnclosingTry()?.CallExpressions.Add(sema);
 
             return sema;
         }
