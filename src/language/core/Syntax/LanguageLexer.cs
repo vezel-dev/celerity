@@ -8,6 +8,8 @@ internal sealed class LanguageLexer
 {
     private const int UnicodeEscapeSequenceLength = 6;
 
+    private static readonly Encoding _utf8 = Encoding.UTF8;
+
     private readonly ListReader<char> _reader;
 
     private readonly SyntaxMode _mode;
@@ -18,7 +20,7 @@ internal sealed class LanguageLexer
 
     private readonly StringBuilder _trivia = new();
 
-    private readonly StringBuilder _string = new();
+    private readonly List<char> _string = new();
 
     private readonly ImmutableArray<SyntaxTrivia>.Builder _leading = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
@@ -149,7 +151,7 @@ internal sealed class LanguageLexer
                 SyntaxTokenKind.IntegerLiteral => CreateInteger(position, text),
                 SyntaxTokenKind.RealLiteral => CreateReal(position, text),
                 SyntaxTokenKind.AtomLiteral => CreateAtom(text),
-                SyntaxTokenKind.StringLiteral => CreateString(text),
+                SyntaxTokenKind.StringLiteral => CreateString(),
                 _ => null,
             },
             new(_leading.DrainToImmutable()),
@@ -237,83 +239,14 @@ internal sealed class LanguageLexer
         return text.AsMemory(1..);
     }
 
-    private ReadOnlyMemory<byte> CreateString(string text)
+    private ReadOnlyMemory<byte> CreateString()
     {
-        // TODO: Build up the string in ParseStringLiteral to avoid duplication of escape sequence processing logic.
+        var chars = CollectionsMarshal.AsSpan(_string);
+        var bytes = new byte[_utf8.GetByteCount(chars)];
 
-        using var enumerator = text.GetEnumerator();
+        _ = _utf8.GetBytes(chars, bytes);
 
-        // Skip opening double quote.
-        _ = enumerator.MoveNext();
-
-        var hex = (stackalloc char[UnicodeEscapeSequenceLength]);
-        var code = (stackalloc char[2]);
-
-        while (enumerator.MoveNext())
-        {
-            var cur = enumerator.Current;
-
-            // Closing double quote.
-            if (cur == '"')
-                continue;
-
-            if (cur != '\\')
-            {
-                _ = _string.Append(cur);
-
-                continue;
-            }
-
-            _ = enumerator.MoveNext();
-
-            var replacement = char.MaxValue;
-
-            switch (enumerator.Current)
-            {
-                case '0':
-                    replacement = '\0';
-                    break;
-                case 'n' or 'N':
-                    replacement = '\n';
-                    break;
-                case 'r' or 'R':
-                    replacement = '\r';
-                    break;
-                case 't' or 'T':
-                    replacement = '\t';
-                    break;
-                case '"':
-                    replacement = '"';
-                    break;
-                case '\\':
-                    replacement = '\\';
-                    break;
-                case 'u' or 'U':
-                    break;
-            }
-
-            if (replacement == char.MaxValue)
-            {
-                for (var i = 0; i < hex.Length; i++)
-                {
-                    _ = enumerator.MoveNext();
-
-                    hex[i] = enumerator.Current;
-                }
-
-                var scalar = (Rune)int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-
-                _ = _string.Append(code[..scalar.EncodeToUtf16(code)]);
-            }
-            else
-                _ = _string.Append(replacement);
-        }
-
-        var result = _string.ToString();
-
-        _ = _string.Clear();
-
-        return Encoding.UTF8.GetBytes(result);
+        return bytes;
     }
 
     public IReadOnlyList<SyntaxToken> Lex()
@@ -672,12 +605,11 @@ internal sealed class LanguageLexer
         Advance();
 
         var hex = (stackalloc char[UnicodeEscapeSequenceLength]);
+        var code = (stackalloc char[2]);
 
         while (true)
         {
-            var ch = Peek1();
-
-            if (ch == null || TextFacts.IsNewLine((char)ch))
+            if (Peek1() is not { } ch || TextFacts.IsNewLine(ch))
             {
                 TokenError(position, StandardDiagnosticCodes.IncompleteStringLiteral, "Incomplete string literal");
 
@@ -692,12 +624,30 @@ internal sealed class LanguageLexer
                 break;
 
             if (ch != '\\')
+            {
+                _string.Add(ch);
+
                 continue;
+            }
+
+            var replacement = default(char?);
 
             switch (Peek1())
             {
-                case '0' or 'n' or 'N' or 'r' or 'R' or 't' or 'T' or '"' or '\\':
-                    Advance();
+                case '0':
+                    replacement = '\0';
+                    break;
+                case 'n' or 'N':
+                    replacement = '\n';
+                    break;
+                case 'r' or 'R':
+                    replacement = '\r';
+                    break;
+                case 't' or 'T':
+                    replacement = '\t';
+                    break;
+                case ('"' or '\\') and var rep:
+                    replacement = rep;
                     break;
                 case 'u' or 'U':
                     Advance();
@@ -706,9 +656,7 @@ internal sealed class LanguageLexer
 
                     for (var i = 0; i < UnicodeEscapeSequenceLength; i++)
                     {
-                        var digit = Peek1();
-
-                        if (digit is not (>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F'))
+                        if (Peek1() is not ((>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F')))
                         {
                             TokenError(
                                 codePos,
@@ -721,19 +669,42 @@ internal sealed class LanguageLexer
                         hex[i] = Read();
                     }
 
-                    if (!Rune.IsValid(int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture)))
+                    // Did we read the full scalar number?
+                    if (_position != codePos + UnicodeEscapeSequenceLength)
+                        break;
+
+                    var scalar = int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+
+                    if (!Rune.TryCreate(scalar, out var rune))
+                    {
                         TokenError(
                             codePos,
                             UnicodeEscapeSequenceLength,
                             StandardDiagnosticCodes.InvalidUnicodeEscapeSequence,
                             $"Invalid Unicode escape sequence");
 
+                        break;
+                    }
+
+                    _string.AddRange(code[..rune.EncodeToUtf16(code)]);
+
                     break;
                 default:
                     TokenError(chPos, StandardDiagnosticCodes.IncompleteEscapeSequence, "Incomplete escape sequence");
                     break;
             }
+
+            if (replacement is not { } repCh)
+                continue;
+
+            Advance();
+
+            _string.Add(repCh);
         }
+
+        // If an error occurred, we will not try to create the string value in CreateToken, so just drop it.
+        if (_errors)
+            _string.Clear();
 
         return (position, SyntaxTokenKind.StringLiteral);
     }

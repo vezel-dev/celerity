@@ -12,8 +12,7 @@ internal sealed class RunVerb : Verb
         // TODO: Replace all of this.
 
         var syntax = SyntaxTree.Parse(
-            new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File)),
-            SyntaxMode.Module);
+            new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File)), SyntaxMode.Module);
         var semantics = SemanticTree.Analyze(syntax);
         var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).ToArray();
 
