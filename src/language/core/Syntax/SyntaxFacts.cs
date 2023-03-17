@@ -216,6 +216,26 @@ public static class SyntaxFacts
             SyntaxTokenKind.StringLiteral;
     }
 
+    public static bool IsSubmissionStarter(SyntaxTokenKind kind)
+    {
+        return IsDeclarationSubmissionStarter(kind) || IsStatementSubmissionStarter(kind);
+    }
+
+    public static bool IsDeclarationSubmissionStarter(SyntaxTokenKind kind)
+    {
+        Check.Enum(kind);
+
+        return kind == SyntaxTokenKind.UseKeyword;
+    }
+
+    public static bool IsStatementSubmissionStarter(SyntaxTokenKind kind)
+    {
+        return kind is
+            SyntaxTokenKind.AssertKeyword or
+            SyntaxTokenKind.LetKeyword ||
+            IsExpressionStarter(kind);
+    }
+
     public static bool IsDeclarationStarter(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
@@ -227,26 +247,13 @@ public static class SyntaxFacts
             SyntaxTokenKind.FnKeyword or
             SyntaxTokenKind.PubKeyword or
             SyntaxTokenKind.TestKeyword or
-            SyntaxTokenKind.TypeKeyword || IsInteractiveDeclarationStarter(kind);
-    }
-
-    public static bool IsInteractiveDeclarationStarter(SyntaxTokenKind kind)
-    {
-        Check.Enum(kind);
-
-        return kind == SyntaxTokenKind.UseKeyword;
+            SyntaxTokenKind.TypeKeyword ||
+            IsDeclarationSubmissionStarter(kind);
     }
 
     public static bool IsStatementStarter(SyntaxTokenKind kind)
     {
-        return kind == SyntaxTokenKind.DeferKeyword || IsInteractiveStatementStarter(kind);
-    }
-
-    public static bool IsInteractiveStatementStarter(SyntaxTokenKind kind)
-    {
-        return kind is
-            SyntaxTokenKind.AssertKeyword or
-            SyntaxTokenKind.LetKeyword || IsExpressionStarter(kind);
+        return kind == SyntaxTokenKind.DeferKeyword || IsStatementSubmissionStarter(kind);
     }
 
     public static bool IsExpressionStarter(SyntaxTokenKind kind)

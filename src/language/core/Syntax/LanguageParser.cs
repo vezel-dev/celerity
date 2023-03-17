@@ -407,11 +407,11 @@ internal sealed class LanguageParser
 
     private InteractiveDocumentSyntax ParseInteractiveDocument()
     {
-        var subs = Builder<SubmissionSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false })
-            subs.Add(ParseSubmission());
-
+        var subs = ParseAttributedList(
+            SyntaxFacts.IsSubmissionStarter,
+            static (@this, attrs) => @this.ParseSubmission(attrs),
+            SyntaxTokenKind.CloseBrace,
+            "submission");
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
 
         return new(List(subs), eoi);
@@ -455,14 +455,12 @@ internal sealed class LanguageParser
 
     // Submissions
 
-    private SubmissionSyntax ParseSubmission()
+    private SubmissionSyntax ParseSubmission(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
-        var attrs = ParseAttributes();
-
-        return Peek1() switch
+        return Peek1().Kind switch
         {
-            { } tok when SyntaxFacts.IsInteractiveDeclarationStarter(tok.Kind) => ParseDeclarationSubmission(attrs),
-            _ => ParseStatementSubmission(attrs),
+            var kind when SyntaxFacts.IsDeclarationSubmissionStarter(kind) => ParseDeclarationSubmission(attributes),
+            _ => ParseStatementSubmission(attributes),
         };
     }
 
