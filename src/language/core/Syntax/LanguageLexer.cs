@@ -253,7 +253,7 @@ internal sealed class LanguageLexer
 
         while (true)
         {
-            LexTrivia(_reader.Position, _leading);
+            LexTrivia(_leading);
 
             var position = _reader.Position;
             var kind = Peek1() switch
@@ -283,7 +283,7 @@ internal sealed class LanguageLexer
             };
 
             if (kind != SyntaxTokenKind.EndOfInput)
-                LexTrivia(_reader.Position, _trailing);
+                LexTrivia(_trailing);
 
             tokens.Add(CreateToken(position, kind));
 
@@ -305,10 +305,12 @@ internal sealed class LanguageLexer
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.ShebangLine));
     }
 
-    private void LexTrivia(int position, ImmutableArray<SyntaxTrivia>.Builder builder)
+    private void LexTrivia(ImmutableArray<SyntaxTrivia>.Builder builder)
     {
         while (Peek2() is ({ } ch1, var ch2))
         {
+            var position = _reader.Position;
+
             switch ((ch1, ch2))
             {
                 case ('/', '/'):
