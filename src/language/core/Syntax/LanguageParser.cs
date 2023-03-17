@@ -16,6 +16,8 @@ internal sealed class LanguageParser
 
     private readonly ImmutableArray<SyntaxTrivia>.Builder _skipped = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
+    private SyntaxToken? _last;
+
     public LanguageParser(
         IReadOnlyList<SyntaxToken> tokens, SyntaxMode mode, List<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
@@ -53,18 +55,22 @@ internal sealed class LanguageParser
     {
         var token = _reader.Read();
 
-        if (_skipped.Count == 0)
-            return token;
+        if (_skipped.Count != 0)
+        {
+            _skipped.AddRange(token.LeadingTrivia.AsImmutableArray());
 
-        _skipped.AddRange(token.LeadingTrivia.AsImmutableArray());
+            token = new(
+                token.Span.Start,
+                token.Kind,
+                token.Text,
+                token.Value,
+                new(_skipped.DrainToImmutable()),
+                token.TrailingTrivia);
+        }
 
-        return new(
-            token.Span.Start,
-            token.Kind,
-            token.Text,
-            token.Value,
-            new(_skipped.DrainToImmutable()),
-            token.TrailingTrivia);
+        _last = token;
+
+        return token;
     }
 
     private void Skip(int count)
@@ -197,7 +203,13 @@ internal sealed class LanguageParser
 
     private void ErrorExpected(SourceTextSpan? span, DiagnosticCode code, string expected)
     {
-        Error(span ?? _eoi, code, $"Expected {expected}");
+        var finalSpan = span ?? _eoi;
+
+        // When possible, attach the error to the trailing new-line trivia on the previous token.
+        if (_last?.TrailingTrivia.SingleOrDefault(t => t.Kind == SyntaxTriviaKind.NewLine) is { } trivia)
+            finalSpan = trivia.FullSpan;
+
+        Error(finalSpan, code, $"Expected {expected}");
     }
 
     private void Error(SourceTextSpan span, DiagnosticCode code, string message)
