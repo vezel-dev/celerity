@@ -70,6 +70,6 @@ public readonly struct SourceTextSpan :
 
     public override string ToString()
     {
-        return $"{Start}..{Length}";
+        return $"{Start}..{End}";
     }
 }
