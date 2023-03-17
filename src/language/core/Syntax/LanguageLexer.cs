@@ -6,8 +6,6 @@ namespace Vezel.Celerity.Language.Syntax;
 
 internal sealed class LanguageLexer
 {
-    private const int UnicodeEscapeSequenceLength = 6;
-
     private static readonly Encoding _utf8 = Encoding.UTF8;
 
     private readonly ListReader<char> _reader;
@@ -25,8 +23,6 @@ internal sealed class LanguageLexer
     private readonly ImmutableArray<SyntaxTrivia>.Builder _leading = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
     private readonly ImmutableArray<SyntaxTrivia>.Builder _trailing = ImmutableArray.CreateBuilder<SyntaxTrivia>();
-
-    private int _position;
 
     private bool _errors;
 
@@ -62,14 +58,12 @@ internal sealed class LanguageLexer
 
         _ = (builder ?? _chars).Append(ch);
 
-        _position++;
-
         return ch;
     }
 
     private void TokenError(int position, DiagnosticCode code, string message)
     {
-        TokenError(position, _position - position, code, message);
+        TokenError(position, _reader.Position - position, code, message);
     }
 
     private void TokenError(int position, int length, DiagnosticCode code, string message)
@@ -255,40 +249,41 @@ internal sealed class LanguageLexer
 
         // The shebang line can only occur at the very beginning.
         if (_mode == SyntaxMode.Module && Peek2() == ('#', '!'))
-            LexShebangLine(_position, _leading);
+            LexShebangLine(_reader.Position, _leading);
 
         while (true)
         {
-            LexTrivia(_position, _leading);
+            LexTrivia(_reader.Position, _leading);
 
-            var (position, kind) = Peek1() switch
+            var position = _reader.Position;
+            var kind = Peek1() switch
             {
                 '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<' or '=' or '!' =>
-                    LexOperatorOrPunctuator(_position),
-                '.' => LexPunctuator(_position, SyntaxTokenKind.Dot),
-                ',' => LexPunctuator(_position, SyntaxTokenKind.Comma),
-                ';' => LexPunctuator(_position, SyntaxTokenKind.Semicolon),
-                '@' => LexPunctuator(_position, SyntaxTokenKind.At),
-                '#' => LexPunctuator(_position, SyntaxTokenKind.Hash),
-                '?' => LexPunctuator(_position, SyntaxTokenKind.Question),
-                '(' => LexPunctuator(_position, SyntaxTokenKind.OpenParen),
-                ')' => LexPunctuator(_position, SyntaxTokenKind.CloseParen),
-                '[' => LexPunctuator(_position, SyntaxTokenKind.OpenBracket),
-                ']' => LexPunctuator(_position, SyntaxTokenKind.CloseBracket),
-                '{' => LexPunctuator(_position, SyntaxTokenKind.OpenBrace),
-                '}' => LexPunctuator(_position, SyntaxTokenKind.CloseBrace),
-                >= 'A' and <= 'Z' => LexIdentifier(_position, SyntaxTokenKind.UpperIdentifier),
-                >= 'a' and <= 'z' => LexIdentifier(_position, SyntaxTokenKind.LowerIdentifier),
-                '_' => LexIdentifier(_position, SyntaxTokenKind.DiscardIdentifier),
-                >= '0' and <= '9' => LexNumberLiteral(_position),
-                ':' => LexAtomLiteralOrPunctuator(_position),
-                '"' => LexStringLiteral(_position),
-                null => (_position, SyntaxTokenKind.EndOfInput),
-                _ => LexUnrecognized(_position),
+                    LexOperatorOrPunctuator(position),
+                '.' => LexPunctuator(SyntaxTokenKind.Dot),
+                ',' => LexPunctuator(SyntaxTokenKind.Comma),
+                ';' => LexPunctuator(SyntaxTokenKind.Semicolon),
+                '@' => LexPunctuator(SyntaxTokenKind.At),
+                '#' => LexPunctuator(SyntaxTokenKind.Hash),
+                '?' => LexPunctuator(SyntaxTokenKind.Question),
+                '(' => LexPunctuator(SyntaxTokenKind.OpenParen),
+                ')' => LexPunctuator(SyntaxTokenKind.CloseParen),
+                '[' => LexPunctuator(SyntaxTokenKind.OpenBracket),
+                ']' => LexPunctuator(SyntaxTokenKind.CloseBracket),
+                '{' => LexPunctuator(SyntaxTokenKind.OpenBrace),
+                '}' => LexPunctuator(SyntaxTokenKind.CloseBrace),
+                >= 'A' and <= 'Z' => LexIdentifier(SyntaxTokenKind.UpperIdentifier),
+                >= 'a' and <= 'z' => LexIdentifier(SyntaxTokenKind.LowerIdentifier),
+                '_' => LexIdentifier(SyntaxTokenKind.DiscardIdentifier),
+                >= '0' and <= '9' => LexNumberLiteral(position),
+                ':' => LexAtomLiteralOrPunctuator(),
+                '"' => LexStringLiteral(position),
+                null => SyntaxTokenKind.EndOfInput,
+                _ => LexUnrecognized(position),
             };
 
             if (kind != SyntaxTokenKind.EndOfInput)
-                LexTrivia(_position, _trailing);
+                LexTrivia(_reader.Position, _trailing);
 
             tokens.Add(CreateToken(position, kind));
 
@@ -301,8 +296,8 @@ internal sealed class LanguageLexer
 
     private void LexShebangLine(int position, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        Advance(_trivia);
-        Advance(_trivia);
+        for (var i = 0; i < 2; i++)
+            Advance(_trivia);
 
         while (Peek1() is { } ch && !TextFacts.IsNewLine(ch))
             Advance(_trivia);
@@ -349,7 +344,7 @@ internal sealed class LanguageLexer
             if (ch != ' ')
                 TriviaError(
                     ref _whiteSpaceDiagnostic,
-                    _position,
+                    _reader.Position,
                     StandardDiagnosticCodes.UnsupportedWhiteSpaceCharacter,
                     "Input is using unsupported white space characters (only ASCII space is supported)");
 
@@ -377,8 +372,8 @@ internal sealed class LanguageLexer
 
     private void LexComment(int position, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        Advance(_trivia);
-        Advance(_trivia);
+        for (var i = 0; i < 2; i++)
+            Advance(_trivia);
 
         while (Peek1() is { } ch && !TextFacts.IsNewLine(ch))
             Advance(_trivia);
@@ -386,16 +381,16 @@ internal sealed class LanguageLexer
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.Comment));
     }
 
-    private (int Position, SyntaxTokenKind Kind) LexUnrecognized(int position)
+    private SyntaxTokenKind LexUnrecognized(int position)
     {
         Advance();
 
         TokenError(position, 1, StandardDiagnosticCodes.UnrecognizedCharacter, "Unrecognized character");
 
-        return (position, SyntaxTokenKind.Unrecognized);
+        return SyntaxTokenKind.Unrecognized;
     }
 
-    private (int Position, SyntaxTokenKind Kind) LexOperatorOrPunctuator(int position)
+    private SyntaxTokenKind LexOperatorOrPunctuator(int position)
     {
         var ch1 = Read();
         var ch2 = Peek1();
@@ -414,14 +409,14 @@ internal sealed class LanguageLexer
         {
             Advance();
 
-            return (position, k);
+            return k;
         }
 
         if (ch1 == '!')
         {
             TokenError(position, StandardDiagnosticCodes.IncompleteExclamationEquals, "Incomplete '!=' operator");
 
-            return (position, SyntaxTokenKind.ExclamationEquals);
+            return SyntaxTokenKind.ExclamationEquals;
         }
 
         var parts = 1;
@@ -437,30 +432,30 @@ internal sealed class LanguageLexer
         // Handle remaining special operators, and then custom operators.
         return (parts, ch1, ch2) switch
         {
-            (1, '<', _) => (position, SyntaxTokenKind.OpenAngle),
-            (1, '>', _) => (position, SyntaxTokenKind.CloseAngle),
-            (2, '-', '>') => (position, SyntaxTokenKind.MinusCloseAngle),
-            (_, '+' or '-' or '~', _) => (position, SyntaxTokenKind.AdditiveOperator),
-            (_, '*' or '/' or '%', _) => (position, SyntaxTokenKind.MultiplicativeOperator),
-            (_, '&' or '|' or '^', _) => (position, SyntaxTokenKind.BitwiseOperator),
-            (_, '>' or '<', _) => (position, SyntaxTokenKind.ShiftOperator),
+            (1, '<', _) => SyntaxTokenKind.OpenAngle,
+            (1, '>', _) => SyntaxTokenKind.CloseAngle,
+            (2, '-', '>') => SyntaxTokenKind.MinusCloseAngle,
+            (_, '+' or '-' or '~', _) => SyntaxTokenKind.AdditiveOperator,
+            (_, '*' or '/' or '%', _) => SyntaxTokenKind.MultiplicativeOperator,
+            (_, '&' or '|' or '^', _) => SyntaxTokenKind.BitwiseOperator,
+            (_, '>' or '<', _) => SyntaxTokenKind.ShiftOperator,
             _ => throw new UnreachableException(),
         };
     }
 
-    private (int Position, SyntaxTokenKind Kind) LexPunctuator(int position, SyntaxTokenKind kind)
+    private SyntaxTokenKind LexPunctuator(SyntaxTokenKind kind)
     {
         Advance();
 
         if (kind != SyntaxTokenKind.Dot || Peek1() != '.')
-            return (position, kind);
+            return kind;
 
         Advance();
 
-        return (position, SyntaxTokenKind.DotDot);
+        return SyntaxTokenKind.DotDot;
     }
 
-    private (int Position, SyntaxTokenKind Kind) LexIdentifier(int position, SyntaxTokenKind kind)
+    private SyntaxTokenKind LexIdentifier(SyntaxTokenKind kind)
     {
         Advance();
 
@@ -479,10 +474,10 @@ internal sealed class LanguageLexer
                 break;
         }
 
-        return (position, kind);
+        return kind;
     }
 
-    private (int Position, SyntaxTokenKind Kind) LexNumberLiteral(int position)
+    private SyntaxTokenKind LexNumberLiteral(int position)
     {
         var ch1 = Read();
         var ch2 = Peek1();
@@ -538,12 +533,12 @@ internal sealed class LanguageLexer
             TokenError(
                 position, StandardDiagnosticCodes.IncompleteIntegerLiteral, $"Incomplete base-{radix} integer literal");
 
-            return (position, SyntaxTokenKind.IntegerLiteral);
+            return SyntaxTokenKind.IntegerLiteral;
         }
 
         // Is it an integer or real literal?
         if (radix != 10 || Peek1() != '.')
-            return (position, SyntaxTokenKind.IntegerLiteral);
+            return SyntaxTokenKind.IntegerLiteral;
 
         Advance();
 
@@ -551,12 +546,12 @@ internal sealed class LanguageLexer
         {
             TokenError(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
-            return (position, SyntaxTokenKind.RealLiteral);
+            return SyntaxTokenKind.RealLiteral;
         }
 
         // Do we have an exponent part?
         if (Peek1() is not ('e' or 'E'))
-            return (position, SyntaxTokenKind.RealLiteral);
+            return SyntaxTokenKind.RealLiteral;
 
         Advance();
 
@@ -566,10 +561,10 @@ internal sealed class LanguageLexer
         if (!ConsumeDigits(10))
             TokenError(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
-        return (position, SyntaxTokenKind.RealLiteral);
+        return SyntaxTokenKind.RealLiteral;
     }
 
-    private (int Position, SyntaxTokenKind Kind) LexAtomLiteralOrPunctuator(int position)
+    private SyntaxTokenKind LexAtomLiteralOrPunctuator()
     {
         Advance();
 
@@ -579,7 +574,7 @@ internal sealed class LanguageLexer
         {
             Advance();
 
-            return (position, SyntaxTokenKind.ColonColon);
+            return SyntaxTokenKind.ColonColon;
         }
 
         var ident = ch switch
@@ -592,19 +587,19 @@ internal sealed class LanguageLexer
 
         if (ident is { } k)
         {
-            _ = LexIdentifier(position, k);
+            _ = LexIdentifier(k);
 
-            return (position, SyntaxTokenKind.AtomLiteral);
+            return SyntaxTokenKind.AtomLiteral;
         }
 
-        return (position, SyntaxTokenKind.Colon);
+        return SyntaxTokenKind.Colon;
     }
 
-    private (int Position, SyntaxTokenKind Kind) LexStringLiteral(int position)
+    private SyntaxTokenKind LexStringLiteral(int position)
     {
         Advance();
 
-        var hex = (stackalloc char[UnicodeEscapeSequenceLength]);
+        var hex = (stackalloc char[6]);
         var code = (stackalloc char[2]);
 
         while (true)
@@ -616,7 +611,7 @@ internal sealed class LanguageLexer
                 break;
             }
 
-            var chPos = _position;
+            var chPos = _reader.Position;
 
             Advance();
 
@@ -652,9 +647,9 @@ internal sealed class LanguageLexer
                 case 'u' or 'U':
                     Advance();
 
-                    var codePos = _position;
+                    var codePos = _reader.Position;
 
-                    for (var i = 0; i < UnicodeEscapeSequenceLength; i++)
+                    for (var i = 0; i < hex.Length; i++)
                     {
                         if (Peek1() is not ((>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F')))
                         {
@@ -670,7 +665,7 @@ internal sealed class LanguageLexer
                     }
 
                     // Did we read the full scalar number?
-                    if (_position != codePos + UnicodeEscapeSequenceLength)
+                    if (_reader.Position != codePos + hex.Length)
                         break;
 
                     var scalar = int.Parse(hex, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
@@ -679,7 +674,7 @@ internal sealed class LanguageLexer
                     {
                         TokenError(
                             codePos,
-                            UnicodeEscapeSequenceLength,
+                            hex.Length,
                             StandardDiagnosticCodes.InvalidUnicodeEscapeSequence,
                             $"Invalid Unicode escape sequence");
 
@@ -706,6 +701,6 @@ internal sealed class LanguageLexer
         if (_errors)
             _string.Clear();
 
-        return (position, SyntaxTokenKind.StringLiteral);
+        return SyntaxTokenKind.StringLiteral;
     }
 }
