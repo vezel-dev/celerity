@@ -115,7 +115,7 @@ internal sealed class LanguageParser
 
         // In the vast majority of places where we use lowercase identifiers in the language, there is no reason to
         // reserve these common words for use as type keywords. So allow them as lowercase identifiers.
-        if (next.Kind is { } kind && SyntaxFacts.IsCodeIdentifier(kind))
+        if (SyntaxFacts.IsCodeIdentifier(next.Kind))
             return Read();
 
         ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase identifier");
@@ -128,7 +128,7 @@ internal sealed class LanguageParser
         var next = Peek1();
 
         // Same idea as above.
-        if (next.Kind is { } kind && SyntaxFacts.IsBindingIdentifier(kind))
+        if (SyntaxFacts.IsBindingIdentifier(next.Kind))
             return Read();
 
         ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase or discard identifier");
@@ -640,7 +640,7 @@ internal sealed class LanguageParser
         {
             (SyntaxTokenKind.AnyKeyword, _, _) => ParseAnyType(),
             _ when IsMinus(tok1) => ParseLiteralType(),
-            ({ } literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralType(),
+            (var literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralType(),
             (SyntaxTokenKind.BoolKeyword, _, _) => ParseBooleanType(),
             (SyntaxTokenKind.IntKeyword, _, _) => ParseIntegerType(),
             (SyntaxTokenKind.RealKeyword, _, _) => ParseRealType(),
@@ -1246,8 +1246,8 @@ internal sealed class LanguageParser
         {
             (SyntaxTokenKind.OpenParen, _, _) => ParseParenthesizedOrTupleExpression(),
             (SyntaxTokenKind.OpenBrace, _, _) => ParseBlockExpression(),
-            ({ } ident, _, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseIdentifierExpression(),
-            ({ } literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralExpression(),
+            (var ident, _, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseIdentifierExpression(),
+            (var literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralExpression(),
             (SyntaxTokenKind.ThisKeyword, _, _) => ParseThisExpression(),
             (SyntaxTokenKind.UpperIdentifier, _, _) => ParseModuleExpression(),
             (SyntaxTokenKind.FnKeyword, _, _) or
@@ -1820,7 +1820,7 @@ internal sealed class LanguageParser
         var next = Peek1();
         var binding = next.Kind switch
         {
-            { } kind when kind == SyntaxTokenKind.MutKeyword || SyntaxFacts.IsCodeIdentifier(kind) =>
+            var kind when kind == SyntaxTokenKind.MutKeyword || SyntaxFacts.IsCodeIdentifier(kind) =>
                 ParseVariableBinding(),
             SyntaxTokenKind.DiscardIdentifier => ParseDiscardBinding(),
             _ => default(BindingSyntax),
@@ -1859,10 +1859,10 @@ internal sealed class LanguageParser
         var pat = (tok1.Kind, tok2?.Kind) switch
         {
             (SyntaxTokenKind.MutKeyword, _) => ParseWildcardOrStringOrArrayPattern(),
-            ({ } ident, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseWildcardOrStringOrArrayPattern(),
+            (var ident, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseWildcardOrStringOrArrayPattern(),
             _ when IsMinus(tok1) => ParseLiteralPattern(),
             (SyntaxTokenKind.StringLiteral, _) => ParseStringPattern(null),
-            ({ } literal, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralPattern(),
+            (var literal, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralPattern(),
             (SyntaxTokenKind.RecKeyword, _) => ParseRecordPattern(),
             (SyntaxTokenKind.ErrKeyword, _) => ParseErrorPattern(),
             (SyntaxTokenKind.OpenParen, _) => ParseTuplePattern(),
