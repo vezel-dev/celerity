@@ -71,15 +71,17 @@ internal static class DiagnosticPrinter
 
             foreach (var (line, text) in lines.Where(t => t.Line >= startLine && t.Line <= endLine))
             {
-                await PrintLineAsync(line, text, ControlSequences.SetDecorations(intense: true));
-
                 // Edge case: If a diagnostic points to the new-line character on line A, its SourceTextLocation.End
                 // will point to the first character of the following line B. This causes line B to be included in this
                 // loop. But since no characters on that line are actually affected, we print no caret. This causes the
                 // edge case logic below to kick in, resulting in a nonsensical caret at the end of line B.
                 //
                 // Deal with this by avoiding printing the caret line.
-                if (line == endLine && end.Character == 0)
+                var skip = line == endLine && end.Character == 0;
+
+                await PrintLineAsync(line, text, !skip ? ControlSequences.SetDecorations(intense: true) : null);
+
+                if (skip)
                     continue;
 
                 var sb = new StringBuilder();
