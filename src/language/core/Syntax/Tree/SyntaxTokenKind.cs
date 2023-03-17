@@ -4,7 +4,7 @@ public enum SyntaxTokenKind
 {
     Missing, // Synthesized in LanguageParser for missing tokens.
     EndOfInput, // Synthesized in LanguageLexer after all input has been consumed.
-    Unrecognized,
+    Unrecognized, // Produced by LanguageLexer but turned into SyntaxTriviaKind.SkippedToken in LanguageParser.
     BitwiseOperator,
     ShiftOperator,
     MultiplicativeOperator,

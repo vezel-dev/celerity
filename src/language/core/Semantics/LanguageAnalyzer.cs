@@ -188,8 +188,7 @@ internal sealed class LanguageAnalyzer
         }
 
         private SeparatedSemanticNodeList<TSemantics, TSyntax> ConvertList<TSyntax, TSemantics>(
-            SeparatedSyntaxItemList<TSyntax> syntax,
-            Func<AnalysisVisitor, TSyntax, TSemantics> converter)
+            SeparatedSyntaxItemList<TSyntax> syntax, Func<AnalysisVisitor, TSyntax, TSemantics> converter)
             where TSyntax : SyntaxNode
             where TSemantics : SemanticNode
         {
@@ -279,10 +278,7 @@ internal sealed class LanguageAnalyzer
 
         public override InteractiveDocumentSemantics VisitInteractiveDocument(InteractiveDocumentSyntax node)
         {
-            var subs = ConvertList(
-                node.Submissions,
-                static (@this, sub) => @this.VisitSubmission(sub),
-                static sub => sub is not StatementSubmissionSyntax { Statement: MissingStatementSyntax });
+            var subs = ConvertList(node.Submissions, static (@this, sub) => @this.VisitSubmission(sub));
 
             return new(node, subs);
         }
@@ -868,9 +864,6 @@ internal sealed class LanguageAnalyzer
 
             foreach (var stmt in node.Statements)
             {
-                if (stmt is MissingStatementSyntax)
-                    continue;
-
                 if (stmt is LetStatementSyntax)
                     lets.Add(PushScope<Scope>());
 

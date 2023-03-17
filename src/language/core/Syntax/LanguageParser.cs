@@ -14,6 +14,8 @@ internal sealed class LanguageParser
 
     private readonly SourceTextSpan _eoi;
 
+    private readonly ImmutableArray<SyntaxTrivia>.Builder _skipped = ImmutableArray.CreateBuilder<SyntaxTrivia>();
+
     public LanguageParser(
         IReadOnlyList<SyntaxToken> tokens, SyntaxMode mode, List<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
@@ -49,7 +51,49 @@ internal sealed class LanguageParser
 
     private SyntaxToken Read()
     {
-        return _reader.Read();
+        var token = _reader.Read();
+
+        if (_skipped.Count == 0)
+            return token;
+
+        _skipped.AddRange(token.LeadingTrivia.AsImmutableArray());
+
+        return new(
+            token.Span.Start,
+            token.Kind,
+            token.Text,
+            token.Value,
+            new(_skipped.DrainToImmutable()),
+            token.TrailingTrivia);
+    }
+
+    private void Skip(int count)
+    {
+        for (var i = 0; i < count; i++)
+            SkipToken(_reader.Read());
+    }
+
+    private void SkipWhile<T>(
+        SyntaxToken first, Func<SyntaxTokenKind, T, bool> predicate, T state, DiagnosticCode code, string message)
+    {
+        while (Peek1() is { IsEndOfInput: false } token && predicate(token.Kind, state))
+            SkipToken(_reader.Read());
+
+        var firstSpan = first.Span;
+
+        Error(
+            new(
+                firstSpan.Start,
+                _skipped.LastOrDefault() is { } last ? last.Span.End - firstSpan.Start : firstSpan.Length),
+            code,
+            message);
+    }
+
+    private void SkipToken(SyntaxToken token)
+    {
+        _skipped.AddRange(token.LeadingTrivia.AsImmutableArray());
+        _skipped.Add(new(token.Span.Start, SyntaxTriviaKind.SkippedToken, token.Text));
+        _skipped.AddRange(token.TrailingTrivia.AsImmutableArray());
     }
 
     private SyntaxToken ExpectCodeIdentifier()
@@ -153,14 +197,13 @@ internal sealed class LanguageParser
 
     private void ErrorExpected(SourceTextSpan? span, DiagnosticCode code, string expected)
     {
-        _diagnostics.Add(tree =>
-            new(
-                tree,
-                span ?? _eoi,
-                code,
-                DiagnosticSeverity.Error,
-                $"Expected {expected}",
-                ImmutableArray<DiagnosticNote>.Empty));
+        Error(span ?? _eoi, code, $"Expected {expected}");
+    }
+
+    private void Error(SourceTextSpan span, DiagnosticCode code, string message)
+    {
+        _diagnostics.Add(
+            tree => new(tree, span, code, DiagnosticSeverity.Error, message, ImmutableArray<DiagnosticNote>.Empty));
     }
 
     private static ImmutableArray<T>.Builder Builder<T>()
@@ -193,6 +236,51 @@ internal sealed class LanguageParser
         where T : SyntaxNode
     {
         return Peek1()?.Kind == kind ? parser(this) : null;
+    }
+
+    private ImmutableArray<T>.Builder ParseAttributedList<T>(
+        Func<SyntaxTokenKind, bool> predicate,
+        Func<LanguageParser, ImmutableArray<AttributeSyntax>.Builder, T> parser,
+        SyntaxTokenKind closer,
+        DiagnosticCode code,
+        string expected)
+        where T : SyntaxNode
+    {
+        var elements = Builder<T>();
+
+        while (true)
+        {
+            var mark = _reader.Save();
+            var attrs = ParseAttributes();
+            var next = Peek1()!;
+
+            if (predicate(next.Kind))
+            {
+                elements.Add(parser(this, attrs));
+
+                continue;
+            }
+
+            var position = _reader.Position;
+
+            _reader.Rewind(mark);
+
+            var stop = next.IsEndOfInput || next.Kind == closer;
+
+            Skip(position - _reader.Position + (stop ? 0 : 1));
+
+            if (stop)
+                break;
+
+            SkipWhile(
+                next,
+                static (kind, state) => !state.Predicate(kind) && kind != state.Closer,
+                (Predicate: predicate, Closer: closer),
+                code,
+                $"Expected {expected}");
+        }
+
+        return elements;
     }
 
     private (ImmutableArray<T>.Builder Elements, ImmutableArray<SyntaxToken>.Builder Separators) ParseSeparatedList<T>(
@@ -270,45 +358,22 @@ internal sealed class LanguageParser
         var attrs = ParseAttributes();
         var mod = Expect(SyntaxTokenKind.ModKeyword);
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var decls = Builder<DeclarationSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            var dattrs = ParseAttributes();
-            var skipped = Builder<SyntaxToken>();
-
-            void DrainToMissingDeclaration(bool attributes)
-            {
-                if (skipped.Count == 0 && (!attributes || dattrs.Count == 0))
-                    return;
-
-                ErrorExpected(
-                    (skipped.FirstOrDefault() ?? Peek1())?.Span,
-                    StandardDiagnosticCodes.MissingDeclaration,
-                    "declaration");
-
-                decls.Add(new MissingDeclarationSyntax(List(dattrs), List(skipped)));
-            }
-
-            while (Peek1() is { IsEndOfInput: false } next)
-            {
-                if (SyntaxFacts.IsDeclarationStarter(next.Kind))
-                {
-                    DrainToMissingDeclaration(false);
-
-                    decls.Add(ParseDeclaration(dattrs));
-
-                    break;
-                }
-
-                skipped.Add(Read());
-            }
-
-            // There can be some leftover skipped tokens.
-            DrainToMissingDeclaration(true);
-        }
-
+        var decls = ParseAttributedList(
+            SyntaxFacts.IsDeclarationStarter,
+            static (@this, attrs) => @this.ParseDeclaration(attrs),
+            SyntaxTokenKind.CloseBrace,
+            StandardDiagnosticCodes.MissingDeclaration,
+            "declaration");
         var close = Expect(SyntaxTokenKind.CloseBrace);
+
+        if (Peek1() is { IsEndOfInput: false } next)
+            SkipWhile(
+                next,
+                static (kind, _) => true,
+                default(object),
+                StandardDiagnosticCodes.UnexpectedToken,
+                "Unexpected token");
+
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
 
         return new(List(attrs), mod, open, List(decls), close, eoi);
@@ -319,53 +384,7 @@ internal sealed class LanguageParser
         var subs = Builder<SubmissionSyntax>();
 
         while (Peek1() is { IsEndOfInput: false })
-        {
-            var attrs = ParseAttributes();
-            var skipped = Builder<SyntaxToken>();
-
-            void DrainToMissingStatement(bool attributes)
-            {
-                if (skipped.Count == 0 && (!attributes || attrs.Count == 0))
-                    return;
-
-                ErrorExpected(
-                    (skipped.FirstOrDefault() ?? Peek1())?.Span,
-                    StandardDiagnosticCodes.MissingStatement,
-                    "interactive declaration or statement");
-
-                subs.Add(
-                    new StatementSubmissionSyntax(new MissingStatementSyntax(List(attrs), List(skipped), Missing())));
-            }
-
-            while (Peek1() is { IsEndOfInput: false } next)
-            {
-                if (SyntaxFacts.IsInteractiveDeclarationStarter(next.Kind))
-                {
-                    DrainToMissingStatement(false);
-
-                    subs.Add(new DeclarationSubmissionSyntax(ParseDeclaration(attrs)));
-
-                    break;
-                }
-
-                if (SyntaxFacts.IsInteractiveStatementStarter(next.Kind))
-                {
-                    DrainToMissingStatement(false);
-
-                    subs.Add(new StatementSubmissionSyntax(ParseStatement(attrs)));
-
-                    break;
-                }
-
-                skipped.Add(Read());
-
-                if (next.Kind == SyntaxTokenKind.Semicolon)
-                    break;
-            }
-
-            // There can be some leftover skipped tokens.
-            DrainToMissingStatement(true);
-        }
+            subs.Add(ParseSubmission());
 
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
 
@@ -406,6 +425,33 @@ internal sealed class LanguageParser
         }
 
         return new(List(idents, seps));
+    }
+
+    // Submissions
+
+    private SubmissionSyntax ParseSubmission()
+    {
+        var attrs = ParseAttributes();
+
+        return Peek1() switch
+        {
+            { } tok when SyntaxFacts.IsInteractiveDeclarationStarter(tok.Kind) => ParseDeclarationSubmission(attrs),
+            _ => ParseStatementSubmission(attrs),
+        };
+    }
+
+    private DeclarationSubmissionSyntax ParseDeclarationSubmission(ImmutableArray<AttributeSyntax>.Builder attributes)
+    {
+        var decl = ParseDeclaration(attributes);
+
+        return new(decl);
+    }
+
+    private StatementSubmissionSyntax ParseStatementSubmission(ImmutableArray<AttributeSyntax>.Builder attributes)
+    {
+        var stmt = ParseStatement(attributes);
+
+        return new(stmt);
     }
 
     // Declarations
@@ -1247,83 +1293,23 @@ internal sealed class LanguageParser
     private BlockExpressionSyntax ParseBlockExpression()
     {
         var open = Expect(SyntaxTokenKind.OpenBrace);
-        var stmts = Builder<StatementSyntax>();
-
-        while (Peek1() is { IsEndOfInput: false, Kind: not SyntaxTokenKind.CloseBrace })
-        {
-            var mark = _reader.Save();
-            var attrs = ParseAttributes();
-            var skipped = Builder<SyntaxToken>();
-
-            void DrainToMissingStatement()
-            {
-                if (skipped.Count == 0)
-                    return;
-
-                ErrorExpected(
-                    (skipped.FirstOrDefault() ?? Peek1())?.Span, StandardDiagnosticCodes.MissingStatement, "statement");
-
-                stmts.Add(new MissingStatementSyntax(List(attrs), List(skipped), Missing()));
-            }
-
-            var decl = false;
-
-            while (Peek2() is ({ IsEndOfInput: false } next1, var next2))
-            {
-                // We might be looking at a declaration because the user has not yet closed the current block
-                // expression. If so, stop parsing this block so we can properly parse the declaration.
-                //
-                // Note this ambiguity:
-                //
-                // {
-                //     fn() {};
-                // }
-                //
-                // The fn keyword could be confused with a declaration. For this case, we need to look ahead.
-                if (SyntaxFacts.IsDeclarationStarter(next1.Kind) &&
-                    (next1.Kind, next2?.Kind) is not (SyntaxTokenKind.FnKeyword, SyntaxTokenKind.OpenParen))
-                {
-                    DrainToMissingStatement();
-
-                    // If we have any attributes that were not attached to the MissingStatementSyntax, rewind so that
-                    // they become available when the declaration is parsed.
-                    if (attrs.Count != 0)
-                        _reader.Rewind(mark);
-
-                    decl = true;
-
-                    break;
-                }
-
-                if (SyntaxFacts.IsStatementStarter(next1.Kind))
-                {
-                    DrainToMissingStatement();
-
-                    stmts.Add(ParseStatement(attrs));
-
-                    break;
-                }
-
-                skipped.Add(Read());
-
-                if (next1.Kind == SyntaxTokenKind.Semicolon)
-                    break;
-            }
-
-            // There can be some leftover skipped tokens.
-            DrainToMissingStatement();
-
-            if (decl)
-                break;
-        }
+        var stmts = ParseAttributedList(
+            SyntaxFacts.IsStatementStarter,
+            static (@this, attrs) => @this.ParseStatement(attrs),
+            SyntaxTokenKind.CloseBrace,
+            StandardDiagnosticCodes.MissingStatement,
+            "statement");
 
         // Blocks must have at least one statement.
         if (stmts.Count == 0)
         {
             ErrorExpected(Peek1()?.Span, StandardDiagnosticCodes.MissingStatement, "statement");
 
-            stmts.Add(new MissingStatementSyntax(
-                List(Builder<AttributeSyntax>()), List(Builder<SyntaxToken>()), Missing()));
+            stmts.Add(
+                new ExpressionStatementSyntax(
+                    List(Builder<AttributeSyntax>()),
+                    new IdentifierExpressionSyntax(Missing()),
+                    Missing()));
         }
 
         var close = Expect(SyntaxTokenKind.CloseBrace);

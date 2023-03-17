@@ -6,4 +6,5 @@ public enum SyntaxTriviaKind
     WhiteSpace,
     NewLine,
     Comment,
+    SkippedToken, // Synthesized in LanguageParser when attempting to recover from parse errors.
 }

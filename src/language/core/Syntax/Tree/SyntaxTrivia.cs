@@ -14,6 +14,8 @@ public sealed class SyntaxTrivia : SyntaxItem
 
     public SyntaxTriviaKind Kind { get; }
 
+    public bool IsSkippedToken => Kind == SyntaxTriviaKind.SkippedToken;
+
     [SuppressMessage("", "CA1721")]
     public string Text { get; }
 

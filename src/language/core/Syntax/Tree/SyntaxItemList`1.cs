@@ -90,6 +90,11 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
             item.SetParent(parent);
     }
 
+    internal ImmutableArray<T> AsImmutableArray()
+    {
+        return _items;
+    }
+
     public Enumerator GetEnumerator()
     {
         return new(_items.GetEnumerator());

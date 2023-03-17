@@ -56,11 +56,6 @@
         <Nodes Name="Attribute" Type="Attribute" />
     </Type>
 
-    <Type Name="MissingDeclaration" Base="Declaration">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Tokens Name="Skipped" />
-    </Type>
-
     <Type Name="UseDeclaration" Base="Declaration">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Token Name="UseKeyword" />
@@ -362,12 +357,6 @@
     <Type Name="Statement" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
         <Token Name="Semicolon" />
-    </Type>
-
-    <Type Name="MissingStatement" Base="Statement">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Tokens Name="Skipped" />
-        <Token Name="Semicolon" Override="true" />
     </Type>
 
     <Type Name="LetStatement" Base="Statement">

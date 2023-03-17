@@ -6,13 +6,13 @@ public sealed class SyntaxToken : SyntaxItem
 {
     public new SyntaxNode Parent => Unsafe.As<SyntaxNode>(base.Parent!);
 
-    public override SourceTextSpan Span => _position == -1 ? default : new(_position, Text.Length);
+    public override SourceTextSpan Span => IsMissing ? default : new(_position, Text.Length);
 
     public override SourceTextSpan FullSpan
     {
         get
         {
-            if (_position == -1)
+            if (IsMissing)
                 return default;
 
             var start = LeadingTrivia.Count != 0 ? LeadingTrivia[0].FullSpan.Start : _position;
@@ -29,8 +29,6 @@ public sealed class SyntaxToken : SyntaxItem
     public bool IsMissing => Kind == SyntaxTokenKind.Missing;
 
     public bool IsEndOfInput => Kind == SyntaxTokenKind.EndOfInput;
-
-    public bool IsUnrecognized => Kind == SyntaxTokenKind.Unrecognized;
 
     [SuppressMessage("", "CA1721")]
     public string Text { get; }
