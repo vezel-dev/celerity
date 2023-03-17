@@ -12,11 +12,11 @@ internal sealed class ListReader<T>
         }
     }
 
-    public bool IsEmpty => _position == _items.Count;
+    public int Position { get; private set; }
+
+    public bool IsEmpty => Position == _items.Count;
 
     private readonly IReadOnlyList<T> _items;
-
-    private int _position;
 
     public ListReader(IReadOnlyList<T> items)
     {
@@ -25,7 +25,7 @@ internal sealed class ListReader<T>
 
     public bool TryPeek(int offset, [MaybeNullWhen(false)] out T item)
     {
-        var position = _position + offset;
+        var position = Position + offset;
 
         if (position < _items.Count)
         {
@@ -41,16 +41,16 @@ internal sealed class ListReader<T>
 
     public T Read()
     {
-        return _items[_position++];
+        return _items[Position++];
     }
 
     public Mark Save()
     {
-        return new(_position);
+        return new(Position);
     }
 
     public void Rewind(Mark mark)
     {
-        _position = mark.Position;
+        Position = mark.Position;
     }
 }
