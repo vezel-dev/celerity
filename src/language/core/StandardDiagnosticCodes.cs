@@ -32,9 +32,11 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode InvalidUnicodeEscapeSequence { get; } = CreateCode();
 
-    public static DiagnosticCode UnexpectedToken { get; } = CreateCode();
-
     public static DiagnosticCode ExpectedToken { get; } = CreateCode();
+
+    public static DiagnosticCode UnexpectedTokens { get; } = CreateCode();
+
+    public static DiagnosticCode UselessTrailingAttributes { get; } = CreateCode();
 
     public static DiagnosticCode MissingDeclaration { get; } = CreateCode();
 

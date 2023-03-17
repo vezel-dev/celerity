@@ -12,8 +12,6 @@ internal sealed class LanguageParser
 
     private readonly List<Func<SyntaxTree, Diagnostic>> _diagnostics;
 
-    private readonly SourceTextSpan _eoi;
-
     private readonly ImmutableArray<SyntaxTrivia>.Builder _skipped = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
     private SyntaxToken? _last;
@@ -24,31 +22,34 @@ internal sealed class LanguageParser
         _reader = new(tokens);
         _mode = mode;
         _diagnostics = diagnostics;
-        _eoi = tokens[^1].Span;
     }
 
-    private SyntaxToken? Peek1()
+    private SyntaxToken Peek1()
     {
         _ = _reader.TryPeek(0, out var tok);
 
-        return tok;
+        // This can only be null in case of a bug since the last token is always EOI and is meant to be consumed at the
+        // very end of parsing.
+        return tok!;
     }
 
-    private (SyntaxToken? First, SyntaxToken? Second) Peek2()
+    private (SyntaxToken First, SyntaxToken? Second) Peek2()
     {
         _ = _reader.TryPeek(0, out var tok1);
         _ = _reader.TryPeek(1, out var tok2);
 
-        return (tok1, tok2);
+        // See comment in Peek1.
+        return (tok1!, tok2);
     }
 
-    private (SyntaxToken? First, SyntaxToken? Second, SyntaxToken? Third) Peek3()
+    private (SyntaxToken First, SyntaxToken? Second, SyntaxToken? Third) Peek3()
     {
         _ = _reader.TryPeek(0, out var tok1);
         _ = _reader.TryPeek(1, out var tok2);
         _ = _reader.TryPeek(2, out var tok3);
 
-        return (tok1, tok2, tok3);
+        // See comment in Peek1.
+        return (tok1!, tok2, tok3);
     }
 
     private SyntaxToken Read()
@@ -80,9 +81,15 @@ internal sealed class LanguageParser
     }
 
     private void SkipWhile<T>(
-        SyntaxToken first, Func<SyntaxTokenKind, T, bool> predicate, T state, DiagnosticCode code, string message)
+        SyntaxToken first,
+        Func<SyntaxTokenKind, T, bool> predicate,
+        T state,
+        DiagnosticCode code,
+        string location)
     {
-        while (Peek1() is { IsEndOfInput: false } token && predicate(token.Kind, state))
+        var i = 0;
+
+        for (; Peek1() is { IsEndOfInput: false } token && predicate(token.Kind, state); i++)
             SkipToken(_reader.Read());
 
         var firstSpan = first.Span;
@@ -92,7 +99,7 @@ internal sealed class LanguageParser
                 firstSpan.Start,
                 _skipped.LastOrDefault() is { } last ? last.Span.End - firstSpan.Start : firstSpan.Length),
             code,
-            message);
+            $"Unexpected {(i == 1 ? "token" : "tokens")} in {location}");
     }
 
     private void SkipToken(SyntaxToken token)
@@ -108,10 +115,10 @@ internal sealed class LanguageParser
 
         // In the vast majority of places where we use lowercase identifiers in the language, there is no reason to
         // reserve these common words for use as type keywords. So allow them as lowercase identifiers.
-        if (next?.Kind is { } kind && SyntaxFacts.IsCodeIdentifier(kind))
+        if (next.Kind is { } kind && SyntaxFacts.IsCodeIdentifier(kind))
             return Read();
 
-        ErrorExpected(next?.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase identifier");
+        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase identifier");
 
         return Missing();
     }
@@ -121,10 +128,10 @@ internal sealed class LanguageParser
         var next = Peek1();
 
         // Same idea as above.
-        if (next?.Kind is { } kind && SyntaxFacts.IsBindingIdentifier(kind))
+        if (next.Kind is { } kind && SyntaxFacts.IsBindingIdentifier(kind))
             return Read();
 
-        ErrorExpected(next?.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase or discard identifier");
+        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase or discard identifier");
 
         return Missing();
     }
@@ -133,7 +140,7 @@ internal sealed class LanguageParser
     {
         var next = Peek1();
 
-        if (next?.Kind is
+        if (next.Kind is
             SyntaxTokenKind.NilLiteral or
             SyntaxTokenKind.BooleanLiteral or
             SyntaxTokenKind.IntegerLiteral or
@@ -142,26 +149,26 @@ internal sealed class LanguageParser
             SyntaxTokenKind.StringLiteral)
             return Read();
 
-        ErrorExpected(next?.Span, StandardDiagnosticCodes.ExpectedToken, "literal");
+        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "literal value");
 
         return Missing();
     }
 
     private SyntaxToken ExpectNumericLiteral()
     {
-        return Expect(SyntaxTokenKind.IntegerLiteral, SyntaxTokenKind.RealLiteral);
+        return ExpectEither(SyntaxTokenKind.IntegerLiteral, SyntaxTokenKind.RealLiteral);
     }
 
-    private SyntaxToken Expect(SyntaxTokenKind kind1, SyntaxTokenKind kind2)
+    private SyntaxToken ExpectEither(SyntaxTokenKind kind1, SyntaxTokenKind kind2)
     {
         var next = Peek1();
-        var kind = next?.Kind;
+        var kind = next.Kind;
 
         if (kind == kind1 || kind == kind2)
             return Read();
 
         ErrorExpected(
-            next?.Span,
+            next.Span,
             StandardDiagnosticCodes.ExpectedToken,
             $"{SyntaxFacts.GetFriendlyName(kind1)} or {SyntaxFacts.GetFriendlyName(kind2)}");
 
@@ -172,10 +179,10 @@ internal sealed class LanguageParser
     {
         var next = Peek1();
 
-        if (next?.Kind == kind)
+        if (next.Kind == kind)
             return Read();
 
-        ErrorExpected(next?.Span, StandardDiagnosticCodes.ExpectedToken, SyntaxFacts.GetFriendlyName(kind));
+        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, SyntaxFacts.GetFriendlyName(kind));
 
         return Missing();
     }
@@ -185,7 +192,7 @@ internal sealed class LanguageParser
         return IsMinus(Peek1()) ? Read() : null;
     }
 
-    private static bool IsMinus(SyntaxToken? token)
+    private static bool IsMinus(SyntaxToken token)
     {
         return token is { Kind: SyntaxTokenKind.AdditiveOperator, Text: "-" };
     }
@@ -193,7 +200,7 @@ internal sealed class LanguageParser
     private SyntaxToken? Optional(SyntaxTokenKind kind)
     {
         // TODO: Take params ReadOnlySpan<SyntaxTokenKind>.
-        return Peek1()?.Kind == kind ? Read() : null;
+        return Peek1().Kind == kind ? Read() : null;
     }
 
     private static SyntaxToken Missing()
@@ -201,15 +208,13 @@ internal sealed class LanguageParser
         return new();
     }
 
-    private void ErrorExpected(SourceTextSpan? span, DiagnosticCode code, string expected)
+    private void ErrorExpected(SourceTextSpan span, DiagnosticCode code, string expected)
     {
-        var finalSpan = span ?? _eoi;
-
         // When possible, attach the error to the trailing new-line trivia on the previous token.
         if (_last?.TrailingTrivia.SingleOrDefault(t => t.Kind == SyntaxTriviaKind.NewLine) is { } trivia)
-            finalSpan = trivia.FullSpan;
+            span = trivia.FullSpan;
 
-        Error(finalSpan, code, $"Expected {expected}");
+        Error(span, code, $"Expected {expected}");
     }
 
     private void Error(SourceTextSpan span, DiagnosticCode code, string message)
@@ -247,15 +252,14 @@ internal sealed class LanguageParser
     private T? ParseOptional<T>(SyntaxTokenKind kind, Func<LanguageParser, T> parser)
         where T : SyntaxNode
     {
-        return Peek1()?.Kind == kind ? parser(this) : null;
+        return Peek1().Kind == kind ? parser(this) : null;
     }
 
     private ImmutableArray<T>.Builder ParseAttributedList<T>(
         Func<SyntaxTokenKind, bool> predicate,
         Func<LanguageParser, ImmutableArray<AttributeSyntax>.Builder, T> parser,
         SyntaxTokenKind closer,
-        DiagnosticCode code,
-        string expected)
+        string location)
         where T : SyntaxNode
     {
         var elements = Builder<T>();
@@ -263,8 +267,9 @@ internal sealed class LanguageParser
         while (true)
         {
             var mark = _reader.Save();
+            var first = Peek1();
             var attrs = ParseAttributes();
-            var next = Peek1()!;
+            var next = Peek1();
 
             if (predicate(next.Kind))
             {
@@ -277,19 +282,29 @@ internal sealed class LanguageParser
 
             _reader.Rewind(mark);
 
-            var stop = next.IsEndOfInput || next.Kind == closer;
+            Skip(position - _reader.Position);
 
-            Skip(position - _reader.Position + (stop ? 0 : 1));
+            if (next.IsEndOfInput || next.Kind == closer)
+            {
+                if (first != next)
+                {
+                    var firstSpan = first.Span;
 
-            if (stop)
+                    Error(
+                        new(firstSpan.Start, _last!.Span.End - firstSpan.Start),
+                        StandardDiagnosticCodes.UselessTrailingAttributes,
+                        $"Useless trailing {(attrs.Count == 1 ? "attribute" : "attributes")} in {location}");
+                }
+
                 break;
+            }
 
             SkipWhile(
-                next,
+                first,
                 static (kind, state) => !state.Predicate(kind) && kind != state.Closer,
                 (Predicate: predicate, Closer: closer),
-                code,
-                $"Expected {expected}");
+                StandardDiagnosticCodes.UnexpectedTokens,
+                location);
         }
 
         return elements;
@@ -374,17 +389,16 @@ internal sealed class LanguageParser
             SyntaxFacts.IsDeclarationStarter,
             static (@this, attrs) => @this.ParseDeclaration(attrs),
             SyntaxTokenKind.CloseBrace,
-            StandardDiagnosticCodes.MissingDeclaration,
-            "declaration");
+            "module");
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        if (Peek1() is { IsEndOfInput: false } next)
+        if (Peek2() is ({ IsEndOfInput: false } next1, var next2))
             SkipWhile(
-                next,
+                next1,
                 static (kind, _) => true,
                 default(object),
-                StandardDiagnosticCodes.UnexpectedToken,
-                "Unexpected token");
+                StandardDiagnosticCodes.UnexpectedTokens,
+                "file");
 
         var eoi = Expect(SyntaxTokenKind.EndOfInput);
 
@@ -409,7 +423,7 @@ internal sealed class LanguageParser
     {
         var attrs = Builder<AttributeSyntax>();
 
-        while (Peek1()?.Kind == SyntaxTokenKind.At)
+        while (Peek1().Kind == SyntaxTokenKind.At)
             attrs.Add(ParseAttribute());
 
         return attrs;
@@ -470,9 +484,9 @@ internal sealed class LanguageParser
 
     private DeclarationSyntax ParseDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
-        var (tok1, tok2) = Peek2()!;
+        var (tok1, tok2) = Peek2();
 
-        return (tok1?.Kind, tok2?.Kind) switch
+        return (tok1.Kind, tok2?.Kind) switch
         {
             (SyntaxTokenKind.UseKeyword, _) => ParseUseDeclaration(attributes),
             (SyntaxTokenKind.TypeKeyword, _) or
@@ -531,7 +545,7 @@ internal sealed class LanguageParser
     private TypeParameterSyntax ParseTypeParameter()
     {
         var attrs = ParseAttributes();
-        var name = Expect(SyntaxTokenKind.LowerIdentifier, SyntaxTokenKind.DiscardIdentifier);
+        var name = ExpectEither(SyntaxTokenKind.LowerIdentifier, SyntaxTokenKind.DiscardIdentifier);
 
         return new(List(attrs), name);
     }
@@ -624,7 +638,7 @@ internal sealed class LanguageParser
     private TypeSyntax ParsePrimaryType()
     {
         var (tok1, tok2, tok3) = Peek3();
-        var type = (tok1?.Kind, tok2?.Kind, tok3?.Kind) switch
+        var type = (tok1.Kind, tok2?.Kind, tok3?.Kind) switch
         {
             (SyntaxTokenKind.AnyKeyword, _, _) => ParseAnyType(),
             _ when IsMinus(tok1) => ParseLiteralType(),
@@ -655,7 +669,7 @@ internal sealed class LanguageParser
 
         if (type == null)
         {
-            ErrorExpected(Peek1()?.Span, StandardDiagnosticCodes.MissingType, "type");
+            ErrorExpected(tok1.Span, StandardDiagnosticCodes.MissingType, "type");
 
             type = new NominalTypeSyntax(null, Missing(), null);
         }
@@ -698,18 +712,18 @@ internal sealed class LanguageParser
         var open = Read();
         var lower = default(IntegerTypeRangeBoundSyntax);
 
-        static bool IsBoundStarter(SyntaxToken? token)
+        static bool IsBoundStarter(SyntaxToken token)
         {
-            return IsMinus(token) || token?.Kind == SyntaxTokenKind.IntegerLiteral;
+            return IsMinus(token) || token.Kind == SyntaxTokenKind.IntegerLiteral;
         }
 
-        if (Peek1() is { } nextLower && IsBoundStarter(nextLower))
+        if (IsBoundStarter(Peek1()))
             lower = ParseIntegerTypeRangeBound();
 
         var sep = Expect(SyntaxTokenKind.DotDot);
         var upper = default(IntegerTypeRangeBoundSyntax);
 
-        if (lower == null || (Peek1() is { } nextUpper && IsBoundStarter(nextUpper)))
+        if (lower == null || IsBoundStarter(Peek1()))
             upper = ParseIntegerTypeRangeBound();
 
         var close = Expect(SyntaxTokenKind.CloseParen);
@@ -997,7 +1011,7 @@ internal sealed class LanguageParser
 
     private ReturnTypeSyntax ParseReturnType()
     {
-        return Peek1()?.Kind switch
+        return Peek1().Kind switch
         {
             SyntaxTokenKind.NoneKeyword => ParseNoneReturnType(),
             _ => ParseNormalReturnType(),
@@ -1047,7 +1061,7 @@ internal sealed class LanguageParser
 
     private StatementSyntax ParseStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
-        return Peek1()?.Kind switch
+        return Peek1().Kind switch
         {
             SyntaxTokenKind.LetKeyword => ParseLetStatement(attributes),
             SyntaxTokenKind.DeferKeyword => ParseDeferStatement(attributes),
@@ -1118,7 +1132,7 @@ internal sealed class LanguageParser
     {
         var expr = ParseRelationalExpression();
 
-        while (Peek1()?.Kind is SyntaxTokenKind.AndKeyword or SyntaxTokenKind.OrKeyword)
+        while (Peek1().Kind is SyntaxTokenKind.AndKeyword or SyntaxTokenKind.OrKeyword)
         {
             var op = Read();
             var right = ParseRelationalExpression();
@@ -1133,7 +1147,7 @@ internal sealed class LanguageParser
     {
         var expr = ParseBitwiseExpression();
 
-        while (Peek1()?.Kind is
+        while (Peek1().Kind is
             SyntaxTokenKind.ExclamationEquals or
             SyntaxTokenKind.EqualsEquals or
             SyntaxTokenKind.CloseAngle or
@@ -1208,7 +1222,7 @@ internal sealed class LanguageParser
 
     private ExpressionSyntax ParsePrefixExpression()
     {
-        return Peek1()?.Kind switch
+        return Peek1().Kind switch
         {
             SyntaxTokenKind.BitwiseOperator or
             SyntaxTokenKind.ShiftOperator or
@@ -1230,7 +1244,7 @@ internal sealed class LanguageParser
     private ExpressionSyntax ParsePrimaryExpression()
     {
         var (tok1, tok2, tok3) = Peek3();
-        var expr = (tok1?.Kind, tok2?.Kind, tok3?.Kind) switch
+        var expr = (tok1.Kind, tok2?.Kind, tok3?.Kind) switch
         {
             (SyntaxTokenKind.OpenParen, _, _) => ParseParenthesizedOrTupleExpression(),
             (SyntaxTokenKind.OpenBrace, _, _) => ParseBlockExpression(),
@@ -1264,7 +1278,7 @@ internal sealed class LanguageParser
 
         if (expr == null)
         {
-            ErrorExpected(Peek1()?.Span, StandardDiagnosticCodes.MissingExpression, "expression");
+            ErrorExpected(tok1.Span, StandardDiagnosticCodes.MissingExpression, "expression");
 
             expr = new IdentifierExpressionSyntax(Missing());
         }
@@ -1309,13 +1323,12 @@ internal sealed class LanguageParser
             SyntaxFacts.IsStatementStarter,
             static (@this, attrs) => @this.ParseStatement(attrs),
             SyntaxTokenKind.CloseBrace,
-            StandardDiagnosticCodes.MissingStatement,
-            "statement");
+            "block");
 
-        // Blocks must have at least one statement.
-        if (stmts.Count == 0)
+        // Blocks must have at least one statement. Avoid printing a duplicate error if we already skipped tokens.
+        if (stmts.Count == 0 && _skipped.Count == 0)
         {
-            ErrorExpected(Peek1()?.Span, StandardDiagnosticCodes.MissingStatement, "statement");
+            ErrorExpected(Peek1().Span, StandardDiagnosticCodes.MissingStatement, "statement");
 
             stmts.Add(
                 new ExpressionStatementSyntax(
@@ -1807,7 +1820,7 @@ internal sealed class LanguageParser
     private BindingSyntax ParseBinding()
     {
         var next = Peek1();
-        var binding = next?.Kind switch
+        var binding = next.Kind switch
         {
             { } kind when kind == SyntaxTokenKind.MutKeyword || SyntaxFacts.IsCodeIdentifier(kind) =>
                 ParseVariableBinding(),
@@ -1817,7 +1830,7 @@ internal sealed class LanguageParser
 
         if (binding == null)
         {
-            ErrorExpected(next?.Span, StandardDiagnosticCodes.MissingBinding, "binding");
+            ErrorExpected(next.Span, StandardDiagnosticCodes.MissingBinding, "variable or discard binding");
 
             binding = new VariableBindingSyntax(null, Missing());
         }
@@ -1845,7 +1858,7 @@ internal sealed class LanguageParser
     private PatternSyntax ParsePattern()
     {
         var (tok1, tok2) = Peek2();
-        var pat = (tok1?.Kind, tok2?.Kind) switch
+        var pat = (tok1.Kind, tok2?.Kind) switch
         {
             (SyntaxTokenKind.MutKeyword, _) => ParseWildcardOrStringOrArrayPattern(),
             ({ } ident, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseWildcardOrStringOrArrayPattern(),
@@ -1864,7 +1877,7 @@ internal sealed class LanguageParser
 
         if (pat == null)
         {
-            ErrorExpected(Peek1()?.Span, StandardDiagnosticCodes.MissingPattern, "pattern");
+            ErrorExpected(tok1.Span, StandardDiagnosticCodes.MissingPattern, "pattern");
 
             pat = new WildcardPatternSyntax(new VariableBindingSyntax(null, Missing()), null);
         }
