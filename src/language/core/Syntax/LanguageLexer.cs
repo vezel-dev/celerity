@@ -106,7 +106,7 @@ internal sealed class LanguageLexer
         return new SyntaxTrivia(
             position,
             kind,
-            kind is SyntaxTriviaKind.ShebangLine or SyntaxTriviaKind.NewLine ? string.Intern(text) : text);
+            kind == SyntaxTriviaKind.NewLine ? string.Intern(text) : text);
     }
 
     private SyntaxToken CreateToken(int position, SyntaxTokenKind kind)
