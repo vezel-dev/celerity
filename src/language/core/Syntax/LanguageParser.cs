@@ -639,7 +639,7 @@ internal sealed class LanguageParser
         var type = (tok1.Kind, tok2?.Kind, tok3?.Kind) switch
         {
             (SyntaxTokenKind.AnyKeyword, _, _) => ParseAnyType(),
-            (var kind, _) when IsMinus(tok1) || SyntaxFacts.IsLiteral(kind) => ParseLiteralType(),
+            (var kind, _, _) when IsMinus(tok1) || SyntaxFacts.IsLiteral(kind) => ParseLiteralType(),
             (SyntaxTokenKind.BoolKeyword, _, _) => ParseBooleanType(),
             (SyntaxTokenKind.IntKeyword, _, _) => ParseIntegerType(),
             (SyntaxTokenKind.RealKeyword, _, _) => ParseRealType(),
