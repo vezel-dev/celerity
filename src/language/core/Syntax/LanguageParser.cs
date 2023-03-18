@@ -649,6 +649,7 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.RefKeyword, _, _) => ParseReferenceType(),
             (SyntaxTokenKind.HandleKeyword, _, _) => ParseHandleType(),
             (SyntaxTokenKind.ModKeyword, _, _) => ParseModuleType(),
+            (SyntaxTokenKind.FnKeyword, _, _) or
             (SyntaxTokenKind.ErrKeyword, SyntaxTokenKind.FnKeyword, _) => ParseFunctionType(),
             (SyntaxTokenKind.RecKeyword, _, _) => ParseRecordType(),
             (SyntaxTokenKind.ErrKeyword, _, _) => ParseErrorType(),
@@ -659,7 +660,6 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBrace) => ParseSetType(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket, _) or
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket) => ParseMapType(),
-            (SyntaxTokenKind.FnKeyword, _, _) or
             (SyntaxTokenKind.AgentKeyword, _, _) => ParseAgentType(),
             (SyntaxTokenKind.UpperIdentifier or SyntaxTokenKind.LowerIdentifier, _, _) => ParseNominalType(),
             _ => default(TypeSyntax),
