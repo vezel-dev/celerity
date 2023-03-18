@@ -258,13 +258,7 @@ public static class SyntaxFacts
 
     public static bool IsExpressionStarter(SyntaxTokenKind kind)
     {
-        Check.Enum(kind);
-
         return kind is
-            SyntaxTokenKind.BitwiseOperator or
-            SyntaxTokenKind.ShiftOperator or
-            SyntaxTokenKind.MultiplicativeOperator or
-            SyntaxTokenKind.AdditiveOperator or
             SyntaxTokenKind.Hash or
             SyntaxTokenKind.OpenParen or
             SyntaxTokenKind.OpenBracket or
@@ -287,15 +281,10 @@ public static class SyntaxFacts
             SyntaxTokenKind.ThisKeyword or
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.WhileKeyword or
-            SyntaxTokenKind.UpperIdentifier or
-            SyntaxTokenKind.LowerIdentifier or
-            SyntaxTokenKind.DiscardIdentifier or
-            SyntaxTokenKind.NilLiteral or
-            SyntaxTokenKind.BooleanLiteral or
-            SyntaxTokenKind.IntegerLiteral or
-            SyntaxTokenKind.RealLiteral or
-            SyntaxTokenKind.AtomLiteral or
-            SyntaxTokenKind.StringLiteral;
+            SyntaxTokenKind.UpperIdentifier ||
+            IsOperator(kind) ||
+            IsBindingIdentifier(kind) ||
+            IsLiteral(kind);
     }
 
     internal static bool IsInternable(SyntaxTokenKind kind)
@@ -323,9 +312,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.OpenBracket or
             SyntaxTokenKind.CloseBracket or
             SyntaxTokenKind.OpenBrace or
-            SyntaxTokenKind.CloseBrace or
-            SyntaxTokenKind.NilLiteral or
-            SyntaxTokenKind.BooleanLiteral ||
+            SyntaxTokenKind.CloseBrace ||
             IsNormalKeyword(kind) ||
             IsTypeKeyword(kind) ||
             IsReservedKeyword(kind) ||
