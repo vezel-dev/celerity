@@ -211,8 +211,18 @@ internal sealed class LanguageParser
     private void ErrorExpected(SourceTextSpan span, DiagnosticCode code, string expected)
     {
         // When possible, attach the error to the trailing new-line trivia on the previous token.
-        if (_last?.TrailingTrivia.SingleOrDefault(t => t.Kind == SyntaxTriviaKind.NewLine) is { } trivia)
-            span = trivia.FullSpan;
+        if (_last != null)
+        {
+            foreach (var trivia in _last.TrailingTrivia)
+            {
+                if (trivia.Kind == SyntaxTriviaKind.NewLine)
+                {
+                    span = trivia.FullSpan;
+
+                    break;
+                }
+            }
+        }
 
         Error(span, code, $"Expected {expected}");
     }
