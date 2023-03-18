@@ -639,8 +639,7 @@ internal sealed class LanguageParser
         var type = (tok1.Kind, tok2?.Kind, tok3?.Kind) switch
         {
             (SyntaxTokenKind.AnyKeyword, _, _) => ParseAnyType(),
-            _ when IsMinus(tok1) => ParseLiteralType(),
-            (var literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralType(),
+            (var kind, _) when IsMinus(tok1) || SyntaxFacts.IsLiteral(kind) => ParseLiteralType(),
             (SyntaxTokenKind.BoolKeyword, _, _) => ParseBooleanType(),
             (SyntaxTokenKind.IntKeyword, _, _) => ParseIntegerType(),
             (SyntaxTokenKind.RealKeyword, _, _) => ParseRealType(),
@@ -1859,10 +1858,9 @@ internal sealed class LanguageParser
         var pat = (tok1.Kind, tok2?.Kind) switch
         {
             (SyntaxTokenKind.MutKeyword, _) => ParseWildcardOrStringOrArrayPattern(),
-            (var ident, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseWildcardOrStringOrArrayPattern(),
-            _ when IsMinus(tok1) => ParseLiteralPattern(),
+            (var kind, _) when SyntaxFacts.IsBindingIdentifier(kind) => ParseWildcardOrStringOrArrayPattern(),
             (SyntaxTokenKind.StringLiteral, _) => ParseStringPattern(null),
-            (var literal, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralPattern(),
+            (var kind, _) when IsMinus(tok1) || SyntaxFacts.IsLiteral(kind) => ParseLiteralPattern(),
             (SyntaxTokenKind.RecKeyword, _) => ParseRecordPattern(),
             (SyntaxTokenKind.ErrKeyword, _) => ParseErrorPattern(),
             (SyntaxTokenKind.OpenParen, _) => ParseTuplePattern(),
