@@ -56,7 +56,15 @@ public readonly struct SeparatedSyntaxItemList<T> : IReadOnlyList<SyntaxItem>
 
     public bool IsDefaultOrEmpty => Elements.IsDefaultOrEmpty;
 
-    public SyntaxItem this[int index] => index % 2 == 0 ? Elements[index] : Separators[index];
+    public SyntaxItem this[int index]
+    {
+        get
+        {
+            var (idx, sep) = int.DivRem(index, 2);
+
+            return sep == 0 ? Elements[idx] : Separators[idx];
+        }
+    }
 
     // This constructs a partially-initialized list. It is only intended for use in LanguageParser.
     internal SeparatedSyntaxItemList(ImmutableArray<T> elements, ImmutableArray<SyntaxToken> separators)
