@@ -43,6 +43,16 @@ public sealed partial class SemanticTests
                     for _ in next {
                         6;
                     };
+
+                    while true {
+                        fn() -> {
+                            break;
+
+                            break as 7;
+
+                            next;
+                        };
+                    };
                 }
             }
             """);

@@ -56,4 +56,34 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
    :                  ^^^^  
 36 |             6;
 37 |         };
-38 |     }
+38 | 
+Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+---> loop_control.cel (41,17)-(41,22)
+38 | 
+39 |         while true {
+40 |             fn() -> {
+41 |                 break;
+   :                 ^^^^^ 
+42 | 
+43 |                 break as 7;
+44 | 
+Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+---> loop_control.cel (43,17)-(43,27)
+40 |             fn() -> {
+41 |                 break;
+42 | 
+43 |                 break as 7;
+   :                 ^^^^^^^^^^ 
+44 | 
+45 |                 next;
+46 |             };
+Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
+---> loop_control.cel (45,17)-(45,21)
+42 | 
+43 |                 break as 7;
+44 | 
+45 |                 next;
+   :                 ^^^^ 
+46 |             };
+47 |         };
+48 |     }
