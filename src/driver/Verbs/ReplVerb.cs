@@ -10,7 +10,7 @@ internal sealed class ReplVerb : Verb
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     public override async ValueTask<int> RunAsync()
     {
-        if (!Terminal.TerminalIn.IsInteractive)
+        if (!Terminal.StandardIn.IsInteractive)
         {
             await Terminal.ErrorLineAsync("The REPL can only be run in an interactive terminal.");
 
