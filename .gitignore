@@ -1,5 +1,6 @@
 .clangd
 .vs
+*.received.*
 *.user
 /pkg/cache/*/*
 /pkg/feed/*.nupkg

@@ -1,30 +1,43 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <!--
-        The TestAdapter suffix in the assembly name is required for the VSTest
-        infrastructure to pick up our custom ITestDiscoverer implementation.
-        -->
-        <AssemblyName>Vezel.Celerity.TestAdapter</AssemblyName>
+        <AssemblyName>Vezel.Celerity.Tests</AssemblyName>
         <RootNamespace>Vezel.Celerity.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="Microsoft.VisualStudio.TestPlatform.ObjectModel" />
-        <Using Include="Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter" />
-        <Using Include="Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging" />
+        <Using Include="DiffEngine" />
+        <Using Include="Shouldly" />
+        <Using Include="VerifyXunit" />
+        <Using Remove="VerifyXunit.Verifier" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../driver/driver.csproj"
                           ReferenceOutputAssembly="false" />
+        <ProjectReference Include="../language/library/library.csproj" />
+        <ProjectReference Include="../language/server/server.csproj" />
+        <ProjectReference Include="../runtime/compiler/compiler.csproj" />
+        <ProjectReference Include="../runtime/interpreter/interpreter.csproj" />
+        <ProjectReference Include="../runtime/kernel/kernel.csproj" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk"
                           PrivateAssets="all" />
-        <PackageReference Include="Microsoft.TestPlatform.ObjectModel" />
+        <PackageReference Include="Shouldly" />
+        <PackageReference Include="Verify.DiffPlex" />
+        <PackageReference Include="Verify.Xunit" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio"
                           PrivateAssets="all" />
     </ItemGroup>
+
+    <Import Project="../language/core/core.targets" />
+    <Import Project="../language/library/library.targets" />
+    <Import Project="../language/server/server.targets" />
+    <Import Project="../language/tooling/tooling.targets" />
+    <Import Project="../runtime/compiler/compiler.targets" />
+    <Import Project="../runtime/core/core.targets" />
+    <Import Project="../runtime/interpreter/interpreter.targets" />
+    <Import Project="../runtime/kernel/kernel.targets" />
 </Project>
