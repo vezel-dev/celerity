@@ -1,3 +1,5 @@
+using Vezel.Celerity.Driver.Diagnostics;
+
 namespace Vezel.Celerity.Driver.Verbs;
 
 [SuppressMessage("", "CA1812")]
@@ -14,9 +16,18 @@ internal sealed class RunVerb : Verb
         var syntax = SyntaxTree.Parse(
             new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File)), SyntaxMode.Module);
         var semantics = SemanticTree.Analyze(syntax);
-        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).ToArray();
 
-        await DiagnosticPrinter.PrintAsync(diags);
+        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).ToArray();
+        var stderr = Terminal.StandardError;
+        var writer = new DiagnosticWriter(new DiagnosticConfiguration().WithStyle(new TerminalDiagnosticStyle(stderr)));
+
+        for (var i = 0; i < diags.Length; i++)
+        {
+            await writer.WriteAsync(diags[i], stderr.TextWriter);
+
+            if (i != diags.Length - 1)
+                await stderr.WriteLineAsync();
+        }
 
         return diags.Any(static diag => diag.IsError) ? 1 : 0;
     }

@@ -11,6 +11,10 @@ diagnostic rendering.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Vezel.Celerity.Diagnostics" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="../core/core.csproj" />
     </ItemGroup>
 
