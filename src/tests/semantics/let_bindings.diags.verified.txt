@@ -1,0 +1,29 @@
+﻿Error[E0030]: Unknown symbol name 'b'
+---> let_bindings.cel (3,17)-(3,18)
+ 1 | mod {
+ 2 |     fn bindings(arg) {
+ 3 |         let a = b;
+   :                 ^ 
+ 4 |         let c = a;
+ 5 | 
+ 6 |         c = 1;
+Error[E0033]: Assignment to immutable symbol 'c'
+---> let_bindings.cel (6,9)-(6,10)
+ 3 |         let a = b;
+ 4 |         let c = a;
+ 5 | 
+ 6 |         c = 1;
+   :         ^     
+ 7 | 
+ 8 |         let mut c = c;
+ 9 | 
+Note: Symbol defined here
+---> let_bindings.cel (4,13)-(4,14)
+ 1 | mod {
+ 2 |     fn bindings(arg) {
+ 3 |         let a = b;
+ 4 |         let c = a;
+   :             ^     
+ 5 | 
+ 6 |         c = 1;
+ 7 | 
