@@ -39,7 +39,7 @@ internal sealed class LanguageAnalyzer
 
         private readonly List<IdentifierExpressionSemantics> _identifiers = new();
 
-        private readonly List<Symbol> _duplicates = new();
+        private readonly HashSet<Symbol> _duplicates = new();
 
         private Scope _scope = new(null);
 
@@ -62,7 +62,7 @@ internal sealed class LanguageAnalyzer
                         decls.Skip(1).Select(
                             static decl => (decl.Syntax.NameToken.Span, "Also declared here")));
 
-            foreach (var sym in _duplicates)
+            foreach (var sym in _duplicates.OrderBy(static sym => sym.Name))
             {
                 var (code, msg, note) = sym switch
                 {
@@ -266,7 +266,7 @@ internal sealed class LanguageAnalyzer
             foreach (var decl in node.Declarations)
                 if (decl is CodeDeclarationSyntax { NameToken: { IsMissing: false } name })
                     if (!_scope.DefineSymbol<DeclarationSymbol>(name.Text, out var sym))
-                        _duplicates.Add(sym);
+                        _ = _duplicates.Add(sym);
 
             var decls = ConvertList(
                 node.Declarations,
@@ -382,7 +382,7 @@ internal sealed class LanguageAnalyzer
             if (node.NameToken is { IsMissing: false } name)
             {
                 if (!_scope.DefineSymbol<ParameterSymbol>(name.Text, out var sym2))
-                    _duplicates.Add(sym2);
+                    _ = _duplicates.Add(sym2);
 
                 sym = Unsafe.As<ParameterSymbol>(sym2); // Only parameters will be defined at this stage.
             }
@@ -566,7 +566,7 @@ internal sealed class LanguageAnalyzer
             if (node.NameToken is { IsMissing: false } name)
             {
                 if (!_scope.DefineSymbol<ParameterSymbol>(name.Text, out var sym2))
-                    _duplicates.Add(sym2);
+                    _ = _duplicates.Add(sym2);
 
                 sym = Unsafe.As<ParameterSymbol>(sym2); // Only parameters will be defined at this stage.
             }
@@ -1017,7 +1017,7 @@ internal sealed class LanguageAnalyzer
             if (node.NameToken is { IsMissing: false } name)
             {
                 if (!_scope.DefineSymbol<VariableSymbol>(name.Text, out var sym2))
-                    _duplicates.Add(sym2);
+                    _ = _duplicates.Add(sym2);
 
                 sym = Unsafe.As<VariableSymbol>(sym2); // Only variables will be defined at this stage.
             }
@@ -1032,7 +1032,7 @@ internal sealed class LanguageAnalyzer
         public override DiscardBindingSemantics VisitDiscardBinding(DiscardBindingSyntax node)
         {
             if (!_scope.DefineSymbol<VariableSymbol>(node.NameToken.Text, out var sym))
-                _duplicates.Add(sym);
+                _ = _duplicates.Add(sym);
 
             var sym2 = Unsafe.As<VariableSymbol>(sym); // Only variables will be defined at this stage.
             var sema = new DiscardBindingSemantics(node, sym2);

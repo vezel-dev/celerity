@@ -1,14 +1,17 @@
 public sealed partial class SemanticTests
 {
     [Fact]
-    public Task duplicate_function()
+    public Task duplicate_symbols()
     {
         return TestAsync(
             SyntaxMode.Module,
             """
             mod {
                 fn foo() { 1; }
-                fn foo() { 2; }
+
+                const foo = 2;
+
+                test foo { assert true; }
             }
             """);
     }
