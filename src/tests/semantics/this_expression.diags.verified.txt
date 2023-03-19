@@ -1,0 +1,9 @@
+﻿Error[E0027]: No enclosing lambda expression for 'this' expression
+--> this_expression.cel (5,9)-(5,13)
+2 |     fn foo() {
+3 |         fn() -> this;
+4 | 
+5 |         this;
+  :         ^^^^ 
+6 |     }
+7 | }
