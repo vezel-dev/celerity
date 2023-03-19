@@ -9,6 +9,7 @@ internal sealed class RunVerb : Verb
     [Value(0, Required = true, HelpText = "Entry point file.")]
     public required string File { get; init; }
 
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     public override async ValueTask<int> RunAsync()
     {
         // TODO: Replace all of this.

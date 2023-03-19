@@ -32,8 +32,10 @@ public sealed class DiagnosticWriter
 
         return WriteAsyncCore();
 
+        [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
         async ValueTask WriteAsyncCore()
         {
+            [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
             async ValueTask WriteWindowAsync(
                 IReadOnlyList<(int Line, string Text)> lines,
                 int margin,
@@ -42,6 +44,7 @@ public sealed class DiagnosticWriter
                 Color color,
                 string message)
             {
+                [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
                 async ValueTask WriteContextAsync(IEnumerable<(int Line, string Text)> lines)
                 {
                     foreach (var (line, text) in lines)
@@ -50,6 +53,7 @@ public sealed class DiagnosticWriter
 
                 var style = Configuration.Style;
 
+                [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
                 async ValueTask WriteLineAsync(int line, string text, bool intense)
                 {
                     await style.WriteColoredAsync(

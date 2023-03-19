@@ -9,6 +9,7 @@ internal sealed class CheckVerb : Verb
     [Value(0, HelpText = "Source code directory.")]
     public required string? Directory { get; init; }
 
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     public override async ValueTask<int> RunAsync()
     {
         // TODO: Replace all of this.

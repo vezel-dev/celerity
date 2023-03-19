@@ -22,6 +22,7 @@ internal sealed class TerminalDiagnosticStyle : DiagnosticStyle
             writer, ControlSequences.SetForegroundColor(color.R, color.G, color.B), text, cancellationToken);
     }
 
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
     private async ValueTask WriteAsync(
         TextWriter writer, string sequence, string text, CancellationToken cancellationToken)
     {

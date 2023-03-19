@@ -7,6 +7,7 @@ internal sealed class ReplVerb : Verb
     [Value(0, HelpText = "Source code directory.")]
     public required string? Directory { get; init; }
 
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     public override async ValueTask<int> RunAsync()
     {
         if (!Terminal.TerminalIn.IsInteractive)

@@ -37,12 +37,15 @@ internal sealed class InfoVerb : Verb
             ("Architecture", RuntimeInformation.OSArchitecture),
         };
 
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     public override async ValueTask<int> RunAsync()
     {
         var interactive = Terminal.TerminalOut.IsInteractive;
 
+        [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
         async ValueTask WriteSectionAsync(string header, IEnumerable<(string Name, object Value)> table)
         {
+            [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
             async ValueTask WriteControlAsync(string sequence)
             {
                 if (interactive)
