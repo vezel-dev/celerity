@@ -22,6 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Meziantou.Xunit.ParallelTestFramework" />
         <PackageReference Include="Microsoft.NET.Test.Sdk"
                           PrivateAssets="all" />
         <PackageReference Include="Shouldly" />
