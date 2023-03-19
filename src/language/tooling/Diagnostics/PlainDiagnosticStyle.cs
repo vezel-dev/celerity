@@ -27,11 +27,6 @@ public sealed class PlainDiagnosticStyle : DiagnosticStyle
         Check.Null(writer);
         Check.Null(text);
 
-        return WriteAsync();
-
-        async ValueTask WriteAsync()
-        {
-            await writer.WriteAsync(text.AsMemory(), cancellationToken).ConfigureAwait(false);
-        }
+        return new(writer.WriteAsync(text.AsMemory(), cancellationToken));
     }
 }
