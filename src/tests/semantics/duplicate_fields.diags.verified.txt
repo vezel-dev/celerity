@@ -1,0 +1,80 @@
+﻿Error[E0026]: Record field 'x' is assigned multiple times
+---> duplicate_fields.cel (4,13)-(4,14)
+ 1 | mod {
+ 2 |     fn foo() {
+ 3 |         rec {
+ 4 |             x : 1,
+   :             ^     
+ 5 |             x : 2,
+ 6 |         };
+ 7 |     }
+Note: Also assigned here
+---> duplicate_fields.cel (5,13)-(5,14)
+ 2 |     fn foo() {
+ 3 |         rec {
+ 4 |             x : 1,
+ 5 |             x : 2,
+   :             ^     
+ 6 |         };
+ 7 |     }
+ 8 | 
+Error[E0026]: Error field 'y' is assigned multiple times
+---> duplicate_fields.cel (11,13)-(11,14)
+ 8 | 
+ 9 |     fn bar() {
+10 |         err MyError {
+11 |             y : 3,
+   :             ^     
+12 |             y : 4,
+13 |         };
+14 |     }
+Note: Also assigned here
+---> duplicate_fields.cel (12,13)-(12,14)
+ 9 |     fn bar() {
+10 |         err MyError {
+11 |             y : 3,
+12 |             y : 4,
+   :             ^     
+13 |         };
+14 |     }
+15 | 
+Error[E0026]: Record field 'x' is matched multiple times
+---> duplicate_fields.cel (18,19)-(18,20)
+15 | 
+16 |     fn baz(value) {
+17 |         match value {
+18 |             rec { x : _a, x : _b } -> 5,
+   :                   ^                     
+19 |             err { y : _c, y : _d } -> 6,
+20 |         };
+21 |     }
+Note: Also matched here
+---> duplicate_fields.cel (18,27)-(18,28)
+15 | 
+16 |     fn baz(value) {
+17 |         match value {
+18 |             rec { x : _a, x : _b } -> 5,
+   :                           ^             
+19 |             err { y : _c, y : _d } -> 6,
+20 |         };
+21 |     }
+Error[E0026]: Error field 'y' is matched multiple times
+---> duplicate_fields.cel (19,19)-(19,20)
+16 |     fn baz(value) {
+17 |         match value {
+18 |             rec { x : _a, x : _b } -> 5,
+19 |             err { y : _c, y : _d } -> 6,
+   :                   ^                     
+20 |         };
+21 |     }
+22 | }
+Note: Also matched here
+---> duplicate_fields.cel (19,27)-(19,28)
+16 |     fn baz(value) {
+17 |         match value {
+18 |             rec { x : _a, x : _b } -> 5,
+19 |             err { y : _c, y : _d } -> 6,
+   :                           ^             
+20 |         };
+21 |     }
+22 | }
