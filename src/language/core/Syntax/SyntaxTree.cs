@@ -14,9 +14,10 @@ public sealed class SyntaxTree
 
     private SoftReference<SourceText> _text;
 
-    private SyntaxTree(SourceText text, DocumentSyntax root, IEnumerable<Func<SyntaxTree, Diagnostic>> diagnostics)
+    private SyntaxTree(
+        SourceText text, bool discardText, DocumentSyntax root, IEnumerable<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
-        _text = new(text);
+        _text = new(discardText ? null : text);
         Path = text.Path;
         Root = root;
         Diagnostics = diagnostics.Select(creator => creator(this)).OrderBy(diag => diag.Span).ToImmutableArray();
@@ -24,7 +25,7 @@ public sealed class SyntaxTree
         root.SetParent(this);
     }
 
-    public static SyntaxTree Parse(SourceText text, SyntaxMode mode)
+    public static SyntaxTree Parse(SourceText text, SyntaxMode mode, bool discardText = false)
     {
         Check.Null(text);
         Check.Enum(mode);
@@ -32,7 +33,10 @@ public sealed class SyntaxTree
         var diags = new List<Func<SyntaxTree, Diagnostic>>(0);
 
         return new(
-            text, new LanguageParser(new LanguageLexer(text, mode, diags).Lex(), mode, diags).ParseDocument(), diags);
+            text,
+            discardText,
+            new LanguageParser(new LanguageLexer(text, mode, diags).Lex(), mode, diags).ParseDocument(),
+            diags);
     }
 
     public SourceText GetText()
