@@ -55,7 +55,7 @@ public abstract class SourceText : IReadOnlyList<char>
 
             // Edge cases: The file is empty, or the last line lacks a line ending.
             if (line == 0 || charsInLine != 0)
-                builder.Add(new(this, new(0, charsInLine), line));
+                builder.Add(new(this, new(position - charsInLine, charsInLine), line));
 
             return new(this, builder.DrainToImmutable());
         });
