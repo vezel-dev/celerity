@@ -1,29 +1,47 @@
-﻿Error[E0033]: Assignment to immutable symbol 'x'
----> assignment_targets.cel (5,9)-(5,10)
- 2 |     fn assign() {
- 3 |         let x = 1;
- 4 | 
- 5 |         x = 2;
-   :         ^     
- 6 | 
- 7 |         let mut y = 3;
- 8 | 
-Note: Symbol defined here
----> assignment_targets.cel (3,13)-(3,14)
+﻿Error[E0033]: Assignment to immutable symbol 'arg'
+---> assignment_targets.cel (3,9)-(3,12)
  1 | mod {
- 2 |     fn assign() {
- 3 |         let x = 1;
-   :             ^     
+ 2 |     fn assign(arg) {
+ 3 |         arg = 0;
+   :         ^^^     
  4 | 
- 5 |         x = 2;
+ 5 |         let x = 1;
  6 | 
+Note: Symbol defined here
+---> assignment_targets.cel (2,15)-(2,18)
+ 1 | mod {
+ 2 |     fn assign(arg) {
+   :               ^^^   
+ 3 |         arg = 0;
+ 4 | 
+ 5 |         let x = 1;
+Error[E0033]: Assignment to immutable symbol 'x'
+---> assignment_targets.cel (7,9)-(7,10)
+ 4 | 
+ 5 |         let x = 1;
+ 6 | 
+ 7 |         x = 2;
+   :         ^     
+ 8 | 
+ 9 |         let mut y = 3;
+10 | 
+Note: Symbol defined here
+---> assignment_targets.cel (5,13)-(5,14)
+ 2 |     fn assign(arg) {
+ 3 |         arg = 0;
+ 4 | 
+ 5 |         let x = 1;
+   :             ^     
+ 6 | 
+ 7 |         x = 2;
+ 8 | 
 Error[E0032]: Assignment target must be an identifier, field, or index expression
----> assignment_targets.cel (14,9)-(14,18)
-11 |         x.field = 5;
-12 |         y.field = 6;
-13 | 
-14 |         "literal" = 7;
-   :         ^^^^^^^^^     
+---> assignment_targets.cel (16,9)-(16,18)
+13 |         x.field = 5;
+14 |         y.field = 6;
 15 | 
-16 |         let arr1 = [1, 2, 3];
-17 |         let arr2 = mut [1, 2, 3];
+16 |         "literal" = 7;
+   :         ^^^^^^^^^     
+17 | 
+18 |         let arr1 = [1, 2, 3];
+19 |         let arr2 = mut [1, 2, 3];

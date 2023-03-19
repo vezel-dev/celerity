@@ -7,7 +7,9 @@ public sealed partial class SemanticTests
             SyntaxMode.Module,
             """
             mod {
-                fn assign() {
+                fn assign(arg) {
+                    arg = 0;
+
                     let x = 1;
 
                     x = 2;
