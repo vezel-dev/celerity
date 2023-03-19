@@ -21,10 +21,10 @@ internal sealed class CheckVerb : Verb
                 new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file)),
                 SyntaxMode.Module);
             var semantics = SemanticTree.Analyze(syntax);
-            var lint = LintAnalysis.Create(semantics, LintPass.DefaultPasses, LintConfiguration.Default);
-            var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).Concat(lint.Diagnostics).ToArray();
+            var analysis = LintAnalysis.Create(semantics, LintPass.DefaultPasses, LintConfiguration.Default);
+            var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).Concat(analysis.Diagnostics).ToArray();
 
-            await DiagnosticPrinter.PrintAsync(lint.Diagnostics);
+            await DiagnosticPrinter.PrintAsync(diags);
 
             errors |= diags.Any(static diag => diag.IsError);
         }
