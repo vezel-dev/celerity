@@ -4,6 +4,7 @@
     "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
     "editorconfig.editorconfig",
+    "formulahendry.dotnet-test-explorer",
     "github.codespaces",
     "github.vscode-pull-request-github",
     "hashhar.gitattributes",
