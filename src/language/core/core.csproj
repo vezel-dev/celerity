@@ -32,6 +32,4 @@ binding, and linting.</PackageDescription>
     <ItemGroup>
         <PackageReference Include="DotNext" />
     </ItemGroup>
-
-    <Import Project="../../common/common.targets" />
 </Project>

@@ -17,7 +17,6 @@ This package provides the optimizing just-in-time compiler for 64-bit systems.</
         <PackageReference Include="Iced" />
     </ItemGroup>
 
-    <Import Project="../../common/common.targets" />
     <Import Project="../../language/core/core.targets" />
     <Import Project="../core/core.targets" />
 </Project>

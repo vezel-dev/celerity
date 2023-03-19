@@ -38,6 +38,5 @@ bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>
         </ItemGroup>
     </Target>
 
-    <Import Project="../../common/common.targets" />
     <Import Project="../../language/core/core.targets" />
 </Project>

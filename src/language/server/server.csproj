@@ -17,7 +17,6 @@ This package provides the Language Server Protocol implementation.</PackageDescr
         <PackageReference Include="OmniSharp.Extensions.LanguageServer" />
     </ItemGroup>
 
-    <Import Project="../../common/common.targets" />
     <Import Project="../core/core.targets" />
     <Import Project="../tooling/tooling.targets" />
 </Project>

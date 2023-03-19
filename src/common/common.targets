@@ -1,4 +1,0 @@
-<Project>
-    <ItemGroup Condition="'$(ImplicitUsings)' == 'true' or '$(ImplicitUsings)' == 'enable'">
-    </ItemGroup>
-</Project>

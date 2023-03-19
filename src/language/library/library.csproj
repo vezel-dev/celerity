@@ -16,6 +16,4 @@ This package provides the language's standard library.</PackageDescription>
     <ItemGroup>
         <ProjectReference Include="../../common/common.csproj" />
     </ItemGroup>
-
-    <Import Project="../../common/common.targets" />
 </Project>

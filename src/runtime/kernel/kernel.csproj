@@ -18,7 +18,6 @@ system.</PackageDescription>
         <PackageReference Include="Vezel.Cathode" />
     </ItemGroup>
 
-    <Import Project="../../common/common.targets" />
     <Import Project="../../language/core/core.targets" />
     <Import Project="../core/core.targets" />
 </Project>

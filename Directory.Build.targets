@@ -47,7 +47,7 @@
                 <None Include="$(MSBuildProjectName).targets"
                       Pack="true"
                       PackagePath="buildTransitive/$(PackageId).targets"
-                      Condition="'$(OutputType)' == 'Library'" />
+                      Condition="'$(OutputType)' == 'Library' and Exists('$(MSBuildProjectName).targets')" />
             </ItemGroup>
         </When>
     </Choose>
