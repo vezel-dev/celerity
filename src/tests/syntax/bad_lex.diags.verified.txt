@@ -1,0 +1,215 @@
+﻿Error[E0001]: Unrecognized character
+---> bad_lex.cel (2,5)-(2,6)
+ 1 | mod {
+ 2 |     $ !
+   :     ^  
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+Error[E0014]: Unexpected tokens in module
+---> bad_lex.cel (2,5)-(10,1)
+ 1 | mod {
+ 2 |     $ !
+   :     ^^^
+ 3 |     0b 0B
+   : ^^^^^^^^^
+ 4 |     0o 0O
+   : ^^^^^^^^^
+ 5 |     0x 0X
+   : ^^^^^^^^^
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+   : ^^^^^^^^^^^^^^^^^^^^^^^
+ 7 |     "unclosed string literal
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 9 |     "bad escape sequence \x"
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+10 | }
+Error[E0004]: Incomplete '!=' operator
+---> bad_lex.cel (2,7)-(2,8)
+ 1 | mod {
+ 2 |     $ !
+   :       ^
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+Error[E0005]: Incomplete base-2 integer literal
+---> bad_lex.cel (3,5)-(3,7)
+ 1 | mod {
+ 2 |     $ !
+ 3 |     0b 0B
+   :     ^^   
+ 4 |     0o 0O
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+Error[E0005]: Incomplete base-2 integer literal
+---> bad_lex.cel (3,8)-(3,10)
+ 1 | mod {
+ 2 |     $ !
+ 3 |     0b 0B
+   :        ^^
+ 4 |     0o 0O
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+Error[E0005]: Incomplete base-8 integer literal
+---> bad_lex.cel (4,5)-(4,7)
+ 1 | mod {
+ 2 |     $ !
+ 3 |     0b 0B
+ 4 |     0o 0O
+   :     ^^   
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+Error[E0005]: Incomplete base-8 integer literal
+---> bad_lex.cel (4,8)-(4,10)
+ 1 | mod {
+ 2 |     $ !
+ 3 |     0b 0B
+ 4 |     0o 0O
+   :        ^^
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+Error[E0005]: Incomplete base-16 integer literal
+---> bad_lex.cel (5,5)-(5,7)
+ 2 |     $ !
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+   :     ^^   
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+Error[E0005]: Incomplete base-16 integer literal
+---> bad_lex.cel (5,8)-(5,10)
+ 2 |     $ !
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+   :        ^^
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+Error[E0007]: Incomplete real literal
+---> bad_lex.cel (6,5)-(6,7)
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+   :     ^^                 
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+ 9 |     "bad escape sequence \x"
+Error[E0007]: Incomplete real literal
+---> bad_lex.cel (6,8)-(6,12)
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+   :        ^^^^            
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+ 9 |     "bad escape sequence \x"
+Error[E0007]: Incomplete real literal
+---> bad_lex.cel (6,13)-(6,18)
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+   :             ^^^^^      
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+ 9 |     "bad escape sequence \x"
+Error[E0007]: Incomplete real literal
+---> bad_lex.cel (6,19)-(6,24)
+ 3 |     0b 0B
+ 4 |     0o 0O
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+   :                   ^^^^^
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+ 9 |     "bad escape sequence \x"
+Error[E0009]: Incomplete string literal
+---> bad_lex.cel (7,5)-(7,29)
+ 4 |     0o 0O
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+   :     ^^^^^^^^^^^^^^^^^^^^^^^^
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0011]: Incomplete Unicode escape sequence
+---> bad_lex.cel (8,28)-(8,30)
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   :                            ^^                                        
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0011]: Incomplete Unicode escape sequence
+---> bad_lex.cel (8,31)-(8,34)
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   :                               ^^^                                    
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0011]: Incomplete Unicode escape sequence
+---> bad_lex.cel (8,35)-(8,39)
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   :                                   ^^^^                               
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0011]: Incomplete Unicode escape sequence
+---> bad_lex.cel (8,40)-(8,45)
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   :                                        ^^^^^                         
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0011]: Incomplete Unicode escape sequence
+---> bad_lex.cel (8,46)-(8,52)
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   :                                              ^^^^^^                  
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0011]: Incomplete Unicode escape sequence
+---> bad_lex.cel (8,53)-(8,60)
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   :                                                     ^^^^^^^          
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0012]: Invalid Unicode escape sequence
+---> bad_lex.cel (8,61)-(8,69)
+ 5 |     0x 0X
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+   :                                                             ^^^^^^^^ 
+ 9 |     "bad escape sequence \x"
+10 | }
+Error[E0010]: Incomplete escape sequence
+---> bad_lex.cel (9,26)-(9,27)
+ 6 |     1. 1.0e 1.0e+ 1.0e-
+ 7 |     "unclosed string literal
+ 8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
+ 9 |     "bad escape sequence \x"
+   :                          ^  
+10 | }
