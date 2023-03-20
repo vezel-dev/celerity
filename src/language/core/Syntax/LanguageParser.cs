@@ -1848,7 +1848,7 @@ internal sealed class LanguageParser
     private VariableBindingSyntax ParseVariableBinding()
     {
         var mut = Optional(SyntaxTokenKind.MutKeyword);
-        var name = mut != null ? ExpectCodeIdentifier() : Read();
+        var name = ExpectCodeIdentifier();
 
         return new(mut, name);
     }
