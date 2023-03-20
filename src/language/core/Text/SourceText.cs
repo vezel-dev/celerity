@@ -40,17 +40,17 @@ public abstract class SourceText : IReadOnlyList<char>
             {
                 var ch1 = Read();
 
-                if (TextFacts.IsNewLine(ch1))
-                {
-                    _ = reader.TryPeek(0, out var ch2);
+                if (!TextFacts.IsNewLine(ch1))
+                    continue;
 
-                    if ((ch1, ch2) == ('\r', '\n'))
-                        _ = Read();
+                _ = reader.TryPeek(0, out var ch2);
 
-                    builder.Add(new(this, new(position - charsInLine, charsInLine), line++));
+                if ((ch1, ch2) == ('\r', '\n'))
+                    _ = Read();
 
-                    charsInLine = 0;
-                }
+                builder.Add(new(this, new(position - charsInLine, charsInLine), line++));
+
+                charsInLine = 0;
             }
 
             // Edge cases: The file is empty, or the last line lacks a line ending.
