@@ -657,7 +657,7 @@ internal sealed class LanguageLexer
                         if (Peek1() is not ((>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F')))
                         {
                             TokenError(
-                                codePos,
+                                chPos,
                                 StandardDiagnosticCodes.IncompleteUnicodeEscapeSequence,
                                 "Incomplete Unicode escape sequence");
 
@@ -676,8 +676,8 @@ internal sealed class LanguageLexer
                     if (!Rune.TryCreate(scalar, out var rune))
                     {
                         TokenError(
-                            codePos,
-                            hex.Length,
+                            chPos,
+                            @"\u".Length + hex.Length,
                             StandardDiagnosticCodes.InvalidUnicodeEscapeSequence,
                             $"Invalid Unicode escape sequence");
 
