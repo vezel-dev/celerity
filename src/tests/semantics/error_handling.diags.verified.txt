@@ -3,7 +3,7 @@
  1 | mod {
  2 |     fn infallible() {
  3 |         raise err MyError { message : "uh oh" };
-   :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+   :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  4 | 
  5 |         try raise err MyError { message : "this is fine" } catch { _ -> nil };
  6 | 
@@ -13,7 +13,7 @@ Error[E0028]: 'raise' expression in infallible context is invalid
  5 |         try raise err MyError { message : "this is fine" } catch { _ -> nil };
  6 | 
  7 |         try nil catch { _ -> raise err MyError { message : "this is bad" } };
-   :                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   
+   :                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
  8 | 
  9 |         fallible()?;
 10 |     }
@@ -23,7 +23,7 @@ Error[E0028]: Error-propagating call expression in infallible context is invalid
  7 |         try nil catch { _ -> raise err MyError { message : "this is bad" } };
  8 | 
  9 |         fallible()?;
-   :         ^^^^^^^^^^^ 
+   :         ^^^^^^^^^^^
 10 |     }
 11 | 
 12 |     err fn fallible() {
@@ -33,6 +33,6 @@ Error[E0028]: 'raise' expression in infallible context is invalid
 15 |         fallible()?;
 16 | 
 17 |         fn() -> raise err MyError { message : "this lambda is infallible" };
-   :                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
+   :                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 18 |     }
 19 | }

@@ -2,7 +2,7 @@
 ---> bad_lex.cel (2,5)-(2,6)
  1 | mod {
  2 |     $ !
-   :     ^  
+   :     ^
  3 |     0b 0B
  4 |     0o 0O
  5 |     0x 0X
@@ -39,7 +39,7 @@ Error[E0005]: Incomplete base-2 integer literal
  1 | mod {
  2 |     $ !
  3 |     0b 0B
-   :     ^^   
+   :     ^^
  4 |     0o 0O
  5 |     0x 0X
  6 |     1. 1.0e 1.0e+ 1.0e-
@@ -58,7 +58,7 @@ Error[E0005]: Incomplete base-8 integer literal
  2 |     $ !
  3 |     0b 0B
  4 |     0o 0O
-   :     ^^   
+   :     ^^
  5 |     0x 0X
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
@@ -78,7 +78,7 @@ Error[E0005]: Incomplete base-16 integer literal
  3 |     0b 0B
  4 |     0o 0O
  5 |     0x 0X
-   :     ^^   
+   :     ^^
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
@@ -98,7 +98,7 @@ Error[E0007]: Incomplete real literal
  4 |     0o 0O
  5 |     0x 0X
  6 |     1. 1.0e 1.0e+ 1.0e-
-   :     ^^                 
+   :     ^^
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
  9 |     "bad escape sequence \x"
@@ -108,7 +108,7 @@ Error[E0007]: Incomplete real literal
  4 |     0o 0O
  5 |     0x 0X
  6 |     1. 1.0e 1.0e+ 1.0e-
-   :        ^^^^            
+   :        ^^^^
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
  9 |     "bad escape sequence \x"
@@ -118,7 +118,7 @@ Error[E0007]: Incomplete real literal
  4 |     0o 0O
  5 |     0x 0X
  6 |     1. 1.0e 1.0e+ 1.0e-
-   :             ^^^^^      
+   :             ^^^^^
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
  9 |     "bad escape sequence \x"
@@ -148,7 +148,7 @@ Error[E0011]: Incomplete Unicode escape sequence
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
-   :                            ^^                                        
+   :                            ^^
  9 |     "bad escape sequence \x"
 10 | }
 Error[E0011]: Incomplete Unicode escape sequence
@@ -157,7 +157,7 @@ Error[E0011]: Incomplete Unicode escape sequence
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
-   :                               ^^^                                    
+   :                               ^^^
  9 |     "bad escape sequence \x"
 10 | }
 Error[E0011]: Incomplete Unicode escape sequence
@@ -166,7 +166,7 @@ Error[E0011]: Incomplete Unicode escape sequence
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
-   :                                   ^^^^                               
+   :                                   ^^^^
  9 |     "bad escape sequence \x"
 10 | }
 Error[E0011]: Incomplete Unicode escape sequence
@@ -175,7 +175,7 @@ Error[E0011]: Incomplete Unicode escape sequence
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
-   :                                        ^^^^^                         
+   :                                        ^^^^^
  9 |     "bad escape sequence \x"
 10 | }
 Error[E0011]: Incomplete Unicode escape sequence
@@ -184,7 +184,7 @@ Error[E0011]: Incomplete Unicode escape sequence
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
-   :                                              ^^^^^^                  
+   :                                              ^^^^^^
  9 |     "bad escape sequence \x"
 10 | }
 Error[E0011]: Incomplete Unicode escape sequence
@@ -193,7 +193,7 @@ Error[E0011]: Incomplete Unicode escape sequence
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
-   :                                                     ^^^^^^^          
+   :                                                     ^^^^^^^
  9 |     "bad escape sequence \x"
 10 | }
 Error[E0012]: Invalid Unicode escape sequence
@@ -202,7 +202,7 @@ Error[E0012]: Invalid Unicode escape sequence
  6 |     1. 1.0e 1.0e+ 1.0e-
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
-   :                                                             ^^^^^^^^ 
+   :                                                             ^^^^^^^^
  9 |     "bad escape sequence \x"
 10 | }
 Error[E0010]: Incomplete escape sequence
@@ -211,5 +211,5 @@ Error[E0010]: Incomplete escape sequence
  7 |     "unclosed string literal
  8 |     "bad unicode sequences \u \u1 \u12 \u123 \u1234 \u12345 \uffffff"
  9 |     "bad escape sequence \x"
-   :                          ^  
+   :                          ^
 10 | }

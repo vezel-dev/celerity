@@ -3,7 +3,7 @@
  1 | mod {
  2 |     fn loops() {
  3 |         break;
-   :         ^^^^^ 
+   :         ^^^^^
  4 | 
  5 |         next;
  6 | 
@@ -13,7 +13,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
  3 |         break;
  4 | 
  5 |         next;
-   :         ^^^^ 
+   :         ^^^^
  6 | 
  7 |         while true {
  8 |             break;
@@ -23,7 +23,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 13 |         };
 14 | 
 15 |         while break {
-   :               ^^^^^  
+   :               ^^^^^
 16 |             2;
 17 |         };
 18 | 
@@ -33,7 +33,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
 17 |         };
 18 | 
 19 |         while next {
-   :               ^^^^  
+   :               ^^^^
 20 |             3;
 21 |         };
 22 | 
@@ -43,7 +43,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 29 |         };
 30 | 
 31 |         for _ in break {
-   :                  ^^^^^  
+   :                  ^^^^^
 32 |             5;
 33 |         };
 34 | 
@@ -53,7 +53,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
 33 |         };
 34 | 
 35 |         for _ in next {
-   :                  ^^^^  
+   :                  ^^^^
 36 |             6;
 37 |         };
 38 | 
@@ -63,7 +63,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 39 |         while true {
 40 |             fn() -> {
 41 |                 break;
-   :                 ^^^^^ 
+   :                 ^^^^^
 42 | 
 43 |                 break as 7;
 44 | 
@@ -73,7 +73,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 41 |                 break;
 42 | 
 43 |                 break as 7;
-   :                 ^^^^^^^^^^ 
+   :                 ^^^^^^^^^^
 44 | 
 45 |                 next;
 46 |             };
@@ -83,7 +83,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
 43 |                 break as 7;
 44 | 
 45 |                 next;
-   :                 ^^^^ 
+   :                 ^^^^
 46 |             };
 47 |         };
 48 |     }

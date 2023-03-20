@@ -4,13 +4,13 @@
 2 |     test foo { assert true; }
 3 | 
 4 |     fn bar() { foo; }
-  :                ^^^   
+  :                ^^^
 5 | }
 Note: Symbol declared here
 --> test_reference.cel (2,10)-(2,13)
 1 | mod {
 2 |     test foo { assert true; }
-  :          ^^^                 
+  :          ^^^
 3 | 
 4 |     fn bar() { foo; }
 5 | }

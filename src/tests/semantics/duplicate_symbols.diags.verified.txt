@@ -2,7 +2,7 @@
 ---> duplicate_symbols.cel (2,9)-(2,12)
  1 | mod {
  2 |     use Aaa = Bbb;
-   :         ^^^       
+   :         ^^^
  3 |     use Aaa = Bbb;
  4 | 
  5 |     fn foo() { 1; }
@@ -11,7 +11,7 @@ Note: Also declared here
  1 | mod {
  2 |     use Aaa = Bbb;
  3 |     use Aaa = Bbb;
-   :         ^^^       
+   :         ^^^
  4 | 
  5 |     fn foo() { 1; }
  6 | 
@@ -21,7 +21,7 @@ Error[E0023]: Multiple declarations of 'foo' in the same module
  3 |     use Aaa = Bbb;
  4 | 
  5 |     fn foo() { 1; }
-   :        ^^^         
+   :        ^^^
  6 | 
  7 |     const foo = 2;
  8 | 
@@ -31,7 +31,7 @@ Note: Also declared here
  5 |     fn foo() { 1; }
  6 | 
  7 |     const foo = 2;
-   :           ^^^     
+   :           ^^^
  8 | 
  9 |     test foo { assert true; }
 10 | 
@@ -41,7 +41,7 @@ Note: Also declared here
  7 |     const foo = 2;
  8 | 
  9 |     test foo { assert true; }
-   :          ^^^                 
+   :          ^^^
 10 | 
 11 |     fn bar(aaa, aaa) {
 12 |         fn(bbb, bbb) -> 3;
@@ -51,7 +51,7 @@ Error[E0024]: Multiple bindings of parameter 'aaa' in the same function
  9 |     test foo { assert true; }
 10 | 
 11 |     fn bar(aaa, aaa) {
-   :            ^^^        
+   :            ^^^
 12 |         fn(bbb, bbb) -> 3;
 13 |     }
 14 | 
@@ -61,7 +61,7 @@ Note: Also bound here
  9 |     test foo { assert true; }
 10 | 
 11 |     fn bar(aaa, aaa) {
-   :                 ^^^   
+   :                 ^^^
 12 |         fn(bbb, bbb) -> 3;
 13 |     }
 14 | 
@@ -71,7 +71,7 @@ Error[E0024]: Multiple bindings of parameter 'bbb' in the same function
 10 | 
 11 |     fn bar(aaa, aaa) {
 12 |         fn(bbb, bbb) -> 3;
-   :            ^^^            
+   :            ^^^
 13 |     }
 14 | 
 15 |     fn baz() {
@@ -81,7 +81,7 @@ Note: Also bound here
 10 | 
 11 |     fn bar(aaa, aaa) {
 12 |         fn(bbb, bbb) -> 3;
-   :                 ^^^       
+   :                 ^^^
 13 |     }
 14 | 
 15 |     fn baz() {
@@ -91,7 +91,7 @@ Error[E0025]: Multiple bindings of variable 'x' in the same pattern context
 14 | 
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
-   :              ^              
+   :              ^
 17 |         let (_x, _x) = (x, x);
 18 |     }
 19 | }
@@ -101,7 +101,7 @@ Note: Also bound here
 14 | 
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
-   :                 ^           
+   :                 ^
 17 |         let (_x, _x) = (x, x);
 18 |     }
 19 | }
@@ -111,7 +111,7 @@ Error[E0025]: Multiple bindings of variable '_x' in the same pattern context
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
 17 |         let (_x, _x) = (x, x);
-   :              ^^               
+   :              ^^
 18 |     }
 19 | }
 Note: Also bound here
@@ -120,6 +120,6 @@ Note: Also bound here
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
 17 |         let (_x, _x) = (x, x);
-   :                  ^^           
+   :                  ^^
 18 |     }
 19 | }

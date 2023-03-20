@@ -3,7 +3,7 @@
 1 | mod {
 2 |     fn foo() {
 3 |         let x = x;
-  :                 ^ 
+  :                 ^
 4 | 
 5 |         for y in y {
 6 |             y;
@@ -13,7 +13,7 @@ Error[E0030]: Unknown symbol name 'y'
 3 |         let x = x;
 4 | 
 5 |         for y in y {
-  :                  ^  
+  :                  ^
 6 |             y;
 7 |         };
 8 |     }

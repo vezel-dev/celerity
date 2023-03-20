@@ -64,7 +64,7 @@ Error[E0021]: Expected pattern
 13 | 
 14 |     fn baz() {
 15 |         let = 1;
-   :             ^   
+   :             ^
 16 |         let
 17 |             = 2;
 18 | 
@@ -85,7 +85,7 @@ Error[E0013]: Expected lowercase identifier
 17 |             = 2;
 18 | 
 19 |         let _ as = 3;
-   :                  ^   
+   :                  ^
 20 |         let _ as
 21 |             = 4;
 22 |     }

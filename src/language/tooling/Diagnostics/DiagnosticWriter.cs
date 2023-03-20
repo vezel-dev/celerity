@@ -126,6 +126,10 @@ public sealed class DiagnosticWriter
                             _ => ' ',
                         };
 
+                        // If we finished writing the caret(s), avoid writing trailing white space.
+                        if (ch == ' ' && visible)
+                            break;
+
                         if (ch == '^')
                             visible = true;
 
