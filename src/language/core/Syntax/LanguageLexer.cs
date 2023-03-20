@@ -409,7 +409,8 @@ internal sealed class LanguageLexer
 
         if (kind is { } k)
         {
-            Advance();
+            if (k != SyntaxTokenKind.Equals)
+                Advance();
 
             return k;
         }
