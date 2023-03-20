@@ -45,7 +45,7 @@ public sealed class SyntaxToken : SyntaxItem
         : this(
             -1,
             SyntaxTokenKind.Missing,
-            "<error>",
+            string.Empty,
             null,
             new(ImmutableArray<SyntaxTrivia>.Empty),
             new(ImmutableArray<SyntaxTrivia>.Empty))
