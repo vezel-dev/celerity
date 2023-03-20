@@ -149,7 +149,7 @@ internal sealed class LanguageParser
             SyntaxTokenKind.StringLiteral)
             return Read();
 
-        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "literal value");
+        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "literal");
 
         return Missing();
     }
