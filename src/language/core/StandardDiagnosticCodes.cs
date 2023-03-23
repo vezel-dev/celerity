@@ -80,6 +80,6 @@ public static class StandardDiagnosticCodes
 
     private static DiagnosticCode CreateCode()
     {
-        return DiagnosticCode.CreateError(_code++);
+        return DiagnosticCode.CreateStandard(_code++);
     }
 }

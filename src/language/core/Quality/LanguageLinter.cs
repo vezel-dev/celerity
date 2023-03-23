@@ -8,44 +8,41 @@ namespace Vezel.Celerity.Language.Quality;
 
 internal sealed partial class LanguageLinter
 {
-    private sealed partial class LintVisitor : SemanticVisitor
+    private readonly SemanticTree _tree;
+
+    private readonly IEnumerable<LintPass> _passes;
+
+    private readonly LintConfiguration _configuration;
+
+    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
+
+    public LanguageLinter(
+        SemanticTree tree,
+        IEnumerable<LintPass> passes,
+        LintConfiguration configuration,
+        ImmutableArray<Diagnostic>.Builder diagnostics)
     {
-        private readonly SemanticTree _tree;
+        _tree = tree;
+        _passes = passes;
+        _configuration = configuration;
+        _diagnostics = diagnostics;
+    }
 
-        private readonly ReadOnlyMemory<LintPass> _passes;
+    public void Lint()
+    {
+        var mode = _tree.Root is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
 
-        private readonly LintConfiguration _configuration;
+        foreach (var pass in _passes)
+            if (pass.Mode == null || pass.Mode == mode)
+                pass.Run(new(_tree, pass, _diagnostics));
 
-        private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
+        var cfgs = new Stack<LintConfiguration>(1);
 
-        private readonly Stack<LintConfiguration> _configurations = new(1);
-
-        public LintVisitor(
-            SemanticTree tree,
-            ReadOnlyMemory<LintPass> passes,
-            LintConfiguration configuration,
-            ImmutableArray<Diagnostic>.Builder diagnostics)
-        {
-            _tree = tree;
-            _passes = passes;
-            _configuration = configuration;
-            _diagnostics = diagnostics;
-        }
-
-        public void Lint()
-        {
-            _configurations.Push(_configuration);
-
-            Visit(_tree.Root);
-
-            _ = _configurations.Pop();
-        }
-
-        protected override void DefaultVisit(SemanticNode node)
+        void AdjustSeverities(SemanticNode node)
         {
             bool PushConfiguration(SemanticNodeList<AttributeSemantics, AttributeSyntax> attributes)
             {
-                var current = _configurations.Peek();
+                var current = cfgs.Peek();
                 var replacement = current;
 
                 foreach (var attr in attributes)
@@ -56,21 +53,21 @@ internal sealed partial class LanguageLinter
                         !DiagnosticCode.TryCreate(left, out var code))
                         continue;
 
-                    var (severity, valid) = right switch
+                    var severity = right switch
                     {
-                        "none" => (null, true),
-                        "warning" => (DiagnosticSeverity.Warning, true),
-                        "error" => (DiagnosticSeverity.Error, true),
-                        _ => (default(DiagnosticSeverity?), false),
+                        "none" => DiagnosticSeverity.None,
+                        "warning" => DiagnosticSeverity.Warning,
+                        "error" => DiagnosticSeverity.Error,
+                        _ => default(DiagnosticSeverity?),
                     };
 
-                    if (valid)
-                        replacement = current.WithSeverity(code, severity);
+                    if (severity is { } sev)
+                        replacement = current.WithSeverity(code, sev);
                 }
 
                 if (replacement != current)
                 {
-                    _configurations.Push(replacement);
+                    cfgs.Push(replacement);
 
                     return true;
                 }
@@ -86,70 +83,31 @@ internal sealed partial class LanguageLinter
                 _ => false,
             };
 
-            void RunLints<T>(LintTargets target, T node, Action<LintPass, LintContext, T> runner)
-                where T : SemanticNode
+            var span = node.Syntax.Span;
+            var cfg = cfgs.Peek();
+
+            for (var i = 0; i < _diagnostics.Count; i++)
             {
-                var cfg = _configurations.Peek();
+                var diag = _diagnostics[i];
 
-                foreach (var pass in _passes.Span)
-                {
-                    if ((pass.Targets & target) != target)
-                        continue;
-
-                    if (!cfg.TryGetSeverity(pass.Code, out var severity))
-                        severity = pass.Severity;
-
-                    if (severity is not { } sev)
-                        continue;
-
-                    runner(pass, new(_tree.Syntax, pass.Code, sev, _diagnostics), node);
-                }
-            }
-
-            switch (node)
-            {
-                case DocumentSemantics module:
-                    RunLints(LintTargets.Document, module, static (pass, ctx, node) => pass.Run(ctx, node));
-                    break;
-                case DeclarationSemantics declaration:
-                    RunLints(LintTargets.Declaration, declaration, static (pass, ctx, node) => pass.Run(ctx, node));
-                    break;
-                case StatementSemantics statement:
-                    RunLints(LintTargets.Statement, statement, static (pass, ctx, node) => pass.Run(ctx, node));
-                    break;
-                case ExpressionSemantics expression:
-                    RunLints(LintTargets.Expression, expression, static (pass, ctx, node) => pass.Run(ctx, node));
-                    break;
-                case PatternSemantics pattern:
-                    RunLints(LintTargets.Pattern, pattern, static (pass, ctx, node) => pass.Run(ctx, node));
-                    break;
+                if (span.Contains(diag.Span.Start) &&
+                    cfg.TryGetSeverity(diag.Code, out var severity) &&
+                    severity != diag.Severity)
+                    _diagnostics[i] = new(diag.Tree, diag.Span, diag.Code, severity, diag.Message, diag.Notes);
             }
 
             if (node.HasChildren)
                 foreach (var child in node.Children())
-                    Visit(child);
+                    AdjustSeverities(child);
 
             if (pushed)
-                _ = _configurations.Pop();
+                _ = cfgs.Pop();
         }
-    }
 
-    private readonly LintVisitor _visitor;
+        cfgs.Push(_configuration);
 
-    public LanguageLinter(
-        SemanticTree tree,
-        IEnumerable<LintPass> passes,
-        LintConfiguration configuration,
-        ImmutableArray<Diagnostic>.Builder diagnostics)
-    {
-        var mode = tree.Root is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
+        AdjustSeverities(_tree.Root);
 
-        _visitor = new(
-            tree, passes.Where(pass => pass.Mode == null || pass.Mode == mode).ToArray(), configuration, diagnostics);
-    }
-
-    public void Lint()
-    {
-        _visitor.Lint();
+        _ = cfgs.Pop();
     }
 }

@@ -28,6 +28,7 @@ public sealed class DiagnosticWriter
     public ValueTask WriteAsync(Diagnostic diagnostic, TextWriter writer, CancellationToken cancellationToken = default)
     {
         Check.Null(diagnostic);
+        Check.Argument(diagnostic.Severity != DiagnosticSeverity.None, diagnostic);
         Check.Null(writer);
 
         return WriteAsyncCore();

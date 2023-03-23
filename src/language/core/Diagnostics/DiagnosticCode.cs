@@ -12,17 +12,7 @@ public readonly partial struct DiagnosticCode :
         Code = code;
     }
 
-    internal static DiagnosticCode CreateSuggestion(int code)
-    {
-        return new($"S{code:0000}");
-    }
-
-    internal static DiagnosticCode CreateWarning(int code)
-    {
-        return new($"W{code:0000}");
-    }
-
-    internal static DiagnosticCode CreateError(int code)
+    internal static DiagnosticCode CreateStandard(int code)
     {
         return new($"E{code:0000}");
     }

@@ -1,29 +1,24 @@
 using Vezel.Celerity.Language.Diagnostics;
-using Vezel.Celerity.Language.Syntax;
+using Vezel.Celerity.Language.Semantics;
 using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Quality;
 
-[SuppressMessage("", "CA1815")]
-public readonly struct LintContext
+public sealed class LintContext
 {
-    private readonly SyntaxTree _tree;
+    public SemanticTree Tree { get; }
 
-    private readonly DiagnosticCode _code;
-
-    private readonly DiagnosticSeverity _severity;
+    private readonly LintPass _pass;
 
     private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
 
     internal LintContext(
-        SyntaxTree tree,
-        DiagnosticCode code,
-        DiagnosticSeverity severity,
+        SemanticTree tree,
+        LintPass pass,
         ImmutableArray<Diagnostic>.Builder diagnostics)
     {
-        _tree = tree;
-        _code = code;
-        _severity = severity;
+        Tree = tree;
+        _pass = pass;
         _diagnostics = diagnostics;
     }
 
@@ -43,10 +38,10 @@ public readonly struct LintContext
 
         _diagnostics.Add(
             new(
-                _tree,
+                Tree.Syntax,
                 span,
-                _code,
-                _severity,
+                _pass.Code,
+                _pass.Severity,
                 message,
                 notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
     }

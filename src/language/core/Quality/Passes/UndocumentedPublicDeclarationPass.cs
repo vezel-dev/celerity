@@ -10,58 +10,43 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
     public static UndocumentedPublicDeclarationPass Instance { get; } = new();
 
     private UndocumentedPublicDeclarationPass()
-        : base(
-            "undocumented-public-declaration",
-            DiagnosticSeverity.Warning,
-            LintTargets.Document | LintTargets.Declaration,
-            SyntaxMode.Module)
+        : base("undocumented-public-declaration", DiagnosticSeverity.Warning, SyntaxMode.Module)
     {
     }
 
-    protected internal override void Run(LintContext context, DocumentSemantics document)
+    protected internal override void Run(LintContext context)
     {
-        var module = Unsafe.As<ModuleDocumentSemantics>(document);
+        var module = Unsafe.As<ModuleDocumentSemantics>(context.Tree.Root);
         var syntax = module.Syntax;
 
-        CheckDocumentationAttribute(
-            context, "Module", syntax.ModKeywordToken, module.Attributes.Select(static attr => attr.Name), null);
+        void CheckDocumentationAttribute(
+            string kind, SyntaxItem item, IEnumerable<AttributeSyntax> attributes, string? name)
+        {
+            if (!attributes.Any(static attr => attr.NameToken.Text == "doc"))
+                context.ReportDiagnostic(
+                    item.Span,
+                    $"{kind}{(name != null ? $" '{name}'" : string.Empty)} should be decorated with a 'doc' attribute");
+        }
 
-        // Types are not part of the semantic tree, but we still want to check public types.
-        foreach (var decl in syntax.Declarations)
-            if (decl is TypeDeclarationSyntax { PubKeywordToken: { }, NameToken: { IsMissing: false } name })
-                CheckDocumentationAttribute(
-                    context,
-                    "Public type",
-                    name,
-                    decl.Attributes.Select(static attr => attr.NameToken.Text),
-                    name.Text);
-    }
+        CheckDocumentationAttribute("Module", syntax.ModKeywordToken, syntax.Attributes, null);
 
-    protected internal override void Run(LintContext context, DeclarationSemantics declaration)
-    {
         // If the module is explicitly undocumented, do not require declarations within it to be decorated.
-        if (Unsafe.As<ModuleDocumentSemantics>(declaration.Parent).Attributes.Any(
-            attr => attr is { Name: "doc", Value: false }))
+        if (module.Attributes.Any(static attr => attr is { Name: "doc", Value: false }))
             return;
 
-        var (kind, pub, name) = declaration switch
+        foreach (var decl in syntax.Declarations)
         {
-            ConstantDeclarationSemantics constant => ("Public constant", constant.IsPublic, constant.Syntax.NameToken),
-            FunctionDeclarationSemantics function => ("Public function", function.IsPublic, function.Syntax.NameToken),
-            _ => (null, false, null),
-        };
+            // Types are not part of the semantic tree, but we still want to check public types.
+            var tup = decl switch
+            {
+                TypeDeclarationSyntax type => ("Public type", type.PubKeywordToken, type.NameToken),
+                ConstantDeclarationSyntax constant => ("Public constant", constant.PubKeywordToken, constant.NameToken),
+                FunctionDeclarationSyntax function => ("Public function", function.PubKeywordToken, function.NameToken),
+                _ => default((string, SyntaxToken?, SyntaxToken)?),
+            };
 
-        if (pub && !name!.IsMissing)
-            CheckDocumentationAttribute(
-                context, kind!, name, declaration.Attributes.Select(static attr => attr.Name), name.Text);
-    }
-
-    private static void CheckDocumentationAttribute(
-        LintContext context, string kind, SyntaxItem item, IEnumerable<string> attributes, string? name)
-    {
-        if (!attributes.Any(static t => t == "doc"))
-            context.ReportDiagnostic(
-                item.Span,
-                $"{kind}{(name != null ? $" '{name}'" : string.Empty)} should be decorated with a 'doc' attribute");
+            if (tup is (var kind, { }, var name))
+                CheckDocumentationAttribute(kind, name, decl.Attributes, name.Text);
+        }
     }
 }
