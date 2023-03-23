@@ -30,6 +30,7 @@ internal sealed class CheckVerb : Verb
                 .Concat(semantics.Diagnostics)
                 .Concat(analysis.Diagnostics)
                 .Where(static diag => diag.Severity != DiagnosticSeverity.None)
+                .OrderBy(static diag => diag.Span)
                 .ToArray();
             var stderr = Terminal.StandardError;
             var writer = new DiagnosticWriter(

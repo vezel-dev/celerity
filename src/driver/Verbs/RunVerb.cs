@@ -19,7 +19,7 @@ internal sealed class RunVerb : Verb
         var semantics = SemanticTree.Analyze(syntax);
 
         // SyntaxTree and SemanticTree never emit suppressed diagnostics.
-        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).ToArray();
+        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(static diag => diag.Span).ToArray();
         var stderr = Terminal.StandardError;
         var writer = new DiagnosticWriter(new DiagnosticConfiguration().WithStyle(new TerminalDiagnosticStyle(stderr)));
 
