@@ -92,12 +92,8 @@ internal sealed class LanguageParser
         for (; Peek1() is { IsEndOfInput: false } token && predicate(token.Kind, state); i++)
             SkipToken(_reader.Read());
 
-        var firstSpan = first.Span;
-
         Error(
-            new(
-                firstSpan.Start,
-                _skipped.LastOrDefault() is { } last ? last.Span.End - firstSpan.Start : firstSpan.Length),
+            _skipped.LastOrDefault() is { } last ? SourceTextSpan.Union(first.Span, last.Span) : first.Span,
             code,
             $"Unexpected {(i == 1 ? "token" : "tokens")} in {location}");
     }
@@ -301,7 +297,7 @@ internal sealed class LanguageParser
                     var firstSpan = first.Span;
 
                     Error(
-                        new(firstSpan.Start, _last!.Span.End - firstSpan.Start),
+                        SourceTextSpan.Union(first.Span, _last!.Span),
                         StandardDiagnosticCodes.UselessTrailingAttributes,
                         $"Useless trailing {(attrs.Count == 1 ? "attribute" : "attributes")} in {location}");
                 }

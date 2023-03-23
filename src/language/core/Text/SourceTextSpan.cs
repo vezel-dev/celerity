@@ -34,6 +34,13 @@ public readonly struct SourceTextSpan :
 
     public static bool operator >=(SourceTextSpan left, SourceTextSpan right) => left.CompareTo(right) >= 0;
 
+    public static SourceTextSpan Union(SourceTextSpan first, SourceTextSpan second)
+    {
+        var start = int.Min(first.Start, second.Start);
+
+        return new(start, int.Max(first.End, second.End) - start);
+    }
+
     public bool Contains(int position)
     {
         Check.Range(position >= 0, position);

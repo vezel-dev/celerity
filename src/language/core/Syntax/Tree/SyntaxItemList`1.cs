@@ -79,11 +79,8 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
             var first = items[0];
             var last = items[^1];
 
-            var firstSpan = first.Span;
-            var firstFullSpan = first.FullSpan;
-
-            Span = new(firstSpan.Start, last.Span.End - firstSpan.Start);
-            FullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
+            Span = SourceTextSpan.Union(first.Span, last.Span);
+            FullSpan = SourceTextSpan.Union(first.FullSpan, last.FullSpan);
         }
 
         foreach (var item in items)

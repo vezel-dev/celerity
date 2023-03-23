@@ -34,11 +34,8 @@ public abstract class SyntaxNode : SyntaxItem
         var first = children[0];
         var last = children[^1];
 
-        var firstSpan = first.Span;
-        var firstFullSpan = first.FullSpan;
-
-        _span = new(firstSpan.Start, last.Span.End - firstSpan.Start);
-        _fullSpan = new(firstFullSpan.Start, last.FullSpan.End - firstFullSpan.Start);
+        _span = SourceTextSpan.Union(first.Span, last.Span);
+        _fullSpan = SourceTextSpan.Union(first.FullSpan, last.FullSpan);
     }
 
     public new IEnumerable<SyntaxNode> Ancestors()
