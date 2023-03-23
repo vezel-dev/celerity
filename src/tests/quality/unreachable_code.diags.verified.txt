@@ -1,0 +1,44 @@
+﻿Warning[unreachable-code]: Code is unreachable
+---> unreachable_code.cel (6,13)-(6,28)
+ 3 |         if true {
+ 4 |             ret nil;
+ 5 | 
+ 6 |             "this is dead";
+   :             ^^^^^^^^^^^^^^^
+ 7 |         };
+ 8 | 
+ 9 |         if true {
+Warning[unreachable-code]: Code is unreachable
+---> unreachable_code.cel (12,13)-(12,33)
+ 9 |         if true {
+10 |             raise err MyError {};
+11 | 
+12 |             "this is also dead";
+   :             ^^^^^^^^^^^^^^^^^^^^
+13 |         };
+14 | 
+15 |         while true {
+Warning[unreachable-code]: Code is unreachable
+---> unreachable_code.cel (19,17)-(19,28)
+16 |             if true {
+17 |                 next;
+18 | 
+19 |                 "this too";
+   :                 ^^^^^^^^^^^
+20 |             };
+21 | 
+22 |             if false {
+Warning[unreachable-code]: Code is unreachable
+---> unreachable_code.cel (25,17)-(27,30)
+22 |             if false {
+23 |                 break;
+24 | 
+25 |                 "and this";
+   :                 ^^^^^^^^^^^
+26 |                 "multiple";
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+27 |                 "statements";
+   : ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+28 |             };
+29 |         };
+30 |     }
