@@ -8,9 +8,11 @@ public sealed class LintContext
 {
     public SemanticTree Tree { get; }
 
+    private readonly object _lock = new();
+
     private readonly LintPass _pass;
 
-    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
+    private ImmutableArray<Diagnostic>.Builder? _diagnostics;
 
     internal LintContext(
         SemanticTree tree,
@@ -20,6 +22,12 @@ public sealed class LintContext
         Tree = tree;
         _pass = pass;
         _diagnostics = diagnostics;
+    }
+
+    internal void Invalidate()
+    {
+        lock (_lock)
+            _diagnostics = null;
     }
 
     public void ReportDiagnostic(
@@ -36,13 +44,18 @@ public sealed class LintContext
         Check.Null(notes);
         Check.All(notes, static note => note.Message != null);
 
-        _diagnostics.Add(
-            new(
-                Tree.Syntax,
-                span,
-                _pass.Code,
-                _pass.Severity,
-                message,
-                notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
+        lock (_lock)
+        {
+            Check.Operation(_diagnostics != null);
+
+            _diagnostics.Add(
+                new(
+                    Tree.Syntax,
+                    span,
+                    _pass.Code,
+                    _pass.Severity,
+                    message,
+                    notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
+        }
     }
 }

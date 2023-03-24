@@ -33,8 +33,15 @@ internal sealed partial class LanguageLinter
         var mode = _tree.Root is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
 
         foreach (var pass in _passes)
-            if (pass.Mode == null || pass.Mode == mode)
-                pass.Run(new(_tree, pass, _diagnostics));
+        {
+            if (pass.Mode != null && pass.Mode != mode)
+                continue;
+
+            var ctx = new LintContext(_tree, pass, _diagnostics);
+
+            pass.Run(ctx);
+            ctx.Invalidate();
+        }
 
         var cfgs = new Stack<LintConfiguration>(1);
 

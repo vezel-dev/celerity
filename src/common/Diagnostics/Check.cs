@@ -85,10 +85,10 @@ internal static class Check
             throw new ArgumentOutOfRangeException(name);
     }
 
-    public static void Data([DoesNotReturnIf(false)] bool condition)
+    public static void Operation([DoesNotReturnIf(false)] bool condition)
     {
         if (!condition)
-            throw new InvalidDataException();
+            throw new InvalidOperationException();
     }
 
     public static void All<T>(
