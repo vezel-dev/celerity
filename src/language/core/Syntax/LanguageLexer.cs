@@ -240,6 +240,8 @@ internal sealed class LanguageLexer
 
         _ = _utf8.GetBytes(chars, bytes);
 
+        _string.Clear();
+
         return bytes;
     }
 
