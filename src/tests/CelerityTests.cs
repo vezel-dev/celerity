@@ -13,7 +13,7 @@ public abstract class CelerityTests
                 await writer.WriteAsync(diag, text);
 
         _ = await Verifier
-            .Verify(text.ToString(), sourceFile: file)
+            .Verify(text.ToString(), "txt", sourceFile: file)
             .UseTypeName(name)
             .UseMethodName("diags")
             .ToTask();
