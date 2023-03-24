@@ -1,0 +1,47 @@
+﻿Warning[unused-local-symbol]: Declaration 'unused_const' is unused
+--> unused_local_symbols.cel (2,11)-(2,23)
+1 | mod {
+2 |     const unused_const = 1;
+  :           ^^^^^^^^^^^^
+3 | 
+4 |     fn unused_fn(unused_fn_param) {
+5 |         fn(unused_lambda_param) -> 2;
+Warning[unused-local-symbol]: Declaration 'unused_fn' is unused
+--> unused_local_symbols.cel (4,8)-(4,17)
+1 | mod {
+2 |     const unused_const = 1;
+3 | 
+4 |     fn unused_fn(unused_fn_param) {
+  :        ^^^^^^^^^
+5 |         fn(unused_lambda_param) -> 2;
+6 | 
+7 |         let unused_binding = 3;
+Warning[unused-local-symbol]: Parameter 'unused_fn_param' is unused
+--> unused_local_symbols.cel (4,18)-(4,33)
+1 | mod {
+2 |     const unused_const = 1;
+3 | 
+4 |     fn unused_fn(unused_fn_param) {
+  :                  ^^^^^^^^^^^^^^^
+5 |         fn(unused_lambda_param) -> 2;
+6 | 
+7 |         let unused_binding = 3;
+Warning[unused-local-symbol]: Parameter 'unused_lambda_param' is unused
+--> unused_local_symbols.cel (5,12)-(5,31)
+2 |     const unused_const = 1;
+3 | 
+4 |     fn unused_fn(unused_fn_param) {
+5 |         fn(unused_lambda_param) -> 2;
+  :            ^^^^^^^^^^^^^^^^^^^
+6 | 
+7 |         let unused_binding = 3;
+8 |     }
+Warning[unused-local-symbol]: Variable 'unused_binding' is unused
+--> unused_local_symbols.cel (7,13)-(7,27)
+4 |     fn unused_fn(unused_fn_param) {
+5 |         fn(unused_lambda_param) -> 2;
+6 | 
+7 |         let unused_binding = 3;
+  :             ^^^^^^^^^^^^^^
+8 |     }
+9 | }

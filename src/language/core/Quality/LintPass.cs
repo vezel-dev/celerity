@@ -10,6 +10,7 @@ public abstract class LintPass
         ImmutableArray.Create<LintPass>(
             UndocumentedPublicDeclarationPass.Instance,
             UnreachableCodePass.Instance,
+            UnusedLocalSymbolPass.Instance,
             UppercaseBaseIndicatorPass.Instance);
 
     public DiagnosticCode Code { get; }
