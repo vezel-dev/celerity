@@ -9,9 +9,8 @@ public abstract class CelerityTests
         await using var text = new StringWriter(CultureInfo.InvariantCulture);
 
         foreach (var diag in diagnostics)
-        {
-            await writer.WriteAsync(diag, text);
-        }
+            if (diag.Severity != DiagnosticSeverity.None)
+                await writer.WriteAsync(diag, text);
 
         _ = await Verifier
             .Verify(text.ToString(), sourceFile: file)
