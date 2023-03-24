@@ -278,9 +278,23 @@ internal sealed class LanguageAnalyzer
 
         public override InteractiveDocumentSemantics VisitInteractiveDocument(InteractiveDocumentSyntax node)
         {
-            var subs = ConvertList(node.Submissions, static (@this, sub) => @this.VisitSubmission(sub));
+            var subs = Builder<SubmissionSemantics>(node.Submissions.Count);
 
-            return new(node, subs);
+            // See VisitBlockExpression for how this works.
+            var lets = new List<ScopeContext<Scope>>();
+
+            foreach (var sub in node.Submissions)
+            {
+                if (sub is StatementSubmissionSyntax { Statement: LetStatementSyntax })
+                    lets.Add(PushScope<Scope>());
+
+                subs.Add(VisitSubmission(sub));
+            }
+
+            for (var i = lets.Count - 1; i >= 0; i--)
+                lets[i].Dispose();
+
+            return new(node, List(node.Submissions, subs));
         }
 
         // Miscellaneous
