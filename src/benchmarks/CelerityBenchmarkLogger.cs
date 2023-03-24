@@ -8,7 +8,7 @@ internal sealed class CelerityBenchmarkLogger : ILogger
 
     public int Priority => 0;
 
-    private static readonly bool _interactive = Terminal.TerminalOut.IsInteractive;
+    private static readonly bool _interactive = Terminal.StandardOut.IsInteractive;
 
     private static readonly ImmutableDictionary<LogKind, (byte R, byte G, byte B)> _colors =
         new Dictionary<LogKind, (byte, byte, byte)>
@@ -27,15 +27,15 @@ internal sealed class CelerityBenchmarkLogger : ILogger
     {
     }
 
-    private static void WriteControl(string sequence)
-    {
-        if (_interactive)
-            Terminal.Out(sequence);
-    }
-
     private void Write(LogKind kind, string text, bool eol)
     {
         var (r, g, b) = _colors[kind];
+
+        static void WriteControl(string sequence)
+        {
+            if (_interactive)
+                Terminal.Out(sequence);
+        }
 
         WriteControl(ControlSequences.SetForegroundColor(r, g, b));
         Terminal.Out(text);
