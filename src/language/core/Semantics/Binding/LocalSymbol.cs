@@ -6,13 +6,13 @@ namespace Vezel.Celerity.Language.Semantics.Binding;
 
 public abstract class LocalSymbol : Symbol
 {
-    public override ImmutableArray<SemanticNode> Bindings => _bindings;
+    public override sealed string Name { get; }
 
-    public override ImmutableArray<IdentifierExpressionSemantics> References => _references;
+    public override sealed ImmutableArray<SemanticNode> Bindings => _bindings;
 
-    public override ImmutableArray<AssignmentExpressionSemantics> Assignments => _assignments;
+    public override sealed ImmutableArray<IdentifierExpressionSemantics> References => _references;
 
-    public override string Name { get; }
+    public override sealed ImmutableArray<AssignmentExpressionSemantics> Assignments => _assignments;
 
     private ImmutableArray<SemanticNode> _bindings = ImmutableArray<SemanticNode>.Empty;
 
@@ -27,7 +27,7 @@ public abstract class LocalSymbol : Symbol
         Name = name;
     }
 
-    public override IEnumerable<SourceTextSpan> GetSpans()
+    public override sealed IEnumerable<SourceTextSpan> GetSpans()
     {
         foreach (var binding in _bindings)
             yield return GetToken(binding).Span;

@@ -9,17 +9,17 @@ public sealed class UpvalueSymbol : Symbol
 
     public int Slot { get; }
 
-    public override ImmutableArray<SemanticNode> Bindings => Parent.Bindings;
-
-    public override ImmutableArray<IdentifierExpressionSemantics> References => Parent.References;
-
-    public override ImmutableArray<AssignmentExpressionSemantics> Assignments => Parent.Assignments;
-
     public override string Name => Parent.Name;
 
     public override bool IsMutable => false; // Upvalue variables can never be mutated.
 
     public override bool IsDiscard => Parent.IsDiscard;
+
+    public override ImmutableArray<SemanticNode> Bindings => Parent.Bindings;
+
+    public override ImmutableArray<IdentifierExpressionSemantics> References => Parent.References;
+
+    public override ImmutableArray<AssignmentExpressionSemantics> Assignments => Parent.Assignments;
 
     internal UpvalueSymbol(Symbol parent, int slot)
     {
