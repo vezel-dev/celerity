@@ -1,0 +1,15 @@
+﻿Error[E0033]: Assignment to immutable symbol 'immutable'
+--> contextual_submissions.cel (2,1)-(2,10)
+1 | mutable = 1;
+2 | immutable = 2;
+  : ^^^^^^^^^
+3 | let mut immutable = 3;
+4 | immutable = 4;
+5 | nonexistent = 5;
+Error[E0030]: Unknown symbol name 'nonexistent'
+--> contextual_submissions.cel (5,1)-(5,12)
+2 | immutable = 2;
+3 | let mut immutable = 3;
+4 | immutable = 4;
+5 | nonexistent = 5;
+  : ^^^^^^^^^^^

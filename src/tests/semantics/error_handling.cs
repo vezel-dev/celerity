@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task error_handling()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn infallible() {

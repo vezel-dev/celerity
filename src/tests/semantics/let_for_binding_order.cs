@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task let_for_binding_order()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn foo() {

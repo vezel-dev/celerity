@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task loop_control()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn loops() {

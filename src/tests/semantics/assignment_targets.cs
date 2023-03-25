@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task assignment_targets()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn assign(arg) {

@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task this_expression()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn foo() {

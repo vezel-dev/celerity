@@ -4,7 +4,6 @@ public sealed partial class QualityTests
     public Task tests_without_assert()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 test foo {

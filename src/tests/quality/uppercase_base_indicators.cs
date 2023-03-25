@@ -4,7 +4,6 @@ public sealed partial class QualityTests
     public Task uppercase_base_indicators()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn foo() {

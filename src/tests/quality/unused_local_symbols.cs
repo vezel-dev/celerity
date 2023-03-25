@@ -4,7 +4,6 @@ public sealed partial class QualityTests
     public Task unused_local_symbols()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 const unused_const = 1;

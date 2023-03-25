@@ -32,6 +32,8 @@ internal sealed class LanguageAnalyzer
 
         private readonly SyntaxTree _tree;
 
+        private readonly InteractiveContext _context;
+
         private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
 
         private readonly Dictionary<string, (List<UseDeclarationSemantics> Declarations, ModulePath? Path)> _uses =
@@ -43,9 +45,11 @@ internal sealed class LanguageAnalyzer
 
         private Scope _scope = new(null);
 
-        public AnalysisVisitor(SyntaxTree tree, ImmutableArray<Diagnostic>.Builder diagnostics)
+        public AnalysisVisitor(
+            SyntaxTree tree, InteractiveContext context, ImmutableArray<Diagnostic>.Builder diagnostics)
         {
             _tree = tree;
+            _context = context;
             _diagnostics = diagnostics;
         }
 
@@ -148,6 +152,7 @@ internal sealed class LanguageAnalyzer
             {
                 0 => (null, null),
                 1 when _uses.TryGetValue(comps[0], out var tup) => (tup.Declarations[^1], tup.Path),
+                1 when _context.TryGetUse(comps[0], out var p) => (null, p),
                 _ => (null, new(comps)),
             };
         }
@@ -964,6 +969,9 @@ internal sealed class LanguageAnalyzer
             {
                 sym = _scope.ResolveSymbol(ident.Text);
 
+                if (sym == null && _context.TryGetSymbol(ident.Text, out var sym2))
+                    sym = sym2;
+
                 if (sym == null)
                     Error(
                         ident.Span,
@@ -1234,9 +1242,10 @@ internal sealed class LanguageAnalyzer
 
     private readonly AnalysisVisitor _visitor;
 
-    public LanguageAnalyzer(SyntaxTree tree, ImmutableArray<Diagnostic>.Builder diagnostics)
+    public LanguageAnalyzer(
+        SyntaxTree tree, InteractiveContext context, ImmutableArray<Diagnostic>.Builder diagnostics)
     {
-        _visitor = new(tree, diagnostics);
+        _visitor = new(tree, context, diagnostics);
     }
 
     public DocumentSemantics Analyze()

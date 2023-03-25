@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task let_bindings()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn bindings(arg) {

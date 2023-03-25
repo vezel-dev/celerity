@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task standard_attributes()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             @deprecated "broken"
             @lint "foo:bar"

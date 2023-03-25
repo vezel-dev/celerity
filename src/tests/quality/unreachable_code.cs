@@ -4,7 +4,6 @@ public sealed partial class QualityTests
     public Task unreachable_code()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 err fn main() {

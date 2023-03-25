@@ -4,7 +4,6 @@ public sealed partial class QualityTests
     public Task lint_severity_attributes()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn code() {

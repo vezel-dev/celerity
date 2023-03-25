@@ -4,7 +4,6 @@ public sealed partial class QualityTests
     public Task explicitly_undocumented_module()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             @doc false
             mod {

@@ -6,10 +6,27 @@
 public sealed partial class SemanticTests : CelerityTests
 {
     private static Task TestAsync(
-        SyntaxMode mode, string contents, [CallerFilePath] string file = "", [CallerMemberName] string name = "")
+        string contents, [CallerFilePath] string file = "", [CallerMemberName] string name = "")
     {
-        var syntax = SyntaxTree.Parse(new StringSourceText($"{name}.cel", contents), mode, discardText: true);
-        var semantics = SemanticTree.Analyze(syntax);
+        return TestAsync(default(InteractiveContext), contents, file, name);
+    }
+
+    private static Task TestAsync(
+        Func<InteractiveContext, InteractiveContext> contextSetup,
+        string contents,
+        [CallerFilePath] string file = "",
+        [CallerMemberName] string name = "")
+    {
+        return TestAsync(contextSetup(InteractiveContext.Default), contents, file, name);
+    }
+
+    private static Task TestAsync(InteractiveContext? context, string contents, string file, string name)
+    {
+        var syntax = SyntaxTree.Parse(
+            new StringSourceText($"{name}.cel", contents),
+            context != null ? SyntaxMode.Interactive : SyntaxMode.Module,
+            discardText: true);
+        var semantics = SemanticTree.Analyze(syntax, context);
 
         return VerifyDiagnosticsAsync(syntax.Diagnostics.Concat(semantics.Diagnostics), file, name);
     }

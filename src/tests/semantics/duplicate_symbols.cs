@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task duplicate_symbols()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 use Aaa = Bbb;

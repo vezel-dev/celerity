@@ -4,7 +4,6 @@ public sealed partial class SemanticTests
     public Task duplicate_fields()
     {
         return TestAsync(
-            SyntaxMode.Module,
             """
             mod {
                 fn foo() {
