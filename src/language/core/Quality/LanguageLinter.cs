@@ -85,6 +85,7 @@ internal sealed partial class LanguageLinter
             var pushed = node switch
             {
                 ModuleDocumentSemantics module => PushConfiguration(module.Attributes),
+                CodeParameterSemantics parameter => PushConfiguration(parameter.Attributes),
                 DeclarationSemantics declaration => PushConfiguration(declaration.Attributes),
                 StatementSemantics statement => PushConfiguration(statement.Attributes),
                 _ => false,
