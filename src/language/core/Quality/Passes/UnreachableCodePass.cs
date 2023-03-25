@@ -26,10 +26,7 @@ public sealed class UnreachableCodePass : LintPass
             {
                 if (exited)
                     dead.Add(stmt);
-                else if (stmt is ExpressionStatementSemantics
-                {
-                    Expression: BranchExpressionSemantics or LoopBranchExpressionSemantics,
-                })
+                else if (stmt is ExpressionStatementSemantics { Expression: BranchExpressionSemantics })
                     exited = true;
             }
 
