@@ -124,10 +124,6 @@ internal sealed class LambdaScope : FunctionScope, IScope<LambdaScope>
         // We now know that the symbol is a parameter or local variable from further up the call stack, possibly even
         // captured as an upvalue by an ancestor lambda. Register it as an upvalue of this lambda if that has not been
         // done already.
-        ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_upvalues, sym, out _);
-
-        entry ??= new(sym, _upvalueSlot++);
-
-        return entry;
+        return CollectionsMarshal.GetValueRefOrAddDefault(_upvalues, sym, out _) ??= new(sym, _upvalueSlot++);
     }
 }

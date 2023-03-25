@@ -76,6 +76,12 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode DuplicateAggregatePatternField { get; } = CreateCode();
 
+    public static DiagnosticCode InvalidStandardAttributeTarget { get; } = CreateCode();
+
+    public static DiagnosticCode InvalidStandardAttributeValue { get; } = CreateCode();
+
+    public static DiagnosticCode DuplicateStandardAttribute { get; } = CreateCode();
+
     private static int _code;
 
     private static DiagnosticCode CreateCode()

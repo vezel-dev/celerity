@@ -187,6 +187,73 @@ internal sealed class LanguageAnalyzer
             return List(syntax, builder);
         }
 
+        private SemanticNodeList<AttributeSemantics, AttributeSyntax> ConvertAttributeList(
+            SyntaxNode container, SyntaxItemList<AttributeSyntax> attributes)
+        {
+            var attrs = ConvertList(attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var grouped = new Dictionary<string, List<AttributeSemantics>>();
+
+            foreach (var attr in attrs)
+            {
+                var name = attr.Name;
+                var value = attr.Value;
+
+                var (containerValid, valueValid, valueMsg, allowMultiple) = name switch
+                {
+                    "deprecated" => (container is ModuleDocumentSyntax or
+                                                  ConstantDeclarationSyntax or
+                                                  FunctionDeclarationSyntax,
+                                     value is ReadOnlyMemory<byte>,
+                                     "string literal (reason)",
+                                     false),
+                    "doc" => (container is ModuleDocumentSyntax or
+                                           ConstantDeclarationSyntax or
+                                           FunctionDeclarationSyntax,
+                              value is ReadOnlyMemory<byte> or false,
+                              "string literal (documentation text) or 'false'",
+                              false),
+                    "flaky" or "ignore" => (container is TestDeclarationSyntax,
+                                            value is ReadOnlyMemory<byte>,
+                                            "string literal (reason)",
+                                            false),
+                    "lint" => (true,
+                               value is ReadOnlyMemory<byte> utf8 &&
+                               Encoding.UTF8.GetString(utf8.Span).Split(':', StringSplitOptions.RemoveEmptyEntries) is
+                                   [var left, var right] &&
+                               DiagnosticCode.TryCreate(left, out _) &&
+                               right is "none" or "warning" or "error",
+                               "string literal of the form '<name>:<severity>'",
+                               true),
+                    _ => (true, true, null, true),
+                };
+
+                if (!containerValid)
+                    Error(
+                        attr.Syntax.Span,
+                        StandardDiagnosticCodes.InvalidStandardAttributeTarget,
+                        $"Standard attribute '{name}' is not valid on this item");
+
+                if (!valueValid)
+                    Error(
+                        attr.Syntax.ValueToken.Span,
+                        StandardDiagnosticCodes.InvalidStandardAttributeValue,
+                        $"Value for standard attribute '{name}' must be a {valueMsg}");
+
+                if (!allowMultiple)
+                    (CollectionsMarshal.GetValueRefOrAddDefault(grouped, name, out _) ??= new()).Add(attr);
+            }
+
+            foreach (var (name, list) in grouped.OrderBy(static kvp => kvp.Key))
+                if (list.Count != 1)
+                    Error(
+                        list[0].Syntax.Span,
+                        StandardDiagnosticCodes.DuplicateStandardAttribute,
+                        $"Standard attribute '{name}' specified multiple times",
+                        list.Skip(1).Select(static attr => (attr.Syntax.Span, "Also specified here")));
+
+            return attrs;
+        }
+
         private SeparatedSemanticNodeList<TSemantics, TSyntax> ConvertList<TSyntax, TSemantics>(
             SeparatedSyntaxItemList<TSyntax> syntax, Func<AnalysisVisitor, TSyntax, TSemantics> converter)
             where TSyntax : SyntaxNode
@@ -219,16 +286,8 @@ internal sealed class LanguageAnalyzer
             var map = new Dictionary<string, List<SourceTextSpan>>(fields.Count);
 
             foreach (var field in fields)
-            {
-                if (selector(field) is not { IsMissing: false } name)
-                    continue;
-
-                ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(map, name.Text, out _);
-
-                entry ??= new(1);
-
-                entry.Add(name.Span);
-            }
+                if (selector(field) is { IsMissing: false } name)
+                    (CollectionsMarshal.GetValueRefOrAddDefault(map, name.Text, out _) ??= new(1)).Add(name.Span);
 
             var note = $"Also {message} here";
 
@@ -250,7 +309,7 @@ internal sealed class LanguageAnalyzer
 
         public override ModuleDocumentSemantics VisitModuleDocument(ModuleDocumentSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
 
             // Consider:
             //
@@ -330,7 +389,7 @@ internal sealed class LanguageAnalyzer
 
         public override UseDeclarationSemantics VisitUseDeclaration(UseDeclarationSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var (use, path) = ResolveModulePath(node.Path);
             var sema = new UseDeclarationSemantics(node, attrs, use, path);
 
@@ -349,7 +408,7 @@ internal sealed class LanguageAnalyzer
 
         public override ConstantDeclarationSemantics VisitConstantDeclaration(ConstantDeclarationSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var sym = node.NameToken is { IsMissing: false } name
                 ? Unsafe.As<DeclarationSymbol>(_scope.ResolveSymbol(name.Text)!)
                 : null;
@@ -366,7 +425,7 @@ internal sealed class LanguageAnalyzer
 
         public override FunctionDeclarationSemantics VisitFunctionDeclaration(FunctionDeclarationSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var sym = node.NameToken is { IsMissing: false } name
                 ? Unsafe.As<DeclarationSymbol>(_scope.ResolveSymbol(name.Text)!)
                 : null;
@@ -390,7 +449,7 @@ internal sealed class LanguageAnalyzer
 
         public override FunctionParameterSemantics VisitFunctionParameter(FunctionParameterSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var sym = default(ParameterSymbol);
 
             if (node.NameToken is { IsMissing: false } name)
@@ -410,7 +469,7 @@ internal sealed class LanguageAnalyzer
 
         public override TestDeclarationSemantics VisitTestDeclaration(TestDeclarationSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var sym = node.NameToken is { IsMissing: false } name
                 ? Unsafe.As<DeclarationSymbol>(_scope.ResolveSymbol(name.Text)!)
                 : null;
@@ -434,7 +493,7 @@ internal sealed class LanguageAnalyzer
 
         public override LetStatementSemantics VisitLetStatement(LetStatementSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
 
             // We visit the initializer first so that it cannot refer to variables bound in the pattern, as in:
             //
@@ -447,7 +506,7 @@ internal sealed class LanguageAnalyzer
 
         public override DeferStatementSemantics VisitDeferStatement(DeferStatementSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var expr = VisitExpression(node.Expression);
 
             return new(node, attrs, expr);
@@ -455,7 +514,7 @@ internal sealed class LanguageAnalyzer
 
         public override AssertStatementSemantics VisitAssertStatement(AssertStatementSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var expr = VisitExpression(node.Expression);
 
             return new(node, attrs, expr);
@@ -463,7 +522,7 @@ internal sealed class LanguageAnalyzer
 
         public override ExpressionStatementSemantics VisitExpressionStatement(ExpressionStatementSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var expr = VisitExpression(node.Expression);
 
             return new(node, attrs, expr);
@@ -574,7 +633,7 @@ internal sealed class LanguageAnalyzer
 
         public override LambdaParameterSemantics VisitLambdaParameter(LambdaParameterSyntax node)
         {
-            var attrs = ConvertList(node.Attributes, static (@this, attr) => @this.VisitAttribute(attr));
+            var attrs = ConvertAttributeList(node, node.Attributes);
             var sym = default(ParameterSymbol);
 
             if (node.NameToken is { IsMissing: false } name)

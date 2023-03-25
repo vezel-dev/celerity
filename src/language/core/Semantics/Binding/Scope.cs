@@ -92,9 +92,7 @@ internal class Scope : IScope<Scope>
     public bool DefineSymbol<T>(string name, out Symbol result)
         where T : LocalSymbol, ILocalSymbol<T>
     {
-        ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_symbols, name, out var exists);
-
-        result = entry ??= T.Create(name);
+        result = CollectionsMarshal.GetValueRefOrAddDefault(_symbols, name, out var exists) ??= T.Create(name);
 
         return !exists;
     }
