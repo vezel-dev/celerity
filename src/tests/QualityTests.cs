@@ -7,12 +7,12 @@ public sealed partial class QualityTests : CelerityTests
 {
     private static Task TestAsync(
         SyntaxMode mode,
-        string text,
+        string contents,
         LintPass pass,
         [CallerFilePath] string file = "",
         [CallerMemberName] string name = "")
     {
-        var syntax = SyntaxTree.Parse(new StringSourceText($"{name}.cel", text), mode, discardText: true);
+        var syntax = SyntaxTree.Parse(new StringSourceText($"{name}.cel", contents), mode, discardText: true);
         var semantics = SemanticTree.Analyze(syntax);
         var analysis = LintAnalysis.Create(semantics, new[] { pass }, LintConfiguration.Default);
 

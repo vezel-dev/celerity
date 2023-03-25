@@ -6,13 +6,13 @@
 public sealed partial class SyntaxTests : CelerityTests
 {
     private static Task TestAsync(
-        SyntaxMode mode, string text, [CallerFilePath] string file = "", [CallerMemberName] string name = "")
+        SyntaxMode mode, string contents, [CallerFilePath] string file = "", [CallerMemberName] string name = "")
     {
         var path = $"{name}.cel";
-        var syntax = SyntaxTree.Parse(new StringSourceText(path, text), mode, discardText: true);
+        var syntax = SyntaxTree.Parse(new StringSourceText(path, contents), mode, discardText: true);
 
         syntax.Path.ShouldBe(path);
-        syntax.Root.ToFullString().ShouldBe(text);
+        syntax.Root.ToFullString().ShouldBe(contents);
 
         return VerifyDiagnosticsAsync(syntax.Diagnostics, file, name);
     }

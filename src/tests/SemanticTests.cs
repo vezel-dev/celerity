@@ -6,9 +6,9 @@
 public sealed partial class SemanticTests : CelerityTests
 {
     private static Task TestAsync(
-        SyntaxMode mode, string text, [CallerFilePath] string file = "", [CallerMemberName] string name = "")
+        SyntaxMode mode, string contents, [CallerFilePath] string file = "", [CallerMemberName] string name = "")
     {
-        var syntax = SyntaxTree.Parse(new StringSourceText($"{name}.cel", text), mode, discardText: true);
+        var syntax = SyntaxTree.Parse(new StringSourceText($"{name}.cel", contents), mode, discardText: true);
         var semantics = SemanticTree.Analyze(syntax);
 
         return VerifyDiagnosticsAsync(syntax.Diagnostics.Concat(semantics.Diagnostics), file, name);
