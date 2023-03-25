@@ -53,14 +53,14 @@ internal sealed class LanguageAnalyzer
         {
             var semantics = VisitDocument(_tree.Root);
 
-            foreach (var (name, (decls, _)) in _uses.OrderBy(static kvp => kvp.Key, StringComparer.Ordinal))
-                if (decls.Count != 1)
-                    Error(
-                        decls[0].Syntax.NameToken.Span,
-                        StandardDiagnosticCodes.DuplicateUseDeclaration,
-                        $"Multiple 'use' declarations for '{name}' in module",
-                        decls.Skip(1).Select(
-                            static decl => (decl.Syntax.NameToken.Span, "Also declared here")));
+            if (semantics is ModuleDocumentSemantics)
+                foreach (var (name, (decls, _)) in _uses.OrderBy(static kvp => kvp.Key, StringComparer.Ordinal))
+                    if (decls.Count != 1)
+                        Error(
+                            decls[0].Syntax.NameToken.Span,
+                            StandardDiagnosticCodes.DuplicateUseDeclaration,
+                            $"Multiple 'use' declarations for '{name}' in module",
+                            decls.Skip(1).Select(static decl => (decl.Syntax.NameToken.Span, "Also declared here")));
 
             foreach (var sym in _duplicates.OrderBy(static sym => sym.Name))
             {
@@ -147,7 +147,7 @@ internal sealed class LanguageAnalyzer
             return comps.Length switch
             {
                 0 => (null, null),
-                1 when _uses.TryGetValue(comps[0], out var tup) => (tup.Declarations[0], tup.Path),
+                1 when _uses.TryGetValue(comps[0], out var tup) => (tup.Declarations[^1], tup.Path),
                 _ => (null, new(comps)),
             };
         }
