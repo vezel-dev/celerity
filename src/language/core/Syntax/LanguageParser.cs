@@ -105,6 +105,19 @@ internal sealed class LanguageParser
         _skipped.AddRange(token.TrailingTrivia.AsImmutableArray());
     }
 
+    private SyntaxToken ExpectBindingIdentifier()
+    {
+        var next = Peek1();
+
+        // Same idea as above.
+        if (SyntaxFacts.IsBindingIdentifier(next.Kind))
+            return Read();
+
+        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase or discard identifier");
+
+        return Missing();
+    }
+
     private SyntaxToken ExpectCodeIdentifier()
     {
         var next = Peek1();
@@ -115,19 +128,6 @@ internal sealed class LanguageParser
             return Read();
 
         ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase identifier");
-
-        return Missing();
-    }
-
-    private SyntaxToken ExpectBindingIdentifier()
-    {
-        var next = Peek1();
-
-        // Same idea as above.
-        if (SyntaxFacts.IsBindingIdentifier(next.Kind))
-            return Read();
-
-        ErrorExpected(next.Span, StandardDiagnosticCodes.ExpectedToken, "lowercase or discard identifier");
 
         return Missing();
     }
