@@ -183,16 +183,6 @@ public static class SyntaxFacts
             SyntaxTokenKind.AdditiveOperator;
     }
 
-    public static bool IsIdentifier(SyntaxTokenKind kind)
-    {
-        Check.Enum(kind);
-
-        return kind is
-            SyntaxTokenKind.UpperIdentifier or
-            SyntaxTokenKind.LowerIdentifier or
-            SyntaxTokenKind.DiscardIdentifier;
-    }
-
     public static bool IsBindingIdentifier(SyntaxTokenKind kind)
     {
         return kind == SyntaxTokenKind.DiscardIdentifier || IsCodeIdentifier(kind);
