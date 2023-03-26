@@ -16,7 +16,7 @@ Error[E0035]: Standard attribute 'doc' is not valid on this item
  6 |     use X = Y;
  7 | 
  8 |     @doc 42
-Error[E0036]: Value for standard attribute 'doc' must be a string literal (documentation text) or 'false'
+Error[E0036]: Value for standard attribute 'doc' must be a string literal (documentation text) or 'false' literal
 ---> standard_attributes.cel (8,10)-(8,12)
  5 |     @doc "asdf"
  6 |     use X = Y;

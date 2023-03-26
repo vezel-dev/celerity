@@ -215,7 +215,7 @@ internal sealed class LanguageAnalyzer
                                            ConstantDeclarationSyntax or
                                            FunctionDeclarationSyntax,
                               value is ReadOnlyMemory<byte> or false,
-                              "string literal (documentation text) or 'false'",
+                              "string literal (documentation text) or 'false' literal",
                               false),
                     "flaky" or "ignore" => (container is TestDeclarationSyntax,
                                             value is ReadOnlyMemory<byte>,
