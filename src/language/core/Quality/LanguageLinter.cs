@@ -43,7 +43,7 @@ internal sealed partial class LanguageLinter
             ctx.Invalidate();
         }
 
-        var cfgs = new Stack<LintConfiguration>(1);
+        var cfgs = new Stack<LintConfiguration>();
 
         void AdjustSeverities(SemanticNode node)
         {

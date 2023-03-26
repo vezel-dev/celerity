@@ -30,7 +30,7 @@ public sealed class SyntaxTree
         Check.Null(text);
         Check.Enum(mode);
 
-        var diags = new List<Func<SyntaxTree, Diagnostic>>(0);
+        var diags = new List<Func<SyntaxTree, Diagnostic>>();
 
         return new(
             text,

@@ -249,7 +249,7 @@ internal sealed class LanguageAnalyzer
                         $"Value for standard attribute '{name}' must be a {valueMsg}");
 
                 if (!allowMultiple)
-                    (CollectionsMarshal.GetValueRefOrAddDefault(grouped, name, out _) ??= new(1)).Add(attr);
+                    (CollectionsMarshal.GetValueRefOrAddDefault(grouped, name, out _) ??= new()).Add(attr);
             }
 
             foreach (var (name, list) in grouped.OrderBy(static kvp => kvp.Key))
@@ -296,7 +296,7 @@ internal sealed class LanguageAnalyzer
 
             foreach (var field in fields)
                 if (selector(field) is { IsMissing: false } name)
-                    (CollectionsMarshal.GetValueRefOrAddDefault(map, name.Text, out _) ??= new(1)).Add(name.Span);
+                    (CollectionsMarshal.GetValueRefOrAddDefault(map, name.Text, out _) ??= new()).Add(name.Span);
 
             var note = $"Also {message} here";
 
@@ -407,7 +407,7 @@ internal sealed class LanguageAnalyzer
                 ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_uses, name.Text, out var exists);
 
                 if (!exists)
-                    entry = (new(1), path);
+                    entry = (new(), path);
 
                 entry.Declarations.Add(sema);
             }
