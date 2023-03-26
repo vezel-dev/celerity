@@ -287,6 +287,11 @@ public static class SyntaxFacts
             IsLiteral(kind);
     }
 
+    internal static bool IsInternable(SyntaxTriviaKind kind)
+    {
+        return kind == SyntaxTriviaKind.NewLine;
+    }
+
     internal static bool IsInternable(SyntaxTokenKind kind)
     {
         return kind is
