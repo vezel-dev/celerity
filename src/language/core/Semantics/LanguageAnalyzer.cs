@@ -200,8 +200,12 @@ internal sealed class LanguageAnalyzer
 
             foreach (var attr in attrs)
             {
+                // The parser will already have created a diagnostic if the attribute is missing a value; avoid creating
+                // additional diagnostics here as it might overwhelm the user.
+                if (attr.Value is not { } value)
+                    continue;
+
                 var name = attr.Name;
-                var value = attr.Value;
 
                 var (containerValid, valueValid, valueMsg, allowMultiple) = name switch
                 {
@@ -245,7 +249,7 @@ internal sealed class LanguageAnalyzer
                         $"Value for standard attribute '{name}' must be a {valueMsg}");
 
                 if (!allowMultiple)
-                    (CollectionsMarshal.GetValueRefOrAddDefault(grouped, name, out _) ??= new()).Add(attr);
+                    (CollectionsMarshal.GetValueRefOrAddDefault(grouped, name, out _) ??= new(1)).Add(attr);
             }
 
             foreach (var (name, list) in grouped.OrderBy(static kvp => kvp.Key))
