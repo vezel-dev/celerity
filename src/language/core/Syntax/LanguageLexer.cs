@@ -156,9 +156,9 @@ internal sealed class LanguageLexer
         return token;
     }
 
-    private static object? CreateNil()
+    private static Nil CreateNil()
     {
-        return null;
+        return Nil.Value;
     }
 
     private static bool CreateBoolean(string text)
