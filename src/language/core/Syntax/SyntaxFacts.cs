@@ -172,7 +172,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.BooleanLiteral;
     }
 
-    public static bool IsOperator(SyntaxTokenKind kind)
+    public static bool IsCustomOperator(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
 
@@ -282,7 +282,7 @@ public static class SyntaxFacts
             SyntaxTokenKind.TryKeyword or
             SyntaxTokenKind.WhileKeyword or
             SyntaxTokenKind.UpperIdentifier ||
-            IsOperator(kind) ||
+            IsCustomOperator(kind) ||
             IsBindingIdentifier(kind) ||
             IsLiteral(kind);
     }

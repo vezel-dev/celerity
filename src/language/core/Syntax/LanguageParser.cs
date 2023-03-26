@@ -1227,11 +1227,8 @@ internal sealed class LanguageParser
     {
         return Peek1().Kind switch
         {
-            SyntaxTokenKind.BitwiseOperator or
-            SyntaxTokenKind.ShiftOperator or
-            SyntaxTokenKind.MultiplicativeOperator or
-            SyntaxTokenKind.AdditiveOperator or
-            SyntaxTokenKind.NotKeyword => ParseUnaryExpression(),
+            var kind when kind == SyntaxTokenKind.NotKeyword || SyntaxFacts.IsCustomOperator(kind) =>
+                ParseUnaryExpression(),
             _ => ParsePrimaryExpression(),
         };
     }
