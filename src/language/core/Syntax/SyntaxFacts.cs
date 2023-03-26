@@ -2,7 +2,7 @@ using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Syntax;
 
-public static class SyntaxFacts
+public static partial class SyntaxFacts
 {
     public static SyntaxTokenKind? GetNormalKeywordKind(scoped ReadOnlySpan<char> text)
     {
@@ -89,6 +89,43 @@ public static class SyntaxFacts
             _ => null,
         };
     }
+
+    public static bool IsBindingIdentifier(scoped ReadOnlySpan<char> text)
+    {
+        return IsDiscardIdentifier(text) || IsCodeIdentifier(text);
+    }
+
+    public static bool IsCodeIdentifier(scoped ReadOnlySpan<char> text)
+    {
+        return IsLowerIdentifier(text) &&
+               (GetNormalKeywordKind(text),
+                GetReservedKeywordKind(text),
+                GetKeywordLiteralKind(text)) == (null, null, null);
+    }
+
+    public static bool IsUpperIdentifier(scoped ReadOnlySpan<char> text)
+    {
+        return UpperIdentifierRegex().IsMatch(text);
+    }
+
+    [GeneratedRegex(@"^[A-Z][0-9a-zA-Z]*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    private static partial Regex UpperIdentifierRegex();
+
+    public static bool IsLowerIdentifier(scoped ReadOnlySpan<char> text)
+    {
+        return LowerIdentifierRegex().IsMatch(text);
+    }
+
+    [GeneratedRegex(@"^[a-z][_0-9a-z]*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    private static partial Regex LowerIdentifierRegex();
+
+    public static bool IsDiscardIdentifier(scoped ReadOnlySpan<char> text)
+    {
+        return DiscardIdentifierRegex().IsMatch(text);
+    }
+
+    [GeneratedRegex(@"^_[_0-9a-z]*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    private static partial Regex DiscardIdentifierRegex();
 
     public static bool IsNormalKeyword(SyntaxTokenKind kind)
     {

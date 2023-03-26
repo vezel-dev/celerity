@@ -1,3 +1,5 @@
+using Vezel.Celerity.Language.Syntax;
+
 namespace Vezel.Celerity.Language.Semantics;
 
 public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperators<ModulePath, ModulePath, bool>
@@ -14,7 +16,7 @@ public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperat
     public ModulePath(IEnumerable<string> components)
     {
         Check.Null(components);
-        Check.All(components, static component => component != null && ComponentRegex().IsMatch(component));
+        Check.All(components, static comp => comp != null && SyntaxFacts.IsUpperIdentifier(comp));
 
         Components = components.ToImmutableArray();
         FullPath = string.Join("::", components);
@@ -44,7 +46,4 @@ public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperat
     {
         return FullPath;
     }
-
-    [GeneratedRegex(@"^[A-Z][a-zA-Z0-9]*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
-    private static partial Regex ComponentRegex();
 }
