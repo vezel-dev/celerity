@@ -13,9 +13,11 @@ public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperat
     {
     }
 
+    [SuppressMessage("", "CA1851")]
     public ModulePath(IEnumerable<string> components)
     {
         Check.Null(components);
+        Check.Argument(components.Any(), components);
         Check.All(components, static comp => comp != null && SyntaxFacts.IsUpperIdentifier(comp));
 
         Components = components.ToImmutableArray();
