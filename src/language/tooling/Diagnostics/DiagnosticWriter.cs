@@ -4,8 +4,6 @@ public sealed class DiagnosticWriter
 {
     public DiagnosticConfiguration Configuration { get; }
 
-    private static readonly Color _suggestionColor = Color.FromArgb(0, 225, 0);
-
     private static readonly Color _warningColor = Color.FromArgb(225, 225, 0);
 
     private static readonly Color _errorColor = Color.FromArgb(225, 0, 0);
@@ -175,7 +173,6 @@ public sealed class DiagnosticWriter
                 $"{diagnostic.Severity}[{diagnostic.Code}]",
                 diagnostic.Severity switch
                 {
-                    DiagnosticSeverity.Suggestion => _suggestionColor,
                     DiagnosticSeverity.Warning => _warningColor,
                     DiagnosticSeverity.Error => _errorColor,
                     _ => throw new UnreachableException(),
