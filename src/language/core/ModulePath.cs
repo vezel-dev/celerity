@@ -1,6 +1,6 @@
 using Vezel.Celerity.Language.Syntax;
 
-namespace Vezel.Celerity.Language.Semantics;
+namespace Vezel.Celerity.Language;
 
 public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperators<ModulePath, ModulePath, bool>
 {
