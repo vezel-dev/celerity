@@ -150,10 +150,10 @@ internal sealed class LanguageAnalyzer
 
             return comps.Length switch
             {
-                0 => (null, null),
-                1 when _uses.TryGetValue(comps[0], out var tup) => (tup.Declarations[^1], tup.Path),
+                1 when _uses.TryGetValue(comps[0], out var t) => (t.Declarations[^1], t.Path),
                 1 when _context.TryGetUse(comps[0], out var p) => (null, p),
-                _ => (null, new(comps)),
+                _ when ModulePath.TryCreate(comps, out var p) => (null, p),
+                _ => (null, null),
             };
         }
 

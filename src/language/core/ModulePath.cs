@@ -8,19 +8,9 @@ public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperat
 
     public string FullPath { get; }
 
-    public ModulePath(params string[] components)
-        : this(components.AsEnumerable())
+    private ModulePath(ImmutableArray<string> components)
     {
-    }
-
-    [SuppressMessage("", "CA1851")]
-    public ModulePath(IEnumerable<string> components)
-    {
-        Check.Null(components);
-        Check.Argument(components.Any(), components);
-        Check.All(components, static comp => comp != null && SyntaxFacts.IsUpperIdentifier(comp));
-
-        Components = components.ToImmutableArray();
+        Components = components;
         FullPath = string.Join("::", components);
     }
 
@@ -28,6 +18,57 @@ public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperat
         EqualityComparer<ModulePath>.Default.Equals(left, right);
 
     public static bool operator !=(ModulePath? left, ModulePath? right) => !(left == right);
+
+    public static ModulePath Create(params string[] components)
+    {
+        return Create(components.AsEnumerable());
+    }
+
+    public static ModulePath Create(IEnumerable<string> components)
+    {
+        Check.Argument(TryCreate(components, out var path), components);
+
+        return path;
+    }
+
+    public static bool TryCreate(string value, [NotNullWhen(true)] out ModulePath? path)
+    {
+        Check.Null(value);
+
+        return TryCreate(value.Split("::"), out path);
+    }
+
+    [SuppressMessage("", "CA1851")]
+    public static bool TryCreate(IEnumerable<string> components, [NotNullWhen(true)] out ModulePath? path)
+    {
+        Check.Null(components);
+        Check.All(components, static comp => comp != null);
+
+        var good = false;
+
+        foreach (var comp in components)
+        {
+            if (!SyntaxFacts.IsUpperIdentifier(comp))
+            {
+                good = false;
+
+                break;
+            }
+
+            good = true;
+        }
+
+        if (good)
+        {
+            path = new(components.ToImmutableArray());
+
+            return true;
+        }
+
+        path = null;
+
+        return false;
+    }
 
     public bool Equals(ModulePath? other)
     {
