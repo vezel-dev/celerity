@@ -16,20 +16,15 @@ public abstract class LintPass
 
     public DiagnosticCode Code { get; }
 
-    public DiagnosticSeverity Severity { get; }
-
     public SyntaxMode? Mode { get; }
 
-    protected LintPass(string code, DiagnosticSeverity severity, SyntaxMode? mode)
+    protected LintPass(string code, SyntaxMode? mode)
     {
-        Check.Enum(severity);
-        Check.Argument(severity != DiagnosticSeverity.None, severity);
         Check.Enum(mode);
 
         Code = DiagnosticCode.Create(code);
-        Severity = severity;
         Mode = mode;
     }
 
-    protected internal abstract void Run(LintContext context);
+    protected internal abstract void Run(LintPassContext context);
 }

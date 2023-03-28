@@ -1,4 +1,3 @@
-using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Syntax.Tree;
 
@@ -9,14 +8,14 @@ public sealed class UppercaseBaseIndicatorPass : LintPass
     public static UppercaseBaseIndicatorPass Instance { get; } = new();
 
     private UppercaseBaseIndicatorPass()
-        : base("uppercase-base-indicator", DiagnosticSeverity.Warning, SyntaxMode.Module)
+        : base("uppercase-base-indicator", SyntaxMode.Module)
     {
     }
 
     [SuppressMessage("", "CA1308")]
-    protected internal override void Run(LintContext context)
+    protected internal override void Run(LintPassContext context)
     {
-        foreach (var token in context.Tree.Syntax.Root.DescendantTokens())
+        foreach (var token in context.Root.Syntax.DescendantTokens())
         {
             var text = token.Text;
 

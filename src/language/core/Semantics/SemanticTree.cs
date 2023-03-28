@@ -23,13 +23,30 @@ public sealed class SemanticTree
         root.SetParent(this);
     }
 
-    public static SemanticTree Analyze(SyntaxTree syntax, InteractiveContext? context = null)
+    public static SemanticTree Analyze(
+        SyntaxTree syntax, InteractiveContext? context, params DiagnosticAnalyzer[] analyzers)
+    {
+        return Analyze(syntax, context, analyzers.AsEnumerable());
+    }
+
+    public static SemanticTree Analyze(
+        SyntaxTree syntax, InteractiveContext? context, IEnumerable<DiagnosticAnalyzer> analyzers)
     {
         Check.Null(syntax);
         Check.Argument((syntax.Root, context) is (InteractiveDocumentSyntax, _) or (_, null), context);
+        Check.Null(analyzers);
+        Check.All(analyzers, static analyzer => analyzer != null);
 
         var diags = ImmutableArray.CreateBuilder<Diagnostic>(0);
         var root = new LanguageAnalyzer(syntax, context ?? InteractiveContext.Default, diags).Analyze();
+
+        foreach (var analyzer in analyzers)
+        {
+            var ctx = new DiagnosticAnalyzerContext(root, diags);
+
+            analyzer.Analyze(ctx);
+            ctx.Invalidate();
+        }
 
         diags.Sort(static (x, y) => x.Span.CompareTo(y.Span));
 

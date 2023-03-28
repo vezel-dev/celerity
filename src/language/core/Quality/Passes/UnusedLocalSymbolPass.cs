@@ -1,4 +1,3 @@
-using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics.Binding;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
@@ -10,15 +9,15 @@ public sealed class UnusedLocalSymbolPass : LintPass
     public static UnusedLocalSymbolPass Instance { get; } = new();
 
     private UnusedLocalSymbolPass()
-        : base("unused-local-symbol", DiagnosticSeverity.Warning, SyntaxMode.Module)
+        : base("unused-local-symbol", SyntaxMode.Module)
     {
     }
 
-    protected internal override void Run(LintContext context)
+    protected internal override void Run(LintPassContext context)
     {
         var syms = new HashSet<Symbol>();
 
-        foreach (var node in context.Tree.Root.Descendants())
+        foreach (var node in context.Root.Descendants())
         {
             var sym = node switch
             {

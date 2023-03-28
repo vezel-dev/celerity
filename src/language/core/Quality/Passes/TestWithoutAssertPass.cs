@@ -1,4 +1,3 @@
-using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
 
@@ -9,13 +8,13 @@ public sealed class TestWithoutAssertPass : LintPass
     public static TestWithoutAssertPass Instance { get; } = new();
 
     private TestWithoutAssertPass()
-        : base("test-without-assert", DiagnosticSeverity.Warning, SyntaxMode.Module)
+        : base("test-without-assert", SyntaxMode.Module)
     {
     }
 
-    protected internal override void Run(LintContext context)
+    protected internal override void Run(LintPassContext context)
     {
-        foreach (var decl in Unsafe.As<ModuleDocumentSemantics>(context.Tree.Root).Declarations)
+        foreach (var decl in Unsafe.As<ModuleDocumentSemantics>(context.Root).Declarations)
             if (decl is TestDeclarationSemantics { Symbol: { } sym } test &&
                 test.Body.Descendants().All(static node => node is not AssertStatementSemantics))
                 context.ReportDiagnostic(

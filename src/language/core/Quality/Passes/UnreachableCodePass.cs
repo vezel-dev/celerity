@@ -1,4 +1,3 @@
-using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Text;
 
@@ -9,15 +8,15 @@ public sealed class UnreachableCodePass : LintPass
     public static UnreachableCodePass Instance { get; } = new();
 
     private UnreachableCodePass()
-        : base("unreachable-code", DiagnosticSeverity.Warning, null)
+        : base("unreachable-code", null)
     {
     }
 
-    protected internal override void Run(LintContext context)
+    protected internal override void Run(LintPassContext context)
     {
         // TODO: This pass is currently very primitive. We can certainly do better with actual flow analysis.
 
-        foreach (var block in context.Tree.Root.Descendants().OfType<BlockExpressionSemantics>())
+        foreach (var block in context.Root.Descendants().OfType<BlockExpressionSemantics>())
         {
             var exited = false;
             var dead = new List<StatementSemantics>();

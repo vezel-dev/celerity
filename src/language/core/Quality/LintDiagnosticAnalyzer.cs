@@ -6,38 +6,36 @@ using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Quality;
 
-internal sealed partial class LanguageLinter
+public sealed class LintDiagnosticAnalyzer : DiagnosticAnalyzer
 {
-    private readonly SemanticTree _tree;
-
-    private readonly IEnumerable<LintPass> _passes;
+    private readonly ReadOnlyMemory<LintPass> _passes;
 
     private readonly LintConfiguration _configuration;
 
-    private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
-
-    public LanguageLinter(
-        SemanticTree tree,
-        IEnumerable<LintPass> passes,
-        LintConfiguration configuration,
-        ImmutableArray<Diagnostic>.Builder diagnostics)
+    public LintDiagnosticAnalyzer(IEnumerable<LintPass> passes, LintConfiguration configuration)
     {
-        _tree = tree;
-        _passes = passes;
+        Check.Null(passes);
+        Check.All(passes, static pass => pass != null);
+        Check.Null(configuration);
+
+        _passes = passes.ToArray();
         _configuration = configuration;
-        _diagnostics = diagnostics;
     }
 
-    public void Lint()
+    protected internal override void Analyze(DiagnosticAnalyzerContext context)
     {
-        var mode = _tree.Root is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
+        Check.Null(context);
 
-        foreach (var pass in _passes)
+        var root = context.Root;
+        var mode = root is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
+        var diags = new List<Diagnostic>();
+
+        foreach (var pass in _passes.Span)
         {
             if (pass.Mode != null && pass.Mode != mode)
                 continue;
 
-            var ctx = new LintContext(_tree, pass, _diagnostics);
+            var ctx = new LintPassContext(root, pass, diags);
 
             pass.Run(ctx);
             ctx.Invalidate();
@@ -94,14 +92,20 @@ internal sealed partial class LanguageLinter
             var span = node.Syntax.Span;
             var cfg = cfgs.Peek();
 
-            for (var i = 0; i < _diagnostics.Count; i++)
+            for (var i = 0; i < diags.Count; i++)
             {
-                var diag = _diagnostics[i];
+                var diag = diags[i];
 
                 if (span.Contains(diag.Span.Start) &&
                     cfg.TryGetSeverity(diag.Code, out var severity) &&
                     severity != diag.Severity)
-                    _diagnostics[i] = new(diag.Tree, diag.Span, diag.Code, severity, diag.Message, diag.Notes);
+                    diags[i] = Diagnostic.Create(
+                        diag.Tree,
+                        diag.Span,
+                        severity,
+                        diag.Code,
+                        diag.Message,
+                        diag.Notes.Select(static note => (note.Span, note.Message)));
             }
 
             if (node.HasChildren)
@@ -114,8 +118,11 @@ internal sealed partial class LanguageLinter
 
         cfgs.Push(_configuration);
 
-        AdjustSeverities(_tree.Root);
+        AdjustSeverities(root);
 
         _ = cfgs.Pop();
+
+        foreach (var diag in diags)
+            context.AddDiagnostic(diag);
     }
 }

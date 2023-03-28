@@ -65,4 +65,15 @@ internal static class Check
             if (!predicate(item))
                 throw new ArgumentException(null, name);
     }
+
+    public static void All<T, TState>(
+        IEnumerable<T> value,
+        TState state,
+        Func<T, TState, bool> predicate,
+        [CallerArgumentExpression(nameof(value))] string name = "")
+    {
+        foreach (var item in value)
+            if (!predicate(item, state))
+                throw new ArgumentException(null, name);
+    }
 }

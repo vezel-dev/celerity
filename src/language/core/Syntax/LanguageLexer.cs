@@ -68,12 +68,12 @@ internal sealed class LanguageLexer
 
     private void TokenError(int position, int length, DiagnosticCode code, string message)
     {
-        _diagnostics.Add(tree =>
-            new(
+        _diagnostics.Add(
+            tree => new(
                 tree,
                 new(position, length),
-                code,
                 DiagnosticSeverity.Error,
+                code,
                 message,
                 ImmutableArray<DiagnosticNote>.Empty));
 
@@ -85,12 +85,12 @@ internal sealed class LanguageLexer
         if (flag)
             return;
 
-        _diagnostics.Add(tree =>
-            new(
+        _diagnostics.Add(
+            tree => new(
                 tree,
                 new(position, 1),
-                code,
                 DiagnosticSeverity.Error,
+                code,
                 message,
                 ImmutableArray<DiagnosticNote>.Empty));
 

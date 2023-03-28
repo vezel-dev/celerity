@@ -16,7 +16,7 @@ internal sealed class RunVerb : Verb
 
         var syntax = SyntaxTree.Parse(
             new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File)), SyntaxMode.Module);
-        var semantics = SemanticTree.Analyze(syntax);
+        var semantics = SemanticTree.Analyze(syntax, null);
 
         // SyntaxTree and SemanticTree never emit suppressed diagnostics.
         var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(static diag => diag.Span).ToArray();

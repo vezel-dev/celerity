@@ -27,10 +27,10 @@ public sealed partial class QualityTests : CelerityTests
             new StringSourceText($"{name}.cel", contents),
             context != null ? SyntaxMode.Interactive : SyntaxMode.Module,
             discardText: true);
-        var semantics = SemanticTree.Analyze(syntax, context);
-        var analysis = LintAnalysis.Create(semantics, new[] { pass }, LintConfiguration.Default);
+        var semantics = SemanticTree.Analyze(
+            syntax, context, new LintDiagnosticAnalyzer(new[] { pass }, LintConfiguration.Default));
 
-        return VerifyDiagnosticsAsync(
-            syntax.Diagnostics.Concat(semantics.Diagnostics).Concat(analysis.Diagnostics), file, name);
+        // Lint tests should not have syntax and semantic diagnostics, so no need to sort by span here.
+        return VerifyDiagnosticsAsync(syntax.Diagnostics.Concat(semantics.Diagnostics), file, name);
     }
 }

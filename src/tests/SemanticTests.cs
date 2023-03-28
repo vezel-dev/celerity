@@ -28,6 +28,7 @@ public sealed partial class SemanticTests : CelerityTests
             discardText: true);
         var semantics = SemanticTree.Analyze(syntax, context);
 
+        // Semantic tests should not have syntax diagnostics, so no need to sort by span here.
         return VerifyDiagnosticsAsync(syntax.Diagnostics.Concat(semantics.Diagnostics), file, name);
     }
 }

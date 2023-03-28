@@ -133,8 +133,8 @@ internal sealed class LanguageAnalyzer
                 new(
                     _tree,
                     span,
-                    code,
                     DiagnosticSeverity.Error,
+                    code,
                     message,
                     notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
         }

@@ -1,4 +1,3 @@
-using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics.Tree;
 using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Syntax.Tree;
@@ -10,13 +9,13 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
     public static UndocumentedPublicDeclarationPass Instance { get; } = new();
 
     private UndocumentedPublicDeclarationPass()
-        : base("undocumented-public-declaration", DiagnosticSeverity.Warning, SyntaxMode.Module)
+        : base("undocumented-public-declaration", SyntaxMode.Module)
     {
     }
 
-    protected internal override void Run(LintContext context)
+    protected internal override void Run(LintPassContext context)
     {
-        var module = Unsafe.As<ModuleDocumentSemantics>(context.Tree.Root);
+        var module = Unsafe.As<ModuleDocumentSemantics>(context.Root);
         var syntax = module.Syntax;
 
         void CheckDocumentationAttribute(

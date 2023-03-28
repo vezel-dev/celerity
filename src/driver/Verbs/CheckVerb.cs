@@ -23,12 +23,11 @@ internal sealed class CheckVerb : Verb
             var syntax = SyntaxTree.Parse(
                 new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file)),
                 SyntaxMode.Module);
-            var semantics = SemanticTree.Analyze(syntax);
-            var analysis = LintAnalysis.Create(semantics, LintPass.DefaultPasses, LintConfiguration.Default);
+            var semantics = SemanticTree.Analyze(
+                syntax, null, new LintDiagnosticAnalyzer(LintPass.DefaultPasses, LintConfiguration.Default));
 
             var diags = syntax.Diagnostics
                 .Concat(semantics.Diagnostics)
-                .Concat(analysis.Diagnostics)
                 .Where(static diag => diag.Severity != DiagnosticSeverity.None)
                 .OrderBy(static diag => diag.Span)
                 .ToArray();

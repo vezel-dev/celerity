@@ -226,7 +226,13 @@ internal sealed class LanguageParser
     private void Error(SourceTextSpan span, DiagnosticCode code, string message)
     {
         _diagnostics.Add(
-            tree => new(tree, span, code, DiagnosticSeverity.Error, message, ImmutableArray<DiagnosticNote>.Empty));
+            tree => new(
+                tree,
+                span,
+                DiagnosticSeverity.Error,
+                code,
+                message,
+                ImmutableArray<DiagnosticNote>.Empty));
     }
 
     private static ImmutableArray<T>.Builder Builder<T>()
