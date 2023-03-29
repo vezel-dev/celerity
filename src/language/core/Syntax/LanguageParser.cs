@@ -313,8 +313,8 @@ internal sealed class LanguageParser
 
             SkipWhile(
                 first,
-                static (kind, state) => !state.Predicate(kind) && kind != state.Closer,
-                (Predicate: predicate, Closer: closer),
+                static (kind, state) => !state.predicate(kind) && kind != state.closer,
+                (predicate, closer),
                 StandardDiagnosticCodes.UnexpectedTokens,
                 location);
         }

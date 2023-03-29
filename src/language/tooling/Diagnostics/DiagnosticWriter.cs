@@ -162,7 +162,7 @@ public sealed class DiagnosticWriter
                 .Tree
                 .GetText()
                 .Lines
-                .Select(static line => (Line: line.Line + 1, Text: line.ToString().ReplaceLineEndings(string.Empty)))
+                .Select(static line => (Line: line.Line + 1, line.ToString().ReplaceLineEndings(string.Empty)))
                 .ToArray();
             var margin = lines[^1].Line.ToString(writer.FormatProvider).Length;
 
