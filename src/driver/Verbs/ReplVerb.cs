@@ -8,11 +8,11 @@ internal sealed class ReplVerb : Verb
     public required string? Directory { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    public override async ValueTask<int> RunAsync()
+    public override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
         if (!Terminal.StandardIn.IsInteractive)
         {
-            await Terminal.ErrorLineAsync("The REPL can only be run in an interactive terminal.");
+            await Terminal.ErrorLineAsync("The REPL can only be run in an interactive terminal.", cancellationToken);
 
             return 1;
         }

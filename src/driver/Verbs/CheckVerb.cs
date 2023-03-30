@@ -10,7 +10,7 @@ internal sealed class CheckVerb : Verb
     public required string? Directory { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    public override async ValueTask<int> RunAsync()
+    public override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
         // TODO: Replace all of this.
 
@@ -21,7 +21,8 @@ internal sealed class CheckVerb : Verb
             .EnumerateFiles(directory, "*.cel", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
         {
             var syntax = SyntaxTree.Parse(
-                new StringSourceText(Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file)),
+                new StringSourceText(
+                    Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file, cancellationToken)),
                 SyntaxMode.Module);
             var semantics = SemanticTree.Analyze(
                 syntax, null, new LintDiagnosticAnalyzer(LintPass.DefaultPasses, LintConfiguration.Default));
@@ -37,10 +38,10 @@ internal sealed class CheckVerb : Verb
 
             for (var i = 0; i < diags.Length; i++)
             {
-                await writer.WriteAsync(diags[i], stderr.TextWriter);
+                await writer.WriteAsync(diags[i], stderr.TextWriter, cancellationToken);
 
                 if (i != diags.Length - 1)
-                    await stderr.WriteLineAsync();
+                    await stderr.WriteLineAsync(cancellationToken);
             }
 
             errors |= diags.Any(static diag => diag.IsError);

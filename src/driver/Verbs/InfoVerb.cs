@@ -38,7 +38,7 @@ internal sealed class InfoVerb : Verb
         };
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    public override async ValueTask<int> RunAsync()
+    public override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
         var interactive = Terminal.TerminalOut.IsInteractive;
 
@@ -49,28 +49,28 @@ internal sealed class InfoVerb : Verb
             async ValueTask WriteControlAsync(string sequence)
             {
                 if (interactive)
-                    await Terminal.OutAsync(sequence);
+                    await Terminal.OutAsync(sequence, cancellationToken);
             }
 
             await WriteControlAsync(ControlSequences.SetForegroundColor(175, 255, 0));
-            await Terminal.OutLineAsync(header);
+            await Terminal.OutLineAsync(header, cancellationToken);
             await WriteControlAsync(ControlSequences.ResetAttributes());
 
             foreach (var (name, value) in table)
             {
                 await WriteControlAsync(ControlSequences.SetForegroundColor(215, 215, 255));
-                await Terminal.OutAsync($"{name}: ");
+                await Terminal.OutAsync($"{name}: ", cancellationToken);
                 await WriteControlAsync(ControlSequences.ResetAttributes());
-                await Terminal.OutLineAsync(value);
+                await Terminal.OutLineAsync(value, cancellationToken);
             }
         }
 
         await WriteSectionAsync("Celerity", _celerity);
-        await Terminal.OutLineAsync();
+        await Terminal.OutLineAsync(cancellationToken);
         await WriteSectionAsync(".NET", _runtime);
-        await Terminal.OutLineAsync();
+        await Terminal.OutLineAsync(cancellationToken);
         await WriteSectionAsync("Process", _process);
-        await Terminal.OutLineAsync();
+        await Terminal.OutLineAsync(cancellationToken);
         await WriteSectionAsync("System", _system);
 
         return 0;
