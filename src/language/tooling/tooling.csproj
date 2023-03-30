@@ -11,6 +11,9 @@ diagnostic rendering.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="NuGet.Versioning" />
+        <Using Include="Spdx" />
+        <Using Include="Spdx.Expressions" />
         <Using Include="Vezel.Celerity.Diagnostics" />
     </ItemGroup>
 

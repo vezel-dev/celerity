@@ -21,6 +21,10 @@
         <Using Include="System.Xml.Serialization" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
+        <Using Include="System.Text.Json" />
+    </ItemGroup>
+
     <ItemGroup Condition="'$(UsingVezelZigSdk)' != 'true'">
         <AdditionalFiles Include="$(MSBuildThisFileDirectory).stylecop.json" />
     </ItemGroup>
