@@ -15,7 +15,7 @@ internal sealed class CelerityBenchmarkConfig : ManualConfig
             _ = AddFilter(new GlobFilter(new[] { filter }));
 
         _ = WithOptions(ConfigOptions.JoinSummary | ConfigOptions.StopOnFirstError)
-            .WithArtifactsPath(Path.Combine(Path.GetDirectoryName(Environment.ProcessPath!)!, "artifacts"))
+            .WithArtifactsPath(Path.Join(Path.GetDirectoryName(Environment.ProcessPath!)!, "artifacts"))
             .WithSummaryStyle(new(CultureInfo.InvariantCulture, false, null!, TimeUnit.Microsecond))
             .AddAnalyser(
                 BaselineCustomAnalyzer.Default,

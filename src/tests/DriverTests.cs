@@ -26,7 +26,7 @@ public sealed partial class DriverTests : CelerityTests
     }
 
     private static readonly string _path =
-        Path.Combine(
+        Path.Join(
             Path.GetDirectoryName(typeof(ThisAssembly).Assembly.Location)!,
             "..",
             "..",
@@ -48,7 +48,7 @@ public sealed partial class DriverTests : CelerityTests
         try
         {
             foreach (var (fileName, fileContents) in directorySetup(new DirectoryBuilder()).Files)
-                await File.WriteAllTextAsync(Path.Combine(directory.FullName, fileName), fileContents);
+                await File.WriteAllTextAsync(Path.Join(directory.FullName, fileName), fileContents);
 
             var process = processSetup(
                 new ChildProcessBuilder()
