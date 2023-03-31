@@ -1,5 +1,4 @@
 using Vezel.Celerity.Language.Semantics.Tree;
-using Vezel.Celerity.Language.Syntax;
 
 namespace Vezel.Celerity.Language.Quality.Passes;
 
@@ -8,7 +7,7 @@ public sealed class TestWithoutAssertPass : LintPass
     public static TestWithoutAssertPass Instance { get; } = new();
 
     private TestWithoutAssertPass()
-        : base("test-without-assert", SyntaxMode.Module)
+        : base("test-without-assert")
     {
     }
 

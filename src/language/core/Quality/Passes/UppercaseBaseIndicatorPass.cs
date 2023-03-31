@@ -1,4 +1,3 @@
-using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Quality.Passes;
@@ -8,7 +7,7 @@ public sealed class UppercaseBaseIndicatorPass : LintPass
     public static UppercaseBaseIndicatorPass Instance { get; } = new();
 
     private UppercaseBaseIndicatorPass()
-        : base("uppercase-base-indicator", SyntaxMode.Module)
+        : base("uppercase-base-indicator")
     {
     }
 

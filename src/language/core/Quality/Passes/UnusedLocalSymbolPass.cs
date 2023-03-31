@@ -1,6 +1,5 @@
 using Vezel.Celerity.Language.Semantics.Binding;
 using Vezel.Celerity.Language.Semantics.Tree;
-using Vezel.Celerity.Language.Syntax;
 
 namespace Vezel.Celerity.Language.Quality.Passes;
 
@@ -9,7 +8,7 @@ public sealed class UnusedLocalSymbolPass : LintPass
     public static UnusedLocalSymbolPass Instance { get; } = new();
 
     private UnusedLocalSymbolPass()
-        : base("unused-local-symbol", SyntaxMode.Module)
+        : base("unused-local-symbol")
     {
     }
 

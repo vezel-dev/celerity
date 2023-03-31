@@ -1,7 +1,0 @@
-﻿Warning[unreachable-code]: Code is unreachable
---> unreachable_code_submission.cel (3,5)-(3,8)
-1 | {
-2 |     ret nil;
-3 |     42;
-  :     ^^^
-4 | };

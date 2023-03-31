@@ -1,6 +1,5 @@
 using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Quality.Passes;
-using Vezel.Celerity.Language.Syntax;
 
 namespace Vezel.Celerity.Language.Quality;
 
@@ -16,14 +15,9 @@ public abstract class LintPass
 
     public DiagnosticCode Code { get; }
 
-    public SyntaxMode? Mode { get; }
-
-    protected LintPass(string code, SyntaxMode? mode)
+    protected LintPass(string code)
     {
-        Check.Enum(mode);
-
         Code = DiagnosticCode.Create(code);
-        Mode = mode;
     }
 
     protected internal abstract void Run(LintPassContext context);

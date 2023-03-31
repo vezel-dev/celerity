@@ -8,7 +8,7 @@ public sealed class UnreachableCodePass : LintPass
     public static UnreachableCodePass Instance { get; } = new();
 
     private UnreachableCodePass()
-        : base("unreachable-code", null)
+        : base("unreachable-code")
     {
     }
 

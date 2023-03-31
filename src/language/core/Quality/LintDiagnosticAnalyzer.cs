@@ -1,7 +1,6 @@
 using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Semantics;
 using Vezel.Celerity.Language.Semantics.Tree;
-using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Quality;
@@ -25,16 +24,13 @@ public sealed class LintDiagnosticAnalyzer : DiagnosticAnalyzer
     protected internal override void Analyze(DiagnosticAnalyzerContext context)
     {
         Check.Null(context);
+        Check.Argument(context.Root is ModuleDocumentSemantics, context);
 
         var root = context.Root;
-        var mode = root is ModuleDocumentSemantics ? SyntaxMode.Module : SyntaxMode.Interactive;
         var diags = new List<Diagnostic>();
 
         foreach (var pass in _passes.Span)
         {
-            if (pass.Mode != null && pass.Mode != mode)
-                continue;
-
             var ctx = new LintPassContext(root, pass, diags);
 
             pass.Run(ctx);

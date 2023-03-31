@@ -1,5 +1,4 @@
 using Vezel.Celerity.Language.Semantics.Tree;
-using Vezel.Celerity.Language.Syntax;
 using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Quality.Passes;
@@ -9,7 +8,7 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
     public static UndocumentedPublicDeclarationPass Instance { get; } = new();
 
     private UndocumentedPublicDeclarationPass()
-        : base("undocumented-public-declaration", SyntaxMode.Module)
+        : base("undocumented-public-declaration")
     {
     }
 
