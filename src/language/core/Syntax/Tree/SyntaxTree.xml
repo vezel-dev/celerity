@@ -646,13 +646,15 @@
 
     <Type Name="BranchExpression" Base="ControlExpression" Abstract="true" />
 
-    <Type Name="ReturnExpression" Base="BranchExpression">
+    <Type Name="FunctionBranchExpression" Base="BranchExpression" Abstract="true" />
+
+    <Type Name="ReturnExpression" Base="FunctionBranchExpression">
         <Token Name="TailKeyword" Optional="true" />
         <Token Name="RetKeyword" />
         <Node Name="Operand" Type="Expression" />
     </Type>
 
-    <Type Name="RaiseExpression" Base="BranchExpression">
+    <Type Name="RaiseExpression" Base="FunctionBranchExpression">
         <Token Name="RaiseKeyword" />
         <Node Name="Operand" Type="Expression" />
     </Type>

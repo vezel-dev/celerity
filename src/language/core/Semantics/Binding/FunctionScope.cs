@@ -6,11 +6,8 @@ internal class FunctionScope : Scope, IScope<FunctionScope>
 {
     public bool IsFallible { get; set; }
 
-    public ImmutableArray<ReturnExpressionSemantics>.Builder ReturnExpressions { get; } =
-        ImmutableArray.CreateBuilder<ReturnExpressionSemantics>();
-
-    public ImmutableArray<RaiseExpressionSemantics>.Builder RaiseExpressions { get; } =
-        ImmutableArray.CreateBuilder<RaiseExpressionSemantics>();
+    public ImmutableArray<FunctionBranchExpressionSemantics>.Builder BranchExpressions { get; } =
+        ImmutableArray.CreateBuilder<FunctionBranchExpressionSemantics>();
 
     public ImmutableArray<CallExpressionSemantics>.Builder CallExpressions { get; } =
         ImmutableArray.CreateBuilder<CallExpressionSemantics>();

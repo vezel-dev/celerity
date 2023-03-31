@@ -70,8 +70,7 @@
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
         <Nodes Name="Parameter" Type="FunctionParameter" Separated="true" />
         <Node Name="Body" Type="BlockExpression" Optional="true" Override="true" />
-        <Value Name="Returns" Type="ImmutableArray&lt;ReturnExpressionSemantics&gt;" />
-        <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
+        <Value Name="Branches" Type="ImmutableArray&lt;FunctionBranchExpressionSemantics&gt;" />
         <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
     </Type>
 
@@ -180,8 +179,7 @@
         <Node Name="Body" Type="Expression" />
         <Value Name="Upvalues" Type="ImmutableArray&lt;UpvalueSymbol&gt;" />
         <Value Name="References" Type="ImmutableArray&lt;ThisExpressionSemantics&gt;" />
-        <Value Name="Returns" Type="ImmutableArray&lt;ReturnExpressionSemantics&gt;" />
-        <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
+        <Value Name="Branches" Type="ImmutableArray&lt;FunctionBranchExpressionSemantics&gt;" />
         <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
     </Type>
 
@@ -281,8 +279,8 @@
     <Type Name="TryExpression" Base="ConditionalExpression">
         <Node Name="Body" Type="Expression" />
         <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
-        <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
         <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
+        <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
     </Type>
 
     <Type Name="LoopExpression" Base="ControlExpression" Abstract="true">
@@ -308,13 +306,15 @@
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" />
     </Type>
 
-    <Type Name="ReturnExpression" Base="BranchExpression">
+    <Type Name="FunctionBranchExpression" Base="BranchExpression" Abstract="true" />
+
+    <Type Name="ReturnExpression" Base="FunctionBranchExpression">
         <Computed Name="IsTail" Type="bool" Body="Syntax.TailKeywordToken != null" />
         <Node Name="Operand" Type="Expression" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>
 
-    <Type Name="RaiseExpression" Base="BranchExpression">
+    <Type Name="RaiseExpression" Base="FunctionBranchExpression">
         <Node Name="Operand" Type="Expression" />
         <Value Name="Defers" Type="ImmutableArray&lt;DeferStatementSemantics&gt;" Override="true" />
     </Type>

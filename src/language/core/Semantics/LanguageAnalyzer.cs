@@ -449,13 +449,18 @@ internal sealed class LanguageAnalyzer
             var parms = ConvertList(
                 node.ParameterList.Parameters, static (@this, param) => @this.VisitFunctionParameter(param));
             var body = node.Body is { } b ? VisitBlockExpression(b) : null;
-            var rets = scope.ReturnExpressions.DrainToImmutable();
-            var raises = scope.RaiseExpressions.DrainToImmutable();
+            var branches = scope.BranchExpressions.DrainToImmutable();
             var calls = scope.CallExpressions.DrainToImmutable();
 
-            var sema = new FunctionDeclarationSemantics(node, attrs, sym, parms, body, rets, raises, calls);
+            var sema = new FunctionDeclarationSemantics(node, attrs, sym, parms, body, branches, calls);
 
             sym?.AddBinding(sema);
+
+            foreach (var branch in branches)
+                branch.Function = sema;
+
+            foreach (var call in calls)
+                call.Function = sema;
 
             return sema;
         }
@@ -636,14 +641,19 @@ internal sealed class LanguageAnalyzer
             var body = VisitExpression(node.Body);
             var upvalues = scope.CollectUpvalues();
             var refs = scope.ThisExpressions.ToImmutable();
-            var rets = scope.ReturnExpressions.DrainToImmutable();
-            var raises = scope.RaiseExpressions.DrainToImmutable();
+            var branches = scope.BranchExpressions.DrainToImmutable();
             var calls = scope.CallExpressions.DrainToImmutable();
 
-            var sema = new LambdaExpressionSemantics(node, parms, body, upvalues, refs, rets, raises, calls);
+            var sema = new LambdaExpressionSemantics(node, parms, body, upvalues, refs, branches, calls);
 
             foreach (var @this in refs)
                 @this.Lambda = sema;
+
+            foreach (var branch in branches)
+                branch.Lambda = sema;
+
+            foreach (var call in calls)
+                call.Lambda = sema;
 
             return sema;
         }
@@ -807,16 +817,16 @@ internal sealed class LanguageAnalyzer
             }
 
             var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
-            var calls = scope.CallExpressions.DrainToImmutable();
             var raises = scope.RaiseExpressions.DrainToImmutable();
+            var calls = scope.CallExpressions.DrainToImmutable();
 
-            var sema = new TryExpressionSemantics(node, body, arms, calls, raises);
-
-            foreach (var call in calls)
-                call.Try = sema;
+            var sema = new TryExpressionSemantics(node, body, arms, raises, calls);
 
             foreach (var raise in raises)
                 raise.Try = sema;
+
+            foreach (var call in calls)
+                call.Try = sema;
 
             return sema;
         }
@@ -885,7 +895,7 @@ internal sealed class LanguageAnalyzer
             var sema = new ReturnExpressionSemantics(node, oper, defers);
 
             if (_scope.GetEnclosingFunction(ignoreDefer: false) is { } function)
-                function.ReturnExpressions.Add(sema);
+                function.BranchExpressions.Add(sema);
             else
                 Error(
                     node.Span,
@@ -905,7 +915,7 @@ internal sealed class LanguageAnalyzer
             if (_scope.GetEnclosingTry() is { } @try)
                 @try.RaiseExpressions.Add(sema);
             else if (_scope.GetEnclosingFunction(ignoreDefer: true) is { IsFallible: true } function)
-                function.RaiseExpressions.Add(sema);
+                function.BranchExpressions.Add(sema);
             else
                 Error(
                     node.Span,
