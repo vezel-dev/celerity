@@ -16,7 +16,9 @@ public sealed class UnreachableCodePass : LintPass
     {
         // TODO: This pass is currently very primitive. We can certainly do better with actual flow analysis.
 
-        foreach (var block in context.Root.Descendants().OfType<BlockExpressionSemantics>())
+        var descendants = context.Root.Descendants().ToArray();
+
+        foreach (var block in descendants.OfType<BlockExpressionSemantics>())
         {
             var exited = false;
             var dead = new List<StatementSemantics>();
@@ -33,5 +35,19 @@ public sealed class UnreachableCodePass : LintPass
                 context.ReportDiagnostic(
                     SourceTextSpan.Union(dead.First().Syntax.Span, dead.Last().Syntax.Span), "Code is unreachable");
         }
+
+        // Only report a diagnostic if the try expression actually has a body and catch arms.
+        foreach (var @try in descendants.OfType<TryExpressionSemantics>())
+            if (@try is
+                {
+                    Raises.IsEmpty: true,
+                    Calls.IsEmpty: true,
+                    Syntax:
+                    {
+                        Body.Span.IsEmpty: false,
+                        Arms.Span: { IsEmpty: false } span,
+                    },
+                })
+                context.ReportDiagnostic(span, "Code is unreachable");
     }
 }

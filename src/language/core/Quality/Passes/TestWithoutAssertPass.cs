@@ -14,9 +14,9 @@ public sealed class TestWithoutAssertPass : LintPass
     protected internal override void Run(LintPassContext context)
     {
         foreach (var decl in Unsafe.As<ModuleDocumentSemantics>(context.Root).Declarations)
-            if (decl is TestDeclarationSemantics { Symbol: { } sym } test &&
+            if (decl is TestDeclarationSemantics { Syntax.NameToken: { IsMissing: false } name } test &&
                 test.Body.Descendants().All(static node => node is not AssertStatementSemantics))
                 context.ReportDiagnostic(
-                    test.Syntax.NameToken.Span, $"Test declaration '{sym.Name}' lacks 'assert' statements");
+                    name.Span, $"Test declaration '{name.Text}' lacks 'assert' statements");
     }
 }

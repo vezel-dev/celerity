@@ -13,7 +13,7 @@ public sealed partial class QualityTests : CelerityTests
         var semantics = SemanticTree.Analyze(
             syntax, null, new LintDiagnosticAnalyzer(new[] { pass }, LintConfiguration.Default));
 
-        // Lint tests should not have syntax and semantic diagnostics, so no need to sort by span here.
-        return VerifyDiagnosticsAsync(syntax.Diagnostics.Concat(semantics.Diagnostics), file, name);
+        return VerifyDiagnosticsAsync(
+            syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(static diag => diag.Span), file, name);
     }
 }

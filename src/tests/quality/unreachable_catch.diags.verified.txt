@@ -1,0 +1,59 @@
+﻿Error[E0019]: Expected expression
+---> unreachable_catch.cel (3,13)-(3,18)
+ 1 | mod {
+ 2 |     fn main() {
+ 3 |         try catch { _ -> 1 };
+   :             ^^^^^
+ 4 | 
+ 5 |         try catch {};
+ 6 | 
+Error[E0019]: Expected expression
+---> unreachable_catch.cel (5,13)-(5,18)
+ 2 |     fn main() {
+ 3 |         try catch { _ -> 1 };
+ 4 | 
+ 5 |         try catch {};
+   :             ^^^^^
+ 6 | 
+ 7 |         try 42 catch { _ -> 2 };
+ 8 | 
+Error[E0021]: Expected pattern
+---> unreachable_catch.cel (5,20)-(5,21)
+ 2 |     fn main() {
+ 3 |         try catch { _ -> 1 };
+ 4 | 
+ 5 |         try catch {};
+   :                    ^
+ 6 | 
+ 7 |         try 42 catch { _ -> 2 };
+ 8 | 
+Error[E0013]: Expected '->'
+---> unreachable_catch.cel (5,20)-(5,21)
+ 2 |     fn main() {
+ 3 |         try catch { _ -> 1 };
+ 4 | 
+ 5 |         try catch {};
+   :                    ^
+ 6 | 
+ 7 |         try 42 catch { _ -> 2 };
+ 8 | 
+Error[E0019]: Expected expression
+---> unreachable_catch.cel (5,20)-(5,21)
+ 2 |     fn main() {
+ 3 |         try catch { _ -> 1 };
+ 4 | 
+ 5 |         try catch {};
+   :                    ^
+ 6 | 
+ 7 |         try 42 catch { _ -> 2 };
+ 8 | 
+Warning[unreachable-code]: Code is unreachable
+---> unreachable_catch.cel (7,24)-(7,30)
+ 4 | 
+ 5 |         try catch {};
+ 6 | 
+ 7 |         try 42 catch { _ -> 2 };
+   :                        ^^^^^^
+ 8 | 
+ 9 |         try raise nil catch { _ -> 3 };
+10 | 
