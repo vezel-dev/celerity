@@ -48,7 +48,12 @@ public sealed partial class DriverTests : CelerityTests
         try
         {
             foreach (var (fileName, fileContents) in directorySetup(new DirectoryBuilder()).Files)
+            {
+                if (Path.GetDirectoryName(fileName) is { Length: not 0 } dir)
+                    _ = directory.CreateSubdirectory(dir);
+
                 await File.WriteAllTextAsync(Path.Join(directory.FullName, fileName), fileContents);
+            }
 
             var process = processSetup(
                 new ChildProcessBuilder()
