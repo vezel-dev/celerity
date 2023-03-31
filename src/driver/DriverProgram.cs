@@ -27,7 +27,7 @@ internal sealed class DriverProgram : IProgram
                     .Where(static type => type.GetCustomAttribute<VerbAttribute>() != null)
                     .ToArray())
             .MapResult(
-                verb => Unsafe.As<Verb>(verb).RunAsync(context.CancellationToken),
+                verb => Unsafe.As<Verb>(verb).RunWithHandlerAsync(context.CancellationToken),
                 static _ => ValueTask.FromResult(1));
     }
 }

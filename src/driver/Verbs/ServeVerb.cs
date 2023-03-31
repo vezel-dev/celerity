@@ -4,10 +4,10 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("serve", HelpText = "Host the Celerity language server.")]
 internal sealed class ServeVerb : Verb
 {
-    [Value(0, HelpText = "Source code directory.")]
+    [Value(0, HelpText = "Project directory.")]
     public required string? Directory { get; init; }
 
-    public override ValueTask<int> RunAsync(CancellationToken cancellationToken)
+    protected override ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
         // TODO: Implement this.
         return ValueTask.FromResult(0);

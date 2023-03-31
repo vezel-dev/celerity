@@ -12,7 +12,7 @@ internal sealed class TerminalDiagnosticStyle : DiagnosticStyle
     public override ValueTask WriteDecoratedAsync(
         TextWriter writer, string text, bool intense, CancellationToken cancellationToken = default)
     {
-        return WriteAsync(writer, ControlSequences.SetDecorations(intense: intense), text, cancellationToken);
+        return WriteAsync(writer, ControlSequences.SetDecorations(intense), text, cancellationToken);
     }
 
     public override ValueTask WriteColoredAsync(

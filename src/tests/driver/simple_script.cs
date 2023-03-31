@@ -1,7 +1,7 @@
 public sealed partial class DriverTests
 {
     [Fact]
-    public Task simple_run()
+    public Task simple_script()
     {
         return TestAsync(
             builder => builder
@@ -14,7 +14,7 @@ public sealed partial class DriverTests
                         }
                     }
                     """),
-            builder => builder.WithArguments("run", "main.cel"),
+            builder => builder.WithArguments("main.cel"),
             0);
     }
 }

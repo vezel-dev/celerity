@@ -4,20 +4,20 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("repl", HelpText = "Start an interactive Celerity session.")]
 internal sealed class ReplVerb : Verb
 {
-    [Value(0, HelpText = "Source code directory.")]
+    [Value(0, HelpText = "Workspace directory.")]
     public required string? Directory { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    public override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
+    protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        if (!Terminal.StandardIn.IsInteractive)
-        {
-            await Terminal.ErrorLineAsync("The REPL can only be run in an interactive terminal.", cancellationToken);
+        if (!In.IsInteractive)
+            throw new DriverException("The REPL can only be run in an interactive terminal.");
 
-            return 1;
-        }
+        var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
 
         // TODO: Implement this.
+        _ = workspace;
+
         return 0;
     }
 }

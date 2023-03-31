@@ -1,37 +1,23 @@
-using Vezel.Celerity.Driver.Diagnostics;
-
 namespace Vezel.Celerity.Driver.Verbs;
 
 [SuppressMessage("", "CA1812")]
-[Verb("run", true, HelpText = "Run a Celerity program.")]
+[Verb("run", HelpText = "Run a Celerity program.")]
 internal sealed class RunVerb : Verb
 {
-    [Value(0, Required = true, HelpText = "Entry point file.")]
-    public required string File { get; init; }
+    [Value(0, HelpText = "Workspace directory.")]
+    public required string? Directory { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    public override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
+    protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        // TODO: Replace all of this.
+        var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
 
-        var syntax = SyntaxTree.Parse(
-            new StringSourceText(File, await System.IO.File.ReadAllTextAsync(File, cancellationToken)),
-            SyntaxMode.Module);
-        var semantics = SemanticTree.Analyze(syntax, null);
+        if (workspace.GetEntryPointDocument() is not { } doc)
+            throw new DriverException(
+                $"No entry point document ('{PhysicalWorkspace.EntryPointDocumentName}') found in the workspace.");
 
-        // SyntaxTree and SemanticTree never emit suppressed diagnostics.
-        var diags = syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(static diag => diag.Span).ToArray();
-        var stderr = Terminal.StandardError;
-        var writer = new DiagnosticWriter(new DiagnosticConfiguration().WithStyle(new TerminalDiagnosticStyle(stderr)));
+        // TODO: Run the program.
 
-        for (var i = 0; i < diags.Length; i++)
-        {
-            await writer.WriteAsync(diags[i], stderr.TextWriter, cancellationToken);
-
-            if (i != diags.Length - 1)
-                await stderr.WriteLineAsync(cancellationToken);
-        }
-
-        return diags.Any(static diag => diag.IsError) ? 1 : 0;
+        return 0;
     }
 }

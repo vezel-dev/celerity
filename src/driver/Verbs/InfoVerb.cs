@@ -1,3 +1,5 @@
+using Vezel.Celerity.Driver.IO;
+
 namespace Vezel.Celerity.Driver.Verbs;
 
 [SuppressMessage("", "CA1812")]
@@ -10,7 +12,7 @@ internal sealed class InfoVerb : Verb
 #pragma warning disable CS0436 // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
             ("Version", ThisAssembly.AssemblyInformationalVersion),
             ("Commit", ThisAssembly.GitCommitId),
-            ("Date", ThisAssembly.GitCommitDate),
+            ("Date", ThisAssembly.GitCommitDate.ToString("o", CultureInfo.InvariantCulture)),
             ("Mode", ThisAssembly.AssemblyConfiguration),
 #pragma warning restore CS0436
         };
@@ -38,39 +40,30 @@ internal sealed class InfoVerb : Verb
         };
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    public override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
+    protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        var interactive = Terminal.TerminalOut.IsInteractive;
-
         [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
         async ValueTask WriteSectionAsync(string header, IEnumerable<(string Name, object Value)> table)
         {
-            [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
-            async ValueTask WriteControlAsync(string sequence)
-            {
-                if (interactive)
-                    await Terminal.OutAsync(sequence, cancellationToken);
-            }
-
-            await WriteControlAsync(ControlSequences.SetForegroundColor(175, 255, 0));
-            await Terminal.OutLineAsync(header, cancellationToken);
-            await WriteControlAsync(ControlSequences.ResetAttributes());
+            await Out.WriteControlAsync(ControlSequences.SetForegroundColor(175, 255, 0), cancellationToken);
+            await Out.WriteLineAsync(header, cancellationToken);
+            await Out.WriteControlAsync(ControlSequences.ResetAttributes(), cancellationToken);
 
             foreach (var (name, value) in table)
             {
-                await WriteControlAsync(ControlSequences.SetForegroundColor(215, 215, 255));
-                await Terminal.OutAsync($"{name}: ", cancellationToken);
-                await WriteControlAsync(ControlSequences.ResetAttributes());
-                await Terminal.OutLineAsync(value, cancellationToken);
+                await Out.WriteControlAsync(ControlSequences.SetForegroundColor(215, 215, 255), cancellationToken);
+                await Out.WriteAsync($"{name}: ", cancellationToken);
+                await Out.WriteControlAsync(ControlSequences.ResetAttributes(), cancellationToken);
+                await Out.WriteLineAsync(value, cancellationToken);
             }
         }
 
         await WriteSectionAsync("Celerity", _celerity);
-        await Terminal.OutLineAsync(cancellationToken);
+        await Out.WriteLineAsync(cancellationToken);
         await WriteSectionAsync(".NET", _runtime);
-        await Terminal.OutLineAsync(cancellationToken);
+        await Out.WriteLineAsync(cancellationToken);
         await WriteSectionAsync("Process", _process);
-        await Terminal.OutLineAsync(cancellationToken);
+        await Out.WriteLineAsync(cancellationToken);
         await WriteSectionAsync("System", _system);
 
         return 0;

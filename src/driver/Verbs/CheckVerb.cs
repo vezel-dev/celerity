@@ -6,42 +6,26 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("check", HelpText = "Perform semantic and quality analyses on Celerity code.")]
 internal sealed class CheckVerb : Verb
 {
-    [Value(0, HelpText = "Source code directory.")]
+    [Value(0, HelpText = "Workspace directory.")]
     public required string? Directory { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    public override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
+    protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        // TODO: Replace all of this.
-
-        var directory = Directory ?? Environment.CurrentDirectory;
+        var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
+        var writer = new DiagnosticWriter(new DiagnosticConfiguration().WithStyle(new TerminalDiagnosticStyle(Error)));
         var errors = false;
 
-        foreach (var file in System.IO.Directory
-            .EnumerateFiles(directory, "*.cel", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
+        foreach (var doc in workspace.Documents.Values.OrderBy(static kvp => kvp.Path, StringComparer.Ordinal))
         {
-            var syntax = SyntaxTree.Parse(
-                new StringSourceText(
-                    Path.GetRelativePath(directory, file), await File.ReadAllTextAsync(file, cancellationToken)),
-                SyntaxMode.Module);
-            var semantics = SemanticTree.Analyze(
-                syntax, null, new LintDiagnosticAnalyzer(LintPass.DefaultPasses, LintConfiguration.Default));
-
-            var diags = syntax.Diagnostics
-                .Concat(semantics.Diagnostics)
-                .Where(static diag => diag.Severity != DiagnosticSeverity.None)
-                .OrderBy(static diag => diag.Span)
-                .ToArray();
-            var stderr = Terminal.StandardError;
-            var writer = new DiagnosticWriter(
-                new DiagnosticConfiguration().WithStyle(new TerminalDiagnosticStyle(stderr)));
+            var diags = (await doc.GetDiagnosticsAsync(cancellationToken)).ToArray();
 
             for (var i = 0; i < diags.Length; i++)
             {
-                await writer.WriteAsync(diags[i], stderr.TextWriter, cancellationToken);
+                await writer.WriteAsync(diags[i], Error.TextWriter, cancellationToken);
 
                 if (i != diags.Length - 1)
-                    await stderr.WriteLineAsync(cancellationToken);
+                    await Error.WriteLineAsync(cancellationToken);
             }
 
             errors |= diags.Any(static diag => diag.IsError);
