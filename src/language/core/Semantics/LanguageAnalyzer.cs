@@ -904,7 +904,9 @@ internal sealed class LanguageAnalyzer
 
             if (_scope.GetEnclosingTry() is { } @try)
                 @try.RaiseExpressions.Add(sema);
-            else if (_scope.GetEnclosingFunction(ignoreDefer: true) is not { IsFallible: true })
+            else if (_scope.GetEnclosingFunction(ignoreDefer: true) is { IsFallible: true } function)
+                function.RaiseExpressions.Add(sema);
+            else
                 Error(
                     node.Span,
                     StandardDiagnosticCodes.ErrorInInfallibleContext,
@@ -1094,7 +1096,9 @@ internal sealed class LanguageAnalyzer
 
             if (_scope.GetEnclosingTry() is { } @try)
                 @try.CallExpressions.Add(sema);
-            else if (_scope.GetEnclosingFunction(ignoreDefer: true) is not { IsFallible: true })
+            else if (_scope.GetEnclosingFunction(ignoreDefer: true) is { IsFallible: true } function)
+                function.CallExpressions.Add(sema);
+            else
                 Error(
                     node.Span,
                     StandardDiagnosticCodes.ErrorInInfallibleContext,
