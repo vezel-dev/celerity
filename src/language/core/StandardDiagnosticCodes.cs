@@ -82,6 +82,8 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode DuplicateStandardAttribute { get; } = CreateCode();
 
+    public static DiagnosticCode MissingEnclosingFunction { get; } = CreateCode();
+
     private static int _code;
 
     private static DiagnosticCode CreateCode()

@@ -447,9 +447,11 @@ internal sealed class LanguageAnalyzer
             var parms = ConvertList(
                 node.ParameterList.Parameters, static (@this, param) => @this.VisitFunctionParameter(param));
             var body = node.Body is { } b ? VisitBlockExpression(b) : null;
-            var calls = scope.CallExpressions.DrainToImmutable();
+            var rets = scope.ReturnExpressions.DrainToImmutable();
             var raises = scope.RaiseExpressions.DrainToImmutable();
-            var sema = new FunctionDeclarationSemantics(node, attrs, sym, parms, body, calls, raises);
+            var calls = scope.CallExpressions.DrainToImmutable();
+
+            var sema = new FunctionDeclarationSemantics(node, attrs, sym, parms, body, rets, raises, calls);
 
             sym?.AddBinding(sema);
 
@@ -629,10 +631,11 @@ internal sealed class LanguageAnalyzer
             var body = VisitExpression(node.Body);
             var upvalues = scope.CollectUpvalues();
             var refs = scope.ThisExpressions.ToImmutable();
-            var calls = scope.CallExpressions.DrainToImmutable();
+            var rets = scope.ReturnExpressions.DrainToImmutable();
             var raises = scope.RaiseExpressions.DrainToImmutable();
+            var calls = scope.CallExpressions.DrainToImmutable();
 
-            var sema = new LambdaExpressionSemantics(node, parms, body, upvalues, refs, calls, raises);
+            var sema = new LambdaExpressionSemantics(node, parms, body, upvalues, refs, rets, raises, calls);
 
             foreach (var @this in refs)
                 @this.Lambda = sema;
@@ -872,7 +875,17 @@ internal sealed class LanguageAnalyzer
             var oper = VisitExpression(node.Operand);
             var defers = _scope.CollectDefers(null);
 
-            return new(node, oper, defers);
+            var sema = new ReturnExpressionSemantics(node, oper, defers);
+
+            if (_scope.GetEnclosingFunction() is { } function)
+                function.ReturnExpressions.Add(sema);
+            else
+                Error(
+                    node.Span,
+                    StandardDiagnosticCodes.MissingEnclosingFunction,
+                    $"No enclosing function for 'ret' expression");
+
+            return sema;
         }
 
         public override RaiseExpressionSemantics VisitRaiseExpression(RaiseExpressionSyntax node)
@@ -996,10 +1009,9 @@ internal sealed class LanguageAnalyzer
 
         public override ThisExpressionSemantics VisitThisExpression(ThisExpressionSyntax node)
         {
-            var function = _scope.GetEnclosingFunction();
             var sema = new ThisExpressionSemantics(node);
 
-            if (function is LambdaScope lambda)
+            if (_scope.GetEnclosingFunction() is LambdaScope lambda)
                 lambda.ThisExpressions.Add(sema);
             else
                 Error(

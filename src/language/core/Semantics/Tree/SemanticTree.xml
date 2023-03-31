@@ -70,8 +70,9 @@
         <Value Name="Symbol" Type="DeclarationSymbol?" Override="true" />
         <Nodes Name="Parameter" Type="FunctionParameter" Separated="true" />
         <Node Name="Body" Type="BlockExpression" Optional="true" Override="true" />
-        <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
+        <Value Name="Returns" Type="ImmutableArray&lt;ReturnExpressionSemantics&gt;" />
         <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
+        <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
     </Type>
 
     <Type Name="FunctionParameter" Base="CodeParameter" Parent="FunctionDeclaration">
@@ -179,8 +180,9 @@
         <Node Name="Body" Type="Expression" />
         <Value Name="Upvalues" Type="ImmutableArray&lt;UpvalueSymbol&gt;" />
         <Value Name="References" Type="ImmutableArray&lt;ThisExpressionSemantics&gt;" />
-        <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
+        <Value Name="Returns" Type="ImmutableArray&lt;ReturnExpressionSemantics&gt;" />
         <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
+        <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />
     </Type>
 
     <Type Name="LambdaParameter" Base="CodeParameter" Parent="LambdaExpression">
