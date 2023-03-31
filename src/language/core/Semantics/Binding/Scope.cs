@@ -18,7 +18,7 @@ internal class Scope : IScope<Scope>
         return new(parent);
     }
 
-    public FunctionScope? GetEnclosingFunction()
+    public virtual FunctionScope? GetEnclosingFunction(bool ignoreDefer)
     {
         // Consider:
         //
@@ -33,7 +33,7 @@ internal class Scope : IScope<Scope>
         //
         // In this case, the this expression should bind to the inner lambda expression; there is no way to refer to an
         // outer lambda expression with a this expression.
-        return this is FunctionScope function ? function : Parent?.GetEnclosingFunction();
+        return this is FunctionScope function ? function : Parent?.GetEnclosingFunction(ignoreDefer);
     }
 
     public virtual TryScope? GetEnclosingTry()

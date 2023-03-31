@@ -400,6 +400,7 @@ internal sealed class LanguageAnalyzer
         {
             var attrs = ConvertAttributeList(node, node.Attributes);
             var (use, path) = ResolveModulePath(node.Path);
+
             var sema = new UseDeclarationSemantics(node, attrs, use, path);
 
             if (node.NameToken is { IsMissing: false } name)
@@ -425,6 +426,7 @@ internal sealed class LanguageAnalyzer
             using var ctx = PushScope<Scope>();
 
             var body = VisitExpression(node.Body);
+
             var sema = new ConstantDeclarationSemantics(node, attrs, sym, body);
 
             sym?.AddBinding(sema);
@@ -488,6 +490,7 @@ internal sealed class LanguageAnalyzer
             using var ctx = PushScope<Scope>();
 
             var body = VisitBlockExpression(node.Body);
+
             var sema = new TestDeclarationSemantics(node, attrs, sym, body);
 
             sym?.AddBinding(sema);
@@ -517,6 +520,8 @@ internal sealed class LanguageAnalyzer
 
         public override DeferStatementSemantics VisitDeferStatement(DeferStatementSyntax node)
         {
+            using var ctx = PushScope<DeferScope>();
+
             var attrs = ConvertAttributeList(node, node.Attributes);
             var expr = VisitExpression(node.Expression);
 
@@ -804,6 +809,7 @@ internal sealed class LanguageAnalyzer
             var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
             var calls = scope.CallExpressions.DrainToImmutable();
             var raises = scope.RaiseExpressions.DrainToImmutable();
+
             var sema = new TryExpressionSemantics(node, body, arms, calls, raises);
 
             foreach (var call in calls)
@@ -831,6 +837,7 @@ internal sealed class LanguageAnalyzer
 
             var @else = node.Else is { } e ? VisitBlockExpression(e.Body) : null;
             var branches = scope.BranchExpressions.DrainToImmutable();
+
             var sema = new WhileExpressionSemantics(node, cond, body, @else, branches);
 
             foreach (var branch in branches)
@@ -877,7 +884,7 @@ internal sealed class LanguageAnalyzer
 
             var sema = new ReturnExpressionSemantics(node, oper, defers);
 
-            if (_scope.GetEnclosingFunction() is { } function)
+            if (_scope.GetEnclosingFunction(ignoreDefer: false) is { } function)
                 function.ReturnExpressions.Add(sema);
             else
                 Error(
@@ -892,11 +899,12 @@ internal sealed class LanguageAnalyzer
         {
             var oper = VisitExpression(node.Operand);
             var defers = _scope.CollectDefers(null);
+
             var sema = new RaiseExpressionSemantics(node, oper, defers);
 
             if (_scope.GetEnclosingTry() is { } @try)
                 @try.RaiseExpressions.Add(sema);
-            else if (_scope.GetEnclosingFunction() is not { IsFallible: true })
+            else if (_scope.GetEnclosingFunction(ignoreDefer: true) is not { IsFallible: true })
                 Error(
                     node.Span,
                     StandardDiagnosticCodes.ErrorInInfallibleContext,
@@ -909,6 +917,7 @@ internal sealed class LanguageAnalyzer
         {
             var loop = _scope.GetEnclosingLoop();
             var defers = _scope.CollectDefers(loop);
+
             var sema = new NextExpressionSemantics(node, defers);
 
             if (loop != null)
@@ -927,6 +936,7 @@ internal sealed class LanguageAnalyzer
             var result = node.Result is { } r ? VisitExpression(r.Value) : null;
             var loop = _scope.GetEnclosingLoop();
             var defers = _scope.CollectDefers(loop);
+
             var sema = new BreakExpressionSemantics(node, result, defers);
 
             if (loop != null)
@@ -1011,7 +1021,7 @@ internal sealed class LanguageAnalyzer
         {
             var sema = new ThisExpressionSemantics(node);
 
-            if (_scope.GetEnclosingFunction() is LambdaScope lambda)
+            if (_scope.GetEnclosingFunction(ignoreDefer: true) is LambdaScope lambda)
                 lambda.ThisExpressions.Add(sema);
             else
                 Error(
@@ -1076,6 +1086,7 @@ internal sealed class LanguageAnalyzer
             var defers = node.QuestionToken != null
                 ? _scope.CollectDefers(null)
                 : ImmutableArray<DeferStatementSemantics>.Empty;
+
             var sema = new CallExpressionSemantics(node, subject, args, defers);
 
             if (!sema.IsPropagating)
@@ -1083,7 +1094,7 @@ internal sealed class LanguageAnalyzer
 
             if (_scope.GetEnclosingTry() is { } @try)
                 @try.CallExpressions.Add(sema);
-            else if (_scope.GetEnclosingFunction() is not { IsFallible: true })
+            else if (_scope.GetEnclosingFunction(ignoreDefer: true) is not { IsFallible: true })
                 Error(
                     node.Span,
                     StandardDiagnosticCodes.ErrorInInfallibleContext,
@@ -1132,6 +1143,7 @@ internal sealed class LanguageAnalyzer
                 _ = _duplicates.Add(sym);
 
             var sym2 = Unsafe.As<VariableSymbol>(sym); // Only variables will be defined at this stage.
+
             var sema = new DiscardBindingSemantics(node, sym2);
 
             sym2?.AddBinding(sema);
