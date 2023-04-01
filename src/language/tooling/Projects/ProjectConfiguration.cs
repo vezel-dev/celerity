@@ -73,14 +73,14 @@ public sealed class ProjectConfiguration
         if (nameProp.ValueKind != JsonValueKind.String)
             Error("'name' property must be a string.");
 
-        var kind = ProjectKind.Executable;
+        var kind = ProjectKind.Program;
 
         if (root.TryGetProperty("kind"u8, out var kindProp))
         {
             if (kindProp.ValueEquals("library"u8))
                 kind = ProjectKind.Library;
-            else if (!kindProp.ValueEquals("executable"u8))
-                Error("'kind' property, if present, must be 'executable' (default) or 'library'.");
+            else if (!kindProp.ValueEquals("program"u8))
+                Error("'kind' property, if present, must be 'program' (default) or 'library'.");
         }
 
         var path = "src";
