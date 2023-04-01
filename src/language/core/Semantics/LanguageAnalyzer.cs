@@ -109,10 +109,14 @@ internal sealed class LanguageAnalyzer
             return semantics;
         }
 
-        private ScopeContext<T> PushScope<T>()
+        private ScopeContext<T> PushScope<T>(out T scope)
             where T : Scope, IScope<T>
         {
-            return new(this);
+            var ctx = new ScopeContext<T>(this);
+
+            scope = ctx.Scope;
+
+            return ctx;
         }
 
         private void Error(
@@ -181,12 +185,10 @@ internal sealed class LanguageAnalyzer
             if (syntax.Count == 0)
                 return new(syntax, ImmutableArray<TSemantics>.Empty);
 
-            predicate ??= static _ => true;
-
             var builder = Builder<TSemantics>(syntax.Count);
 
             foreach (var node in syntax)
-                if (predicate(node))
+                if (predicate?.Invoke(node) ?? true)
                     builder.Add(converter(this, node));
 
             return List(syntax, builder);
@@ -298,15 +300,13 @@ internal sealed class LanguageAnalyzer
                 if (selector(field) is { IsMissing: false } name)
                     (CollectionsMarshal.GetValueRefOrAddDefault(map, name.Text, out _) ??= new()).Add(name.Span);
 
-            var note = $"Also {message} here";
-
             foreach (var (name, spans) in map)
                 if (spans.Count != 1)
                     Error(
                         spans[0],
                         StandardDiagnosticCodes.DuplicateAggregateExpressionField,
                         $"{type} field '{name}' is {message} multiple times",
-                        spans.Skip(1).Select(span => (span, note)));
+                        spans.Skip(1).Select(span => (span, $"Also {message} here")));
         }
 
         // Document
@@ -354,7 +354,7 @@ internal sealed class LanguageAnalyzer
             foreach (var sub in node.Submissions)
             {
                 if (sub is StatementSubmissionSyntax { Statement: LetStatementSyntax })
-                    lets.Add(PushScope<Scope>());
+                    lets.Add(PushScope(out Scope _));
 
                 subs.Add(VisitSubmission(sub));
             }
@@ -423,9 +423,10 @@ internal sealed class LanguageAnalyzer
                 ? Unsafe.As<DeclarationSymbol>(_scope.ResolveSymbol(name.Text)!)
                 : null;
 
-            using var ctx = PushScope<Scope>();
+            ExpressionSemantics body;
 
-            var body = VisitExpression(node.Body);
+            using (PushScope<Scope>(out _))
+                body = VisitExpression(node.Body);
 
             var sema = new ConstantDeclarationSemantics(node, attrs, sym, body);
 
@@ -441,14 +442,19 @@ internal sealed class LanguageAnalyzer
                 ? Unsafe.As<DeclarationSymbol>(_scope.ResolveSymbol(name.Text)!)
                 : null;
 
-            using var ctx = PushScope<FunctionScope>();
-            var scope = ctx.Scope;
+            FunctionScope scope;
+            SeparatedSemanticNodeList<FunctionParameterSemantics, FunctionParameterSyntax> parms;
+            BlockExpressionSemantics? body;
 
-            scope.IsFallible = node.ErrKeywordToken != null;
+            using (var ctx = PushScope(out scope))
+            {
+                scope.IsFallible = node.ErrKeywordToken != null;
 
-            var parms = ConvertList(
-                node.ParameterList.Parameters, static (@this, param) => @this.VisitFunctionParameter(param));
-            var body = node.Body is { } b ? VisitBlockExpression(b) : null;
+                parms = ConvertList(
+                    node.ParameterList.Parameters, static (@this, param) => @this.VisitFunctionParameter(param));
+                body = node.Body is { } b ? VisitBlockExpression(b) : null;
+            }
+
             var branches = scope.BranchExpressions.DrainToImmutable();
             var calls = scope.CallExpressions.DrainToImmutable();
 
@@ -492,9 +498,10 @@ internal sealed class LanguageAnalyzer
                 ? Unsafe.As<DeclarationSymbol>(_scope.ResolveSymbol(name.Text)!)
                 : null;
 
-            using var ctx = PushScope<Scope>();
+            BlockExpressionSemantics body;
 
-            var body = VisitBlockExpression(node.Body);
+            using (PushScope(out Scope _))
+                body = VisitBlockExpression(node.Body);
 
             var sema = new TestDeclarationSemantics(node, attrs, sym, body);
 
@@ -525,10 +532,12 @@ internal sealed class LanguageAnalyzer
 
         public override DeferStatementSemantics VisitDeferStatement(DeferStatementSyntax node)
         {
-            using var ctx = PushScope<DeferScope>();
-
             var attrs = ConvertAttributeList(node, node.Attributes);
-            var expr = VisitExpression(node.Expression);
+
+            ExpressionSemantics expr;
+
+            using (PushScope(out DeferScope _))
+                expr = VisitExpression(node.Expression);
 
             return new(node, attrs, expr);
         }
@@ -631,14 +640,19 @@ internal sealed class LanguageAnalyzer
 
         public override LambdaExpressionSemantics VisitLambdaExpression(LambdaExpressionSyntax node)
         {
-            using var ctx = PushScope<LambdaScope>();
-            var scope = ctx.Scope;
+            LambdaScope scope;
+            SeparatedSemanticNodeList<LambdaParameterSemantics, LambdaParameterSyntax> parms;
+            ExpressionSemantics body;
 
-            scope.IsFallible = node.ErrKeywordToken != null;
+            using (var ctx = PushScope(out scope))
+            {
+                scope.IsFallible = node.ErrKeywordToken != null;
 
-            var parms = ConvertList(
-                node.ParameterList.Parameters, static (@this, param) => @this.VisitLambdaParameter(param));
-            var body = VisitExpression(node.Body);
+                parms = ConvertList(
+                    node.ParameterList.Parameters, static (@this, param) => @this.VisitLambdaParameter(param));
+                body = VisitExpression(node.Body);
+            }
+
             var upvalues = scope.CollectUpvalues();
             var refs = scope.ThisExpressions.ToImmutable();
             var branches = scope.BranchExpressions.DrainToImmutable();
@@ -768,11 +782,16 @@ internal sealed class LanguageAnalyzer
 
         public override ExpressionPatternArmSemantics VisitExpressionPatternArm(ExpressionPatternArmSyntax node)
         {
-            using var ctx = PushScope<Scope>();
+            PatternSemantics pat;
+            ExpressionSemantics? guard;
+            ExpressionSemantics body;
 
-            var pat = VisitPattern(node.Pattern);
-            var guard = node.Guard is { } g ? VisitExpression(g.Condition) : null;
-            var body = VisitExpression(node.Body);
+            using (PushScope(out Scope _))
+            {
+                pat = VisitPattern(node.Pattern);
+                guard = node.Guard is { } g ? VisitExpression(g.Condition) : null;
+                body = VisitExpression(node.Body);
+            }
 
             return new(node, pat, guard, body);
         }
@@ -787,12 +806,17 @@ internal sealed class LanguageAnalyzer
 
         public override ReceiveExpressionArmSemantics VisitReceiveExpressionArm(ReceiveExpressionArmSyntax node)
         {
-            using var ctx = PushScope<Scope>();
+            SeparatedSemanticNodeList<ReceiveParameterSemantics, ReceiveParameterSyntax> parms;
+            ExpressionSemantics? guard;
+            ExpressionSemantics body;
 
-            var parms = ConvertList(
-                node.ParameterList.Parameters, static (@this, param) => @this.VisitReceiveParameter(param));
-            var guard = node.Guard is { } g ? VisitExpression(g.Condition) : null;
-            var body = VisitExpression(node.Body);
+            using (PushScope(out Scope _))
+            {
+                parms = ConvertList(
+                    node.ParameterList.Parameters, static (@this, param) => @this.VisitReceiveParameter(param));
+                guard = node.Guard is { } g ? VisitExpression(g.Condition) : null;
+                body = VisitExpression(node.Body);
+            }
 
             return new(node, parms, guard, body);
         }
@@ -809,12 +833,8 @@ internal sealed class LanguageAnalyzer
             TryScope scope;
             ExpressionSemantics body;
 
-            using (var ctx = PushScope<TryScope>())
-            {
-                scope = ctx.Scope;
-
+            using (PushScope(out scope))
                 body = VisitExpression(node.Body);
-            }
 
             var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
             var raises = scope.RaiseExpressions.DrainToImmutable();
@@ -837,10 +857,8 @@ internal sealed class LanguageAnalyzer
             ExpressionSemantics cond;
             BlockExpressionSemantics body;
 
-            using (var ctx = PushScope<LoopScope>())
+            using (PushScope(out scope))
             {
-                scope = ctx.Scope;
-
                 cond = VisitExpression(node.Condition);
                 body = VisitBlockExpression(node.Body);
             }
@@ -863,10 +881,8 @@ internal sealed class LanguageAnalyzer
             PatternSemantics pat;
             BlockExpressionSemantics body;
 
-            using (var ctx = PushScope<LoopScope>())
+            using (PushScope(out scope))
             {
-                scope = ctx.Scope;
-
                 // We visit the collection first so that it cannot refer to variables bound in the pattern, as in:
                 //
                 // for x in x {
@@ -879,6 +895,7 @@ internal sealed class LanguageAnalyzer
 
             var @else = node.Else is { } e ? VisitBlockExpression(e.Body) : null;
             var branches = scope.BranchExpressions.DrainToImmutable();
+
             var sema = new ForExpressionSemantics(node, pat, collection, body, @else, branches);
 
             foreach (var branch in branches)
@@ -970,32 +987,36 @@ internal sealed class LanguageAnalyzer
 
         public override BlockExpressionSemantics VisitBlockExpression(BlockExpressionSyntax node)
         {
-            using var ctx = PushScope<BlockScope>();
+            ImmutableArray<StatementSemantics>.Builder stmts;
+            ImmutableArray<DeferStatementSemantics>.Builder defers;
 
-            var stmts = Builder<StatementSemantics>(node.Statements.Count);
-
-            // Let statements are somewhat special in that they introduce a 'horizontal' scope in the tree; that is,
-            // bindings in a let statement become available to siblings to the right of the let statement.
-            var lets = new List<ScopeContext<Scope>>();
-            var defers = ctx.Scope.DeferStatements;
-
-            foreach (var stmt in node.Statements)
+            using (PushScope(out BlockScope scope))
             {
-                if (stmt is LetStatementSyntax)
-                    lets.Add(PushScope<Scope>());
+                stmts = Builder<StatementSemantics>(node.Statements.Count);
+                defers = scope.DeferStatements;
 
-                var sema = VisitStatement(stmt);
+                // Let statements are somewhat special in that they introduce a 'horizontal' scope in the tree; that is,
+                // bindings in a let statement become available to siblings to the right of the let statement.
+                var lets = new List<ScopeContext<Scope>>();
 
-                if (sema is DeferStatementSemantics defer)
-                    defers.Add(defer);
+                foreach (var stmt in node.Statements)
+                {
+                    if (stmt is LetStatementSyntax)
+                        lets.Add(PushScope(out Scope _));
 
-                stmts.Add(sema);
+                    var sema = VisitStatement(stmt);
+
+                    if (sema is DeferStatementSemantics defer)
+                        defers.Add(defer);
+
+                    stmts.Add(sema);
+                }
+
+                for (var i = lets.Count - 1; i >= 0; i--)
+                    lets[i].Dispose();
+
+                defers.Reverse();
             }
-
-            for (var i = lets.Count - 1; i >= 0; i--)
-                lets[i].Dispose();
-
-            defers.Reverse();
 
             return new(node, List(node.Statements, stmts), defers.DrainToImmutable());
         }
@@ -1101,18 +1122,18 @@ internal sealed class LanguageAnalyzer
 
             var sema = new CallExpressionSemantics(node, subject, args, defers);
 
-            if (!sema.IsPropagating)
-                return sema;
-
-            if (_scope.GetEnclosingTry() is { } @try)
-                @try.CallExpressions.Add(sema);
-            else if (_scope.GetEnclosingFunction(ignoreDefer: true) is { IsFallible: true } function)
-                function.CallExpressions.Add(sema);
-            else
-                Error(
-                    node.Span,
-                    StandardDiagnosticCodes.ErrorInInfallibleContext,
-                    "Error-propagating call expression in infallible context is invalid");
+            if (sema.IsPropagating)
+            {
+                if (_scope.GetEnclosingTry() is { } @try)
+                    @try.CallExpressions.Add(sema);
+                else if (_scope.GetEnclosingFunction(ignoreDefer: true) is { IsFallible: true } function)
+                    function.CallExpressions.Add(sema);
+                else
+                    Error(
+                        node.Span,
+                        StandardDiagnosticCodes.ErrorInInfallibleContext,
+                        "Error-propagating call expression in infallible context is invalid");
+            }
 
             return sema;
         }
