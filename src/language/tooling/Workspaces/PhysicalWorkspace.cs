@@ -9,6 +9,7 @@ public abstract class PhysicalWorkspace : Workspace
     {
     }
 
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected internal override sealed async ValueTask<SourceText> LoadTextAsync(
         string path, CancellationToken cancellationToken)
     {
