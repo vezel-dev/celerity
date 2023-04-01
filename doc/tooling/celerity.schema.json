@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docs.vezel.dev/tooling/celerity.schema.json",
+  "title": "Celerity Project Configuration",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "program",
+        "library"
+      ],
+      "default": "program"
+    },
+    "path": {
+      "type": "string",
+      "default": "src"
+    },
+    "paths": {
+      "type": "object",
+      "patternProperties": {
+        "^[A-Z][0-9a-zA-Z]*(::[A-Z][0-9a-zA-Z]*)*$": {
+          "type": "string"
+        }
+      }
+    },
+    "license": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "default": "0.0.0"
+    },
+    "lints": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z]+(-[a-z]+)*$": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "enum": [
+                "none",
+                "warning",
+                "error"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "required": [
+    "name"
+  ]
+}
