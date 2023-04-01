@@ -13,7 +13,7 @@ public abstract class WorkspaceWatcher
 
     internal static bool IsValidPath(string path)
     {
-        Check.NullOrEmpty(path);
+        Check.NullOrWhiteSpace(path);
 
         return !Path.IsPathFullyQualified(path) && Path.GetExtension(path) == ".cel";
     }

@@ -28,7 +28,7 @@ public sealed class ProjectWorkspace : PhysicalWorkspace
     public static ValueTask<ProjectWorkspace> OpenAsync(
         string path, bool disableAnalysis, CancellationToken cancellationToken = default)
     {
-        Check.NullOrEmpty(path);
+        Check.Null(path);
 
         return OpenAsync();
 
@@ -36,8 +36,7 @@ public sealed class ProjectWorkspace : PhysicalWorkspace
         [SuppressMessage("", "CA2000")] // TODO: https://github.com/dotnet/roslyn-analyzers/issues/6512
         async ValueTask<ProjectWorkspace> OpenAsync()
         {
-            var jsonPath = System.IO.Path.Combine(path, ConfigurationFileName);
-            var stream = File.OpenRead(jsonPath);
+            var stream = File.OpenRead(System.IO.Path.Join(path, ConfigurationFileName));
 
             ProjectConfiguration cfg;
 

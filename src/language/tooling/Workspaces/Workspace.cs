@@ -41,9 +41,9 @@ public abstract class Workspace
 
     protected Workspace(string path)
     {
-        Check.NullOrEmpty(path);
+        Check.Null(path);
 
-        Path = System.IO.Path.GetFullPath(path);
+        Path = path;
     }
 
     public WorkspaceDocument? GetEntryPointDocument()

@@ -14,7 +14,7 @@ public abstract class SourceText : IReadOnlyList<char>
 
     protected SourceText(string path)
     {
-        Check.NullOrEmpty(path);
+        Check.NullOrWhiteSpace(path);
 
         Path = path;
         _lines = new(() =>

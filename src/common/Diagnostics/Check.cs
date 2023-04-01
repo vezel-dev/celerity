@@ -16,13 +16,22 @@ internal static class Check
 
     public static void Null([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string name = "")
     {
-        ArgumentNullException.ThrowIfNull(value, name);
+        if (value == null)
+            throw new ArgumentNullException(name);
     }
 
     public static void NullOrEmpty(
         [NotNull] string? value, [CallerArgumentExpression(nameof(value))] string name = "")
     {
-        ArgumentException.ThrowIfNullOrEmpty(value, name);
+        if (string.IsNullOrEmpty(value))
+            throw value == null ? new ArgumentNullException(name) : new ArgumentException(null, name);
+    }
+
+    public static void NullOrWhiteSpace(
+        [NotNull] string? value, [CallerArgumentExpression(nameof(value))] string name = "")
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            throw value == null ? new ArgumentNullException(name) : new ArgumentException(null, name);
     }
 
     public static void Range<T>(

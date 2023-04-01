@@ -13,8 +13,6 @@ public sealed class StringSourceText : SourceText
     public StringSourceText(string path, string value)
         : base(path)
     {
-        Check.NullOrEmpty(path);
-
         try
         {
             _ = _encoding.GetByteCount(value);
