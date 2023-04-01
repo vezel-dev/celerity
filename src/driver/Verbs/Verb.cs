@@ -10,7 +10,7 @@ internal abstract class Verb
 
     protected static TerminalWriter Error { get; } = Terminal.StandardError;
 
-    private static readonly Color _color = Color.FromArgb(225, 0, 0);
+    private static readonly Color _errorColor = Color.FromArgb(225, 0, 0);
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     public async ValueTask<int> RunWithHandlerAsync(CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ internal abstract class Verb
         catch (DriverException ex)
         {
             await Error.WriteControlAsync(
-                ControlSequences.SetForegroundColor(_color.R, _color.G, _color.B), cancellationToken);
+                ControlSequences.SetForegroundColor(_errorColor.R, _errorColor.G, _errorColor.B), cancellationToken);
             await Error.WriteLineAsync(ex.Message, cancellationToken);
             await Error.WriteControlAsync(ControlSequences.ResetAttributes(), cancellationToken);
 
@@ -42,10 +42,40 @@ internal abstract class Verb
 
         try
         {
-            workspace = await ProjectWorkspace.OpenAsync(directory, disableAnalysis, cancellationToken);
+            try
+            {
+                workspace = await ProjectWorkspace.OpenAsync(directory, disableAnalysis, cancellationToken);
+            }
+            catch (PathTooLongException)
+            {
+                throw new DriverException($"Workspace path '{directory}' is too long.");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                throw new DriverException($"Could not find part of workspace directory '{directory}'.");
+            }
+            catch (IOException ex)
+            {
+                throw new DriverException(
+                    $"I/O error while reading '{ProjectWorkspace.ConfigurationFileName}': {ex.Message}");
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or SecurityException)
+            {
+                throw new DriverException("Access to the workspace directory was denied.");
+            }
+            catch (JsonException ex)
+            {
+                throw new DriverException(
+                    $"'{ProjectWorkspace.ConfigurationFileName}' contains invalid JSON: {ex.Message}");
+            }
+            catch (ProjectException ex)
+            {
+                throw new DriverException($"'{ProjectWorkspace.ConfigurationFileName}': {ex.Message}");
+            }
         }
         catch (FileNotFoundException)
         {
+            // No celerity.json, so try a simple workspace.
             workspace = SimpleWorkspace.Open(directory, disableAnalysis);
         }
 

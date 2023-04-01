@@ -18,7 +18,29 @@ internal sealed class CheckVerb : Verb
 
         foreach (var doc in workspace.Documents.Values.OrderBy(static kvp => kvp.Path, StringComparer.Ordinal))
         {
-            var diags = (await doc.GetDiagnosticsAsync(cancellationToken)).ToArray();
+            Diagnostic[] diags;
+
+            try
+            {
+                diags = (await doc.GetDiagnosticsAsync(cancellationToken)).ToArray();
+            }
+            catch (PathTooLongException)
+            {
+                throw new DriverException($"Document path '{doc.Path}' is too long.");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                throw new DriverException(
+                    $"Could not find part of document path '{Path.GetDirectoryName(doc.Path)}'.");
+            }
+            catch (IOException ex)
+            {
+                throw new DriverException($"I/O error while reading document '{doc.Path}': {ex.Message}");
+            }
+            catch (Exception ex) when (ex is UnauthorizedAccessException or SecurityException)
+            {
+                throw new DriverException($"Access to the document '{doc.Path}' was denied.");
+            }
 
             for (var i = 0; i < diags.Length; i++)
             {

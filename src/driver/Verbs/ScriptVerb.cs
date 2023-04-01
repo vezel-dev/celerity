@@ -10,14 +10,13 @@ internal sealed class ScriptVerb : Verb
     public required string File { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-    protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
+    protected override ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
         var workspace = new ScriptWorkspace(File);
-        var semantics = await workspace.GetEntryPointDocument()!.GetSemanticsAsync(cancellationToken);
 
         // TODO: Run the script.
-        _ = semantics;
+        _ = workspace;
 
-        return 0;
+        return ValueTask.FromResult(0);
     }
 }
