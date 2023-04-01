@@ -43,13 +43,6 @@ internal static class Check
             throw new ArgumentOutOfRangeException(name);
     }
 
-    public static void Enum<T>(T? value, [CallerArgumentExpression(nameof(value))] string name = "")
-        where T : struct, Enum
-    {
-        if (value is { } v && !System.Enum.IsDefined(v))
-            throw new ArgumentOutOfRangeException(name);
-    }
-
     public static void Operation([DoesNotReturnIf(false)] bool condition)
     {
         if (!condition)
