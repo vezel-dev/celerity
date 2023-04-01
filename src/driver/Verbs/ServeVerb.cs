@@ -9,6 +9,9 @@ internal sealed class ServeVerb : Verb
 
     protected override ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
+        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
+            throw new DriverException($"Invalid workspace path '{Directory}'.");
+
         // TODO: Implement this.
         return ValueTask.FromResult(0);
     }

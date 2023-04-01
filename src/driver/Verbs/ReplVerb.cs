@@ -10,6 +10,9 @@ internal sealed class ReplVerb : Verb
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
+        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
+            throw new DriverException($"Invalid workspace path '{Directory}'.");
+
         if (!In.IsInteractive)
             throw new DriverException("The REPL can only be run in an interactive terminal.");
 

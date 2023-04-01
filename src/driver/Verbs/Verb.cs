@@ -52,7 +52,7 @@ internal abstract class Verb
             }
             catch (DirectoryNotFoundException)
             {
-                throw new DriverException($"Could not find part of workspace directory '{directory}'.");
+                throw new DriverException($"Could not find part of workspace path '{directory}'.");
             }
             catch (IOException ex)
             {

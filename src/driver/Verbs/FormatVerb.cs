@@ -10,8 +10,12 @@ internal sealed class FormatVerb : Verb
     [Option('f', "fix", HelpText = "Enable automatic fixing.")]
     public required bool Fix { get; init; }
 
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
+        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
+            throw new DriverException($"Invalid workspace path '{Directory}'.");
+
         var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: true, cancellationToken);
 
         // TODO: Implement this.

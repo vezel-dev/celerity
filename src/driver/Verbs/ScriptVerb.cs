@@ -9,9 +9,11 @@ internal sealed class ScriptVerb : Verb
     [Value(0, Required = true, HelpText = "Entry point file.")]
     public required string File { get; init; }
 
-    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(File) || Path.GetExtension(File) != ".cel")
+            throw new DriverException($"Invalid script path '{File}'.");
+
         var workspace = new ScriptWorkspace(File);
 
         // TODO: Run the script.

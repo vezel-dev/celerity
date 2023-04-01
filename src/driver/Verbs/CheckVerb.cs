@@ -12,6 +12,9 @@ internal sealed class CheckVerb : Verb
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
+        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
+            throw new DriverException($"Invalid workspace path '{Directory}'.");
+
         var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
         var writer = new DiagnosticWriter(new DiagnosticConfiguration().WithStyle(new TerminalDiagnosticStyle(Error)));
         var errors = false;

@@ -10,6 +10,9 @@ internal sealed class RunVerb : Verb
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
+        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
+            throw new DriverException($"Invalid workspace path '{Directory}'.");
+
         var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
 
         if (workspace.GetEntryPointDocument() is not { } doc)
