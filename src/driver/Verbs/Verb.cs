@@ -54,7 +54,7 @@ internal abstract class Verb
             {
                 throw new DriverException($"Could not find part of workspace path '{directory}'.");
             }
-            catch (IOException ex)
+            catch (IOException ex) when (ex is not FileNotFoundException)
             {
                 throw new DriverException(
                     $"I/O error while reading '{ProjectWorkspace.ConfigurationFileName}': {ex.Message}");
