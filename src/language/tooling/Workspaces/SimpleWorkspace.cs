@@ -2,6 +2,11 @@ namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
 public sealed class SimpleWorkspace : PhysicalWorkspace
 {
+    private static readonly IEnumerable<DiagnosticAnalyzer> _diagnosticAnalyzers = new[]
+    {
+        new LintDiagnosticAnalyzer(LintPass.DefaultPasses, LintConfiguration.Default),
+    };
+
     private readonly bool _disableAnalysis;
 
     private SimpleWorkspace(string path, bool disableAnalysis)
@@ -17,7 +22,7 @@ public sealed class SimpleWorkspace : PhysicalWorkspace
 
     protected internal override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
     {
-        throw new UnreachableException();
+        return _diagnosticAnalyzers;
     }
 
     protected override WorkspaceDocumentAttributes GetDocumentAttributes(string path)
