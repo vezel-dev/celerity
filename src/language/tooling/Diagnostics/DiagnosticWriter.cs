@@ -43,7 +43,7 @@ public sealed class DiagnosticWriter
                 async ValueTask WriteContextAsync(IEnumerable<(int Line, string Text)> lines)
                 {
                     foreach (var (line, text) in lines)
-                        await WriteContextOrTargetAsync(line, text, DiagnosticPart.Context).ConfigureAwait(false);
+                        await WriteContextOrTargetAsync(line, text, DiagnosticPart.ContextLine).ConfigureAwait(false);
                 }
 
                 ValueTask WriteAsync(DiagnosticPart part, string value)
@@ -61,17 +61,18 @@ public sealed class DiagnosticWriter
                 {
                     var lineValue = line.ToString(writer.FormatProvider);
 
-                    await WriteAsync(DiagnosticPart.Blank, new(' ', margin - lineValue.Length)).ConfigureAwait(false);
+                    await WriteAsync(DiagnosticPart.WhiteSpace, new(' ', margin - lineValue.Length))
+                        .ConfigureAwait(false);
                     await WriteAsync(DiagnosticPart.Margin, lineValue).ConfigureAwait(false);
-                    await WriteAsync(DiagnosticPart.Blank, " ").ConfigureAwait(false);
+                    await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
                     await WriteAsync(DiagnosticPart.Separator, "|").ConfigureAwait(false);
-                    await WriteAsync(DiagnosticPart.Blank, " ").ConfigureAwait(false);
+                    await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
                     await WriteAsync(part, text).ConfigureAwait(false);
                     await WriteLineAsync().ConfigureAwait(false);
                 }
 
                 await WriteAsync(DiagnosticPart.Severity, $"{severityValue}:").ConfigureAwait(false);
-                await WriteAsync(DiagnosticPart.Blank, " ").ConfigureAwait(false);
+                await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
                 await WriteAsync(DiagnosticPart.Message, messageValue).ConfigureAwait(false);
                 await WriteLineAsync().ConfigureAwait(false);
 
@@ -82,11 +83,11 @@ public sealed class DiagnosticWriter
                 var endLine = end.Line + 1;
 
                 await WriteAsync(DiagnosticPart.Separator, $"{new('-', margin + 1)}>").ConfigureAwait(false);
-                await WriteAsync(DiagnosticPart.Blank, " ").ConfigureAwait(false);
-                await WriteAsync(DiagnosticPart.Location, location.Path).ConfigureAwait(false);
-                await WriteAsync(DiagnosticPart.Blank, " ").ConfigureAwait(false);
+                await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
+                await WriteAsync(DiagnosticPart.Path, location.Path).ConfigureAwait(false);
+                await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
                 await WriteAsync(
-                    DiagnosticPart.Span, $"({startLine},{start.Character + 1})-({endLine},{end.Character + 1})")
+                    DiagnosticPart.Range, $"({startLine},{start.Character + 1})-({endLine},{end.Character + 1})")
                     .ConfigureAwait(false);
                 await WriteLineAsync().ConfigureAwait(false);
 
@@ -106,7 +107,8 @@ public sealed class DiagnosticWriter
                     // Deal with this by avoiding writing the caret line.
                     var skip = line == endLine && end.Character == 0;
 
-                    await WriteContextOrTargetAsync(line, text, skip ? DiagnosticPart.Context : DiagnosticPart.Target)
+                    await WriteContextOrTargetAsync(
+                        line, text, skip ? DiagnosticPart.ContextLine : DiagnosticPart.TargetLine)
                         .ConfigureAwait(false);
 
                     if (skip)
@@ -153,12 +155,12 @@ public sealed class DiagnosticWriter
                     if (carets == 0)
                         carets++;
 
-                    await WriteAsync(DiagnosticPart.Blank, new(' ', margin + 1)).ConfigureAwait(false);
+                    await WriteAsync(DiagnosticPart.WhiteSpace, new(' ', margin + 1)).ConfigureAwait(false);
                     await WriteAsync(DiagnosticPart.Separator, ":").ConfigureAwait(false);
-                    await WriteAsync(DiagnosticPart.Blank, " ").ConfigureAwait(false);
+                    await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
 
                     if (blanks != 0)
-                        await WriteAsync(DiagnosticPart.Blank, new(' ', blanks)).ConfigureAwait(false);
+                        await WriteAsync(DiagnosticPart.WhiteSpace, new(' ', blanks)).ConfigureAwait(false);
 
                     await WriteAsync(DiagnosticPart.Caret, new('^', carets)).ConfigureAwait(false);
                     await WriteLineAsync().ConfigureAwait(false);

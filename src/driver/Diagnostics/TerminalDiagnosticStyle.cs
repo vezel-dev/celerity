@@ -45,12 +45,12 @@ internal sealed class TerminalDiagnosticStyle : DiagnosticStyle
             },
             DiagnosticPart.Separator =>
                 ControlSequences.SetForegroundColor(_separatorColor.R, _separatorColor.G, _separatorColor.B),
-            DiagnosticPart.Location =>
+            DiagnosticPart.Path =>
                 ControlSequences.SetForegroundColor(_locationColor.R, _locationColor.G, _locationColor.B),
-            DiagnosticPart.Span => ControlSequences.SetForegroundColor(_spanColor.R, _spanColor.G, _spanColor.B),
+            DiagnosticPart.Range => ControlSequences.SetForegroundColor(_spanColor.R, _spanColor.G, _spanColor.B),
             DiagnosticPart.Margin =>
                 ControlSequences.SetForegroundColor(_marginColor.R, _marginColor.G, _marginColor.B),
-            DiagnosticPart.Target => ControlSequences.SetDecorations(intense: true),
+            DiagnosticPart.TargetLine => ControlSequences.SetDecorations(intense: true),
             _ => null,
         };
 

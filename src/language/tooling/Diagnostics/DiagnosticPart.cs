@@ -2,14 +2,14 @@ namespace Vezel.Celerity.Language.Tooling.Diagnostics;
 
 public enum DiagnosticPart
 {
-    Blank,
+    WhiteSpace,
     Severity,
     Message,
     Separator,
-    Location,
-    Span,
+    Path,
+    Range,
     Margin,
-    Context,
-    Target,
+    ContextLine,
+    TargetLine,
     Caret,
 }
