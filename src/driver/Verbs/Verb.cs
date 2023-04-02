@@ -75,7 +75,7 @@ internal abstract class Verb
         }
         catch (FileNotFoundException)
         {
-            // No celerity.json, so try a simple workspace.
+            // No configuration file, so try a simple workspace.
             workspace = SimpleWorkspace.Open(directory, disableAnalysis);
         }
 

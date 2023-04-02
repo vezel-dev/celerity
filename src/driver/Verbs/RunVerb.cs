@@ -15,6 +15,10 @@ internal sealed class RunVerb : Verb
 
         var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
 
+        if (workspace is ProjectWorkspace { Configuration.Kind: not ProjectKind.Program })
+            throw new DriverException(
+                $"Workspace not configured as program in '{ProjectWorkspace.ConfigurationFileName}'.");
+
         if (workspace.GetEntryPointDocument() is not { } doc)
             throw new DriverException(
                 $"No entry point document named '{PhysicalWorkspace.EntryPointDocumentName}' found in the workspace.");
