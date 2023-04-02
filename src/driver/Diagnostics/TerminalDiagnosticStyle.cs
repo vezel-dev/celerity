@@ -2,6 +2,20 @@ namespace Vezel.Celerity.Driver.Diagnostics;
 
 internal sealed class TerminalDiagnosticStyle : DiagnosticStyle
 {
+    private static readonly Color _warningColor = Color.FromArgb(255, 255, 0);
+
+    private static readonly Color _errorColor = Color.FromArgb(255, 0, 0);
+
+    private static readonly Color _noteColor = Color.FromArgb(0, 255, 255);
+
+    private static readonly Color _separatorColor = Color.FromArgb(125, 125, 125);
+
+    private static readonly Color _locationColor = Color.FromArgb(100, 175, 225);
+
+    private static readonly Color _spanColor = Color.FromArgb(100, 125, 225);
+
+    private static readonly Color _marginColor = Color.FromArgb(175, 175, 175);
+
     private readonly bool _interactive;
 
     public TerminalDiagnosticStyle(TerminalWriter writer)
@@ -9,29 +23,43 @@ internal sealed class TerminalDiagnosticStyle : DiagnosticStyle
         _interactive = writer.IsInteractive;
     }
 
-    public override ValueTask WriteDecoratedAsync(
-        TextWriter writer, string text, bool intense, CancellationToken cancellationToken = default)
-    {
-        return WriteAsync(writer, ControlSequences.SetDecorations(intense), text, cancellationToken);
-    }
-
-    public override ValueTask WriteColoredAsync(
-        TextWriter writer, string text, Color color, CancellationToken cancellationToken = default)
-    {
-        return WriteAsync(
-            writer, ControlSequences.SetForegroundColor(color.R, color.G, color.B), text, cancellationToken);
-    }
-
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
-    private async ValueTask WriteAsync(
-        TextWriter writer, string sequence, string text, CancellationToken cancellationToken)
+    public override async ValueTask WriteAsync(
+        DiagnosticSeverity? severity,
+        DiagnosticPart part,
+        string value,
+        TextWriter writer,
+        CancellationToken cancellationToken = default)
     {
-        if (_interactive)
+        var sequence = part switch
+        {
+            _ when !_interactive => null,
+            DiagnosticPart.Severity or DiagnosticPart.Caret => severity switch
+            {
+                DiagnosticSeverity.Warning =>
+                    ControlSequences.SetForegroundColor(_warningColor.R, _warningColor.G, _warningColor.B),
+                DiagnosticSeverity.Error =>
+                    ControlSequences.SetForegroundColor(_errorColor.R, _errorColor.G, _errorColor.B),
+                null => ControlSequences.SetForegroundColor(_noteColor.R, _noteColor.G, _noteColor.B),
+                _ => throw new UnreachableException(),
+            },
+            DiagnosticPart.Separator =>
+                ControlSequences.SetForegroundColor(_separatorColor.R, _separatorColor.G, _separatorColor.B),
+            DiagnosticPart.Location =>
+                ControlSequences.SetForegroundColor(_locationColor.R, _locationColor.G, _locationColor.B),
+            DiagnosticPart.Span => ControlSequences.SetForegroundColor(_spanColor.R, _spanColor.G, _spanColor.B),
+            DiagnosticPart.Margin =>
+                ControlSequences.SetForegroundColor(_marginColor.R, _marginColor.G, _marginColor.B),
+            DiagnosticPart.Target => ControlSequences.SetDecorations(intense: true),
+            _ => null,
+        };
+
+        if (sequence != null)
             await writer.WriteAsync(sequence.AsMemory(), cancellationToken);
 
-        await writer.WriteAsync(text.AsMemory(), cancellationToken);
+        await writer.WriteAsync(value.AsMemory(), cancellationToken);
 
-        if (_interactive)
+        if (sequence != null)
             await writer.WriteAsync(ControlSequences.ResetAttributes().AsMemory(), cancellationToken);
     }
 }

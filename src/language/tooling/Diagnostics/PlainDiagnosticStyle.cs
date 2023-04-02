@@ -8,25 +8,19 @@ public sealed class PlainDiagnosticStyle : DiagnosticStyle
     {
     }
 
-    public override ValueTask WriteDecoratedAsync(
-        TextWriter writer, string text, bool intense, CancellationToken cancellationToken = default)
+    public override ValueTask WriteAsync(
+        DiagnosticSeverity? severity,
+        DiagnosticPart part,
+        string value,
+        TextWriter writer,
+        CancellationToken cancellationToken = default)
     {
-        return WriteAsync(writer, text, cancellationToken);
-    }
-
-    public override ValueTask WriteColoredAsync(
-        TextWriter writer, string text, Color color, CancellationToken cancellationToken = default)
-    {
-        Check.Argument(!color.IsEmpty && color.A == byte.MaxValue, color);
-
-        return WriteAsync(writer, text, cancellationToken);
-    }
-
-    private static ValueTask WriteAsync(TextWriter writer, string text, CancellationToken cancellationToken)
-    {
+        Check.Enum(severity);
+        Check.Range(severity != DiagnosticSeverity.None, severity);
+        Check.Enum(part);
+        Check.Null(value);
         Check.Null(writer);
-        Check.Null(text);
 
-        return new(writer.WriteAsync(text.AsMemory(), cancellationToken));
+        return new(writer.WriteAsync(value.AsMemory(), cancellationToken));
     }
 }

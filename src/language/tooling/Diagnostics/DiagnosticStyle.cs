@@ -2,11 +2,18 @@ namespace Vezel.Celerity.Language.Tooling.Diagnostics;
 
 public abstract class DiagnosticStyle
 {
-    // TODO: It would be better to have methods that communicate the semantic meaning of the text being written.
+    public abstract ValueTask WriteAsync(
+        DiagnosticSeverity? severity,
+        DiagnosticPart part,
+        string value,
+        TextWriter writer,
+        CancellationToken cancellationToken = default);
 
-    public abstract ValueTask WriteDecoratedAsync(
-        TextWriter writer, string text, bool intense, CancellationToken cancellationToken = default);
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
+    public virtual ValueTask WriteLineAsync(TextWriter writer, CancellationToken cancellationToken = default)
+    {
+        Check.Null(writer);
 
-    public abstract ValueTask WriteColoredAsync(
-        TextWriter writer, string text, Color color, CancellationToken cancellationToken = default);
+        return new(writer.WriteLineAsync(default(ReadOnlyMemory<char>), cancellationToken));
+    }
 }
