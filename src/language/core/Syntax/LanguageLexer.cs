@@ -14,11 +14,15 @@ internal sealed class LanguageLexer
 
     private readonly List<Func<SyntaxTree, Diagnostic>> _diagnostics;
 
-    private readonly StringBuilder _chars = new();
-
-    private readonly StringBuilder _trivia = new();
+    private readonly StringBuilder _token = new();
 
     private readonly List<char> _string = new();
+
+    private readonly StringBuilder _closingIndentation = new();
+
+    private readonly StringBuilder _currentIndentation = new();
+
+    private readonly StringBuilder _trivia = new();
 
     private readonly ImmutableArray<SyntaxTrivia>.Builder _leading = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
@@ -47,26 +51,33 @@ internal sealed class LanguageLexer
         return (_reader.TryPeek(0, out var ch1) ? ch1 : null, _reader.TryPeek(1, out var ch2) ? ch2 : null);
     }
 
-    private void Advance(StringBuilder? builder = null)
+    private (char? First, char? Second, char? Third) Peek3()
+    {
+        return (_reader.TryPeek(0, out var ch1) ? ch1 : null,
+                _reader.TryPeek(1, out var ch2) ? ch2 : null,
+                _reader.TryPeek(2, out var ch3) ? ch3 : null);
+    }
+
+    private void Advance(StringBuilder? builder)
     {
         _ = Read(builder);
     }
 
-    private char Read(StringBuilder? builder = null)
+    private char Read(StringBuilder? builder)
     {
         var ch = _reader.Read();
 
-        _ = (builder ?? _chars).Append(ch);
+        _ = builder?.Append(ch);
 
         return ch;
     }
 
-    private void TokenError(int position, DiagnosticCode code, string message)
+    private void Error(int position, DiagnosticCode code, string message)
     {
-        TokenError(position, _reader.Position - position, code, message);
+        Error(position, _reader.Position - position, code, message);
     }
 
-    private void TokenError(int position, int length, DiagnosticCode code, string message)
+    private void Error(int position, int length, DiagnosticCode code, string message)
     {
         _diagnostics.Add(
             tree => new(
@@ -80,7 +91,7 @@ internal sealed class LanguageLexer
         _errors = true;
     }
 
-    private void TriviaError(ref bool flag, int position, DiagnosticCode code, string message)
+    private void ErrorOnce(ref bool flag, int position, DiagnosticCode code, string message)
     {
         if (flag)
             return;
@@ -111,9 +122,9 @@ internal sealed class LanguageLexer
 
     private SyntaxToken CreateToken(int position, SyntaxTokenKind kind)
     {
-        var text = _chars.ToString();
+        var text = _token.ToString();
 
-        _ = _chars.Clear();
+        _ = _token.Clear();
 
         // We handle keywords and nil/Boolean literals here to avoid an extra allocation while lexing identifiers.
         if (kind == SyntaxTokenKind.LowerIdentifier)
@@ -152,6 +163,8 @@ internal sealed class LanguageLexer
             new(_trailing.DrainToImmutable()));
 
         _errors = false;
+
+        _string.Clear();
 
         return token;
     }
@@ -203,7 +216,7 @@ internal sealed class LanguageLexer
         }
         catch (Exception ex) when (ex is OutOfMemoryException or OverflowException)
         {
-            TokenError(
+            Error(
                 position, text.Length, StandardDiagnosticCodes.InvalidIntegerLiteral, "Integer literal is too large");
 
             return null;
@@ -222,7 +235,7 @@ internal sealed class LanguageLexer
         if (!double.IsInfinity(value))
             return value;
 
-        TokenError(position, text.Length, StandardDiagnosticCodes.InvalidRealLiteral, "Real literal is out of range");
+        Error(position, text.Length, StandardDiagnosticCodes.InvalidRealLiteral, "Real literal is out of range");
 
         return null;
     }
@@ -274,11 +287,14 @@ internal sealed class LanguageLexer
                 ']' => LexPunctuator(SyntaxTokenKind.CloseBracket),
                 '{' => LexPunctuator(SyntaxTokenKind.OpenBrace),
                 '}' => LexPunctuator(SyntaxTokenKind.CloseBrace),
-                >= 'A' and <= 'Z' => LexIdentifier(SyntaxTokenKind.UpperIdentifier),
-                >= 'a' and <= 'z' => LexIdentifier(SyntaxTokenKind.LowerIdentifier),
-                '_' => LexIdentifier(SyntaxTokenKind.DiscardIdentifier),
+                >= 'A' and <= 'Z' =>
+                    LexIdentifierOrRawStringLiteral(position, SyntaxTokenKind.UpperIdentifier, allowRawString: false),
+                >= 'a' and <= 'z' =>
+                    LexIdentifierOrRawStringLiteral(position, SyntaxTokenKind.LowerIdentifier, allowRawString: true),
+                '_' =>
+                    LexIdentifierOrRawStringLiteral(position, SyntaxTokenKind.DiscardIdentifier, allowRawString: false),
                 >= '0' and <= '9' => LexNumberLiteral(position),
-                ':' => LexAtomLiteralOrPunctuator(),
+                ':' => LexAtomLiteralOrPunctuator(position),
                 '"' => LexStringLiteral(position),
                 null => SyntaxTokenKind.EndOfInput,
                 _ => LexUnrecognized(position),
@@ -346,7 +362,7 @@ internal sealed class LanguageLexer
         while (Peek1() is { } ch && TextFacts.IsWhiteSpace(ch))
         {
             if (ch != ' ')
-                TriviaError(
+                ErrorOnce(
                     ref _whiteSpaceDiagnostic,
                     _reader.Position,
                     StandardDiagnosticCodes.UnsupportedWhiteSpaceCharacter,
@@ -365,7 +381,7 @@ internal sealed class LanguageLexer
         if ((ch, Peek1()) == ('\r', '\n'))
             Advance(_trivia);
         else if (ch is not ('\n' or '\r'))
-            TriviaError(
+            ErrorOnce(
                 ref _newLineDiagnostic,
                 position,
                 StandardDiagnosticCodes.UnsupportedNewLineCharacter,
@@ -387,16 +403,16 @@ internal sealed class LanguageLexer
 
     private SyntaxTokenKind LexUnrecognized(int position)
     {
-        Advance();
+        Advance(_token);
 
-        TokenError(position, 1, StandardDiagnosticCodes.UnrecognizedCharacter, "Unrecognized character");
+        Error(position, 1, StandardDiagnosticCodes.UnrecognizedCharacter, "Unrecognized character");
 
         return SyntaxTokenKind.Unrecognized;
     }
 
     private SyntaxTokenKind LexOperatorOrPunctuator(int position)
     {
-        var ch1 = Read();
+        var ch1 = Read(_token);
         var ch2 = Peek1();
 
         // Handle operators that we know cannot be custom operators.
@@ -412,14 +428,14 @@ internal sealed class LanguageLexer
         if (kind is { } k)
         {
             if (k != SyntaxTokenKind.Equals)
-                Advance();
+                Advance(_token);
 
             return k;
         }
 
         if (ch1 == '!')
         {
-            TokenError(position, StandardDiagnosticCodes.IncompleteExclamationEquals, "Incomplete '!=' operator");
+            Error(position, StandardDiagnosticCodes.IncompleteExclamationEquals, "Incomplete '!=' operator");
 
             return SyntaxTokenKind.ExclamationEquals;
         }
@@ -429,7 +445,7 @@ internal sealed class LanguageLexer
         // Lex the full operator.
         while (Peek1() is '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<')
         {
-            Advance();
+            Advance(_token);
 
             parts++;
         }
@@ -450,41 +466,43 @@ internal sealed class LanguageLexer
 
     private SyntaxTokenKind LexPunctuator(SyntaxTokenKind kind)
     {
-        Advance();
+        Advance(_token);
 
         if (kind != SyntaxTokenKind.Dot || Peek1() != '.')
             return kind;
 
-        Advance();
+        Advance(_token);
 
         return SyntaxTokenKind.DotDot;
     }
 
-    private SyntaxTokenKind LexIdentifier(SyntaxTokenKind kind)
+    private SyntaxTokenKind LexIdentifierOrRawStringLiteral(int position, SyntaxTokenKind kind, bool allowRawString)
     {
-        Advance();
+        Advance(_token);
 
         switch (kind)
         {
             case SyntaxTokenKind.UpperIdentifier:
                 while (Peek1() is (>= '0' and <= '9') or (>= 'a' and <= 'z') or (>= 'A' and <= 'Z'))
-                    Advance();
+                    Advance(_token);
 
                 break;
             case SyntaxTokenKind.LowerIdentifier:
             case SyntaxTokenKind.DiscardIdentifier:
                 while (Peek1() is '_' or (>= '0' and <= '9') or (>= 'a' and <= 'z'))
-                    Advance();
+                    Advance(_token);
 
                 break;
         }
 
-        return kind;
+        return allowRawString && kind == SyntaxTokenKind.LowerIdentifier && Peek3() == ('"', '"', '"')
+            ? LexRawStringLiteral(position)
+            : kind;
     }
 
     private SyntaxTokenKind LexNumberLiteral(int position)
     {
-        var ch1 = Read();
+        var ch1 = Read(_token);
         var ch2 = Peek1();
 
         var radix = (ch1, ch2) switch
@@ -499,7 +517,7 @@ internal sealed class LanguageLexer
         };
 
         if (radix != 10)
-            Advance();
+            Advance(_token);
 
         bool ConsumeDigits(int radix)
         {
@@ -516,12 +534,12 @@ internal sealed class LanguageLexer
                     case (16, (>= 'a' and <= 'f') or (>= 'A' and <= 'F')):
                         ok = true;
 
-                        Advance();
+                        Advance(_token);
                         continue;
                     case (_, '_') when ok:
                         ok = false;
 
-                        Advance();
+                        Advance(_token);
                         continue;
                     default:
                         break;
@@ -535,7 +553,7 @@ internal sealed class LanguageLexer
 
         if (!ConsumeDigits(radix) && radix != 10)
         {
-            TokenError(
+            Error(
                 position, StandardDiagnosticCodes.IncompleteIntegerLiteral, $"Incomplete base-{radix} integer literal");
 
             return SyntaxTokenKind.IntegerLiteral;
@@ -545,11 +563,11 @@ internal sealed class LanguageLexer
         if (radix != 10 || Peek1() != '.')
             return SyntaxTokenKind.IntegerLiteral;
 
-        Advance();
+        Advance(_token);
 
         if (!ConsumeDigits(10))
         {
-            TokenError(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
+            Error(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
             return SyntaxTokenKind.RealLiteral;
         }
@@ -558,26 +576,26 @@ internal sealed class LanguageLexer
         if (Peek1() is not ('e' or 'E'))
             return SyntaxTokenKind.RealLiteral;
 
-        Advance();
+        Advance(_token);
 
         if (Peek1() is '+' or '-')
-            Advance();
+            Advance(_token);
 
         if (!ConsumeDigits(10))
-            TokenError(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
+            Error(position, StandardDiagnosticCodes.IncompleteRealLiteral, "Incomplete real literal");
 
         return SyntaxTokenKind.RealLiteral;
     }
 
-    private SyntaxTokenKind LexAtomLiteralOrPunctuator()
+    private SyntaxTokenKind LexAtomLiteralOrPunctuator(int position)
     {
-        Advance();
+        Advance(_token);
 
         var ch = Peek1();
 
         if (ch == ':')
         {
-            Advance();
+            Advance(_token);
 
             return SyntaxTokenKind.ColonColon;
         }
@@ -592,7 +610,7 @@ internal sealed class LanguageLexer
 
         if (ident is { } k)
         {
-            _ = LexIdentifier(k);
+            _ = LexIdentifierOrRawStringLiteral(position, k, allowRawString: false);
 
             return SyntaxTokenKind.AtomLiteral;
         }
@@ -602,7 +620,10 @@ internal sealed class LanguageLexer
 
     private SyntaxTokenKind LexStringLiteral(int position)
     {
-        Advance();
+        if (Peek3() == ('"', '"', '"'))
+            return LexRawStringLiteral(position);
+
+        Advance(_token);
 
         var hex = (stackalloc char[6]);
         var code = (stackalloc char[2]);
@@ -611,14 +632,14 @@ internal sealed class LanguageLexer
         {
             if (Peek1() is not { } ch || TextFacts.IsNewLine(ch))
             {
-                TokenError(position, StandardDiagnosticCodes.IncompleteStringLiteral, "Incomplete string literal");
+                Error(position, StandardDiagnosticCodes.IncompleteStringLiteral, "Incomplete string literal");
 
                 break;
             }
 
             var chPos = _reader.Position;
 
-            Advance();
+            Advance(_token);
 
             if (ch == '"')
                 break;
@@ -650,7 +671,7 @@ internal sealed class LanguageLexer
                     replacement = rep;
                     break;
                 case 'u' or 'U':
-                    Advance();
+                    Advance(_token);
 
                     var codePos = _reader.Position;
 
@@ -658,7 +679,7 @@ internal sealed class LanguageLexer
                     {
                         if (Peek1() is not ((>= '0' and <= '9') or (>= 'a' and <= 'f') or (>= 'A' and <= 'F')))
                         {
-                            TokenError(
+                            Error(
                                 chPos,
                                 StandardDiagnosticCodes.IncompleteUnicodeEscapeSequence,
                                 "Incomplete Unicode escape sequence");
@@ -666,7 +687,7 @@ internal sealed class LanguageLexer
                             break;
                         }
 
-                        hex[i] = Read();
+                        hex[i] = Read(_token);
                     }
 
                     // Did we read the full scalar number?
@@ -677,7 +698,7 @@ internal sealed class LanguageLexer
 
                     if (!Rune.TryCreate(scalar, out var rune))
                     {
-                        TokenError(
+                        Error(
                             chPos,
                             @"\u".Length + hex.Length,
                             StandardDiagnosticCodes.InvalidUnicodeEscapeSequence,
@@ -690,21 +711,219 @@ internal sealed class LanguageLexer
 
                     break;
                 default:
-                    TokenError(chPos, StandardDiagnosticCodes.IncompleteEscapeSequence, "Incomplete escape sequence");
+                    Error(chPos, StandardDiagnosticCodes.IncompleteEscapeSequence, "Incomplete escape sequence");
                     break;
             }
 
             if (replacement is not { } repCh)
                 continue;
 
-            Advance();
+            Advance(_token);
 
             _string.Add(repCh);
         }
 
-        // If an error occurred, we will not try to create the string value in CreateToken, so just drop it.
+        return SyntaxTokenKind.StringLiteral;
+    }
+
+    private SyntaxTokenKind LexRawStringLiteral(int position)
+    {
+        int ReadQuotes(int max)
+        {
+            var i = 0;
+
+            for (; Peek1() == '"' && i < max; i++)
+                Advance(_token);
+
+            return i;
+        }
+
+        void ReadWhiteSpace(StringBuilder? builder, StringBuilder? indentation)
+        {
+            while (Peek1() is { } ch && TextFacts.IsWhiteSpace(ch))
+            {
+                Advance(builder);
+
+                _ = indentation?.Append(ch);
+            }
+        }
+
+        var openQuotes = ReadQuotes(int.MaxValue);
+        var afterOpenQuotes = _reader.Position - position;
+
+        ReadWhiteSpace(_token, null);
+
+        // Is it a verbatim (i.e. single-line) string literal?
+        if (Peek1() is not { } ch1 || !TextFacts.IsNewLine(ch1))
+        {
+            while (true)
+            {
+                if (Peek1() is not { } ch2 || TextFacts.IsNewLine(ch2))
+                {
+                    Error(
+                        position,
+                        StandardDiagnosticCodes.IncompleteVerbatimStringLiteral,
+                        "Incomplete verbatim string literal");
+
+                    break;
+                }
+
+                if (ch2 != '"')
+                {
+                    Advance(_token);
+
+                    continue;
+                }
+
+                var beforeCloseQuotes = _reader.Position - position;
+                var closeQuotes = ReadQuotes(openQuotes);
+
+                // If we have fewer quotes than the opening quotes, we are still lexing the string contents.
+                if (closeQuotes != openQuotes)
+                    continue;
+
+                for (var i = afterOpenQuotes; i < beforeCloseQuotes; i++)
+                    _string.Add(_token[i]);
+
+                break;
+            }
+
+            return SyntaxTokenKind.StringLiteral;
+        }
+
+        // It must be a block (i.e. multi-line) string literal.
+
+        if ((Read(_token), Peek1()) == ('\r', '\n'))
+            Advance(_token);
+
+        var afterOpener = _reader.Save();
+        var lines = 0;
+
+        // First determine the end of the block string literal, along with the indentation string on the closing line.
+        while (true)
+        {
+            _ = _closingIndentation.Clear();
+
+            ReadWhiteSpace(_token, _closingIndentation);
+
+            var closeQuotes = ReadQuotes(openQuotes);
+
+            // Did this quote sequence end the string?
+            if (closeQuotes == openQuotes)
+                break;
+
+            bool more;
+
+            while (true)
+            {
+                if (Peek1() is not { } ch2)
+                {
+                    Error(
+                        position,
+                        StandardDiagnosticCodes.IncompleteBlockStringLiteral,
+                        "Incomplete block string literal");
+
+                    more = false;
+
+                    break;
+                }
+
+                if (TextFacts.IsNewLine(ch2))
+                {
+                    if ((Read(_token), Peek1()) == ('\r', '\n'))
+                        Advance(_token);
+
+                    more = true;
+
+                    break;
+                }
+
+                if (ch2 == '"')
+                {
+                    var quotePos = _reader.Position;
+                    var lineQuotes = ReadQuotes(int.MaxValue);
+
+                    if (lineQuotes == closeQuotes)
+                    {
+                        Error(
+                            quotePos,
+                            StandardDiagnosticCodes.ImproperBlockStringLiteral,
+                            "Closing quotes for block string literal must not be on a content line");
+
+                        more = false;
+
+                        break;
+                    }
+                }
+
+                Advance(_token);
+            }
+
+            if (!more)
+                break;
+
+            lines++;
+        }
+
         if (_errors)
-            _string.Clear();
+            return SyntaxTokenKind.StringLiteral;
+
+        // We now know the indentation of the closing line. Go over the string contents again and construct the string
+        // value, while making sure that all lines have correct indentation.
+
+        var afterString = _reader.Save();
+
+        _reader.Rewind(afterOpener);
+
+        for (var i = 0; i < lines; i++)
+        {
+            var indentPos = _reader.Position;
+
+            _ = _currentIndentation.Clear();
+
+            ReadWhiteSpace(null, _currentIndentation);
+
+            static bool StartsWith(StringBuilder builder, StringBuilder value)
+            {
+                if (builder.Length < value.Length)
+                    return false;
+
+                for (var i = 0; i < value.Length; i++)
+                    if (builder[i] != value[i])
+                        return false;
+
+                return true;
+            }
+
+            // We allow the current indentation to only be a prefix of the closing indentation if the current line has
+            // no content beyond the indentation.
+            if (!StartsWith(_currentIndentation, _closingIndentation) &&
+                !(TextFacts.IsNewLine((char)Peek1()!) && StartsWith(_closingIndentation, _currentIndentation)))
+            {
+                Error(
+                    indentPos,
+                    StandardDiagnosticCodes.ImproperBlockStringLiteral,
+                    "Invalid indentation in block string literal");
+
+                break;
+            }
+
+            // Add any white space past the indentation string.
+            for (var j = _closingIndentation.Length; j < _currentIndentation.Length; i++)
+                _string.Add(_currentIndentation[j]);
+
+            // Add the line content, if any.
+            while (!TextFacts.IsNewLine((char)Peek1()!))
+                _string.Add(Read(null));
+
+            if ((Read(null), Peek1()) == ('\r', '\n'))
+                Advance(null);
+
+            // Finally, add a line break. Block string literals normalize to LF.
+            _string.Add('\n');
+        }
+
+        _reader.Rewind(afterString);
 
         return SyntaxTokenKind.StringLiteral;
     }

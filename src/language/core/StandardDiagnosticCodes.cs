@@ -84,6 +84,12 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode MissingEnclosingFunction { get; } = CreateCode();
 
+    public static DiagnosticCode IncompleteVerbatimStringLiteral { get; } = CreateCode();
+
+    public static DiagnosticCode IncompleteBlockStringLiteral { get; } = CreateCode();
+
+    public static DiagnosticCode ImproperBlockStringLiteral { get; } = CreateCode();
+
     private static int _code;
 
     private static DiagnosticCode CreateCode()
