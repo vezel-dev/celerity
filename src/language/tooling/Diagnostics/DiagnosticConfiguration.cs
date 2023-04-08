@@ -6,6 +6,8 @@ public sealed class DiagnosticConfiguration
 
     public int TabWidth { get; private set; } = 4;
 
+    public Func<Rune, int> WidthMeasurer { get; private set; } = static rune => 1;
+
     public DiagnosticStyle Style { get; private set; } = PlainDiagnosticStyle.Instance;
 
     private DiagnosticConfiguration Clone()
@@ -14,6 +16,7 @@ public sealed class DiagnosticConfiguration
         {
             ContextLines = ContextLines,
             TabWidth = TabWidth,
+            WidthMeasurer = WidthMeasurer,
             Style = Style,
         };
     }
@@ -36,6 +39,17 @@ public sealed class DiagnosticConfiguration
         var cfg = Clone();
 
         cfg.TabWidth = tabWidth;
+
+        return cfg;
+    }
+
+    public DiagnosticConfiguration WithWidthMeasurer(Func<Rune, int> widthMeasurer)
+    {
+        Check.Null(widthMeasurer);
+
+        var cfg = Clone();
+
+        cfg.WidthMeasurer = widthMeasurer;
 
         return cfg;
     }

@@ -52,6 +52,7 @@ public sealed class DiagnosticWriter
                 .ToArray();
             var margin = lines[^1].Line.ToString(writer.FormatProvider).Length;
             var style = Configuration.Style;
+            var measurer = Configuration.WidthMeasurer;
 
             [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
             async ValueTask WriteWindowAsync(
@@ -144,7 +145,7 @@ public sealed class DiagnosticWriter
                     var isStart = line == startLine;
                     var isEnd = line == endLine;
 
-                    for (var i = 0; i < text.Length; i++)
+                    for (var i = 0; i < text.Length;)
                     {
                         var isCaret = (isStart, isEnd, i >= start.Character, i < end.Character) switch
                         {
@@ -155,7 +156,13 @@ public sealed class DiagnosticWriter
                             _ => false,
                         };
 
-                        var count = text[i] == '\t' ? tab.Length : 1;
+                        var (rune, count) = text[i] == '\t'
+                            ? (new('\t'), tab.Length)
+                            : Rune.TryGetRuneAt(text, i, out var r)
+                                ? (r, measurer(r))
+                                : (Rune.ReplacementChar, 1);
+
+                        Check.Operation(count >= 0);
 
                         if (!isCaret)
                         {
@@ -167,6 +174,8 @@ public sealed class DiagnosticWriter
                         }
                         else
                             carets += count;
+
+                        i += rune.Utf16SequenceLength;
                     }
 
                     // Edge case: In various situations, a diagnostic can point to lines in such a way that no visible

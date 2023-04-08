@@ -16,7 +16,10 @@ internal sealed class CheckVerb : Verb
             throw new DriverException($"Invalid workspace path '{Directory}'.");
 
         var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
-        var writer = new DiagnosticWriter(new DiagnosticConfiguration().WithStyle(new TerminalDiagnosticStyle(Error)));
+        var writer = new DiagnosticWriter(
+            new DiagnosticConfiguration()
+                .WithWidthMeasurer(static rune => MonospaceWidth.Measure(rune) ?? 0)
+                .WithStyle(new TerminalDiagnosticStyle(Error)));
         var errors = false;
 
         foreach (var doc in workspace.Documents.Values.OrderBy(static kvp => kvp.Path, StringComparer.Ordinal))
