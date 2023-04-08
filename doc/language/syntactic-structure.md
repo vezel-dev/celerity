@@ -1,7 +1,7 @@
 # Syntactic Structure
 
 ```ebnf
-module ::= 'mod' '{' declaration* '}'
+document ::= 'mod' '{' declaration* '}'
 ```
 
 ```ebnf

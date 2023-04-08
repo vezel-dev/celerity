@@ -1,8 +1,7 @@
 # Lexical Structure
 
 ```ebnf
-module-input ::= shebang-line? token*
-interactive-input ::= token*
+input ::= shebang-.ine? token*
 token ::= blank |
           comment |
           operator |
