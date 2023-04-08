@@ -9,7 +9,6 @@ public abstract class DiagnosticStyle
         TextWriter writer,
         CancellationToken cancellationToken = default);
 
-    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
     public virtual ValueTask WriteLineAsync(TextWriter writer, CancellationToken cancellationToken = default)
     {
         Check.Null(writer);
