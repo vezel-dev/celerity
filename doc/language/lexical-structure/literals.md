@@ -9,14 +9,20 @@ literal ::= nil-literal |
             string-literal
 ```
 
+## Nil Literal
+
 ```ebnf
 nil-literal ::= 'nil'
 ```
+
+## Boolean Literal
 
 ```ebnf
 boolean-literal ::= 'true' |
                     'false'
 ```
+
+## Integer Literal
 
 ```ebnf
 integer-literal ::= binary-integer-literal |
@@ -33,15 +39,21 @@ hexadecimal-integer-literal ::= '0' [xX] hexadecimal-digit ('_'* hexadecimal-dig
 hexadecimal-digit ::= [0-9a-fA-F]
 ```
 
+## Real Literal
+
 ```ebnf
 real-literal ::= real-part '.' real-part ([eE] [+-]? real-part)?
 real-part ::= decimal-digit ('_'* decimal-digit)*
 ```
 
+## Atom Literal
+
 ```ebnf
 atom-literal ::= ':' (upper-identifier |
                       lower-identifier)
 ```
+
+## String Literal
 
 ```ebnf
 string-literal ::= '"' ([^#xa#xd#x85#x2028#x2029"\] |
@@ -52,11 +64,15 @@ string-escape-simple ::= [0aAbBeEfFnNrRtTvV"\]
 string-escape-unicode ::= [uU] hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit
 ```
 
+### Verbatim String Literal
+
 ```ebnf
 verbatim-string-literal ::= '"""' '"'* [^#xa#xd#x85#x2028#x2029]+ '"""' '"'*
 ```
 
+### Block String Literal
+
 ```ebnf
-block-string-literal ::= '"""' '"'* white-space* new-line block-string-line white-space* '"""' '"'*
-block-string-line ::= [^#xa#xd#x85#x2028#x2029]* new-line
+block-string-literal ::= '"""' '"'* white-space* line-break block-string-line white-space* '"""' '"'*
+block-string-line ::= [^#xa#xd#x85#x2028#x2029]* line-break
 ```

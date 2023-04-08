@@ -25,6 +25,8 @@ primary-type ::= any-type |
                  nominal-type
 ```
 
+## Return Types
+
 ```ebnf
 type-annotation ::= ':' type
 return-type-annotation ::= '->' return-type return-type-annotation-raise?

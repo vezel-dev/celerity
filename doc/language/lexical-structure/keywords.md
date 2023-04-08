@@ -6,6 +6,8 @@ keyword ::= normal-keyword |
             reserved-keyword
 ```
 
+## Normal Keywords
+
 ```ebnf
 normal-keyword ::= 'and' |
                    'as' |
@@ -48,6 +50,8 @@ normal-keyword ::= 'and' |
                    'with'
 ```
 
+## Type Keywords
+
 ```ebnf
 type-keyword ::= 'agent' |
                  'any' |
@@ -60,6 +64,8 @@ type-keyword ::= 'agent' |
                  'ref' |
                  'str'
 ```
+
+## Reserved Keywords
 
 ```ebnf
 reserved-keyword ::= 'friend' |
