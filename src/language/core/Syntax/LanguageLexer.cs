@@ -30,10 +30,6 @@ internal sealed class LanguageLexer
 
     private bool _errors;
 
-    private bool _whiteSpaceDiagnostic;
-
-    private bool _newLineDiagnostic;
-
     public LanguageLexer(SourceText text, SyntaxMode mode, List<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
         _reader = new(text);
@@ -89,23 +85,6 @@ internal sealed class LanguageLexer
                 ImmutableArray<DiagnosticNote>.Empty));
 
         _errors = true;
-    }
-
-    private void ErrorOnce(ref bool flag, int position, DiagnosticCode code, string message)
-    {
-        if (flag)
-            return;
-
-        _diagnostics.Add(
-            tree => new(
-                tree,
-                new(position, 1),
-                DiagnosticSeverity.Error,
-                code,
-                message,
-                ImmutableArray<DiagnosticNote>.Empty));
-
-        flag = true;
     }
 
     private SyntaxTrivia CreateTrivia(int position, SyntaxTriviaKind kind)
@@ -360,32 +339,15 @@ internal sealed class LanguageLexer
     private void LexWhiteSpace(int position, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
         while (Peek1() is { } ch && TextFacts.IsWhiteSpace(ch))
-        {
-            if (ch != ' ')
-                ErrorOnce(
-                    ref _whiteSpaceDiagnostic,
-                    _reader.Position,
-                    StandardDiagnosticCodes.UnsupportedWhiteSpaceCharacter,
-                    "Input is using unsupported white space characters (only ASCII space is supported)");
-
             Advance(_trivia);
-        }
 
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.WhiteSpace));
     }
 
     private void LexNewLine(int position, ImmutableArray<SyntaxTrivia>.Builder builder)
     {
-        var ch = Read(_trivia);
-
-        if ((ch, Peek1()) == ('\r', '\n'))
+        if ((Read(_trivia), Peek1()) == ('\r', '\n'))
             Advance(_trivia);
-        else if (ch is not ('\n' or '\r'))
-            ErrorOnce(
-                ref _newLineDiagnostic,
-                position,
-                StandardDiagnosticCodes.UnsupportedNewLineCharacter,
-                "Input is using unsupported new-line characters (only LF and CRLF are supported)");
 
         builder.Add(CreateTrivia(position, SyntaxTriviaKind.NewLine));
     }
