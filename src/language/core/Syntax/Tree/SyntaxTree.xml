@@ -302,12 +302,16 @@
 
     <Type Name="AgentType" Base="Type">
         <Token Name="AgentKeyword" />
+        <Node Name="Protocol" Type="AgentTypeProtocol" Optional="true" />
+    </Type>
+
+    <Type Name="AgentTypeProtocol" Parent="AgentType">
         <Token Name="OpenBrace" />
         <Nodes Name="Message" Type="AgentTypeMessage" Separated="true" />
         <Token Name="CloseBrace" />
     </Type>
 
-    <Type Name="AgentTypeMessage" Parent="AgentType">
+    <Type Name="AgentTypeMessage" Parent="AgentTypeProtocol">
         <Token Name="Name" />
         <Node Name="ParameterList" Type="AgentTypeMessageParameterList" />
     </Type>

@@ -946,16 +946,23 @@ internal sealed class LanguageParser
     private AgentTypeSyntax ParseAgentType()
     {
         var agent = Read();
-        var open = Expect(SyntaxTokenKind.OpenBrace);
+        var protocol = ParseOptional(SyntaxTokenKind.OpenBrace, static @this => @this.ParseAgentTypeProtocol());
+
+        return new(agent, protocol);
+    }
+
+    private AgentTypeProtocolSyntax ParseAgentTypeProtocol()
+    {
+        var open = Read();
         var (msgs, seps) = ParseSeparatedList(
             static @this => @this.ParseAgentTypeMessage(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
+            allowEmpty: false,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(agent, open, List(msgs, seps), close);
+        return new(open, List(msgs, seps), close);
     }
 
     private AgentTypeMessageSyntax ParseAgentTypeMessage()
