@@ -10,7 +10,8 @@ This package provides the language's standard library.</PackageDescription>
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="**/*.cel" />
+        <EmbeddedResource Include="**/*.cel"
+                          LogicalName="%(RelativeDir)%(Filename)%(Extension)" />
     </ItemGroup>
 
     <ItemGroup>

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/vezel-dev/celerity/master/doc/tooling/celerity.schema.json",
+  "name": "Celerity",
+  "kind": "library",
+  "path": "",
+  "license": "0BSD",
+  "version": "0.1.0-dev"
+}
