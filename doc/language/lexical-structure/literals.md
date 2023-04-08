@@ -51,3 +51,12 @@ string-escape-sequence ::= '\' (string-escape-simple |
 string-escape-simple ::= [0aAbBeEfFnNrRtTvV"\]
 string-escape-unicode ::= [uU] hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit
 ```
+
+```ebnf
+verbatim-string-literal ::= '"""' '"'* [^#xa#xd#x85#x2028#x2029]+ '"""' '"'*
+```
+
+```ebnf
+block-string-literal ::= '"""' '"'* white-space* new-line block-string-line white-space* '"""' '"'*
+block-string-line ::= [^#xa#xd#x85#x2028#x2029]* new-line
+```
