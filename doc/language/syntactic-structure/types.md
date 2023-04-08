@@ -1,9 +1,6 @@
 # Types
 
 ```ebnf
-type ::= primary-type ('or' primary-type)*
-return-type ::= none-type |
-                type
 primary-type ::= any-type |
                  literal-type |
                  boolean-type |
@@ -23,12 +20,15 @@ primary-type ::= any-type |
                  function-type |
                  agent-type |
                  nominal-type
+type ::= primary-type ('or' primary-type)*
+type-annotation ::= ':' type
 ```
 
 ## Return Types
 
 ```ebnf
-type-annotation ::= ':' type
+return-type ::= none-type |
+                type
 return-type-annotation ::= '->' return-type return-type-annotation-raise?
 return-type-annotation-raise ::= 'raise' type
 ```
