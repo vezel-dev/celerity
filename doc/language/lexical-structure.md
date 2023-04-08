@@ -1,7 +1,7 @@
 # Lexical Structure
 
 ```ebnf
-input ::= shebang-.ine? token*
+input ::= shebang-line? token*
 token ::= blank |
           comment |
           operator |
