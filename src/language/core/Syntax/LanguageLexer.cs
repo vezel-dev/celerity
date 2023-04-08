@@ -620,6 +620,18 @@ internal sealed class LanguageLexer
                 case '0':
                     replacement = '\0';
                     break;
+                case 'a' or 'A':
+                    replacement = '\a';
+                    break;
+                case 'b' or 'B':
+                    replacement = '\b';
+                    break;
+                case 'e' or 'E':
+                    replacement = '\u001b';
+                    break;
+                case 'f' or 'F':
+                    replacement = '\f';
+                    break;
                 case 'n' or 'N':
                     replacement = '\n';
                     break;
@@ -628,6 +640,9 @@ internal sealed class LanguageLexer
                     break;
                 case 't' or 'T':
                     replacement = '\t';
+                    break;
+                case 'v' or 'V':
+                    replacement = '\v';
                     break;
                 case ('"' or '\\') and var rep:
                     replacement = rep;

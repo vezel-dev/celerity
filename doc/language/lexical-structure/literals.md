@@ -46,8 +46,8 @@ atom-literal ::= ':' (upper-identifier |
 ```ebnf
 string-literal ::= '"' ([^#xa#xd#x85#x2028#x2029"\] |
                         string-escape-sequence)* '"'
-string-escape-sequence ::= '\' (string-escape-code |
+string-escape-sequence ::= '\' (string-escape-simple |
                                 string-escape-unicode)
-string-escape-code ::= [0nNrRtT"\]
+string-escape-simple ::= [0aAbBeEfFnNrRtTvV"\]
 string-escape-unicode ::= [uU] hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit
 ```
