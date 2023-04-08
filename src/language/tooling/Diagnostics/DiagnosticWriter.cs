@@ -4,6 +4,16 @@ public sealed class DiagnosticWriter
 {
     public DiagnosticConfiguration Configuration { get; }
 
+    // Keep in sync with TextFacts.
+    private static readonly ReadOnlyMemory<string> _newLines = new[]
+    {
+        "\n",
+        "\r",
+        "\u0085",
+        "\u2028",
+        "\u2029",
+    };
+
     public DiagnosticWriter(DiagnosticConfiguration configuration)
     {
         Check.Null(configuration);
@@ -26,7 +36,19 @@ public sealed class DiagnosticWriter
                 .Tree
                 .GetText()
                 .Lines
-                .Select(static line => (Line: line.Line + 1, line.ToString().ReplaceLineEndings(string.Empty)))
+                .Select(
+                    static line =>
+                    {
+                        // Most editors and tools do not process VT and FF.
+                        var sb = new StringBuilder(line.ToString())
+                            .Replace('\v', ' ')
+                            .Replace('\f', ' ');
+
+                        foreach (var ch in _newLines.Span)
+                            _ = sb.Replace(ch, string.Empty);
+
+                        return (Line: line.Line + 1, sb.ToString());
+                    })
                 .ToArray();
             var margin = lines[^1].Line.ToString(writer.FormatProvider).Length;
             var style = Configuration.Style;
@@ -56,6 +78,8 @@ public sealed class DiagnosticWriter
                     return style.WriteLineAsync(writer, cancellationToken);
                 }
 
+                var tab = new string(' ', Configuration.TabWidth);
+
                 [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
                 async ValueTask WriteContextOrTargetAsync(int line, string text, DiagnosticPart part)
                 {
@@ -67,7 +91,7 @@ public sealed class DiagnosticWriter
                     await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
                     await WriteAsync(DiagnosticPart.Separator, "|").ConfigureAwait(false);
                     await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
-                    await WriteAsync(part, text).ConfigureAwait(false);
+                    await WriteAsync(part, text.Replace("\t", tab, StringComparison.Ordinal)).ConfigureAwait(false);
                     await WriteLineAsync().ConfigureAwait(false);
                 }
 
@@ -131,16 +155,18 @@ public sealed class DiagnosticWriter
                             _ => false,
                         };
 
+                        var count = text[i] == '\t' ? tab.Length : 1;
+
                         if (!isCaret)
                         {
                             // If we finished writing the caret(s), avoid writing trailing white space.
                             if (carets != 0)
                                 break;
 
-                            blanks++;
+                            blanks += count;
                         }
                         else
-                            carets++;
+                            carets += count;
                     }
 
                     // Edge case: In various situations, a diagnostic can point to lines in such a way that no visible

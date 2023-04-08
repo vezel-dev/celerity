@@ -4,6 +4,8 @@ public sealed class DiagnosticConfiguration
 {
     public int ContextLines { get; private set; } = 3;
 
+    public int TabWidth { get; private set; } = 4;
+
     public DiagnosticStyle Style { get; private set; } = PlainDiagnosticStyle.Instance;
 
     private DiagnosticConfiguration Clone()
@@ -11,6 +13,7 @@ public sealed class DiagnosticConfiguration
         return new()
         {
             ContextLines = ContextLines,
+            TabWidth = TabWidth,
             Style = Style,
         };
     }
@@ -22,6 +25,17 @@ public sealed class DiagnosticConfiguration
         var cfg = Clone();
 
         cfg.ContextLines = contextLines;
+
+        return cfg;
+    }
+
+    public DiagnosticConfiguration WithTabWidth(int tabWidth)
+    {
+        Check.Range(tabWidth >= 1, tabWidth);
+
+        var cfg = Clone();
+
+        cfg.TabWidth = tabWidth;
 
         return cfg;
     }
