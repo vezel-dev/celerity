@@ -3,7 +3,7 @@
 ```ebnf
 module-input ::= shebang-line? token*
 interactive-input ::= token*
-token ::= white-space |
+token ::= blank |
           comment |
           operator |
           punctuator |
