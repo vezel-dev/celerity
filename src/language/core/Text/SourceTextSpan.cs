@@ -53,6 +53,11 @@ public readonly struct SourceTextSpan :
         return span.Start >= Start && span.End <= End;
     }
 
+    public bool Overlaps(SourceTextSpan span)
+    {
+        return int.Max(Start, span.Start) < int.Min(End, span.End);
+    }
+
     public int CompareTo(SourceTextSpan other)
     {
         var diff = Start - other.Start;
