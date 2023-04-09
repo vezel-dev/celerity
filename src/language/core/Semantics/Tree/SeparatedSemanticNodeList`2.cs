@@ -91,4 +91,14 @@ public readonly struct SeparatedSemanticNodeList<TSemantics, TSyntax> : IReadOnl
     {
         return GetEnumerator();
     }
+
+    public override string ToString()
+    {
+        return Syntax.ToString();
+    }
+
+    public string ToFullString()
+    {
+        return Syntax.ToFullString();
+    }
 }

@@ -95,4 +95,14 @@ public abstract class SemanticNode
     internal abstract void Visit(SemanticVisitor visitor);
 
     internal abstract T? Visit<T>(SemanticVisitor<T> visitor);
+
+    public override sealed string ToString()
+    {
+        return Syntax.ToString();
+    }
+
+    public string ToFullString()
+    {
+        return Syntax.ToFullString();
+    }
 }
