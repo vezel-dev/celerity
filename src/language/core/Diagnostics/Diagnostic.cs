@@ -58,7 +58,7 @@ public sealed class Diagnostic
         IEnumerable<(SourceTextSpan Span, string Message)> notes)
     {
         Check.Null(tree);
-        Check.Argument(!span.IsEmpty && tree.Root.FullSpan.Contains(span), span);
+        Check.Argument(tree.Root.FullSpan.Contains(span), span);
         Check.Enum(severity);
         Check.Argument(code is { Code: { }, IsStandard: false }, code);
         Check.NullOrEmpty(message);
