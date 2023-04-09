@@ -1,0 +1,12 @@
+﻿Error[E0013]: Expected 'mod' keyword
+--> empty_file.cel (1,1)-(1,1)
+1 | 
+  : ^
+Error[E0013]: Expected '{'
+--> empty_file.cel (1,1)-(1,1)
+1 | 
+  : ^
+Error[E0013]: Expected '}'
+--> empty_file.cel (1,1)-(1,1)
+1 | 
+  : ^
