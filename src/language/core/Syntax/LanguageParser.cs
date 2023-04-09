@@ -914,11 +914,10 @@ internal sealed class LanguageParser
     {
         var open = Read();
         var parms = ParseFunctionTypeParameterList();
-        var err = Optional(SyntaxTokenKind.ErrKeyword);
         var type = ParseReturnTypeAnnotation();
         var close = Expect(SyntaxTokenKind.CloseParen);
 
-        return new(open, parms, err, type, close);
+        return new(open, parms, type, close);
     }
 
     private FunctionTypeParameterListSyntax ParseFunctionTypeParameterList()
