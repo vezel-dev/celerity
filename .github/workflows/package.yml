@@ -38,6 +38,7 @@ jobs:
                       Vezel.Celerity.Common
                       Vezel.Celerity.Language
                       Vezel.Celerity.Language.Library
+                      Vezel.Celerity.Language.Server
                       Vezel.Celerity.Language.Tooling
                       Vezel.Celerity.Runtime
                       Vezel.Celerity.Runtime.Compiler

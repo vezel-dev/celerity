@@ -22,6 +22,8 @@ This project offers the following packages:
 * [Vezel.Celerity.Language.Tooling](https://www.nuget.org/packages/Vezel.Celerity.Language.Tooling):
   Provides user-oriented tooling such as project management and diagnostic
   rendering.
+* [Vezel.Celerity.Language.Server](https://www.nuget.org/packages/Vezel.Celerity.Language.Server):
+  Provides the Language Server Protocol implementation.
 * [Vezel.Celerity.Runtime](https://www.nuget.org/packages/Vezel.Celerity.Runtime):
   Provides shared components of the runtime system such as the bytecode lowerer,
   garbage collector, and agent scheduler.
