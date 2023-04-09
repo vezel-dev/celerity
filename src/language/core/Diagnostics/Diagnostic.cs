@@ -83,9 +83,8 @@ public sealed class Diagnostic
         return Tree.GetText().GetLocation(Span);
     }
 
-    [SuppressMessage("", "CA1308")]
     public override string ToString()
     {
-        return $"{GetLocation()}: {Severity.ToString().ToLowerInvariant()}[{Code}]: {Message}";
+        return $"{GetLocation()}: {Severity}[{Code}]: {Message}";
     }
 }

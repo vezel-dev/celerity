@@ -40,6 +40,9 @@ public readonly partial struct DiagnosticCode :
         return false;
     }
 
+    [GeneratedRegex(@"^[a-z]+(-[a-z]+)*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    private static partial Regex CodeRegex();
+
     public static bool operator ==(DiagnosticCode left, DiagnosticCode right) => left.Equals(right);
 
     public static bool operator !=(DiagnosticCode left, DiagnosticCode right) => !left.Equals(right);
@@ -63,7 +66,4 @@ public readonly partial struct DiagnosticCode :
     {
         return Code;
     }
-
-    [GeneratedRegex(@"^[a-z]+(-[a-z]+)*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
-    private static partial Regex CodeRegex();
 }

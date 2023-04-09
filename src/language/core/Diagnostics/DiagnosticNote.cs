@@ -28,6 +28,6 @@ public sealed class DiagnosticNote
 
     public override string ToString()
     {
-        return $"{GetLocation()}: note: {Message}";
+        return $"{GetLocation()}: Note: {Message}";
     }
 }
