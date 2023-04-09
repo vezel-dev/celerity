@@ -14,7 +14,7 @@ This package provides common functionality used by all Celerity packages.</Packa
         <InternalsVisibleTo Include="Vezel.Celerity.Common" />
         <InternalsVisibleTo Include="Vezel.Celerity.Language" />
         <InternalsVisibleTo Include="Vezel.Celerity.Language.Library" />
-        <InternalsVisibleTo Include="Vezel.Celerity.Language.Server" />
+        <InternalsVisibleTo Include="Vezel.Celerity.Language.Service" />
         <InternalsVisibleTo Include="Vezel.Celerity.Language.Tooling" />
         <InternalsVisibleTo Include="Vezel.Celerity.Runtime" />
         <InternalsVisibleTo Include="Vezel.Celerity.Runtime.Compiler" />

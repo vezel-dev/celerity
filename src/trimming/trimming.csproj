@@ -21,7 +21,7 @@
         <TrimmerRootAssembly Include="Vezel.Celerity.Runtime.Kernel" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Language" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Language.Library" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Server" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Service" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Language.Tooling" />
     </ItemGroup>
 
@@ -33,7 +33,7 @@
         <ProjectReference Include="../runtime/kernel/kernel.csproj" />
         <ProjectReference Include="../language/core/core.csproj" />
         <ProjectReference Include="../language/library/library.csproj" />
-        <ProjectReference Include="../language/server/server.csproj" />
+        <ProjectReference Include="../language/service/service.csproj" />
         <ProjectReference Include="../language/tooling/tooling.csproj" />
     </ItemGroup>
 </Project>

@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.Language.Service</AssemblyName>
+        <IsPackable>true</IsPackable>
+        <PackageDescription>$(PackageDescription)
+
+This package provides the Language Server Protocol implementation.</PackageDescription>
+        <PackageId>Vezel.Celerity.Language.Service</PackageId>
+        <RootNamespace>Vezel.Celerity.Language.Service</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="Microsoft.Extensions.Logging" />
+        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities" />
+        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Document" />
+        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Models" />
+        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Server" />
+        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities" />
+        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Workspace" />
+        <Using Include="OmniSharp.Extensions.LanguageServer.Server" />
+        <Using Include="Vezel.Celerity.Diagnostics" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../tooling/tooling.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="OmniSharp.Extensions.LanguageServer" />
+    </ItemGroup>
+
+    <Import Project="../core/core.targets" />
+    <Import Project="../tooling/tooling.targets" />
+</Project>
