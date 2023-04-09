@@ -19,6 +19,12 @@ internal abstract class Verb
         {
             return await RunAsync(cancellationToken);
         }
+        catch (OperationCanceledException)
+        {
+            // CoreCLR sets this exit code on SIGINT, with seemingly no way to override it. So just consistently use it
+            // as the exit code when something is canceled.
+            return 130;
+        }
         catch (DriverException ex)
         {
             await Error.WriteControlAsync(
