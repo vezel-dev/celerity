@@ -4,6 +4,8 @@ internal sealed class LanguageServiceLoggerProviderAdapter : ILoggerProvider
 {
     private readonly LanguageServiceLoggerProvider _provider;
 
+    private readonly ConcurrentDictionary<string, LanguageServiceLoggerAdapter> _loggers = new();
+
     public LanguageServiceLoggerProviderAdapter(LanguageServiceLoggerProvider provider)
     {
         _provider = provider;
@@ -17,10 +19,15 @@ internal sealed class LanguageServiceLoggerProviderAdapter : ILoggerProvider
     {
         Check.Null(categoryName);
 
-        var logger = _provider.CreateLogger(categoryName);
+        return _loggers.GetOrAdd(
+            categoryName,
+            name =>
+            {
+                var logger = _provider.CreateLogger(categoryName);
 
-        Check.Operation(logger != null);
+                Check.Operation(logger != null);
 
-        return new LanguageServiceLoggerAdapter(logger);
+                return new LanguageServiceLoggerAdapter(logger);
+            });
     }
 }

@@ -3,6 +3,7 @@
         <Using Include="System.Buffers" />
         <Using Include="System.CodeDom.Compiler" />
         <Using Include="System.Collections" />
+        <Using Include="System.Collections.Concurrent" />
         <Using Include="System.Collections.Immutable" />
         <Using Include="System.ComponentModel" />
         <Using Include="System.Diagnostics" />
