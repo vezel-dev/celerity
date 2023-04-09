@@ -2,7 +2,7 @@ namespace Vezel.Celerity.Language.Tooling.Diagnostics;
 
 public sealed class DiagnosticWriter
 {
-    public DiagnosticConfiguration Configuration { get; }
+    public DiagnosticWriterConfiguration Configuration { get; }
 
     // Keep in sync with TextFacts.
     private static readonly ReadOnlyMemory<string> _newLines = new[]
@@ -14,7 +14,7 @@ public sealed class DiagnosticWriter
         "\u2029",
     };
 
-    public DiagnosticWriter(DiagnosticConfiguration configuration)
+    public DiagnosticWriter(DiagnosticWriterConfiguration configuration)
     {
         Check.Null(configuration);
 

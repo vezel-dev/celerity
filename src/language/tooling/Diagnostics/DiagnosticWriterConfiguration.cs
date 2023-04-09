@@ -1,6 +1,6 @@
 namespace Vezel.Celerity.Language.Tooling.Diagnostics;
 
-public sealed class DiagnosticConfiguration
+public sealed class DiagnosticWriterConfiguration
 {
     public int ContextLines { get; private set; } = 3;
 
@@ -10,7 +10,7 @@ public sealed class DiagnosticConfiguration
 
     public DiagnosticStyle Style { get; private set; } = PlainDiagnosticStyle.Instance;
 
-    private DiagnosticConfiguration Clone()
+    private DiagnosticWriterConfiguration Clone()
     {
         return new()
         {
@@ -21,7 +21,7 @@ public sealed class DiagnosticConfiguration
         };
     }
 
-    public DiagnosticConfiguration WithContextLines(int contextLines)
+    public DiagnosticWriterConfiguration WithContextLines(int contextLines)
     {
         Check.Range(contextLines >= 0, contextLines);
 
@@ -32,7 +32,7 @@ public sealed class DiagnosticConfiguration
         return cfg;
     }
 
-    public DiagnosticConfiguration WithTabWidth(int tabWidth)
+    public DiagnosticWriterConfiguration WithTabWidth(int tabWidth)
     {
         Check.Range(tabWidth >= 1, tabWidth);
 
@@ -43,7 +43,7 @@ public sealed class DiagnosticConfiguration
         return cfg;
     }
 
-    public DiagnosticConfiguration WithWidthMeasurer(Func<Rune, int> widthMeasurer)
+    public DiagnosticWriterConfiguration WithWidthMeasurer(Func<Rune, int> widthMeasurer)
     {
         Check.Null(widthMeasurer);
 
@@ -54,7 +54,7 @@ public sealed class DiagnosticConfiguration
         return cfg;
     }
 
-    public DiagnosticConfiguration WithStyle(DiagnosticStyle style)
+    public DiagnosticWriterConfiguration WithStyle(DiagnosticStyle style)
     {
         Check.Null(style);
 

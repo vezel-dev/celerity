@@ -17,7 +17,7 @@ internal sealed class CheckVerb : Verb
 
         var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
         var writer = new DiagnosticWriter(
-            new DiagnosticConfiguration()
+            new DiagnosticWriterConfiguration()
                 .WithWidthMeasurer(static rune => MonospaceWidth.Measure(rune) ?? 0)
                 .WithStyle(new TerminalDiagnosticStyle(Error)));
         var errors = false;

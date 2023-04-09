@@ -6,7 +6,7 @@ public abstract class CelerityTests
         IEnumerable<Diagnostic> diagnostics, string file, string name)
     {
         var writer = new DiagnosticWriter(
-            new DiagnosticConfiguration().WithWidthMeasurer(static rune => MonospaceWidth.Measure(rune) ?? 0));
+            new DiagnosticWriterConfiguration().WithWidthMeasurer(static rune => MonospaceWidth.Measure(rune) ?? 0));
         await using var text = new StringWriter(CultureInfo.InvariantCulture);
 
         foreach (var diag in diagnostics)
