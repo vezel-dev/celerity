@@ -126,11 +126,11 @@ public sealed class DiagnosticWriter
                     // Edge case: If a diagnostic points to the new-line character on line A, its SourceTextLocation.End
                     // will point to the first character of the following line B. This causes line B to be included in
                     // this loop. But since no characters on that line are actually affected, we do not write a caret.
-                    // This causes the edge case logic below to kick in, resulting in a nonsensical caret at the end of
-                    // line B.
+                    // This causes the caret edge case logic below to kick in, resulting in a nonsensical caret at the
+                    // end of line B.
                     //
-                    // Deal with this by avoiding writing the caret line.
-                    var skip = line == endLine && end.Character == 0;
+                    // Detect this case here and print this line as a normal context line if so.
+                    var skip = line == endLine && start.Line + 1 != line && end.Character == 0;
 
                     await WriteContextOrTargetAsync(
                         line, text, skip ? DiagnosticPart.ContextLine : DiagnosticPart.TargetLine)
