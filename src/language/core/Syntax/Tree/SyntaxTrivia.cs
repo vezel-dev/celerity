@@ -2,7 +2,7 @@ using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Syntax.Tree;
 
-public sealed class SyntaxTrivia : SyntaxItem
+public sealed class SyntaxTrivia : SyntaxTerminal
 {
     public new SyntaxToken Parent => Unsafe.As<SyntaxToken>(base.Parent!);
 
@@ -16,16 +16,13 @@ public sealed class SyntaxTrivia : SyntaxItem
 
     public bool IsSkippedToken => Kind == SyntaxTriviaKind.SkippedToken;
 
-    [SuppressMessage("", "CA1721")]
-    public string Text { get; }
-
     private readonly int _position;
 
     internal SyntaxTrivia(int position, SyntaxTriviaKind kind, string text)
+        : base(text)
     {
         _position = position;
         Kind = kind;
-        Text = text;
     }
 
     public new IEnumerable<SyntaxTrivia> Siblings()
@@ -38,9 +35,9 @@ public sealed class SyntaxTrivia : SyntaxItem
         return base.SiblingsAndSelf().UnsafeCast<SyntaxTrivia>();
     }
 
-    public override IEnumerable<SyntaxItem> Children()
+    public override IEnumerable<SyntaxTerminal> Children()
     {
-        return Array.Empty<SyntaxItem>();
+        return Array.Empty<SyntaxTerminal>();
     }
 
     public new IEnumerable<SyntaxTrivia> ChildrenAndSelf()
@@ -48,9 +45,9 @@ public sealed class SyntaxTrivia : SyntaxItem
         return base.ChildrenAndSelf().UnsafeCast<SyntaxTrivia>();
     }
 
-    public override IEnumerable<SyntaxItem> Descendants()
+    public override IEnumerable<SyntaxTerminal> Descendants()
     {
-        return Array.Empty<SyntaxItem>();
+        return Array.Empty<SyntaxTerminal>();
     }
 
     public new IEnumerable<SyntaxTrivia> DescendantsAndSelf()
@@ -58,14 +55,9 @@ public sealed class SyntaxTrivia : SyntaxItem
         return base.DescendantsAndSelf().UnsafeCast<SyntaxTrivia>();
     }
 
-    public override string ToString()
-    {
-        return ToFullString();
-    }
-
     public override string ToFullString()
     {
-        return Text;
+        return ToString();
     }
 
     internal override void ToString(StringBuilder builder, bool leading, bool trailing)

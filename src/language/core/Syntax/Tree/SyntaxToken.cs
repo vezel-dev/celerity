@@ -2,7 +2,7 @@ using Vezel.Celerity.Language.Text;
 
 namespace Vezel.Celerity.Language.Syntax.Tree;
 
-public sealed class SyntaxToken : SyntaxItem
+public sealed class SyntaxToken : SyntaxTerminal
 {
     public new SyntaxNode Parent => Unsafe.As<SyntaxNode>(base.Parent!);
 
@@ -30,9 +30,6 @@ public sealed class SyntaxToken : SyntaxItem
 
     public bool IsEndOfInput => Kind == SyntaxTokenKind.EndOfInput;
 
-    [SuppressMessage("", "CA1721")]
-    public string Text { get; }
-
     public object? Value { get; }
 
     public SyntaxItemList<SyntaxTrivia> LeadingTrivia { get; }
@@ -59,10 +56,10 @@ public sealed class SyntaxToken : SyntaxItem
         object? value,
         SyntaxItemList<SyntaxTrivia> leading,
         SyntaxItemList<SyntaxTrivia> trailing)
+        : base(text)
     {
         _position = position;
         Kind = kind;
-        Text = text;
         Value = value;
         LeadingTrivia = new(leading, this);
         TrailingTrivia = new(trailing, this);
@@ -85,11 +82,6 @@ public sealed class SyntaxToken : SyntaxItem
     public override IEnumerable<SyntaxTrivia> Descendants()
     {
         return Children();
-    }
-
-    public override string ToString()
-    {
-        return Text;
     }
 
     public override string ToFullString()

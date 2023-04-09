@@ -142,6 +142,22 @@ public abstract class SyntaxNode : SyntaxItem
         }
     }
 
+    public IEnumerable<SyntaxTerminal> DescendantTerminals()
+    {
+        foreach (var token in DescendantTokens())
+        {
+            // Avoid enumerator allocations by explicitly accessing the trivia on tokens.
+
+            foreach (var leading in token.LeadingTrivia)
+                yield return leading;
+
+            yield return token;
+
+            foreach (var trailing in token.TrailingTrivia)
+                yield return trailing;
+        }
+    }
+
     internal abstract void Visit(SyntaxVisitor visitor);
 
     internal abstract T? Visit<T>(SyntaxVisitor<T> visitor);
