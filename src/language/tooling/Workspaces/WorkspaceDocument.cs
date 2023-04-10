@@ -1,3 +1,5 @@
+using Vezel.Celerity.Language.Tooling.Classification;
+
 namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
 public sealed class WorkspaceDocument
@@ -30,6 +32,8 @@ public sealed class WorkspaceDocument
     private object _state;
 
     private IEnumerable<Diagnostic>? _diagnostics;
+
+    private IEnumerable<ClassifiedSourceTextSpan>? _classifications;
 
     internal WorkspaceDocument(Workspace workspace, WorkspaceDocumentAttributes attributes, string path)
     {
@@ -140,5 +144,19 @@ public sealed class WorkspaceDocument
         }
 
         return _diagnostics;
+    }
+
+    [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
+    public async ValueTask<IEnumerable<ClassifiedSourceTextSpan>> GetClassificationsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_classifications == null)
+        {
+            var root = (await GetSemanticsAsync(cancellationToken).ConfigureAwait(false)).Root;
+
+            _classifications = TextClassifier.ClassifySemantically(root, root.Syntax.FullSpan);
+        }
+
+        return _classifications;
     }
 }
