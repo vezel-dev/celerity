@@ -23,7 +23,7 @@ bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>
 
     <Target Name="_AddNativeLibraries"
             DependsOnTargets="ResolveAssemblyReferences"
-            BeforeTargets="AssignTargetPaths">
+            BeforeTargets="BeforeResGen">
         <MSBuild Projects="../native/native.cproj"
                  Targets="_GetNativeLibraries">
             <Output TaskParameter="TargetOutputs"
