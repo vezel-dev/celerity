@@ -25,4 +25,4 @@ jobs:
               uses: actions/setup-dotnet@v3.0.3
             - name: Run Cake
               run: |
-                ./cake -c Release -t release -k ${{ secrets.NUGET_TOKEN }}
+                  ./cake -c Release -t release -k ${{ secrets.NUGET_TOKEN }}

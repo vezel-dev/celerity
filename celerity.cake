@@ -17,9 +17,6 @@ private readonly var _key = Argument("k", default(string));
 Task("Restore")
     .Does(() =>
     {
-        Information("Restoring {0}...", "dotnet-tools.json");
-        DotNetTool("tool restore");
-
         Information("Restoring {0}...", RootProject);
         DotNetRestore(RootProject);
     });
