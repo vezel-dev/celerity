@@ -6,8 +6,11 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("script", isDefault: true, Hidden = true, HelpText = "Run a Celerity script.")]
 internal sealed class ScriptVerb : Verb
 {
-    [Value(0, Required = true, HelpText = "Entry point file.")]
+    [Value(0, Required = true, HelpText = "Script file.")]
     public required string File { get; init; }
+
+    [Value(1, HelpText = "Script arguments.")]
+    public required IEnumerable<string> Arguments { get; init; }
 
     protected override ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {

@@ -4,16 +4,16 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("test", HelpText = "Run unit tests in Celerity code.")]
 internal sealed class TestVerb : Verb
 {
-    [Value(0, HelpText = "Project directory.")]
-    public required string? Directory { get; init; }
+    [Option('w', "workspace", HelpText = "Set workspace directory.")]
+    public required string? Workspace { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
-            throw new DriverException($"Invalid workspace path '{Directory}'.");
+        if (Workspace != null && string.IsNullOrWhiteSpace(Workspace))
+            throw new DriverException($"Invalid workspace path '{Workspace}'.");
 
-        var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
+        var workspace = await OpenWorkspaceAsync(Workspace, disableAnalysis: false, cancellationToken);
 
         // TODO: Implement this.
         _ = workspace;

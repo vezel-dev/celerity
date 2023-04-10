@@ -38,10 +38,10 @@ jobs:
               run: |
                   dotnet tool restore
                   dotnet publish -c ${{ matrix.cfg }}
-                  dotnet run --project src/driver -c ${{ matrix.cfg }} -- check src/language/library
-                  dotnet run --project src/driver -c ${{ matrix.cfg }} -- format src/language/library
+                  dotnet run --project src/driver -c ${{ matrix.cfg }} -- check -w src/language/library
+                  dotnet run --project src/driver -c ${{ matrix.cfg }} -- format -w src/language/library
             - name: Run tests
               run: |
                   dotnet test -c ${{ matrix.cfg }} --no-build
-                  dotnet run --project src/driver -c ${{ matrix.cfg }} -- test src/language/library
+                  dotnet run --project src/driver -c ${{ matrix.cfg }} -- test -w src/language/library
                   dotnet run --project src/benchmarks -c ${{ matrix.cfg }} --no-build -- -t

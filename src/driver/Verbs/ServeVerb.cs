@@ -6,8 +6,8 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("serve", HelpText = "Host the Celerity language server.")]
 internal sealed class ServeVerb : Verb
 {
-    [Value(0, HelpText = "Project directory.")]
-    public required string? Directory { get; init; }
+    [Option('w', "workspace", HelpText = "Set workspace directory.")]
+    public required string? Workspace { get; init; }
 
     [Option('l', "level", Default = LogLevel.Information, HelpText = "Set log level.")]
     public required LogLevel Level { get; init; }
@@ -15,8 +15,8 @@ internal sealed class ServeVerb : Verb
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
-            throw new DriverException($"Invalid workspace path '{Directory}'.");
+        if (Workspace != null && string.IsNullOrWhiteSpace(Workspace))
+            throw new DriverException($"Invalid workspace path '{Workspace}'.");
 
         await Error.WriteLineAsync("Running Celerity language server on standard input/output.", cancellationToken);
 

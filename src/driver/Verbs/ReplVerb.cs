@@ -4,19 +4,19 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("repl", HelpText = "Start an interactive Celerity session.")]
 internal sealed class ReplVerb : Verb
 {
-    [Value(0, HelpText = "Workspace directory.")]
-    public required string? Directory { get; init; }
+    [Option('w', "workspace", HelpText = "Set workspace directory.")]
+    public required string? Workspace { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
-            throw new DriverException($"Invalid workspace path '{Directory}'.");
+        if (Workspace != null && string.IsNullOrWhiteSpace(Workspace))
+            throw new DriverException($"Invalid workspace path '{Workspace}'.");
 
         if (!In.IsInteractive)
             throw new DriverException("The REPL can only be run in an interactive terminal.");
 
-        var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
+        var workspace = await OpenWorkspaceAsync(Workspace, disableAnalysis: false, cancellationToken);
 
         // TODO: Implement this.
         _ = workspace;

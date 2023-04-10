@@ -6,16 +6,19 @@ namespace Vezel.Celerity.Driver.Verbs;
 [Verb("check", HelpText = "Perform semantic and quality analyses on Celerity code.")]
 internal sealed class CheckVerb : Verb
 {
-    [Value(0, HelpText = "Workspace directory.")]
-    public required string? Directory { get; init; }
+    [Option('w', "workspace", HelpText = "Set workspace directory.")]
+    public required string? Workspace { get; init; }
+
+    [Option('f', "fix", HelpText = "Enable automatic fixing.")]
+    public required bool Fix { get; init; }
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
     {
-        if (Directory != null && string.IsNullOrWhiteSpace(Directory))
-            throw new DriverException($"Invalid workspace path '{Directory}'.");
+        if (Workspace != null && string.IsNullOrWhiteSpace(Workspace))
+            throw new DriverException($"Invalid workspace path '{Workspace}'.");
 
-        var workspace = await OpenWorkspaceAsync(Directory, disableAnalysis: false, cancellationToken);
+        var workspace = await OpenWorkspaceAsync(Workspace, disableAnalysis: false, cancellationToken);
         var writer = new DiagnosticWriter(
             new DiagnosticWriterConfiguration()
                 .WithWidthMeasurer(static rune => MonospaceWidth.Measure(rune) ?? 0)
