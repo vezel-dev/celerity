@@ -97,7 +97,7 @@ internal sealed class LanguageAnalyzer
                 if (!sym.Bindings.Any(static node => node is TestDeclarationSemantics))
                     continue;
 
-                var name = ident.Syntax.IdentifierToken;
+                var name = ident.Syntax.NameToken;
 
                 Error(
                     name.Span,
@@ -1025,7 +1025,7 @@ internal sealed class LanguageAnalyzer
         {
             var sym = default(Symbol);
 
-            if (node.IdentifierToken is { IsMissing: false } ident)
+            if (node.NameToken is { IsMissing: false } ident)
             {
                 sym = _scope.ResolveSymbol(ident.Text);
 
@@ -1078,7 +1078,7 @@ internal sealed class LanguageAnalyzer
                         Error(
                             node.LeftOperand.Span,
                             StandardDiagnosticCodes.ImmutableAssignmentTarget,
-                            $"Assignment to immutable symbol '{ident.Syntax.IdentifierToken.Text}'",
+                            $"Assignment to immutable symbol '{ident.Syntax.NameToken.Text}'",
                             sym.GetSpans().Select(static loc => (loc, "Symbol defined here")));
 
                     break;

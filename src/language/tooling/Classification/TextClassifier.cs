@@ -326,7 +326,7 @@ public static class TextClassifier
 
                     break;
                 case IdentifierExpressionSyntax identExpr when identifiers:
-                    Classify(identExpr.IdentifierToken, SyntaxClassification.UnresolvedName);
+                    Classify(identExpr.NameToken, SyntaxClassification.UnresolvedName);
 
                     break;
                 case FieldExpressionSyntax fieldExpr:
@@ -374,7 +374,7 @@ public static class TextClassifier
     {
         foreach (var child in node.DescendantsAndSelf().OfType<IdentifierExpressionSemantics>())
         {
-            var ident = child.Syntax.IdentifierToken;
+            var ident = child.Syntax.NameToken;
 
             if (ident.IsMissing || !span.Overlaps(ident.Span))
                 continue;

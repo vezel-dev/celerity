@@ -695,7 +695,7 @@
     </Type>
 
     <Type Name="IdentifierExpression" Base="Expression">
-        <Token Name="Identifier" />
+        <Token Name="Name" />
     </Type>
 
     <Type Name="AssignmentExpression" Base="Expression">
