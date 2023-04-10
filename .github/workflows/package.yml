@@ -27,6 +27,8 @@ jobs:
               run: |
                   dotnet tool restore
                   dotnet build
+                  dotnet run --project src/driver -c Release --no-build -- check -w src/language/library
+                  dotnet run --project src/driver -c Release --no-build -- format -w src/language/library
             - name: Upload GitHub packages
               run: |
                   dotnet gpr push pkg/feed/*.nupkg -k ${{ secrets.GITHUB_TOKEN }}
