@@ -23,12 +23,6 @@ jobs:
                   submodules: recursive
             - name: Set up .NET
               uses: actions/setup-dotnet@v3.0.3
-            - name: Build project
+            - name: Run Cake
               run: |
-                  dotnet tool restore
-                  dotnet build -c Release
-                  dotnet run --project src/driver -c Release --no-build -- check -w src/language/library
-                  dotnet run --project src/driver -c Release --no-build -- format -w src/language/library
-            - name: Upload NuGet packages
-              run: |
-                  dotnet nuget push pkg/feed/*.nupkg -k ${{ secrets.NUGET_TOKEN }} -s https://api.nuget.org/v3/index.json
+                ./cake -c Release -t release -k ${{ secrets.NUGET_TOKEN }}

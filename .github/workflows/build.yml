@@ -34,14 +34,6 @@ jobs:
                   submodules: recursive
             - name: Set up .NET
               uses: actions/setup-dotnet@v3.0.3
-            - name: Build project
+            - name: Run Cake
               run: |
-                  dotnet tool restore
-                  dotnet publish -c ${{ matrix.cfg }}
-                  dotnet run --project src/driver -c ${{ matrix.cfg }} --no-build -- check -w src/language/library
-                  dotnet run --project src/driver -c ${{ matrix.cfg }} --no-build -- format -w src/language/library
-            - name: Run tests
-              run: |
-                  dotnet test -c ${{ matrix.cfg }} --no-build
-                  dotnet run --project src/driver -c ${{ matrix.cfg }} --no-build -- test -w src/language/library
-                  dotnet run --project src/benchmarks -c ${{ matrix.cfg }} --no-build -- -t
+                  ./cake -c ${{ matrix.cfg }}
