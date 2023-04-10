@@ -35,7 +35,6 @@
         <When Condition="'$(IsPackable)' == 'true'">
             <PropertyGroup>
                 <ApplicationIcon Condition="'$(OutputType)' != 'Library'">$(MSBuildThisFileDirectory)celerity.ico</ApplicationIcon>
-                <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
                 <PackageIcon>celerity.png</PackageIcon>
                 <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
             </PropertyGroup>
