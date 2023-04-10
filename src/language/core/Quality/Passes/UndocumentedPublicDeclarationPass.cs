@@ -26,7 +26,8 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
                     $"{kind}{(name != null ? $" '{name}'" : string.Empty)} should be decorated with a 'doc' attribute");
         }
 
-        CheckDocumentationAttribute("Module", syntax.ModKeywordToken, syntax.Attributes, null);
+        if (syntax.ModKeywordToken is { IsMissing: false } mod)
+            CheckDocumentationAttribute("Module", mod, syntax.Attributes, null);
 
         // If the module is explicitly undocumented, do not require declarations within it to be decorated.
         if (module.Attributes.Any(static attr => attr is { Name: "doc", Value: false }))
@@ -43,7 +44,7 @@ public sealed class UndocumentedPublicDeclarationPass : LintPass
                 _ => default((string, SyntaxToken?, SyntaxToken)?),
             };
 
-            if (tup is (var kind, { }, var name))
+            if (tup is (var kind, { }, { IsMissing: false } name))
                 CheckDocumentationAttribute(kind, name, decl.Attributes, name.Text);
         }
     }
