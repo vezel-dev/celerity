@@ -8,11 +8,16 @@ private const string LibraryDirectory = "src/language/library";
 
 private const string PackagesGlob = "pkg/feed/*.nupkg";
 
-private readonly var _target = Argument("t", "Test");
+private readonly var _target = Argument("t", "Default");
 
 private readonly var _configuration = Argument("c", "Debug");
 
 private readonly var _key = Argument("k", default(string));
+
+Task("Default")
+    .IsDependentOn("Test")
+    .IsDependentOn("Publish")
+    .IsDependentOn("Pack");
 
 Task("Restore")
     .Does(() =>
@@ -22,10 +27,28 @@ Task("Restore")
     });
 
 Task("Build")
-    .IsDependentOn("Publish"); // TODO: https://github.com/microsoft/MSBuildSdks/issues/435
+    .IsDependentOn("Restore")
+    .Does(() =>
+    {
+        Information("Building {0}...", RootProject);
+        DotNetBuild(
+            RootProject,
+            new()
+            {
+                MSBuildSettings = new()
+                {
+                    ConsoleLoggerSettings = new()
+                    {
+                        NoSummary = true,
+                    },
+                },
+                NoLogo = true,
+                Configuration = _configuration,
+            });
+    });
 
 Task("Publish")
-    .IsDependentOn("Restore")
+    .IsDependentOn("Build")
     .Does(() =>
     {
         Information("Publishing {0}...", RootProject);
@@ -35,7 +58,7 @@ Task("Publish")
             {
                 NoLogo = true,
                 Configuration = _configuration,
-                NoRestore = true,
+                NoBuild = true,
             });
 
         Information("Checking {0}", LibraryDirectory);
@@ -61,6 +84,21 @@ Task("Publish")
             });
     });
 
+Task("Pack")
+    .IsDependentOn("Build")
+    .Does(() =>
+    {
+        Information("Packing {0}...", RootProject);
+        DotNetPack(
+            RootProject,
+            new()
+            {
+                NoLogo = true,
+                Configuration = _configuration,
+                NoBuild = true,
+            });
+    });
+
 Task("Clean")
     .Does(() =>
     {
@@ -75,7 +113,7 @@ Task("Clean")
     });
 
 Task("Test")
-    .IsDependentOn("Publish")
+    .IsDependentOn("Build")
     .Does(() =>
     {
         Information("Testing {0}...", RootProject);
@@ -123,6 +161,7 @@ Task("Test")
 Task("Package")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
     .IsDependentOn("Publish")
+    .IsDependentOn("Pack")
     .Does(() =>
     {
         Information("Pushing {0} to GitHub...", PackagesGlob);
@@ -137,6 +176,7 @@ Task("Package")
 Task("Release")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
     .IsDependentOn("Publish")
+    .IsDependentOn("Pack")
     .Does(() =>
     {
         Information("Pushing {0} to NuGet...", PackagesGlob);
