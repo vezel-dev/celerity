@@ -20,6 +20,7 @@
         <LangVersion>latest</LangVersion>
         <MicrosoftExtensions>true</MicrosoftExtensions>
         <Nullable>enable</Nullable>
+        <PackRelease>false</PackRelease>
         <PackageDescription>$(Description)
 
 Celerity is expression-oriented, multi-paradigm, and features optional type
@@ -30,6 +31,7 @@ lightweight agents, and non-suspending garbage collection.</PackageDescription>
         <PackageOutputPath>$(MSBuildThisFileDirectory)pkg/feed/</PackageOutputPath>
         <PackageProjectUrl>https://docs.vezel.dev/celerity</PackageProjectUrl>
         <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
+        <PublishRelease>false</PublishRelease>
         <RepositoryUrl>https://github.com/vezel-dev/celerity.git</RepositoryUrl>
         <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
         <SymbolVisibility>Hidden</SymbolVisibility>
