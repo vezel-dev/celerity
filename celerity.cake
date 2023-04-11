@@ -1,3 +1,6 @@
+#addin nuget:?package=Cake.Npm&version=2.0.0
+#addin nuget:?package=Cake.Npx&version=1.7.0
+
 private const string RootProject = "celerity.proj";
 
 private const string BenchmarksDirectory = "src/benchmarks";
@@ -5,6 +8,8 @@ private const string BenchmarksDirectory = "src/benchmarks";
 private const string DriverProject = "src/driver/driver.csproj";
 
 private const string LibraryDirectory = "src/language/library";
+
+private const string DocumentationGlob = "doc/**/*.md";
 
 private readonly var _target = Argument("t", "Default");
 
@@ -23,6 +28,9 @@ Task("Restore")
     {
         Information("Restoring {0}...", RootProject);
         DotNetRestore(RootProject);
+
+        Information("Restoring {0}...", "package.json");
+        NpmInstall();
     });
 
 Task("Build")
@@ -67,6 +75,12 @@ Task("Build")
                 Configuration = _configuration,
                 NoBuild = true,
             });
+
+        Information("Checking {0}...", DocumentationGlob);
+        Npx(
+            "markdownlint-cli2",
+            new ProcessArgumentBuilder()
+                .AppendQuoted(DocumentationGlob));
     });
 
 Task("Test")
