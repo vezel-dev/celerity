@@ -1,4 +1,4 @@
-﻿Error[E0014]: Unexpected tokens in module
+﻿Error[E0013]: Unexpected tokens in module
 ---> declaration_recovery.cel (2,5)-(5,1)
  1 | mod {
  2 |     42;
@@ -11,7 +11,7 @@
  6 |     fn main() {
  7 |         1;
  8 |     }
-Error[E0014]: Unexpected tokens in module
+Error[E0013]: Unexpected tokens in module
 ---> declaration_recovery.cel (10,5)-(11,1)
  7 |         1;
  8 |     }

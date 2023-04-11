@@ -1,4 +1,4 @@
-﻿Error[E0013]: Expected integer literal or real literal
+﻿Error[E0012]: Expected integer literal or real literal
 --> missing_tokens.cel (2,15)-(2,16)
 1 | mod {
 2 |     type x = -;
@@ -6,7 +6,7 @@
 3 | 
 4 |     @foo
 5 |     fn () { 1; }
-Error[E0013]: Expected literal
+Error[E0012]: Expected literal
 --> missing_tokens.cel (4,9)-(5,1)
 1 | mod {
 2 |     type x = -;
@@ -15,7 +15,7 @@ Error[E0013]: Expected literal
   :         ^
 5 |     fn () { 1; }
 6 | }
-Error[E0013]: Expected lowercase identifier
+Error[E0012]: Expected lowercase identifier
 --> missing_tokens.cel (5,8)-(5,9)
 2 |     type x = -;
 3 | 

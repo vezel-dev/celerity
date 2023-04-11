@@ -1,4 +1,4 @@
-﻿Error[E0038]: No enclosing function for 'ret' expression
+﻿Error[E0037]: No enclosing function for 'ret' expression
 ---> defer_scope_walk.cel (5,15)-(5,21)
  2 |     err fn main() {
  3 |         defer Foo.bar()?;
@@ -8,7 +8,7 @@
  6 | 
  7 |         defer raise err MyError {};
  8 | 
-Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> defer_scope_walk.cel (14,19)-(14,24)
 11 |         };
 12 | 
@@ -18,7 +18,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 15 | 
 16 |             defer next;
 17 |         };
-Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 ---> defer_scope_walk.cel (16,19)-(16,23)
 13 |         while true {
 14 |             defer break;

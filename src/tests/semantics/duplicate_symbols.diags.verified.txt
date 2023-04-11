@@ -1,4 +1,4 @@
-﻿Error[E0022]: Multiple 'use' declarations for 'Aaa' in module
+﻿Error[E0021]: Multiple 'use' declarations for 'Aaa' in module
 ---> duplicate_symbols.cel (2,9)-(2,12)
  1 | mod {
  2 |     use Aaa = Bbb;
@@ -15,7 +15,7 @@ Note: Also declared here
  4 | 
  5 |     fn foo() { 1; }
  6 | 
-Error[E0023]: Multiple declarations of 'foo' in the same module
+Error[E0022]: Multiple declarations of 'foo' in the same module
 ---> duplicate_symbols.cel (5,8)-(5,11)
  2 |     use Aaa = Bbb;
  3 |     use Aaa = Bbb;
@@ -45,7 +45,7 @@ Note: Also declared here
 10 | 
 11 |     fn bar(aaa, aaa) {
 12 |         fn(bbb, bbb) -> 3;
-Error[E0024]: Multiple bindings of parameter 'aaa' in the same function
+Error[E0023]: Multiple bindings of parameter 'aaa' in the same function
 ---> duplicate_symbols.cel (11,12)-(11,15)
  8 | 
  9 |     test foo { assert true; }
@@ -65,7 +65,7 @@ Note: Also bound here
 12 |         fn(bbb, bbb) -> 3;
 13 |     }
 14 | 
-Error[E0024]: Multiple bindings of parameter 'bbb' in the same function
+Error[E0023]: Multiple bindings of parameter 'bbb' in the same function
 ---> duplicate_symbols.cel (12,12)-(12,15)
  9 |     test foo { assert true; }
 10 | 
@@ -85,7 +85,7 @@ Note: Also bound here
 13 |     }
 14 | 
 15 |     fn baz() {
-Error[E0025]: Multiple bindings of variable 'x' in the same pattern context
+Error[E0024]: Multiple bindings of variable 'x' in the same pattern context
 ---> duplicate_symbols.cel (16,14)-(16,15)
 13 |     }
 14 | 
@@ -105,7 +105,7 @@ Note: Also bound here
 17 |         let (_x, _x) = (x, x);
 18 |     }
 19 | }
-Error[E0025]: Multiple bindings of variable '_x' in the same pattern context
+Error[E0024]: Multiple bindings of variable '_x' in the same pattern context
 ---> duplicate_symbols.cel (17,14)-(17,16)
 14 | 
 15 |     fn baz() {

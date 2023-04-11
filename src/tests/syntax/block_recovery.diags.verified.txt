@@ -1,4 +1,4 @@
-﻿Error[E0014]: Unexpected token in block
+﻿Error[E0013]: Unexpected token in block
 ---> block_recovery.cel (3,9)-(3,14)
  1 | mod {
  2 |     fn main() {
@@ -7,7 +7,7 @@
  4 | 
  5 |         42;
  6 | 
-Error[E0021]: Expected pattern
+Error[E0020]: Expected pattern
 ---> block_recovery.cel (3,17)-(3,18)
  1 | mod {
  2 |     fn main() {
@@ -16,7 +16,7 @@ Error[E0021]: Expected pattern
  4 | 
  5 |         42;
  6 | 
-Error[E0013]: Expected '='
+Error[E0012]: Expected '='
 ---> block_recovery.cel (3,17)-(3,18)
  1 | mod {
  2 |     fn main() {
@@ -25,7 +25,7 @@ Error[E0013]: Expected '='
  4 | 
  5 |         42;
  6 | 
-Error[E0019]: Expected expression
+Error[E0018]: Expected expression
 ---> block_recovery.cel (3,17)-(3,18)
  1 | mod {
  2 |     fn main() {
@@ -34,7 +34,7 @@ Error[E0019]: Expected expression
  4 | 
  5 |         42;
  6 | 
-Error[E0014]: Unexpected tokens in block
+Error[E0013]: Unexpected tokens in block
 ---> block_recovery.cel (7,9)-(9,1)
  4 | 
  5 |         42;
@@ -47,7 +47,7 @@ Error[E0014]: Unexpected tokens in block
 10 |         assert
 11 |         ;
 12 |     }
-Error[E0019]: Expected expression
+Error[E0018]: Expected expression
 ---> block_recovery.cel (10,15)-(11,1)
  7 |         mod  const
  8 |           type

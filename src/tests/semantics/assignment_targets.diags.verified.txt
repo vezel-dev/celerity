@@ -1,4 +1,4 @@
-﻿Error[E0033]: Assignment to immutable symbol 'arg'
+﻿Error[E0032]: Assignment to immutable symbol 'arg'
 ---> assignment_targets.cel (3,9)-(3,12)
  1 | mod {
  2 |     fn assign(arg) {
@@ -15,7 +15,7 @@ Note: Symbol defined here
  3 |         arg = 0;
  4 | 
  5 |         let x = 1;
-Error[E0033]: Assignment to immutable symbol 'x'
+Error[E0032]: Assignment to immutable symbol 'x'
 ---> assignment_targets.cel (7,9)-(7,10)
  4 | 
  5 |         let x = 1;
@@ -35,7 +35,7 @@ Note: Symbol defined here
  6 | 
  7 |         x = 2;
  8 | 
-Error[E0032]: Assignment target must be an identifier, field, or index expression
+Error[E0031]: Assignment target must be an identifier, field, or index expression
 ---> assignment_targets.cel (16,9)-(16,18)
 13 |         x.field = 5;
 14 |         y.field = 6;

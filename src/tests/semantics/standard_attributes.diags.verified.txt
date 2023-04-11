@@ -1,4 +1,4 @@
-﻿Error[E0036]: Value for standard attribute 'lint' must be a string literal of the form '<name>:<severity>'
+﻿Error[E0035]: Value for standard attribute 'lint' must be a string literal of the form '<name>:<severity>'
 ---> standard_attributes.cel (2,7)-(2,16)
  1 | @deprecated "broken"
  2 | @lint "foo:bar"
@@ -6,7 +6,7 @@
  3 | @lint "foo:none"
  4 | mod {
  5 |     @doc "asdf"
-Error[E0035]: Standard attribute 'doc' is not valid on this item
+Error[E0034]: Standard attribute 'doc' is not valid on this item
 ---> standard_attributes.cel (5,5)-(5,16)
  2 | @lint "foo:bar"
  3 | @lint "foo:none"
@@ -16,7 +16,7 @@ Error[E0035]: Standard attribute 'doc' is not valid on this item
  6 |     use X = Y;
  7 | 
  8 |     @doc 42
-Error[E0036]: Value for standard attribute 'doc' must be a string literal (documentation text) or 'false' literal
+Error[E0035]: Value for standard attribute 'doc' must be a string literal (documentation text) or 'false' literal
 ---> standard_attributes.cel (8,10)-(8,12)
  5 |     @doc "asdf"
  6 |     use X = Y;
@@ -26,7 +26,7 @@ Error[E0036]: Value for standard attribute 'doc' must be a string literal (docum
  9 |     @deprecated "very broken"
 10 |     fn a() { 1; }
 11 | 
-Error[E0037]: Standard attribute 'doc' specified multiple times
+Error[E0036]: Standard attribute 'doc' specified multiple times
 ---> standard_attributes.cel (15,5)-(15,16)
 12 |     @doc false
 13 |     fn b() { 2; }
@@ -46,7 +46,7 @@ Note: Also specified here
 17 |     fn c() { 3; }
 18 | 
 19 |     @ignore "bad test"
-Error[E0036]: Value for standard attribute 'flaky' must be a string literal (reason)
+Error[E0035]: Value for standard attribute 'flaky' must be a string literal (reason)
 ---> standard_attributes.cel (20,12)-(20,16)
 17 |     fn c() { 3; }
 18 | 
@@ -56,7 +56,7 @@ Error[E0036]: Value for standard attribute 'flaky' must be a string literal (rea
 21 |     @deprecated false
 22 |     test stuff {
 23 |         assert false;
-Error[E0035]: Standard attribute 'deprecated' is not valid on this item
+Error[E0034]: Standard attribute 'deprecated' is not valid on this item
 ---> standard_attributes.cel (21,5)-(21,22)
 18 | 
 19 |     @ignore "bad test"
@@ -66,7 +66,7 @@ Error[E0035]: Standard attribute 'deprecated' is not valid on this item
 22 |     test stuff {
 23 |         assert false;
 24 |     }
-Error[E0036]: Value for standard attribute 'deprecated' must be a string literal (reason)
+Error[E0035]: Value for standard attribute 'deprecated' must be a string literal (reason)
 ---> standard_attributes.cel (21,17)-(21,22)
 18 | 
 19 |     @ignore "bad test"

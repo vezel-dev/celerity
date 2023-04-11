@@ -1,4 +1,4 @@
-﻿Error[E0026]: Record field 'x' is assigned multiple times
+﻿Error[E0025]: Record field 'x' is assigned multiple times
 ---> duplicate_fields.cel (4,13)-(4,14)
  1 | mod {
  2 |     fn foo() {
@@ -18,7 +18,7 @@ Note: Also assigned here
  6 |         };
  7 |     }
  8 | 
-Error[E0026]: Error field 'y' is assigned multiple times
+Error[E0025]: Error field 'y' is assigned multiple times
 ---> duplicate_fields.cel (11,13)-(11,14)
  8 | 
  9 |     fn bar() {
@@ -38,7 +38,7 @@ Note: Also assigned here
 13 |         };
 14 |     }
 15 | 
-Error[E0026]: Record field 'x' is matched multiple times
+Error[E0025]: Record field 'x' is matched multiple times
 ---> duplicate_fields.cel (18,19)-(18,20)
 15 | 
 16 |     fn baz(value) {
@@ -58,7 +58,7 @@ Note: Also matched here
 19 |             err { y : _c, y : _d } -> 6,
 20 |         };
 21 |     }
-Error[E0026]: Error field 'y' is matched multiple times
+Error[E0025]: Error field 'y' is matched multiple times
 ---> duplicate_fields.cel (19,19)-(19,20)
 16 |     fn baz(value) {
 17 |         match value {

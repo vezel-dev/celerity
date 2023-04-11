@@ -6,8 +6,6 @@ public static class StandardDiagnosticCodes
 {
     // Codes are stable. New codes must be added at the end.
 
-    public static DiagnosticCode InternalError { get; } = CreateCode();
-
     public static DiagnosticCode UnrecognizedCharacter { get; } = CreateCode();
 
     public static DiagnosticCode UnsupportedWhiteSpaceCharacter { get; } = CreateCode();

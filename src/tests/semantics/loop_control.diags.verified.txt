@@ -1,4 +1,4 @@
-﻿Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+﻿Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> loop_control.cel (3,9)-(3,14)
  1 | mod {
  2 |     fn loops() {
@@ -7,7 +7,7 @@
  4 | 
  5 |         next;
  6 | 
-Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 ---> loop_control.cel (5,9)-(5,13)
  2 |     fn loops() {
  3 |         break;
@@ -17,7 +17,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
  6 | 
  7 |         while true {
  8 |             break;
-Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> loop_control.cel (15,15)-(15,20)
 12 |             next;
 13 |         };
@@ -27,7 +27,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 16 |             2;
 17 |         };
 18 | 
-Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 ---> loop_control.cel (19,15)-(19,19)
 16 |             2;
 17 |         };
@@ -37,7 +37,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
 20 |             3;
 21 |         };
 22 | 
-Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> loop_control.cel (31,18)-(31,23)
 28 |             next;
 29 |         };
@@ -47,7 +47,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 32 |             5;
 33 |         };
 34 | 
-Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 ---> loop_control.cel (35,18)-(35,22)
 32 |             5;
 33 |         };
@@ -57,7 +57,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
 36 |             6;
 37 |         };
 38 | 
-Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> loop_control.cel (41,17)-(41,22)
 38 | 
 39 |         while true {
@@ -67,7 +67,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 42 | 
 43 |                 break as 7;
 44 | 
-Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> loop_control.cel (43,17)-(43,27)
 40 |             fn() -> {
 41 |                 break;
@@ -77,7 +77,7 @@ Error[E0029]: No enclosing 'while' or 'for' expression for 'break' expression
 44 | 
 45 |                 next;
 46 |             };
-Error[E0029]: No enclosing 'while' or 'for' expression for 'next' expression
+Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 ---> loop_control.cel (45,17)-(45,21)
 42 | 
 43 |                 break as 7;

@@ -1,4 +1,4 @@
-﻿Error[E0038]: No enclosing function for 'ret' expression
+﻿Error[E0037]: No enclosing function for 'ret' expression
 ---> bad_return.cel (2,15)-(2,20)
  1 | mod {
  2 |     const a = ret 1;

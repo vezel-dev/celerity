@@ -1,4 +1,4 @@
-﻿Error[E0018]: Expected type
+﻿Error[E0017]: Expected type
 ---> missing_items.cel (2,15)-(2,16)
  1 | mod {
  2 |     type tx = ;
@@ -6,7 +6,7 @@
  3 |     type ty =
  4 |         ;
  5 | 
-Error[E0018]: Expected type
+Error[E0017]: Expected type
 ---> missing_items.cel (3,14)-(4,1)
  1 | mod {
  2 |     type tx = ;
@@ -16,7 +16,7 @@ Error[E0018]: Expected type
  5 | 
  6 |     const x = ;
  7 |     const y =
-Error[E0019]: Expected expression
+Error[E0018]: Expected expression
 ---> missing_items.cel (6,15)-(6,16)
  3 |     type ty =
  4 |         ;
@@ -26,7 +26,7 @@ Error[E0019]: Expected expression
  7 |     const y =
  8 |         ;
  9 | 
-Error[E0019]: Expected expression
+Error[E0018]: Expected expression
 ---> missing_items.cel (7,14)-(8,1)
  4 |         ;
  5 | 
@@ -37,7 +37,7 @@ Error[E0019]: Expected expression
  9 | 
 10 |     fn foo() { }
 11 |     fn bar() {
-Error[E0017]: Expected statement
+Error[E0016]: Expected statement
 ---> missing_items.cel (10,16)-(10,17)
  7 |     const y =
  8 |         ;
@@ -47,7 +47,7 @@ Error[E0017]: Expected statement
 11 |     fn bar() {
 12 |     }
 13 | 
-Error[E0017]: Expected statement
+Error[E0016]: Expected statement
 ---> missing_items.cel (11,15)-(12,1)
  8 |         ;
  9 | 
@@ -58,7 +58,7 @@ Error[E0017]: Expected statement
 13 | 
 14 |     fn baz() {
 15 |         let = 1;
-Error[E0021]: Expected pattern
+Error[E0020]: Expected pattern
 ---> missing_items.cel (15,13)-(15,14)
 12 |     }
 13 | 
@@ -68,7 +68,7 @@ Error[E0021]: Expected pattern
 16 |         let
 17 |             = 2;
 18 | 
-Error[E0021]: Expected pattern
+Error[E0020]: Expected pattern
 ---> missing_items.cel (16,12)-(17,1)
 13 | 
 14 |     fn baz() {
@@ -79,7 +79,7 @@ Error[E0021]: Expected pattern
 18 | 
 19 |         let _ as = 3;
 20 |         let _ as
-Error[E0013]: Expected lowercase identifier
+Error[E0012]: Expected lowercase identifier
 ---> missing_items.cel (19,18)-(19,19)
 16 |         let
 17 |             = 2;
@@ -89,7 +89,7 @@ Error[E0013]: Expected lowercase identifier
 20 |         let _ as
 21 |             = 4;
 22 |     }
-Error[E0013]: Expected lowercase identifier
+Error[E0012]: Expected lowercase identifier
 ---> missing_items.cel (20,17)-(21,1)
 17 |             = 2;
 18 | 

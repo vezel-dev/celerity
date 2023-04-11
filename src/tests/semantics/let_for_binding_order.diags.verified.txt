@@ -1,4 +1,4 @@
-﻿Error[E0030]: Unknown symbol name 'x'
+﻿Error[E0029]: Unknown symbol name 'x'
 --> let_for_binding_order.cel (3,17)-(3,18)
 1 | mod {
 2 |     fn foo() {
@@ -7,7 +7,7 @@
 4 | 
 5 |         for y in y {
 6 |             y;
-Error[E0030]: Unknown symbol name 'y'
+Error[E0029]: Unknown symbol name 'y'
 --> let_for_binding_order.cel (5,18)-(5,19)
 2 |     fn foo() {
 3 |         let x = x;

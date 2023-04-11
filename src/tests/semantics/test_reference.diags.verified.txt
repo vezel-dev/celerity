@@ -1,4 +1,4 @@
-﻿Error[E0031]: Reference to test declaration 'foo' is illegal
+﻿Error[E0030]: Reference to test declaration 'foo' is illegal
 --> test_reference.cel (4,16)-(4,19)
 1 | mod {
 2 |     test foo { assert true; }

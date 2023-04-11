@@ -1,4 +1,4 @@
-﻿Error[E0039]: Incomplete verbatim string literal
+﻿Error[E0038]: Incomplete verbatim string literal
 ---> raw_strings.cel (3,17)-(3,24)
  1 | mod {
  2 |     fn raw_strings() {
@@ -7,7 +7,7 @@
  4 |         let b = """asdf""";
  5 |         let c = """
  6 |         asdf
-Error[E0013]: Expected ';'
+Error[E0012]: Expected ';'
 ---> raw_strings.cel (3,24)-(4,1)
  1 | mod {
  2 |     fn raw_strings() {
@@ -17,7 +17,7 @@ Error[E0013]: Expected ';'
  5 |         let c = """
  6 |         asdf
  7 |         ghjk
-Error[E0040]: Incomplete block string literal
+Error[E0039]: Incomplete block string literal
 ---> raw_strings.cel (9,17)-(12,2)
  6 |         asdf
  7 |         ghjk
@@ -30,21 +30,21 @@ Error[E0040]: Incomplete block string literal
    : ^^^^^
 12 | }
    : ^
-Error[E0013]: Expected ';'
+Error[E0012]: Expected ';'
 ---> raw_strings.cel (12,2)-(12,2)
  9 |         let d = """
 10 |         asdf
 11 |     }
 12 | }
    :  ^
-Error[E0013]: Expected '}'
+Error[E0012]: Expected '}'
 ---> raw_strings.cel (12,2)-(12,2)
  9 |         let d = """
 10 |         asdf
 11 |     }
 12 | }
    :  ^
-Error[E0013]: Expected '}'
+Error[E0012]: Expected '}'
 ---> raw_strings.cel (12,2)-(12,2)
  9 |         let d = """
 10 |         asdf
