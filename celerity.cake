@@ -18,7 +18,6 @@ private readonly var _key = Argument("k", default(string));
 
 Task("Default")
     .IsDependentOn("Test")
-    .IsDependentOn("Publish")
     .IsDependentOn("Pack");
 
 Task("Restore")
@@ -148,7 +147,7 @@ Task("Publish")
     });
 
 Task("Pack")
-    .IsDependentOn("Build")
+    .IsDependentOn("Publish")
     .Does(() =>
     {
         Information("Packing {0}...", RootProject);
@@ -177,7 +176,6 @@ Task("Clean")
 
 Task("Package")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
-    .IsDependentOn("Publish")
     .IsDependentOn("Pack")
     .Does(() =>
     {
@@ -192,7 +190,6 @@ Task("Package")
 
 Task("Release")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
-    .IsDependentOn("Publish")
     .IsDependentOn("Pack")
     .Does(() =>
     {
