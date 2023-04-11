@@ -45,6 +45,7 @@ Task("Build")
                 },
                 NoLogo = true,
                 Configuration = _configuration,
+                NoRestore = true,
             });
     });
 
