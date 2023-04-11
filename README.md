@@ -7,8 +7,8 @@
 
 <p align="center">
     <strong>
-        A highly concurrent and expressive programming language suitable for
-        embedding.
+        An expressive programming language for writing concurrent and
+        maintainable software.
     </strong>
 </p>
 
@@ -31,8 +31,8 @@ productivity and scalability while being easily embeddable in host applications.
 
 **Celerity** is expression-oriented, multi-paradigm, and features optional type
 checking. Some notable features are pattern matching, first-class functions with
-closures, opt-in mutability, explicit error propagation, concurrency based on
-lightweight agents, and non-suspending garbage collection.
+closures, opt-in mutability, explicit yet terse error propagation, concurrency
+based on lightweight agents, and non-suspending garbage collection.
 
 ## Usage
 
