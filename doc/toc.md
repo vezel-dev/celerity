@@ -25,6 +25,7 @@
     * [Literals](language/lexical-structure/literals.md)
 * [Syntactic Structure](language/syntactic-structure.md)
     * [Attributes](language/syntactic-structure/attributes.md)
+    * [Module Paths](language/syntactic-structure/module-paths.md)
     * [Declarations](language/syntactic-structure/declarations.md)
         * [Use Declaration](language/syntactic-structure/declarations/use.md)
         * [Type Declaration](language/syntactic-structure/declarations/type.md)
@@ -110,3 +111,9 @@
         * [Array Pattern](language/syntactic-structure/patterns/array.md)
         * [Map Pattern](language/syntactic-structure/patterns/map.md)
         * [Set Pattern](language/syntactic-structure/patterns/set.md)
+
+## Tooling
+
+* [CLI Driver](tooling/cli-driver.md)
+* [Project Configuration](tooling/project-configuration.md)
+* [Editor Extensions](tooling/editor-extensions.md)
