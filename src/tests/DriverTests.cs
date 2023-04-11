@@ -25,15 +25,14 @@ public sealed partial class DriverTests : CelerityTests
         }
     }
 
+    [SuppressMessage("", "CA1308")]
     private static readonly string _path =
         Path.Join(
             Path.GetDirectoryName(typeof(ThisAssembly).Assembly.Location)!,
             "..",
             "..",
-            "..",
             "driver",
-            "bin",
-            ThisAssembly.AssemblyConfiguration,
+            ThisAssembly.AssemblyConfiguration.ToLowerInvariant(),
             $"celerity{(OperatingSystem.IsWindows() ? ".exe" : string.Empty)}");
 
     private static async Task TestAsync(

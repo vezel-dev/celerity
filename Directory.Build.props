@@ -10,7 +10,6 @@
     <PropertyGroup>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <AnalysisLevel>latest-all</AnalysisLevel>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <ImplicitUsings>true</ImplicitUsings>
@@ -28,7 +27,6 @@ checking. Some notable features are pattern matching, first-class functions with
 closures, opt-in mutability, explicit yet terse error propagation, concurrency
 based on lightweight agents, and non-suspending garbage collection.</PackageDescription>
         <PackageLicenseExpression>0BSD</PackageLicenseExpression>
-        <PackageOutputPath>$(MSBuildThisFileDirectory)pkg/feed/</PackageOutputPath>
         <PackageProjectUrl>https://docs.vezel.dev/celerity</PackageProjectUrl>
         <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
         <PublishRelease>false</PublishRelease>
@@ -37,5 +35,11 @@ based on lightweight agents, and non-suspending garbage collection.</PackageDesc
         <SymbolVisibility>Hidden</SymbolVisibility>
         <TargetFramework>net8.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <UseArtifactsOutput>true</UseArtifactsOutput>
+    </PropertyGroup>
+
+    <!-- TODO: https://github.com/dotnet/designs/pull/281#issuecomment-1503979448 -->
+    <PropertyGroup>
+        <ArtifactsProjectName>$([MSBuild]::MakeRelative('$(MSBuildThisFileDirectory)', '$(MSBuildProjectDirectory)'))</ArtifactsProjectName>
     </PropertyGroup>
 </Project>

@@ -6,8 +6,6 @@ private const string DriverProject = "src/driver/driver.csproj";
 
 private const string LibraryDirectory = "src/language/library";
 
-private const string PackagesGlob = "pkg/feed/*.nupkg";
-
 private readonly var _target = Argument("t", "Default");
 
 private readonly var _configuration = Argument("c", "Debug");
@@ -177,26 +175,32 @@ Task("Clean")
 
 Task("Package")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
+    .WithCriteria(_configuration == "Debug")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        Information("Pushing {0} to GitHub...", PackagesGlob);
+        const string Glob = ".artifacts/package/debug/*.nupkg";
+
+        Information("Pushing {0} to GitHub...", Glob);
         DotNetTool(
             null,
             "gpr push",
             new ProcessArgumentBuilder()
-                .AppendQuoted(PackagesGlob)
+                .AppendQuoted(Glob)
                 .AppendSwitchQuotedSecret("-k", _key));
     });
 
 Task("Release")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
+    .WithCriteria(_configuration == "Release")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        Information("Pushing {0} to NuGet...", PackagesGlob);
+        const string Glob = ".artifacts/package/release/*.nupkg";
+
+        Information("Pushing {0} to NuGet...", Glob);
         DotNetNuGetPush(
-            PackagesGlob,
+            Glob,
             new()
             {
                 Source = "https://api.nuget.org/v3/index.json",

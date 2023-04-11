@@ -1,8 +1,5 @@
-.clangd
-.vs
+/.artifacts
 *.received.*
 *.user
-/pkg/cache/*/*
-/pkg/feed/*.nupkg
-bin
-obj
+.clangd
+.vs
