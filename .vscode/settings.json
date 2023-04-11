@@ -4,8 +4,6 @@
     "**/*.received.*": true,
     "**/*.verified.*": true,
     "**/.vs": true,
-    "**/bin": true,
-    "**/node_modules": true,
-    "**/obj": true
+    "**/node_modules": true
   }
 }
