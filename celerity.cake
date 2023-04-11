@@ -12,6 +12,8 @@ private readonly var _target = Argument("t", "Default");
 
 private readonly var _configuration = Argument("c", "Debug");
 
+private readonly var _filter = Argument("f", default(string));
+
 private readonly var _key = Argument("k", default(string));
 
 Task("Default")
@@ -44,6 +46,67 @@ Task("Build")
                 },
                 NoLogo = true,
                 Configuration = _configuration,
+            });
+    });
+
+Task("Test")
+    .IsDependentOn("Build")
+    .Does(() =>
+    {
+        Information("Testing {0}...", RootProject);
+        DotNetTest(
+            RootProject,
+            new()
+            {
+                MSBuildSettings = new()
+                {
+                    ConsoleLoggerSettings = new()
+                    {
+                        NoSummary = true,
+                    },
+                },
+                NoLogo = true,
+                Verbosity = DotNetVerbosity.Normal,
+                Configuration = _configuration,
+                NoBuild = true,
+            });
+
+        Information("Testing {0}...", BenchmarksDirectory);
+        DotNetRun(
+            BenchmarksDirectory,
+            new ProcessArgumentBuilder()
+                .Append("-t"),
+            new()
+            {
+                Configuration = _configuration,
+                NoBuild = true,
+            });
+
+        Information("Testing {0}...", LibraryDirectory);
+        DotNetRun(
+            DriverProject,
+            new ProcessArgumentBuilder()
+                .Append("test")
+                .AppendSwitch("-w", LibraryDirectory),
+            new()
+            {
+                Configuration = _configuration,
+                NoBuild = true,
+            });
+    });
+
+Task("Benchmark")
+    .IsDependentOn("Build")
+    .Does(() =>
+    {
+        Information("Running {0}...", BenchmarksDirectory);
+        DotNetRun(
+            BenchmarksDirectory,
+            _filter != null ? new ProcessArgumentBuilder().AppendSwitchQuoted("-f", _filter) : null,
+            new()
+            {
+                Configuration = _configuration,
+                NoBuild = true,
             });
     });
 
@@ -109,52 +172,6 @@ Task("Clean")
             {
                 NoLogo = true,
                 Configuration = _configuration,
-            });
-    });
-
-Task("Test")
-    .IsDependentOn("Build")
-    .Does(() =>
-    {
-        Information("Testing {0}...", RootProject);
-        DotNetTest(
-            RootProject,
-            new()
-            {
-                MSBuildSettings = new()
-                {
-                    ConsoleLoggerSettings = new()
-                    {
-                        NoSummary = true,
-                    },
-                },
-                NoLogo = true,
-                Verbosity = DotNetVerbosity.Normal,
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-
-        Information("Testing {0}...", BenchmarksDirectory);
-        DotNetRun(
-            BenchmarksDirectory,
-            new ProcessArgumentBuilder()
-                .Append("-t"),
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-
-        Information("Testing {0}...", LibraryDirectory);
-        DotNetRun(
-            DriverProject,
-            new ProcessArgumentBuilder()
-                .Append("test")
-                .AppendSwitch("-w", LibraryDirectory),
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
             });
     });
 
