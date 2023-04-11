@@ -47,6 +47,28 @@ Task("Build")
                 Configuration = _configuration,
                 NoRestore = true,
             });
+
+        Information("Checking {0}", LibraryDirectory);
+        DotNetRun(
+            DriverProject,
+            new ProcessArgumentBuilder()
+                .Append("check")
+                .AppendSwitchQuoted("-w", LibraryDirectory),
+            new()
+            {
+                Configuration = _configuration,
+                NoBuild = true,
+            });
+        DotNetRun(
+            DriverProject,
+            new ProcessArgumentBuilder()
+                .Append("format")
+                .AppendSwitchQuoted("-w", LibraryDirectory),
+            new()
+            {
+                Configuration = _configuration,
+                NoBuild = true,
+            });
     });
 
 Task("Test")
@@ -120,28 +142,6 @@ Task("Publish")
             new()
             {
                 NoLogo = true,
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-
-        Information("Checking {0}", LibraryDirectory);
-        DotNetRun(
-            DriverProject,
-            new ProcessArgumentBuilder()
-                .Append("check")
-                .AppendSwitchQuoted("-w", LibraryDirectory),
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-        DotNetRun(
-            DriverProject,
-            new ProcessArgumentBuilder()
-                .Append("format")
-                .AppendSwitchQuoted("-w", LibraryDirectory),
-            new()
-            {
                 Configuration = _configuration,
                 NoBuild = true,
             });
