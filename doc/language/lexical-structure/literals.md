@@ -50,7 +50,8 @@ real-part ::= decimal-digit ('_'* decimal-digit)*
 
 ```ebnf
 atom-literal ::= ':' (upper-identifier |
-                      lower-identifier)
+                      lower-identifier |
+                      discard-identifier)
 ```
 
 ## String Literal
