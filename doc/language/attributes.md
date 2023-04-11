@@ -1,5 +1,5 @@
 # Attributes
 
 ```ebnf
-attribute ::= '@' lower-identifier literal
+attribute ::= '@' code-identifier literal
 ```

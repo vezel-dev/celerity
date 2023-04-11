@@ -2,5 +2,5 @@
 
 ```ebnf
 record-type ::= 'rec' '{' (record-type-field (',' record-type-field)* ','?)? '}'
-record-type-field ::= 'mut'? lower-identifier ':' type
+record-type-field ::= 'mut'? code-identifier ':' type
 ```

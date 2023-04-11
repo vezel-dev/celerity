@@ -2,5 +2,5 @@
 
 ```ebnf
 record-pattern ::= 'rec' '{' (record-pattern-field (',' record-pattern-field)* ','?)? '}'
-record-pattern-field ::= lower-identifier ':' pattern
+record-pattern-field ::= code-identifier ':' pattern
 ```

@@ -31,7 +31,7 @@ binding ::= variable-binding |
 ### Variable Bindings
 
 ```ebnf
-variable-binding ::= 'mut'? lower-identifier
+variable-binding ::= 'mut'? code-identifier
 ```
 
 ### Discard Bindings

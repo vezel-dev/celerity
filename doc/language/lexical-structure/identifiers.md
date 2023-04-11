@@ -23,3 +23,19 @@ lower-identifier ::= [a-z] [_0-9a-z]*
 ```ebnf
 discard-identifier ::= '_' [_0-9a-z]*
 ```
+
+## Special Identifiers
+
+### Binding Identifier
+
+```ebnf
+binding-identifier ::= discard-identifier |
+                       code-identifier
+```
+
+### Code Identifier
+
+```ebnf
+code-identifier ::= lower-identifier |
+                    type-keyword
+```

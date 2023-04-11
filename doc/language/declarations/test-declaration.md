@@ -1,5 +1,5 @@
 # Test Declaration
 
 ```ebnf
-test-declaration ::= 'test' lower-identifier block-expression
+test-declaration ::= 'test' code-identifier block-expression
 ```
