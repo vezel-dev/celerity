@@ -87,7 +87,7 @@ Task("Test")
             DriverProject,
             new ProcessArgumentBuilder()
                 .Append("test")
-                .AppendSwitch("-w", LibraryDirectory),
+                .AppendSwitchQuoted("-w", LibraryDirectory),
             new()
             {
                 Configuration = _configuration,
@@ -129,7 +129,7 @@ Task("Publish")
             DriverProject,
             new ProcessArgumentBuilder()
                 .Append("check")
-                .AppendSwitch("-w", LibraryDirectory),
+                .AppendSwitchQuoted("-w", LibraryDirectory),
             new()
             {
                 Configuration = _configuration,
@@ -139,7 +139,7 @@ Task("Publish")
             DriverProject,
             new ProcessArgumentBuilder()
                 .Append("format")
-                .AppendSwitch("-w", LibraryDirectory),
+                .AppendSwitchQuoted("-w", LibraryDirectory),
             new()
             {
                 Configuration = _configuration,
@@ -187,7 +187,7 @@ Task("Package")
             "gpr push",
             new ProcessArgumentBuilder()
                 .AppendQuoted(PackagesGlob)
-                .AppendSwitchSecret("-k", _key));
+                .AppendSwitchQuotedSecret("-k", _key));
     });
 
 Task("Release")
