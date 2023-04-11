@@ -36,8 +36,6 @@
                         Version="4.5.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk"
                         Version="17.5.0" />
-        <PackageVersion Include="Microsoft.TestPlatform.ObjectModel"
-                        Version="17.5.0" />
         <PackageVersion Include="NuGet.Versioning"
                         Version="6.4.0" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
