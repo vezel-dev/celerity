@@ -1,6 +1,6 @@
 [SuppressMessage("", "CA1050")]
 [UsesVerify]
-public abstract class CelerityTests
+public abstract partial class CelerityTests
 {
     private protected static async Task VerifyDiagnosticsAsync(
         IEnumerable<Diagnostic> diagnostics, string file, string name)
@@ -15,8 +15,15 @@ public abstract class CelerityTests
 
         _ = await Verifier
             .Verify(text.ToString(), "txt", sourceFile: file)
+            .ScrubLinesWithReplace(
+                line => DiagnosticPathRegex().Replace(
+                    line, m => $"{m.Groups[1].Value}{m.Groups[2].Value.Replace('\\', '/')}{m.Groups[3].Value}"))
             .UseTypeName(name)
             .UseMethodName("diags")
             .ToTask();
     }
+
+    [GeneratedRegex(
+        @"^(---*> )(\w+)(.cel \(\d+,\d+\)-\(\d+,\d+\))$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
+    private static partial Regex DiagnosticPathRegex();
 }
