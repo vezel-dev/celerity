@@ -11,6 +11,10 @@ private const string LibraryDirectory = "src/language/library";
 
 private const string DocumentationGlob = "doc/**/*.md";
 
+private const string PackageGlob = ".artifacts/package/debug/*.nupkg";
+
+private const string ReleaseGlob = ".artifacts/package/release/*.nupkg";
+
 private readonly var _target = Argument("t", "Default");
 
 private readonly var _configuration = Argument("c", "Debug");
@@ -193,14 +197,12 @@ Task("Package")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        const string Glob = ".artifacts/package/debug/*.nupkg";
-
-        Information("Pushing {0} to GitHub...", Glob);
+        Information("Pushing {0} to GitHub...", PackageGlob);
         DotNetTool(
             null,
             "gpr push",
             new ProcessArgumentBuilder()
-                .AppendQuoted(Glob)
+                .AppendQuoted(PackageGlob)
                 .AppendSwitchQuotedSecret("-k", _key));
     });
 
@@ -210,11 +212,9 @@ Task("Release")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        const string Glob = ".artifacts/package/release/*.nupkg";
-
-        Information("Pushing {0} to NuGet...", Glob);
+        Information("Pushing {0} to NuGet...", ReleaseGlob);
         DotNetNuGetPush(
-            Glob,
+            ReleaseGlob,
             new()
             {
                 Source = "https://api.nuget.org/v3/index.json",
