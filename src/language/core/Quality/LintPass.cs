@@ -8,7 +8,7 @@ public abstract class LintPass
     public static ImmutableArray<LintPass> DefaultPasses { get; } =
         ImmutableArray.Create<LintPass>(
             TestWithoutAssertPass.Instance,
-            UndocumentedPublicDeclarationPass.Instance,
+            UndocumentedPublicSymbolPass.Instance,
             UnreachableCodePass.Instance,
             UnusedLocalSymbolPass.Instance,
             UppercaseBaseIndicatorPass.Instance);

@@ -162,7 +162,7 @@
         * [Semantic Diagnostic E0037](tooling/analysis-diagnostics/semantics/e0037.md)
 * [Lints](tooling/lints.md)
     * [Test Without Assert](tooling/lints/test-without-assert.md)
-    * [Undocumented Public Declaration](tooling/lints/undocumented-public-declaration.md)
+    * [Undocumented Public Symbol](tooling/lints/undocumented-public-symbol.md)
     * [Unreachable Code](tooling/lints/unreachable-code.md)
     * [Unused Local Symbol](tooling/lints/unused-local-symbol.md)
     * [Uppercase Base Indicator](tooling/lints/uppercase-base-indicator.md)

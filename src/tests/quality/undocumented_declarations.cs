@@ -22,6 +22,6 @@ public sealed partial class QualityTests
                 }
             }
             """,
-            UndocumentedPublicDeclarationPass.Instance);
+            UndocumentedPublicSymbolPass.Instance);
     }
 }

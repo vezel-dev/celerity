@@ -1,4 +1,4 @@
-﻿Warning[undocumented-public-declaration]: Module should be decorated with a 'doc' attribute
+﻿Warning[undocumented-public-symbol]: Module should be decorated with a 'doc' attribute
 --> undocumented_module.cel (1,1)-(1,4)
 1 | mod {
   : ^^^

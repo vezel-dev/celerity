@@ -3,12 +3,12 @@ using Vezel.Celerity.Language.Syntax.Tree;
 
 namespace Vezel.Celerity.Language.Quality.Passes;
 
-public sealed class UndocumentedPublicDeclarationPass : LintPass
+public sealed class UndocumentedPublicSymbolPass : LintPass
 {
-    public static UndocumentedPublicDeclarationPass Instance { get; } = new();
+    public static UndocumentedPublicSymbolPass Instance { get; } = new();
 
-    private UndocumentedPublicDeclarationPass()
-        : base("undocumented-public-declaration")
+    private UndocumentedPublicSymbolPass()
+        : base("undocumented-public-symbol")
     {
     }
 

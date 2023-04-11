@@ -1,4 +1,4 @@
-﻿Warning[undocumented-public-declaration]: Public function 'foo' should be decorated with a 'doc' attribute
+﻿Warning[undocumented-public-symbol]: Public function 'foo' should be decorated with a 'doc' attribute
 ---> undocumented_declarations.cel (3,12)-(3,15)
  1 | @doc "my fancy module"
  2 | mod {

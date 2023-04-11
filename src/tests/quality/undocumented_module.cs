@@ -8,6 +8,6 @@ public sealed partial class QualityTests
             mod {
             }
             """,
-            UndocumentedPublicDeclarationPass.Instance);
+            UndocumentedPublicSymbolPass.Instance);
     }
 }
