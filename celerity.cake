@@ -11,9 +11,9 @@ private const string LibraryDirectory = "src/language/library";
 
 private const string DocumentationGlob = "doc/**/*.md";
 
-private const string PackageGlob = ".artifacts/package/debug/*.nupkg";
+private const string PackageGlob = "out/pkg/debug/*.nupkg";
 
-private const string ReleaseGlob = ".artifacts/package/release/*.nupkg";
+private const string ReleaseGlob = "out/pkg/release/*.nupkg";
 
 private readonly var _target = Argument("t", "Default");
 

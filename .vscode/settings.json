@@ -1,6 +1,6 @@
 {
   "files.exclude": {
-    ".artifacts": true,
+    "out": true,
     "**/*.received.*": true,
     "**/*.verified.*": true,
     "**/.vs": true,

@@ -1,4 +1,4 @@
-/.artifacts
+/out
 *.received.*
 *.user
 .clangd

@@ -10,6 +10,9 @@
     <PropertyGroup>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <AnalysisLevel>latest-all</AnalysisLevel>
+        <ArtifactsPath>$(MSBuildThisFileDirectory)out</ArtifactsPath>
+        <ArtifactsPublishOutputName>pub</ArtifactsPublishOutputName>
+        <ArtifactsPackageOutputName>pkg</ArtifactsPackageOutputName>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <ImplicitUsings>true</ImplicitUsings>
