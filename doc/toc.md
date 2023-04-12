@@ -16,7 +16,7 @@
     * [Startup and Termination](language/basic-concepts/startup-and-termination.md)
 * [Lexical Structure](language/lexical-structure.md)
     * [Shebang Line](language/lexical-structure/shebang-line.md)
-    * [White Space](language/lexical-structure/white-space.md)
+    * [Blanks](language/lexical-structure/blanks.md)
     * [Comments](language/lexical-structure/comments.md)
     * [Operators](language/lexical-structure/operators.md)
     * [Punctuators](language/lexical-structure/punctuators.md)

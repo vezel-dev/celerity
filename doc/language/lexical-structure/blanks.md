@@ -1,9 +1,8 @@
-# White Space
+# Blanks
 
 ```ebnf
 blank ::= white-space |
           line-break
-line-break ::= [#xa#xd#x85#x2028#x2029]
 ```
 
 ## White Space
