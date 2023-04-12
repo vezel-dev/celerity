@@ -9,5 +9,5 @@ max_line_length = 120
 tab_width = 4
 trim_trailing_whitespace = true
 
-[*.{json,vsconfig}]
+[*.{json,jsonc,vsconfig}]
 indent_size = 2

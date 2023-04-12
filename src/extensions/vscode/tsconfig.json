@@ -1,0 +1,15 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "target": "es2021",
+    "lib": [
+      "es2021",
+      "es2021.intl",
+      "es2021.promise",
+      "es2021.string",
+      "es2021.weakref"
+    ],
+    "module": "commonjs",
+    "rootDir": "src"
+  }
+}

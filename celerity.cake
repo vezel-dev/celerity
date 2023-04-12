@@ -1,19 +1,27 @@
 #addin nuget:?package=Cake.Npm&version=2.0.0
 #addin nuget:?package=Cake.Npx&version=1.7.0
 
+#nullable enable
+
 private const string RootProject = "celerity.proj";
 
-private const string BenchmarksDirectory = "src/benchmarks";
+private const string BenchmarksProject = "src/benchmarks/benchmarks.csproj";
 
 private const string DriverProject = "src/driver/driver.csproj";
 
 private const string LibraryDirectory = "src/language/library";
 
-private const string DocumentationGlob = "doc/**/*.md";
+private const string ExtensionDirectory = "src/extensions/vscode";
 
-private const string PackageGlob = "out/pkg/debug/*.nupkg";
+private const string DocumentationDirectory = "doc";
 
-private const string ReleaseGlob = "out/pkg/release/*.nupkg";
+private const string OutputPath = "out";
+
+private const string GitHubPackageGlob = $"{OutputPath}/pkg/debug/*.nupkg";
+
+private const string NuGetPackageGlob = $"{OutputPath}/pkg/release/*.nupkg";
+
+private const string ExtensionPackageGlob = $"{OutputPath}/pkg/*.vsix";
 
 private readonly var _target = Argument("t", "Default");
 
@@ -21,7 +29,11 @@ private readonly var _configuration = Argument("c", "Debug");
 
 private readonly var _filter = Argument("f", default(string));
 
-private readonly var _key = Argument("k", default(string));
+private readonly var _githubKey = Argument("github-key", default(string));
+
+private readonly var _nugetKey = Argument("nuget-key", default(string));
+
+private readonly var _marketplaceKey = Argument("marketplace-key", default(string));
 
 private static DotNetMSBuildSettings ConfigureMSBuild(string target)
 {
@@ -43,7 +55,7 @@ private static DotNetMSBuildSettings ConfigureMSBuild(string target)
         BinaryLogger = new()
         {
             Enabled = true,
-            FileName = System.IO.Path.Join("out", "log", name),
+            FileName = System.IO.Path.Join(OutputPath, "log", name),
         },
         ConsoleLoggerSettings = new()
         {
@@ -75,6 +87,13 @@ Task("Restore")
 
         Information("Restoring {0}...", "package.json");
         NpmInstall();
+
+        Information("Restoring {0}...", $"{ExtensionDirectory}/package.json");
+        NpmInstall(
+            new NpmInstallSettings()
+            {
+                WorkingDirectory = ExtensionDirectory,
+            });
     });
 
 Task("Build")
@@ -91,7 +110,7 @@ Task("Build")
                 NoRestore = true,
             });
 
-        Information("Checking {0}", LibraryDirectory);
+        Information("Checking {0}", $"{LibraryDirectory}/celerity.json");
         DotNetRun(
             DriverProject,
             new ProcessArgumentBuilder()
@@ -113,11 +132,18 @@ Task("Build")
                 NoBuild = true,
             });
 
-        Information("Checking {0}...", DocumentationGlob);
+        Information("Building {0}...", $"{ExtensionDirectory}/package.json");
+        NpmRunScript(
+            new NpmRunScriptSettings()
+            {
+                WorkingDirectory = ExtensionDirectory,
+                ScriptName = "build",
+            });
+
+        Information("Checking {0}...", DocumentationDirectory);
         Npx(
             "markdownlint-cli2",
-            new ProcessArgumentBuilder()
-                .AppendQuoted(DocumentationGlob));
+            settings => settings.WorkingDirectory = "doc");
     });
 
 Task("Test")
@@ -134,9 +160,9 @@ Task("Test")
                 NoBuild = true,
             });
 
-        Information("Testing {0}...", BenchmarksDirectory);
+        Information("Testing {0}...", BenchmarksProject);
         DotNetRun(
-            BenchmarksDirectory,
+            BenchmarksProject,
             new ProcessArgumentBuilder()
                 .Append("-t"),
             new()
@@ -145,7 +171,7 @@ Task("Test")
                 NoBuild = true,
             });
 
-        Information("Testing {0}...", LibraryDirectory);
+        Information("Testing {0}...", $"{LibraryDirectory}/celerity.json");
         DotNetRun(
             DriverProject,
             new ProcessArgumentBuilder()
@@ -162,10 +188,13 @@ Task("Benchmark")
     .IsDependentOn("Build")
     .Does(() =>
     {
-        Information("Running {0}...", BenchmarksDirectory);
+        Information("Benchmarking {0}...", BenchmarksProject);
         DotNetRun(
-            BenchmarksDirectory,
-            _filter != null ? new ProcessArgumentBuilder().AppendSwitchQuoted("-f", _filter) : null,
+            BenchmarksProject,
+            _filter != null
+                ? new ProcessArgumentBuilder()
+                    .AppendSwitchQuoted("-f", _filter)
+                : null,
             new()
             {
                 Configuration = _configuration,
@@ -201,6 +230,14 @@ Task("Pack")
                 Configuration = _configuration,
                 NoBuild = true,
             });
+
+        Information("Packing {0}...", $"{ExtensionDirectory}/package.json");
+        NpmRunScript(
+            new NpmRunScriptSettings()
+            {
+                WorkingDirectory = ExtensionDirectory,
+                ScriptName = "pack",
+            });
     });
 
 Task("Clean")
@@ -214,6 +251,14 @@ Task("Clean")
                 MSBuildSettings = ConfigureMSBuild("clean"),
                 Configuration = _configuration,
             });
+
+        Information("Cleaning {0}...", $"{ExtensionDirectory}/package.json");
+        NpmRunScript(
+            new NpmRunScriptSettings()
+            {
+                WorkingDirectory = ExtensionDirectory,
+                ScriptName = "clean",
+            });
     });
 
 Task("Prune")
@@ -221,7 +266,7 @@ Task("Prune")
     {
         void Prune(string directory, string extension)
         {
-            var glob = $"out/{directory}/**/*.{extension}";
+            var glob = $"{OutputPath}/{directory}/**/*.{extension}";
 
             Information("Pruning {0}...", glob);
             DeleteFiles(glob);
@@ -230,37 +275,60 @@ Task("Prune")
         Prune("log", "binlog");
         Prune("trx", "trx");
         Prune("pkg", "nupkg");
+        Prune("pkg", "vsix");
     });
 
-Task("Package")
+Task("Upload-GitHub")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
     .WithCriteria(_configuration == "Debug")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        Information("Pushing {0} to GitHub...", PackageGlob);
+        Information("Pushing {0} to GitHub...", GitHubPackageGlob);
         DotNetTool(
             null,
             "gpr push",
             new ProcessArgumentBuilder()
-                .AppendQuoted(PackageGlob)
-                .AppendSwitchQuotedSecret("-k", _key));
+                .AppendQuoted(GitHubPackageGlob)
+                .AppendSwitchQuotedSecret("-k", _githubKey));
     });
 
-Task("Release")
+Task("Upload-NuGet")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
     .WithCriteria(_configuration == "Release")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        Information("Pushing {0} to NuGet...", ReleaseGlob);
+        Information("Pushing {0} to NuGet...", NuGetPackageGlob);
         DotNetNuGetPush(
-            ReleaseGlob,
+            NuGetPackageGlob,
             new()
             {
                 Source = "https://api.nuget.org/v3/index.json",
-                ApiKey = _key,
+                ApiKey = _nugetKey,
             });
+    });
+
+Task("Upload-Marketplace")
+    .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
+    .WithCriteria(_configuration == "Release")
+    .IsDependentOn("Pack")
+    .Does(() =>
+    {
+        var files = GetFiles(ExtensionPackageGlob);
+        var cwd = new DirectoryPath(Environment.CurrentDirectory);
+        var args = new ProcessArgumentBuilder()
+            .Append("--pre-release")
+            .AppendSwitchQuotedSecret("-p", _marketplaceKey);
+
+        foreach (var file in files)
+            _ = args.AppendSwitchQuoted("-i", file.FullPath);
+
+        Information("Pushing {0} to Visual Studio Marketplace...", ExtensionPackageGlob);
+        Npx(
+            "vsce publish",
+            args,
+            settings => settings.WorkingDirectory = ExtensionDirectory);
     });
 
 RunTarget(_target);

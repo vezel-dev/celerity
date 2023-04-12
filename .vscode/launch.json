@@ -15,6 +15,17 @@
         "searchNuGetOrgSymbolServer": true
       },
       "processId": "${command:pickProcess}"
+    },
+    {
+      "name": "VS Code: Launch Extension",
+      "presentation": {
+        "group": "celerity"
+      },
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/out/bin/src/extensions/vscode"
+      ]
     }
   ]
 }

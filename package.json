@@ -1,9 +1,21 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "celerity",
+  "private": true,
   "engines": {
     "node": "18.15.0"
   },
-  "private": "true",
   "devDependencies": {
-    "markdownlint-cli2": "0.6.0"
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "cpy-cli": "4.2.0",
+    "esbuild": "0.17.16",
+    "eslint": "^8.38.0",
+    "markdownlint-cli2": "^0.6.0",
+    "nerdbank-gitversioning": "3.6.79-alpha",
+    "rimraf": "5.0.0",
+    "symlink-dir": "5.1.1",
+    "typescript": "5.0.4",
+    "yo": "4.3.1"
   }
 }

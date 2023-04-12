@@ -1,0 +1,155 @@
+{
+  "name": "celerity",
+  "displayName": "Celerity",
+  "description": "Celerity programming language support for Visual Studio Code.",
+  "publisher": "vezel",
+  "preview": true,
+  "license": "0BSD",
+  "homepage": "https://docs.vezel.dev/celerity",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vezel-dev/celerity"
+  },
+  "bugs": {
+    "url": "https://github.com/vezel-dev/celerity/issues"
+  },
+  "qna": "https://github.com/vezel-dev/celerity/discussions",
+  "sponsor": {
+    "url": "https://github.com/sponsors/vezel-dev"
+  },
+  "icon": "celerity.png",
+  "badges": [
+    {
+      "description": "License",
+      "url": "https://img.shields.io/github/license/vezel-dev/celerity?color=brown",
+      "href": "https://github.com/vezel-dev/celerity/blob/master/LICENSE-0BSD"
+    },
+    {
+      "description": "Commits",
+      "url": "https://img.shields.io/github/commit-activity/m/vezel-dev/celerity/master?label=commits&color=slateblue",
+      "href": "https://github.com/vezel-dev/celerity/commits/master"
+    },
+    {
+      "description": "Build",
+      "url": "https://img.shields.io/github/actions/workflow/status/vezel-dev/celerity/build.yml?branch=master",
+      "href": "https://github.com/vezel-dev/celerity/actions/workflows/build.yml"
+    },
+    {
+      "description": "Discussions",
+      "url": "https://img.shields.io/github/discussions/vezel-dev/celerity?color=teal",
+      "href": "https://github.com/vezel-dev/celerity/discussions"
+    },
+    {
+      "description": "Discord",
+      "url": "https://img.shields.io/discord/960716713136095232?color=peru&label=discord",
+      "href": "https://discord.gg/uD8maMVVFX"
+    }
+  ],
+  "categories": [
+    "Debuggers",
+    "Formatters",
+    "Linters",
+    "Programming Languages",
+    "Snippets",
+    "Testing"
+  ],
+  "engines": {
+    "node": "18.15.0",
+    "vscode": "^1.77.3"
+  },
+  "extensionKind": [
+    "workspace"
+  ],
+  "capabilities": {
+    "virtualWorkspaces": false,
+    "untrustedWorkspaces": {
+      "supported": false
+    }
+  },
+  "activationEvents": [
+    "onLanguage:celerity",
+    "workspaceContains:**/celerity.json"
+  ],
+  "contributes": {
+    "breakpoints": [
+      {
+        "language": "celerity"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "celerity",
+        "scopeName": "source.celerity",
+        "path": "syntaxes/celerity.tmLanguage.json"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": [
+          "celerity.json"
+        ],
+        "url": "https://raw.githubusercontent.com/vezel-dev/celerity/master/doc/tooling/celerity.schema.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "celerity",
+        "aliases": [
+          "Celerity"
+        ],
+        "icon": {
+          "light": "celerity.svg",
+          "dark": "celerity.svg"
+        },
+        "extensions": [
+          ".cel"
+        ],
+        "configuration": "language-configuration.json"
+      }
+    ],
+    "problemMatchers": [
+      {
+        "name": "celerity",
+        "owner": "celerity",
+        "fileLocation": "relative",
+        "pattern": [
+          {
+            "regexp": "^(Warning|Error)\\[(.+)\\]: (.+)$",
+            "severity": 1,
+            "code": 2,
+            "message": 3
+          },
+          {
+            "regexp": "^---*> (.+) \\((\\d+),(\\d+)\\)-\\((\\d+),(\\d+)\\)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "endLine": 4,
+            "endColumn": 5
+          }
+        ]
+      }
+    ],
+    "snippets": [
+      {
+        "language": "celerity",
+        "path": "snippets/celerity.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "16.11.68",
+    "@types/vscode": "1.77.0",
+    "@vscode/vsce": "2.19.0",
+    "generator-code": "1.7.5"
+  },
+  "dependencies": {
+    "vscode-languageclient": "8.1.0"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && eslint src --ext ts && rimraf ../../../out/bin/src/extensions/vscode && esbuild src/extension.ts --external:vscode --platform=node --bundle --minify --sourcemap --outdir=../../../out/bin/src/extensions/vscode && cpy README.md language-configuration.json package.json snippets syntaxes ../../../out/bin/src/extensions/vscode && symlink-dir node_modules ../../../out/bin/src/extensions/vscode/node_modules && cd ../../../out/bin/src/extensions/vscode && cpy ../../../../../LICENSE-0BSD . --flat --rename=LICENSE && cpy \"../../../../../celerity.{png,svg}\" . --flat && echo node_modules > .vscodeignore && nbgv-setversion",
+    "clean": "rimraf ../../../out/bin/src/extensions/vscode",
+    "pack": "cd ../../../out/bin/src/extensions/vscode && vsce package --pre-release -o ../../../../pkg"
+  },
+  "main": "extension.js"
+}
