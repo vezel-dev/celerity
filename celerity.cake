@@ -23,6 +23,35 @@ private readonly var _filter = Argument("f", default(string));
 
 private readonly var _key = Argument("k", default(string));
 
+private static DotNetMSBuildSettings ConfigureMSBuild(string target)
+{
+    var prefix = $"{target}_{Environment.UserName}_{Environment.MachineName}_";
+    var time = DateTime.Now;
+
+    string name;
+
+    do
+    {
+        name = $"{prefix}{time:yyyy-MM-dd_HH_mm_ss}.binlog";
+        time = time.AddSeconds(1);
+    }
+    while (System.IO.File.Exists(name));
+
+    return new()
+    {
+        NoLogo = true,
+        BinaryLogger = new()
+        {
+            Enabled = true,
+            FileName = System.IO.Path.Join("out", "log", name),
+        },
+        ConsoleLoggerSettings = new()
+        {
+            NoSummary = true,
+        },
+    };
+}
+
 Task("Default")
     .IsDependentOn("Test")
     .IsDependentOn("Pack");
@@ -31,7 +60,12 @@ Task("Restore")
     .Does(() =>
     {
         Information("Restoring {0}...", RootProject);
-        DotNetRestore(RootProject);
+        DotNetRestore(
+            RootProject,
+            new()
+            {
+                MSBuildSettings = ConfigureMSBuild("restore"),
+            });
 
         Information("Restoring {0}...", "package.json");
         NpmInstall();
@@ -46,14 +80,7 @@ Task("Build")
             RootProject,
             new()
             {
-                MSBuildSettings = new()
-                {
-                    ConsoleLoggerSettings = new()
-                    {
-                        NoSummary = true,
-                    },
-                },
-                NoLogo = true,
+                MSBuildSettings = ConfigureMSBuild("build"),
                 Configuration = _configuration,
                 NoRestore = true,
             });
@@ -96,15 +123,7 @@ Task("Test")
             RootProject,
             new()
             {
-                MSBuildSettings = new()
-                {
-                    ConsoleLoggerSettings = new()
-                    {
-                        NoSummary = true,
-                    },
-                },
-                NoLogo = true,
-                Verbosity = DotNetVerbosity.Normal,
+                MSBuildSettings = ConfigureMSBuild("test"),
                 Configuration = _configuration,
                 NoBuild = true,
             });
@@ -157,7 +176,7 @@ Task("Publish")
             RootProject,
             new()
             {
-                NoLogo = true,
+                MSBuildSettings = ConfigureMSBuild("publish"),
                 Configuration = _configuration,
                 NoBuild = true,
             });
@@ -172,7 +191,7 @@ Task("Pack")
             RootProject,
             new()
             {
-                NoLogo = true,
+                MSBuildSettings = ConfigureMSBuild("pack"),
                 Configuration = _configuration,
                 NoBuild = true,
             });
@@ -186,7 +205,7 @@ Task("Clean")
             RootProject,
             new()
             {
-                NoLogo = true,
+                MSBuildSettings = ConfigureMSBuild("clean"),
                 Configuration = _configuration,
             });
     });
