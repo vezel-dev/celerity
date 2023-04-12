@@ -49,6 +49,12 @@ private static DotNetMSBuildSettings ConfigureMSBuild(string target)
         {
             NoSummary = true,
         },
+        TreatAllWarningsAs = MSBuildTreatAllWarningsAs.Error,
+        // TODO: https://github.com/cake-build/cake/issues/4144
+        ArgumentCustomization = args =>
+            args
+                .Append("-nr:false")
+                .Append("-ds:false"),
     };
 }
 
