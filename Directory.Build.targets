@@ -1,4 +1,9 @@
 <Project>
+    <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+        <VSTestLogger>trx</VSTestLogger>
+        <VSTestResultsDirectory>$(ArtifactsPath)/trx/$(ArtifactsProjectName)/$(ArtifactsPivots)</VSTestResultsDirectory>
+    </PropertyGroup>
+
     <ItemGroup>
         <Using Include="System.Buffers" />
         <Using Include="System.CodeDom.Compiler" />
