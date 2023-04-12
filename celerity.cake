@@ -216,6 +216,22 @@ Task("Clean")
             });
     });
 
+Task("Prune")
+    .Does(() =>
+    {
+        void Prune(string directory, string extension)
+        {
+            var glob = $"out/{directory}/**/*.{extension}";
+
+            Information("Pruning {0}...", glob);
+            DeleteFiles(glob);
+        }
+
+        Prune("log", "binlog");
+        Prune("trx", "trx");
+        Prune("pkg", "nupkg");
+    });
+
 Task("Package")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
     .WithCriteria(_configuration == "Debug")
