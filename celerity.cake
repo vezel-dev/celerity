@@ -1,41 +1,51 @@
+#addin nuget:?package=Cake.DoInDirectory&version=6.0.0
 #addin nuget:?package=Cake.Npm&version=2.0.0
 #addin nuget:?package=Cake.Npx&version=1.7.0
 
 #nullable enable
 
-private const string RootProject = "celerity.proj";
+// Arguments
 
-private const string BenchmarksProject = "src/benchmarks/benchmarks.csproj";
+var target = Argument("t", "default");
+var configuration = Argument("c", "Debug");
+var filter = Argument("f", default(string));
 
-private const string DriverProject = "src/driver/driver.csproj";
+// Environment
 
-private const string LibraryDirectory = "src/language/library";
+var githubToken = EnvironmentVariable("GITHUB_TOKEN");
+var nugetToken = EnvironmentVariable("NUGET_TOKEN");
+var vsceToken = EnvironmentVariable("VSCE_TOKEN");
+var ovsxToken = EnvironmentVariable("OVSX_TOKEN");
 
-private const string ExtensionDirectory = "src/extensions/vscode";
+// Paths
 
-private const string DocumentationDirectory = "doc";
+var root = Context.Environment.WorkingDirectory;
+var celerityProj = root.CombineWithFilePath("celerity.proj");
 
-private const string OutputPath = "out";
+var doc = root.Combine("doc");
 
-private const string GitHubPackageGlob = $"{OutputPath}/pkg/debug/*.nupkg";
+var src = root.Combine("src");
+var srcLanguageLibrary = src.Combine("language").Combine("library");
+var srcExtensionsVscode = src.Combine("extensions").Combine("vscode");
+var driverCsproj = src.Combine("driver").CombineWithFilePath("driver.csproj");
+var benchmarksCsproj = src.Combine("benchmarks").CombineWithFilePath("benchmarks.csproj");
+var testsCsproj = src.Combine("tests").CombineWithFilePath("tests.csproj");
+var trimmingCsproj = src.Combine("trimming").CombineWithFilePath("trimming.csproj");
 
-private const string NuGetPackageGlob = $"{OutputPath}/pkg/release/*.nupkg";
+var @out = root.Combine("out");
+var outLog = @out.Combine("log");
+var outPkg = @out.Combine("pkg");
+var outPkgDotnet = outPkg.Combine("dotnet");
 
-private const string ExtensionPackageGlob = $"{OutputPath}/pkg/*.vsix";
+// Globs
 
-private readonly var _target = Argument("t", "Default");
+var githubGlob = new GlobPattern(outPkgDotnet.Combine("debug").CombineWithFilePath("*.nupkg").FullPath);
+var nugetGlob = new GlobPattern(outPkgDotnet.Combine("release").CombineWithFilePath("*.nupkg").FullPath);
+var vscodeGlob = new GlobPattern(outPkg.Combine("vscode").CombineWithFilePath("*.vsix").FullPath);
 
-private readonly var _configuration = Argument("c", "Debug");
+// Utilities
 
-private readonly var _filter = Argument("f", default(string));
-
-private readonly var _githubKey = Argument("github-key", default(string));
-
-private readonly var _nugetKey = Argument("nuget-key", default(string));
-
-private readonly var _marketplaceKey = Argument("marketplace-key", default(string));
-
-private static DotNetMSBuildSettings ConfigureMSBuild(string target)
+DotNetMSBuildSettings ConfigureMSBuild(string target)
 {
     var prefix = $"{target}_{Environment.UserName}_{Environment.MachineName}_";
     var time = DateTime.Now;
@@ -55,7 +65,7 @@ private static DotNetMSBuildSettings ConfigureMSBuild(string target)
         BinaryLogger = new()
         {
             Enabled = true,
-            FileName = System.IO.Path.Join(OutputPath, "log", name),
+            FileName = outLog.CombineWithFilePath(name).FullPath,
         },
         ConsoleLoggerSettings = new()
         {
@@ -70,265 +80,207 @@ private static DotNetMSBuildSettings ConfigureMSBuild(string target)
     };
 }
 
-Task("Default")
-    .IsDependentOn("Test")
-    .IsDependentOn("Pack");
+void NpmInstall(DirectoryPath directory)
+{
+    DoInDirectory(directory, NpmInstall);
+}
 
-Task("Restore")
+void DotNetRun(FilePath project, Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender)
+{
+    DotNetRun(
+        project.FullPath,
+        appender(new ProcessArgumentBuilder()),
+        new()
+        {
+            Configuration = configuration,
+            NoBuild = true,
+        });
+}
+
+void UploadVSCode(string command, string token)
+{
+    var args = new ProcessArgumentBuilder()
+        .Append("--pre-release")
+        .AppendSwitchQuotedSecret("-p", token);
+
+    foreach (var file in GetFiles(vscodeGlob))
+        _ = args.AppendSwitchQuoted("-i", file.FullPath);
+
+    DoInDirectory(srcExtensionsVscode, () => Npx($"{command} publish", args));
+}
+
+// Tasks
+
+Task("default")
+    .IsDependentOn("test")
+    .IsDependentOn("build")
+    .IsDependentOn("pack");
+
+Task("restore-dotnet")
     .Does(() =>
-    {
-        Information("Restoring {0}...", RootProject);
         DotNetRestore(
-            RootProject,
+            celerityProj.FullPath,
             new()
             {
                 MSBuildSettings = ConfigureMSBuild("restore"),
-            });
+            }));
 
-        Information("Restoring {0}...", "package.json");
-        NpmInstall();
+Task("restore-node")
+    .Does(() => NpmInstall(root));
 
-        Information("Restoring {0}...", $"{ExtensionDirectory}/package.json");
-        NpmInstall(
-            new NpmInstallSettings()
-            {
-                WorkingDirectory = ExtensionDirectory,
-            });
-    });
+Task("restore-node-vscode")
+    .IsDependentOn("restore-node")
+    .Does(() => NpmInstall(srcExtensionsVscode));
 
-Task("Build")
-    .IsDependentOn("Restore")
+Task("restore-node-doc")
+    .IsDependentOn("restore-node")
+    .Does(() => NpmInstall(doc));
+
+Task("restore")
+    .IsDependentOn("restore-dotnet")
+    .IsDependentOn("restore-node-vscode")
+    .IsDependentOn("restore-node-doc");
+
+Task("build-dotnet")
+    .IsDependentOn("restore-dotnet")
     .Does(() =>
-    {
-        Information("Building {0}...", RootProject);
         DotNetBuild(
-            RootProject,
+            celerityProj.FullPath,
             new()
             {
                 MSBuildSettings = ConfigureMSBuild("build"),
-                Configuration = _configuration,
+                Configuration = configuration,
                 NoRestore = true,
-            });
+            }));
 
-        Information("Checking {0}", $"{LibraryDirectory}/celerity.json");
-        DotNetRun(
-            DriverProject,
-            new ProcessArgumentBuilder()
-                .Append("check")
-                .AppendSwitchQuoted("-w", LibraryDirectory),
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-        DotNetRun(
-            DriverProject,
-            new ProcessArgumentBuilder()
-                .Append("format")
-                .AppendSwitchQuoted("-w", LibraryDirectory),
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-
-        Information("Building {0}...", $"{ExtensionDirectory}/package.json");
-        NpmRunScript(
-            new NpmRunScriptSettings()
-            {
-                WorkingDirectory = ExtensionDirectory,
-                ScriptName = "build",
-            });
-
-        Information("Checking {0}...", DocumentationDirectory);
-        Npx(
-            "markdownlint-cli2",
-            settings => settings.WorkingDirectory = "doc");
-    });
-
-Task("Test")
-    .IsDependentOn("Build")
+Task("build-dotnet-trimming")
+    .IsDependentOn("build-dotnet")
     .Does(() =>
-    {
-        Information("Testing {0}...", RootProject);
-        DotNetTest(
-            RootProject,
-            new()
-            {
-                MSBuildSettings = ConfigureMSBuild("test"),
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-
-        Information("Testing {0}...", BenchmarksProject);
-        DotNetRun(
-            BenchmarksProject,
-            new ProcessArgumentBuilder()
-                .Append("-t"),
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-
-        Information("Testing {0}...", $"{LibraryDirectory}/celerity.json");
-        DotNetRun(
-            DriverProject,
-            new ProcessArgumentBuilder()
-                .Append("test")
-                .AppendSwitchQuoted("-w", LibraryDirectory),
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-    });
-
-Task("Benchmark")
-    .IsDependentOn("Build")
-    .Does(() =>
-    {
-        Information("Benchmarking {0}...", BenchmarksProject);
-        DotNetRun(
-            BenchmarksProject,
-            _filter != null
-                ? new ProcessArgumentBuilder()
-                    .AppendSwitchQuoted("-f", _filter)
-                : null,
-            new()
-            {
-                Configuration = _configuration,
-                NoBuild = true,
-            });
-    });
-
-Task("Publish")
-    .IsDependentOn("Build")
-    .Does(() =>
-    {
-        Information("Publishing {0}...", RootProject);
         DotNetPublish(
-            RootProject,
+            trimmingCsproj.FullPath,
             new()
             {
                 MSBuildSettings = ConfigureMSBuild("publish"),
-                Configuration = _configuration,
+                Configuration = configuration,
                 NoBuild = true,
-            });
-    });
+            }));
 
-Task("Pack")
-    .IsDependentOn("Publish")
+Task("build-celerity-stdlib")
+    .IsDependentOn("build-dotnet")
     .Does(() =>
-    {
-        Information("Packing {0}...", RootProject);
+        DoInDirectory(
+            srcLanguageLibrary,
+            () =>
+            {
+                foreach (var cmd in new[] { "check", "format" })
+                    DotNetRun(driverCsproj.FullPath, args => args.Append(cmd));
+            }));
+
+Task("build-node-vscode")
+    .IsDependentOn("restore-node-vscode")
+    .Does(() => DoInDirectory(srcExtensionsVscode, () => NpmRunScript("build")));
+
+Task("build-node-doc")
+    .IsDependentOn("restore-node-doc")
+    .Does(() => DoInDirectory(doc, () => Npx("markdownlint-cli2")));
+
+Task("build")
+    .IsDependentOn("build-dotnet-trimming")
+    .IsDependentOn("build-celerity-stdlib")
+    .IsDependentOn("build-node-vscode")
+    .IsDependentOn("build-node-doc");
+
+Task("pack-dotnet")
+    .IsDependentOn("build-dotnet")
+    .Does(() =>
         DotNetPack(
-            RootProject,
+            celerityProj.FullPath,
             new()
             {
                 MSBuildSettings = ConfigureMSBuild("pack"),
-                Configuration = _configuration,
+                Configuration = configuration,
                 NoBuild = true,
-            });
+            }));
 
-        Information("Packing {0}...", $"{ExtensionDirectory}/package.json");
-        NpmRunScript(
-            new NpmRunScriptSettings()
-            {
-                WorkingDirectory = ExtensionDirectory,
-                ScriptName = "pack",
-            });
-    });
+Task("pack-node-vscode")
+    .IsDependentOn("build-node-vscode")
+    .Does(() => DoInDirectory(srcExtensionsVscode, () => NpmRunScript("pack")));
 
-Task("Clean")
+Task("pack")
+    .IsDependentOn("pack-dotnet")
+    .IsDependentOn("pack-node-vscode");
+
+Task("test-dotnet-benchmarks")
+    .IsDependentOn("build-dotnet")
+    .Does(() => DotNetRun(benchmarksCsproj, args => args.Append("-t")));
+
+Task("test-dotnet-tests")
+    .IsDependentOn("build-dotnet")
     .Does(() =>
-    {
-        Information("Cleaning {0}...", RootProject);
-        DotNetClean(
-            RootProject,
+        DotNetTest(
+            testsCsproj.FullPath,
             new()
             {
-                MSBuildSettings = ConfigureMSBuild("clean"),
-                Configuration = _configuration,
-            });
+                MSBuildSettings = ConfigureMSBuild("test"),
+                Configuration = configuration,
+                NoBuild = true,
+            }));
 
-        Information("Cleaning {0}...", $"{ExtensionDirectory}/package.json");
-        NpmRunScript(
-            new NpmRunScriptSettings()
-            {
-                WorkingDirectory = ExtensionDirectory,
-                ScriptName = "clean",
-            });
-    });
+Task("test-celerity-stdlib")
+    .IsDependentOn("build-celerity-stdlib")
+    .Does(() => DotNetRun(driverCsproj.FullPath, args => args.Append("test")));
 
-Task("Prune")
+Task("test")
+    .IsDependentOn("test-dotnet-benchmarks")
+    .IsDependentOn("test-dotnet-tests")
+    .IsDependentOn("test-celerity-stdlib");
+
+Task("benchmark-dotnet-benchmarks")
+    .WithCriteria(configuration == "Release")
+    .IsDependentOn("build-dotnet")
     .Does(() =>
-    {
-        void Prune(string directory, string extension)
-        {
-            var glob = $"{OutputPath}/{directory}/**/*.{extension}";
+        DotNetRun(
+            benchmarksCsproj,
+            args => filter != null ? args.AppendSwitchQuoted("-f", filter) : args));
 
-            Information("Pruning {0}...", glob);
-            DeleteFiles(glob);
-        }
+Task("benchmark")
+    .IsDependentOn("benchmark-dotnet-benchmarks");
 
-        Prune("log", "binlog");
-        Prune("trx", "trx");
-        Prune("pkg", "nupkg");
-        Prune("pkg", "vsix");
-    });
-
-Task("Upload-GitHub")
+Task("upload-dotnet-github")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
-    .WithCriteria(_configuration == "Debug")
-    .IsDependentOn("Pack")
+    .WithCriteria(configuration == "Debug")
+    .IsDependentOn("pack-dotnet")
     .Does(() =>
-    {
-        Information("Pushing {0} to GitHub...", GitHubPackageGlob);
         DotNetTool(
             null,
             "gpr push",
             new ProcessArgumentBuilder()
-                .AppendQuoted(GitHubPackageGlob)
-                .AppendSwitchQuotedSecret("-k", _githubKey));
-    });
+                .AppendQuoted(githubGlob)
+                .AppendSwitchQuotedSecret("-k", githubToken)));
 
-Task("Upload-NuGet")
+Task("upload-dotnet-nuget")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
-    .WithCriteria(_configuration == "Release")
-    .IsDependentOn("Pack")
+    .WithCriteria(configuration == "Release")
+    .IsDependentOn("pack-dotnet")
     .Does(() =>
-    {
-        Information("Pushing {0} to NuGet...", NuGetPackageGlob);
         DotNetNuGetPush(
-            NuGetPackageGlob,
+            nugetGlob.Pattern,
             new()
             {
                 Source = "https://api.nuget.org/v3/index.json",
-                ApiKey = _nugetKey,
-            });
-    });
+                ApiKey = nugetToken,
+            }));
 
-Task("Upload-Marketplace")
+Task("upload-node-vscode-vsce")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
-    .WithCriteria(_configuration == "Release")
-    .IsDependentOn("Pack")
-    .Does(() =>
-    {
-        var files = GetFiles(ExtensionPackageGlob);
-        var cwd = new DirectoryPath(Environment.CurrentDirectory);
-        var args = new ProcessArgumentBuilder()
-            .Append("--pre-release")
-            .AppendSwitchQuotedSecret("-p", _marketplaceKey);
+    .WithCriteria(configuration == "Release")
+    .IsDependentOn("pack-node-vscode")
+    .Does(() => UploadVSCode("vsce", vsceToken));
 
-        foreach (var file in files)
-            _ = args.AppendSwitchQuoted("-i", file.FullPath);
+Task("upload-node-vscode-ovsx")
+    .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
+    .WithCriteria(configuration == "Release")
+    .IsDependentOn("pack-node-vscode")
+    .Does(() => UploadVSCode("ovsx", ovsxToken));
 
-        Information("Pushing {0} to Visual Studio Marketplace...", ExtensionPackageGlob);
-        Npx(
-            "vsce publish",
-            args,
-            settings => settings.WorkingDirectory = ExtensionDirectory);
-    });
-
-RunTarget(_target);
+RunTarget(target);
