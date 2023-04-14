@@ -101,6 +101,7 @@ void UploadVSCode(string command, string token)
 {
     var args = new ProcessArgumentBuilder()
         .Append("--pre-release")
+        .Append("--skip-duplicate")
         .AppendSwitchQuotedSecret("-p", token);
 
     foreach (var file in GetFiles(vscodeGlob))
@@ -269,6 +270,7 @@ Task("upload-dotnet-nuget")
             {
                 Source = "https://api.nuget.org/v3/index.json",
                 ApiKey = nugetToken,
+                SkipDuplicate = true,
             }));
 
 Task("upload-node-vscode-vsce")
