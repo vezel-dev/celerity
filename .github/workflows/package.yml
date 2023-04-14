@@ -11,6 +11,7 @@ env:
     DOTNET_CLI_TELEMETRY_OPTOUT: true
     DOTNET_GENERATE_ASPNET_CERTIFICATE: false
     DOTNET_NOLOGO: true
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
     package:
         if: github.repository == 'vezel-dev/celerity'
