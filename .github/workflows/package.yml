@@ -28,7 +28,7 @@ jobs:
                   node-version-file: package.json
             - name: Run Cake
               run: |
-                  ./cake package -k ${{ secrets.GITHUB_TOKEN }}
+                  ./cake upload-github --github-key ${{ secrets.GITHUB_TOKEN }}
             - name: Prune GitHub packages
               uses: SmartsquareGmbH/delete-old-packages@v0.6.0
               with:

@@ -28,4 +28,4 @@ jobs:
                   node-version-file: package.json
             - name: Run Cake
               run: |
-                  ./cake release -c Release -k ${{ secrets.NUGET_TOKEN }}
+                  ./cake release -c Release --nuget-key ${{ secrets.NUGET_TOKEN }}
