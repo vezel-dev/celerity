@@ -43,7 +43,7 @@ jobs:
                       out/pub/*
                       out/trx/*
             - name: Prune GitHub packages
-              uses: SmartsquareGmbH/delete-old-packages@v0.6.0
+              uses: SmartsquareGmbH/delete-old-packages@v0.7.0
               with:
                   names: |
                       celerity
