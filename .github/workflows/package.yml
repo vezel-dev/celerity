@@ -36,9 +36,9 @@ jobs:
               with:
                   name: ${{ github.workflow }}-${{ github.run_number }}-${{ github.run_attempt }}-windows-2022-Debug
                   path: |
-                      out/bin/*
-                      out/bld/*
-                      out/log/*
-                      out/pkg/*
-                      out/pub/*
-                      out/trx/*
+                      out/bin
+                      out/bld
+                      out/log
+                      out/pkg
+                      out/pub
+                      out/trx
