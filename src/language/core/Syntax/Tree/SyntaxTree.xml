@@ -73,7 +73,7 @@
         <Token Name="Name" />
         <Node Name="ParameterList" Type="TypeParameterList" Optional="true" />
         <Token Name="Equals" />
-        <Node Name="Type" Type="Type" />
+        <Node Name="Body" Type="Type" />
         <Token Name="Semicolon" />
     </Type>
 

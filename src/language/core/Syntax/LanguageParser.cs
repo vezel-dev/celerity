@@ -532,10 +532,10 @@ internal sealed class LanguageParser
         var name = Expect(SyntaxTokenKind.LowerIdentifier);
         var parms = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseTypeParameterList());
         var equals = Expect(SyntaxTokenKind.Equals);
-        var type = ParseType();
+        var body = ParseType();
         var semi = Expect(SyntaxTokenKind.Semicolon);
 
-        return new(List(attributes), pub, opaque, kw, name, parms, equals, type, semi);
+        return new(List(attributes), pub, opaque, kw, name, parms, equals, body, semi);
     }
 
     private TypeParameterListSyntax ParseTypeParameterList()
