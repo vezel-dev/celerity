@@ -148,7 +148,7 @@
     "vscode-languageclient": "8.1.0"
   },
   "scripts": {
-    "build": "tsc --noEmit && eslint src --ext ts && rimraf ../../../out/bin/src/extensions/vscode && esbuild src/extension.ts --external:vscode --platform=node --bundle --minify --sourcemap --outdir=../../../out/bin/src/extensions/vscode && cpy README.md language-configuration.json package.json snippets syntaxes ../../../out/bin/src/extensions/vscode && symlink-dir node_modules ../../../out/bin/src/extensions/vscode/node_modules && cd ../../../out/bin/src/extensions/vscode && cpy ../../../../../LICENSE-0BSD . --flat --rename=LICENSE && cpy \"../../../../../celerity.{png,svg}\" . --flat && nbgv-setversion",
+    "build": "tsc --noEmit && eslint src --ext ts && rimraf ../../../out/bin/src/extensions/vscode && esbuild src/extension.ts --external:vscode --platform=node --bundle --minify --sourcemap --outdir=../../../out/bin/src/extensions/vscode && cpy README.md language-configuration.json package.json snippets ../../../out/bin/src/extensions/vscode && mkdirp ../../../out/bin/src/extensions/vscode/syntaxes && js-yaml syntaxes/celerity.tmLanguage.yml > ../../../out/bin/src/extensions/vscode/syntaxes/celerity.tmLanguage.json && symlink-dir node_modules ../../../out/bin/src/extensions/vscode/node_modules && cd ../../../out/bin/src/extensions/vscode && cpy ../../../../../LICENSE-0BSD . --flat --rename=LICENSE && cpy \"../../../../../celerity.{png,svg}\" . --flat && nbgv-setversion",
     "pack": "cd ../../../out/bin/src/extensions/vscode && mkdirp ../../../../pkg/vscode && vsce package -o ../../../../pkg/vscode"
   },
   "vsce": {

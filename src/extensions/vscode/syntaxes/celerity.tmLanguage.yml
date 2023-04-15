@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json
+uuid: 6f95e94d-d78e-49d8-870b-b2496bd720be
+name: celerity
+scopeName: source.celerity
+fileTypes:
+    - cel
+firstLineMatch: ^#!.*\bcelerity\b.*$
+
+# This grammar is intentionally simple and only performs classification according to the lexical grammar. It also is not
+# entirely faithful to the formal language grammar. More advanced (and 100% correct) classification based on the
+# syntactic grammar and semantic knowledge is left to the language server.
+patterns:
+    # Shebang Line
+    - name: string.unquoted.celerity
+      match: ^#!.*$
+    # Comments
+    - name: comment.line.celerity
+      match: \s*//.*
+    # Operators
+    - name: keyword.operator.celerity
+      match: ==?|!=|(\+|-|~|\*|/|%|\&|\||\^|>|<)(\+|-|~|\*|/|%|\&|\||\^|>|<)*
+    # Literals
+    - name: constant.language.celerity
+      match: \b(false|nil|true)\b
+    - name: constant.numeric.real.celerity
+      match: '[0-9](_*[0-9])*\.[0-9](_*[0-9])*([eE][\+-]?[0-9](_*[0-9])*)?'
+    - name: constant.numeric.integer.celerity
+      match: '0([oO][0-7](_*[0-7])*|[bB][0-1](_*[0-1])*|[xX][0-9a-fA-F](_*[0-9a-fA-F])*)|[0-9](_*[0-9])*'
+    - name: string.quoted.celerity
+      begin: '"'
+      end: '"'
+    - name: string.other.celerity
+      match: :([A-Z][0-9a-zA-Z]*|[a-z][_0-9a-z]*|_[_0-9a-z]*)
+    # Punctuators
+    - name: punctuation.celerity
+      match: \.\.?|,|:\:?|;|->|@|#|\?|\(|\)|\[|\]|\{|\}
+    # Keywords
+    - name: keyword.declaration.celerity
+      match: \b(const|ext|fn|mod|opaque|pub|test|type|use)\b
+    - name: keyword.control.celerity
+      match: \b(as|assert|break|catch|cond|defer|else|for|if|in|let|match|mut|next|raise|recv|ret|tail|try|while)\b
+    - name: keyword.expression.celerity
+      match: \b(and|err|not|or|rec|this|with)\b
+    - name: keyword.type.celerity
+      match: \b(agent|any|atom|bool|handle|int|none|real|ref|str)\b
+    - name: keyword.other.celerity
+      match: \b(friend|macro|meta|quote|unquote|yield)\b
+    # Identifiers
+    - name: support.type.celerity
+      match: '[A-Z][0-9a-zA-Z]*'
+    - name: variable.name.celerity
+      match: '[a-z][_0-9a-z]*'
+    - name: support.other.excluded.celerity
+      match: _[_0-9a-z]*
