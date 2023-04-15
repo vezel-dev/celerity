@@ -33,7 +33,7 @@ var testsCsproj = src.Combine("tests").CombineWithFilePath("tests.csproj");
 var trimmingCsproj = src.Combine("trimming").CombineWithFilePath("trimming.csproj");
 
 var @out = root.Combine("out");
-var outLog = @out.Combine("log");
+var outLogDotNet = @out.Combine("log").Combine("dotnet");
 var outPkg = @out.Combine("pkg");
 var outPkgDotnet = outPkg.Combine("dotnet");
 
@@ -65,7 +65,7 @@ DotNetMSBuildSettings ConfigureMSBuild(string target)
         BinaryLogger = new()
         {
             Enabled = true,
-            FileName = outLog.CombineWithFilePath(name).FullPath,
+            FileName = outLogDotNet.CombineWithFilePath(name).FullPath,
         },
         ConsoleLoggerSettings = new()
         {
