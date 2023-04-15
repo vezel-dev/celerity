@@ -1,6 +1,7 @@
 # Table of Contents
 
 * [Home](index.md)
+* [Installation](installation.md)
 
 ## Language
 
