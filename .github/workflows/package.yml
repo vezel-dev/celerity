@@ -42,20 +42,3 @@ jobs:
                       out/pkg/*
                       out/pub/*
                       out/trx/*
-            - name: Prune GitHub packages
-              uses: SmartsquareGmbH/delete-old-packages@v0.7.0
-              with:
-                  organization: ${{ github.repository_owner }}
-                  type: nuget
-                  names: |
-                      celerity
-                      Vezel.Celerity.Common
-                      Vezel.Celerity.Language
-                      Vezel.Celerity.Language.Library
-                      Vezel.Celerity.Language.Service
-                      Vezel.Celerity.Language.Tooling
-                      Vezel.Celerity.Runtime
-                      Vezel.Celerity.Runtime.Compiler
-                      Vezel.Celerity.Runtime.Interpreter
-                      Vezel.Celerity.Runtime.Kernel
-                  keep: 25
