@@ -582,9 +582,11 @@ internal sealed class LanguageParser
         var name = ExpectCodeIdentifier();
         var parms = ParseFunctionParameterList();
         var type = ParseOptional(SyntaxTokenKind.MinusCloseAngle, static @this => @this.ParseReturnTypeAnnotation());
-        var body = ext == null ? ParseBlockExpression() : null;
+        var (body, semi) = ext == null
+            ? (ParseBlockExpression(), default(SyntaxToken))
+            : (null, Expect(SyntaxTokenKind.Semicolon));
 
-        return new(List(attributes), pub, ext, err, fn, name, parms, type, body);
+        return new(List(attributes), pub, ext, err, fn, name, parms, type, body, semi);
     }
 
     private FunctionParameterListSyntax ParseFunctionParameterList()

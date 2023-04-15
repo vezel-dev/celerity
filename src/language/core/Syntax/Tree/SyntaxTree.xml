@@ -114,6 +114,7 @@
         <Node Name="ParameterList" Type="FunctionParameterList" />
         <Node Name="ReturnType" Type="ReturnTypeAnnotation" Optional="true" />
         <Node Name="Body" Type="BlockExpression" Optional="true" Override="true" />
+        <Token Name="Semicolon" Optional="true" />
     </Type>
 
     <Type Name="FunctionParameterList" Parent="FunctionDeclaration">
