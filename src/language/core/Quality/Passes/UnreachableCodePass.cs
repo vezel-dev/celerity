@@ -36,7 +36,7 @@ public sealed class UnreachableCodePass : LintPass
                     SourceTextSpan.Union(dead.First().Syntax.Span, dead.Last().Syntax.Span), "Code is unreachable");
         }
 
-        // Only report a diagnostic if the try expression actually has a body and catch arms.
+        // Only report a diagnostic if the try expression actually has an operand and catch arms.
         foreach (var @try in descendants.OfType<TryExpressionSemantics>())
             if (@try is
                 {
@@ -44,7 +44,7 @@ public sealed class UnreachableCodePass : LintPass
                     Calls.IsEmpty: true,
                     Syntax:
                     {
-                        Body.Span.IsEmpty: false,
+                        Operand.Span.IsEmpty: false,
                         Arms.Span: { IsEmpty: false } span,
                     },
                 })

@@ -277,7 +277,7 @@
     </Type>
 
     <Type Name="TryExpression" Base="ConditionalExpression">
-        <Node Name="Body" Type="Expression" />
+        <Node Name="Operand" Type="Expression" />
         <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />
         <Value Name="Raises" Type="ImmutableArray&lt;RaiseExpressionSemantics&gt;" />
         <Value Name="Calls" Type="ImmutableArray&lt;CallExpressionSemantics&gt;" />

@@ -834,7 +834,7 @@ internal sealed class LanguageAnalyzer
             ExpressionSemantics body;
 
             using (PushScope(out scope))
-                body = VisitExpression(node.Body);
+                body = VisitExpression(node.Operand);
 
             var arms = ConvertList(node.Arms, static (@this, arm) => @this.VisitExpressionPatternArm(arm));
             var raises = scope.RaiseExpressions.DrainToImmutable();

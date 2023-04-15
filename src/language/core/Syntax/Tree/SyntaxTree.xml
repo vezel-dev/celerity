@@ -623,7 +623,7 @@
 
     <Type Name="TryExpression" Base="ConditionalExpression">
         <Token Name="TryKeyword" />
-        <Node Name="Body" Type="Expression" />
+        <Node Name="Operand" Type="Expression" />
         <Token Name="CatchKeyword" />
         <Token Name="OpenBrace" />
         <Nodes Name="Arm" Type="ExpressionPatternArm" Separated="true" />

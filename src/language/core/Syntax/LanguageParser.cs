@@ -1651,7 +1651,7 @@ internal sealed class LanguageParser
     private TryExpressionSyntax ParseTryExpression()
     {
         var @try = Read();
-        var body = ParseExpression();
+        var oper = ParseExpression();
         var @catch = Expect(SyntaxTokenKind.CatchKeyword);
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var (arms, seps) = ParseSeparatedList(
@@ -1662,7 +1662,7 @@ internal sealed class LanguageParser
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(@try, body, @catch, open, List(arms, seps), close);
+        return new(@try, oper, @catch, open, List(arms, seps), close);
     }
 
     private WhileExpressionSyntax ParseWhileExpression()
