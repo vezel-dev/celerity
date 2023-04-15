@@ -57,8 +57,7 @@ A full list of milestones can be found
 The ideal bug report is one that is immediately actionable by a person looking
 to resolve it. To that end, a bug report should include:
 
-* The version of Celerity being used.
-* Information about the host platform (operating system, architecture, etc).
+* The output of running `celerity info`.
 * A self-contained test case that reproduces the issue, along with instructions
   to trigger the issue.
 * A detailed description of current behavior (including stack traces(s) if
