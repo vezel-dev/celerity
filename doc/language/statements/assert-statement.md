@@ -5,9 +5,9 @@ assert-statement ::= 'assert' expression
 ```
 
 Evaluates [`expression`](../expressions.md) (the *condition*). If the result
-does not test as [truthy](../expressions/control/if.md#truthiness), a panic
-occurs. An `assert` statement is always executed; it is not conditional on build
-flags or similar.
+does not test as [truthy](../expressions/control/if-expression.md#truthiness), a
+panic occurs. An `assert` statement is always executed; it is not conditional on
+build flags or similar.
 
 <!-- TODO: Link to panic definition. -->
 
