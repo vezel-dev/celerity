@@ -1,4 +1,5 @@
 #addin nuget:?package=Cake.DoInDirectory&version=6.0.0
+#addin nuget:?package=Cake.GitVersioning&version=3.5.119
 #addin nuget:?package=Cake.Npm&version=2.0.0
 #addin nuget:?package=Cake.Npx&version=1.7.0
 
@@ -33,15 +34,16 @@ var testsCsproj = src.Combine("tests").CombineWithFilePath("tests.csproj");
 var trimmingCsproj = src.Combine("trimming").CombineWithFilePath("trimming.csproj");
 
 var @out = root.Combine("out");
-var outLogDotNet = @out.Combine("log").Combine("dotnet");
+var outLogDotnet = @out.Combine("log").Combine("dotnet");
 var outPkg = @out.Combine("pkg");
 var outPkgDotnet = outPkg.Combine("dotnet");
+var outPkgVscode = outPkg.Combine("vscode");
 
 // Globs
 
 var githubGlob = new GlobPattern(outPkgDotnet.Combine("debug").CombineWithFilePath("*.nupkg").FullPath);
 var nugetGlob = new GlobPattern(outPkgDotnet.Combine("release").CombineWithFilePath("*.nupkg").FullPath);
-var vscodeGlob = new GlobPattern(outPkg.Combine("vscode").CombineWithFilePath("*.vsix").FullPath);
+var vscodeGlob = new GlobPattern(outPkgVscode.CombineWithFilePath("*.vsix").FullPath);
 
 // Utilities
 
@@ -65,7 +67,7 @@ DotNetMSBuildSettings ConfigureMSBuild(string target)
         BinaryLogger = new()
         {
             Enabled = true,
-            FileName = outLogDotNet.CombineWithFilePath(name).FullPath,
+            FileName = outLogDotnet.CombineWithFilePath(name).FullPath,
         },
         ConsoleLoggerSettings = new()
         {
@@ -89,12 +91,22 @@ void DotNetRun(FilePath project, Func<ProcessArgumentBuilder, ProcessArgumentBui
 {
     DotNetRun(
         project.FullPath,
-        appender(new ProcessArgumentBuilder()),
+        appender(new()),
         new()
         {
             Configuration = configuration,
             NoBuild = true,
         });
+}
+
+void RunVSCode(Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender)
+{
+    var tool = Context.Tools.Resolve(new[] { "code.cmd", "code" }) ??
+        throw new CakeException("code: Could not locate executable.");
+    var code = StartProcess(tool, appender(new()).Render());
+
+    if (code != 0)
+        throw new CakeException(code, $"code: Process returned an error (exit code {code}).");
 }
 
 void UploadVSCode(string command, string token)
@@ -240,12 +252,25 @@ Task("benchmark-dotnet-benchmarks")
     .WithCriteria(configuration == "Release")
     .IsDependentOn("build-dotnet")
     .Does(() =>
-        DotNetRun(
-            benchmarksCsproj,
-            args => filter != null ? args.AppendSwitchQuoted("-f", filter) : args));
+        DotNetRun(benchmarksCsproj, args => filter != null ? args.AppendSwitchQuoted("-f", filter) : args));
 
 Task("benchmark")
     .IsDependentOn("benchmark-dotnet-benchmarks");
+
+Task("install-node-vscode")
+    .IsDependentOn("pack-node-vscode")
+    .Does(() =>
+    {
+        var version = GitVersioningGetVersion(root.FullPath);
+
+        RunVSCode(
+            args => args.AppendSwitchQuoted(
+                "--install-extension",
+                outPkgVscode.CombineWithFilePath($"celerity-{version.NpmPackageVersion}.vsix").FullPath));
+    });
+
+Task("uninstall-node-vscode")
+    .Does(() => RunVSCode(args => args.AppendSwitchQuoted("--uninstall-extension", "vezel.celerity")));
 
 Task("upload-dotnet-github")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
