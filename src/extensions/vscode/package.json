@@ -76,6 +76,36 @@
         "language": "celerity"
       }
     ],
+    "configuration":[
+      {
+        "title": "Celerity",
+        "properties": {
+          "celerity.executablePath": {
+            "title": "Executable Path",
+            "scope": "machine",
+            "type": "string",
+            "format": "path",
+            "default": "celerity",
+            "markdownDescription": "Path to the `celerity` executable."
+          },
+          "celerity.logLevel": {
+            "title": "Log Level",
+            "scope": "machine",
+            "type": "string",
+            "enum": [
+              "critical",
+              "error",
+              "warning",
+              "information",
+              "debug",
+              "trace"
+            ],
+            "default": "information",
+            "markdownDescription": "Language server log level."
+          }
+        }
+      }
+    ],
     "grammars": [
       {
         "language": "celerity",

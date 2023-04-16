@@ -11,6 +11,7 @@ document formatting, debugging, testing, and more.
 This extension can provide basic language features on its own, but the majority
 of functionality requires the Celerity language server. To use the language
 server, you must have the `celerity` executable available in your `PATH`, or
-configure it manually with the `celerity.path` setting. See Celerity's
+configure the location manually with the `celerity.executablePath` setting.
+See Celerity's
 [installation instructions](https://docs.vezel.dev/celerity/installation) for
 more information.
