@@ -57,6 +57,7 @@ celerity serve [options...]
 | - | - |
 | `--workspace` | Set workspace directory. |
 | `--level` | Set log level. |
+| `--stdio` | Enable standard I/O communication. |
 
 ## celerity test
 
