@@ -331,6 +331,10 @@ Task("install-node-vscode")
                 outPkgVscode.CombineWithFilePath($"celerity-{version.NpmPackageVersion}.vsix").FullPath));
     });
 
+Task("install")
+    .IsDependentOn("install-dotnet")
+    .IsDependentOn("install-node-vscode");
+
 Task("uninstall-dotnet")
     .Does(() =>
     {
@@ -346,6 +350,10 @@ Task("uninstall-dotnet")
 
 Task("uninstall-node-vscode")
     .Does(() => RunVSCode(args => args.AppendSwitchQuoted("--uninstall-extension", "vezel.celerity")));
+
+Task("uninstall")
+    .IsDependentOn("uninstall-node-vscode")
+    .IsDependentOn("uninstall-dotnet");
 
 Task("upload-dotnet-github")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
