@@ -96,14 +96,52 @@ void DotNetRun(FilePath project, Func<ProcessArgumentBuilder, ProcessArgumentBui
         });
 }
 
+(int ExitCode, string StandardOut, string StandardError) RunCommand(
+    string name,
+    string[] tools,
+    Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender,
+    Func<string, string, bool> checker)
+{
+    var code = StartProcess(
+        Context.Tools.Resolve(tools) ?? throw new CakeException($"{name}: Could not locate executable."),
+        new()
+        {
+            Arguments = appender(new()),
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            RedirectedStandardOutputHandler = text =>
+            {
+                Console.Out.WriteLine(text);
+
+                return text;
+            },
+            RedirectedStandardErrorHandler = text =>
+            {
+                Console.Error.WriteLine(text);
+
+                return text;
+            },
+        },
+        out var stdOut,
+        out var stdErr);
+
+    var stdOutStr = string.Join(null, stdOut);
+    var stdErrStr = string.Join(null, stdErr);
+
+    if (code != 0 && checker(stdOutStr, stdErrStr))
+        throw new CakeException(code, $"{name}: Process returned an error (exit code {code}).");
+
+    return (code, stdOutStr, stdErrStr);
+}
+
+bool RunDotNet(Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender, Func<string, string, bool> checker)
+{
+    return RunCommand(".NET CLI", new[] { "dotnet", "dotnet.exe" }, appender, checker).ExitCode == 0;
+}
+
 void RunVSCode(Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender)
 {
-    var tool = Context.Tools.Resolve(new[] { "code.cmd", "code" }) ??
-        throw new CakeException("code: Could not locate executable.");
-    var code = StartProcess(tool, appender(new()).Render());
-
-    if (code != 0)
-        throw new CakeException(code, $"code: Process returned an error (exit code {code}).");
+    _ = RunCommand("VS Code", new[] { "code.cmd", "code" }, appender, (_, _) => true);
 }
 
 void UploadVSCode(string command, string token)
@@ -254,6 +292,33 @@ Task("benchmark-dotnet-benchmarks")
 Task("benchmark")
     .IsDependentOn("benchmark-dotnet-benchmarks");
 
+Task("install-dotnet")
+    .IsDependentOn("pack-dotnet")
+    .Does(() =>
+    {
+        // TODO: https://github.com/dotnet/sdk/issues/31824
+        if (RunDotNet(
+            args =>
+                args
+                    .Append("tool")
+                    .Append("install")
+                    .Append("celerity")
+                    .Append("--prerelease")
+                    .Append("-g"),
+            (_, stdErr) => !stdErr.StartsWith("Tool 'celerity' is already installed.")))
+            return;
+
+        _ = RunDotNet(
+            args =>
+                args
+                    .Append("tool")
+                    .Append("update")
+                    .Append("celerity")
+                    .Append("--prerelease")
+                    .Append("-g"),
+            (_, _) => true);
+    });
+
 Task("install-node-vscode")
     .IsDependentOn("pack-node-vscode")
     .Does(() =>
@@ -264,6 +329,19 @@ Task("install-node-vscode")
             args => args.AppendSwitchQuoted(
                 "--install-extension",
                 outPkgVscode.CombineWithFilePath($"celerity-{version.NpmPackageVersion}.vsix").FullPath));
+    });
+
+Task("uninstall-dotnet")
+    .Does(() =>
+    {
+        _ = RunDotNet(
+            args =>
+                args
+                    .Append("tool")
+                    .Append("uninstall")
+                    .Append("celerity")
+                    .Append("-g"),
+            (_, stdErr) => !stdErr.StartsWith("A tool with the package Id 'celerity' could not be found."));
     });
 
 Task("uninstall-node-vscode")
