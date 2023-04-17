@@ -97,6 +97,13 @@
       {
         "title": "Celerity",
         "properties": {
+          "celerity.autoDetectTasks": {
+            "title": "Auto-Detect Tasks",
+            "scope": "machine",
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Controls whether `celerity.json` tasks are automatically detected."
+          },
           "celerity.autoStartServer": {
             "title": "Auto-Start Language Server",
             "scope": "machine",
@@ -200,6 +207,11 @@
       {
         "language": "celerity",
         "path": "snippets/celerity.json"
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "celerity"
       }
     ]
   },

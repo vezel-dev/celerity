@@ -1,9 +1,16 @@
 import {
+    type CancellationToken,
     Disposable,
     type ExtensionContext,
     MarkdownString,
+    ShellExecution,
     StatusBarAlignment,
+    Task,
+    TaskGroup,
+    type TaskProvider,
+    type Uri,
     commands,
+    tasks,
     window,
     workspace,
 } from "vscode";
@@ -19,6 +26,8 @@ export async function activate(context : ExtensionContext) : Promise<void> {
     const status = window.createStatusBarItem("Celerity", StatusBarAlignment.Left);
 
     let client : LanguageClient | null = null;
+
+    pushDisposable(new Disposable(async () => client?.dispose()));
 
     function setStatus(icon : string, tooltip ?: string | undefined) : void {
         status.text = `$(${icon}) Celerity`;
@@ -98,12 +107,68 @@ export async function activate(context : ExtensionContext) : Promise<void> {
         await commands.executeCommand("celerity.startServer");
     });
 
-    status.show();
+    if (cfg.get<boolean>("autoDetectTasks", true))
+        pushDisposable(tasks.registerTaskProvider("celerity", new CelerityTaskProvider()));
 
-    pushDisposable(new Disposable(async () => client?.dispose()));
+    status.show();
 
     if (cfg.get<boolean>("autoStartServer", true))
         await commands.executeCommand("celerity.startServer");
     else
         setStatus("circle-slash", "Language server not started due to `celerity.autoStartServer` setting.");
+}
+
+class CelerityTaskProvider implements TaskProvider {
+    private readonly _tasks : Map<string, Task[]> = new Map<string, Task[]>();
+
+    public constructor() {
+        const glob = "**/celerity.json";
+
+        void workspace.findFiles(glob).then(uris => {
+            for (const uri of uris)
+                this.addTasks(uri);
+        });
+
+        const watcher = workspace.createFileSystemWatcher(glob);
+
+        watcher.onDidCreate(uri => this.addTasks(uri));
+        watcher.onDidDelete(uri => this._tasks.delete(uri.fsPath));
+    }
+
+    public provideTasks(_token : CancellationToken) : Task[] {
+        return [... this._tasks.values()].flat();
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    public resolveTask(_task : Task, _token : CancellationToken) : undefined {
+        return undefined;
+    }
+
+    private addTasks(uri : Uri) : void {
+        const folder = workspace.getWorkspaceFolder(uri);
+
+        if (folder !== undefined)
+            this._tasks.set(
+                uri.fsPath,
+                ["Check", "Format", "Test"].map(kind => {
+                    const task = new Task(
+                        { type : "celerity" },
+                        folder,
+                        `${kind} ${workspace.asRelativePath(uri)}`,
+                        "Celerity",
+                        new ShellExecution(`celerity ${kind.toLowerCase()}`, kind === "Format" ? ["-f"] : []),
+                        "$celerity");
+
+                    switch (kind) {
+                        case "Check":
+                            task.group = TaskGroup.Build;
+                            break;
+                        case "Test":
+                            task.group = TaskGroup.Test;
+                            break;
+                    }
+
+                    return task;
+                }));
+    }
 }
