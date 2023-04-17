@@ -32,6 +32,12 @@ export function activate(context : ExtensionContext) : void {
             status.tooltip = new MarkdownString(tooltip);
     }
 
+    if (!cfg.get<boolean>("enableLanguageServer", true)) {
+        setStatus("circle-slash", "Disabled due to `celerity.enableLanguageServer` setting.");
+
+        return;
+    }
+
     extensionChannel.info("Launching Celerity language server...");
 
     setStatus("rocket", "Launching...");

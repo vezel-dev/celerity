@@ -80,6 +80,13 @@
       {
         "title": "Celerity",
         "properties": {
+          "celerity.enableLanguageServer": {
+            "title": "Enable Language Server",
+            "scope": "machine",
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Enable language server support."
+          },
           "celerity.executablePath": {
             "title": "Executable Path",
             "scope": "machine",
