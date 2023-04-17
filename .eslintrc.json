@@ -756,9 +756,6 @@
       {
         "array": true,
         "object": true
-      },
-      {
-        "enforceForRenamedProperties": true
       }
     ],
     "prefer-exponentiation-operator": "error",
