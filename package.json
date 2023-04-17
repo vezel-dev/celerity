@@ -9,7 +9,7 @@
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "cpy-cli": "4.2.0",
-    "esbuild": "0.17.16",
+    "esbuild": "0.17.17",
     "eslint": "^8.38.0",
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.0",
