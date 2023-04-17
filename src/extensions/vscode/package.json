@@ -85,7 +85,7 @@
             "scope": "machine",
             "type": "boolean",
             "default": true,
-            "markdownDescription": "Enable language server support."
+            "markdownDescription": "Enables language server support."
           },
           "celerity.executablePath": {
             "title": "Executable Path",
@@ -93,10 +93,10 @@
             "type": "string",
             "format": "path",
             "default": "celerity",
-            "markdownDescription": "Path to the `celerity` executable."
+            "markdownDescription": "Configures the path to the `celerity` executable."
           },
           "celerity.logLevel": {
-            "title": "Log Level",
+            "title": "Language Server Log Level",
             "scope": "machine",
             "type": "string",
             "enum": [
@@ -108,7 +108,19 @@
               "trace"
             ],
             "default": "information",
-            "markdownDescription": "Language server log level."
+            "markdownDescription": "Controls the language server log level."
+          },
+          "celerity.trace.server": {
+            "title": "Language Server Tracing",
+            "scope": "machine",
+            "type": "string",
+            "enum": [
+              "off",
+              "messages",
+              "verbose"
+            ],
+            "default": "off",
+            "markdownDescription": "Enables tracing of communication with the language server."
           }
         }
       }
