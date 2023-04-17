@@ -3,6 +3,7 @@ import {
     type ExtensionContext,
     MarkdownString,
     StatusBarAlignment,
+    commands,
     window,
     workspace,
 } from "vscode";
@@ -11,19 +12,13 @@ import {
     TransportKind,
 } from "vscode-languageclient/node";
 
-export function activate(context : ExtensionContext) : void {
-    const { subscriptions } = context;
+export async function activate(context : ExtensionContext) : Promise<void> {
     const cfg = workspace.getConfiguration("celerity");
-
     const extensionChannel = window.createOutputChannel("Celerity", { log : true });
     const serverChannel = window.createOutputChannel("Celerity Language Server");
     const status = window.createStatusBarItem("Celerity", StatusBarAlignment.Left);
 
-    subscriptions.push(new Disposable(() => extensionChannel.dispose()));
-    subscriptions.push(new Disposable(() => serverChannel.dispose()));
-    subscriptions.push(new Disposable(() => status.dispose()));
-
-    status.show();
+    let client : LanguageClient | null = null;
 
     function setStatus(icon : string, tooltip ?: string | undefined) : void {
         status.text = `$(${icon}) Celerity`;
@@ -32,45 +27,83 @@ export function activate(context : ExtensionContext) : void {
             status.tooltip = new MarkdownString(tooltip);
     }
 
-    if (!cfg.get<boolean>("enableLanguageServer", true)) {
-        setStatus("circle-slash", "Disabled due to `celerity.enableLanguageServer` setting.");
-
-        return;
+    function pushDisposable(disposable : { dispose : () => unknown }) {
+        context.subscriptions.push(disposable);
     }
 
-    extensionChannel.info("Launching Celerity language server...");
+    function registerCommand(name : string, callback : () => unknown) : void {
+        pushDisposable(commands.registerCommand(name, callback));
+    }
 
-    setStatus("rocket", "Launching...");
+    pushDisposable(extensionChannel);
+    pushDisposable(serverChannel);
+    pushDisposable(status);
 
-    const client = new LanguageClient(
-        "celerity",
-        {
-            command : cfg.get("executablePath", "celerity"),
-            args : ["serve", "-l", cfg.get<string>("logLevel", "information")],
-            transport : TransportKind.stdio,
-        },
-        {
-            outputChannel : serverChannel,
-            documentSelector : [
+    registerCommand(
+        "celerity.startServer",
+        async () => {
+            if (client !== null)
+                return;
+
+            extensionChannel.info("Starting Celerity language server...");
+            setStatus("rocket", "Starting...");
+
+            client = new LanguageClient(
+                "celerity",
                 {
-                    scheme : "file",
-                    language : "celerity",
+                    command : cfg.get("executablePath", "celerity"),
+                    args : ["serve", "-l", cfg.get<string>("serverLogLevel", "information")],
+                    transport : TransportKind.stdio,
                 },
-            ],
+                {
+                    outputChannel : serverChannel,
+                    documentSelector : [
+                        {
+                            scheme : "file",
+                            language : "celerity",
+                        },
+                    ],
+                });
+
+            try {
+                await client.start();
+
+                extensionChannel.info("Celerity language server started.");
+                setStatus("zap", client.initializeResult?.serverInfo?.version);
+            } catch (err) {
+                extensionChannel.show(true);
+
+                extensionChannel.error("Celerity language server failed to start:", err);
+                setStatus("alert", `\`\`\`\n${err}\n\`\`\``);
+            }
         });
 
-    client.start().then(
-        () => {
-            subscriptions.push(client);
+    registerCommand("celerity.stopServer", () => {
+        if (client === null)
+            return;
 
-            extensionChannel.info("Celerity language server launched.");
+        extensionChannel.info("Stopping Celerity language server...");
+        setStatus("history", "Stopping...");
 
-            setStatus("zap", client.initializeResult?.serverInfo?.version);
-        },
-        err => {
-            extensionChannel.error("Celerity language server failed to launch:", err);
-            extensionChannel.show(true);
+        void client.dispose();
 
-            setStatus("alert", `\`\`\`\n${err}\n\`\`\``);
-        });
+        client = null;
+
+        extensionChannel.info("Celerity language server stopped.");
+        setStatus("circle-slash", "Language server manually stopped.");
+    });
+
+    registerCommand("celerity.restartServer", async () => {
+        await commands.executeCommand("celerity.stopServer");
+        await commands.executeCommand("celerity.startServer");
+    });
+
+    status.show();
+
+    pushDisposable(new Disposable(async () => client?.dispose()));
+
+    if (cfg.get<boolean>("autoStartServer", true))
+        await commands.executeCommand("celerity.startServer");
+    else
+        setStatus("circle-slash", "Language server not started due to `celerity.autoStartServer` setting.");
 }

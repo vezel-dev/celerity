@@ -76,16 +76,33 @@
         "language": "celerity"
       }
     ],
+    "commands": [
+      {
+        "command": "celerity.startServer",
+        "category": "Celerity",
+        "title": "Start Language Server"
+      },
+      {
+        "command": "celerity.stopServer",
+        "category": "Celerity",
+        "title": "Stop Language Server"
+      },
+      {
+        "command": "celerity.restartServer",
+        "category": "Celerity",
+        "title": "Restart Language Server"
+      }
+    ],
     "configuration":[
       {
         "title": "Celerity",
         "properties": {
-          "celerity.enableLanguageServer": {
-            "title": "Enable Language Server",
+          "celerity.autoStartServer": {
+            "title": "Auto-Start Language Server",
             "scope": "machine",
             "type": "boolean",
             "default": true,
-            "markdownDescription": "Enables language server support."
+            "markdownDescription": "Controls whether the language server starts automatically."
           },
           "celerity.executablePath": {
             "title": "Executable Path",
@@ -95,7 +112,7 @@
             "default": "celerity",
             "markdownDescription": "Configures the path to the `celerity` executable."
           },
-          "celerity.logLevel": {
+          "celerity.serverLogLevel": {
             "title": "Language Server Log Level",
             "scope": "machine",
             "type": "string",
