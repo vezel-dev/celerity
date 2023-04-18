@@ -173,15 +173,10 @@ Task("restore-dotnet")
                 MSBuildSettings = ConfigureMSBuild("restore"),
             }));
 
-Task("restore-node")
-    .Does(() => NpmInstall(root));
-
 Task("restore-node-vscode")
-    .IsDependentOn("restore-node")
     .Does(() => NpmInstall(srcExtensionsVscode));
 
 Task("restore-node-doc")
-    .IsDependentOn("restore-node")
     .Does(() => NpmInstall(doc));
 
 Task("restore")
