@@ -164,7 +164,7 @@ Task("default")
     .IsDependentOn("build")
     .IsDependentOn("pack");
 
-Task("restore-dotnet")
+Task("restore-core")
     .Does(() =>
         DotNetRestore(
             celerityProj.FullPath,
@@ -173,19 +173,19 @@ Task("restore-dotnet")
                 MSBuildSettings = ConfigureMSBuild("restore"),
             }));
 
-Task("restore-node-vscode")
+Task("restore-vscode")
     .Does(() => NpmInstall(srcExtensionsVscode));
 
-Task("restore-node-doc")
+Task("restore-doc")
     .Does(() => NpmInstall(doc));
 
 Task("restore")
-    .IsDependentOn("restore-dotnet")
-    .IsDependentOn("restore-node-vscode")
-    .IsDependentOn("restore-node-doc");
+    .IsDependentOn("restore-core")
+    .IsDependentOn("restore-vscode")
+    .IsDependentOn("restore-doc");
 
-Task("build-dotnet")
-    .IsDependentOn("restore-dotnet")
+Task("build-core")
+    .IsDependentOn("restore-core")
     .Does(() =>
         DotNetBuild(
             celerityProj.FullPath,
@@ -196,8 +196,8 @@ Task("build-dotnet")
                 NoRestore = true,
             }));
 
-Task("build-dotnet-trimming")
-    .IsDependentOn("build-dotnet")
+Task("build-trimming")
+    .IsDependentOn("build-core")
     .Does(() =>
         DotNetPublish(
             trimmingCsproj.FullPath,
@@ -208,8 +208,8 @@ Task("build-dotnet-trimming")
                 NoBuild = true,
             }));
 
-Task("build-celerity-stdlib")
-    .IsDependentOn("build-dotnet")
+Task("build-stdlib")
+    .IsDependentOn("build-core")
     .Does(() =>
         DoInDirectory(
             srcLanguageLibrary,
@@ -219,22 +219,22 @@ Task("build-celerity-stdlib")
                     DotNetRun(driverCsproj.FullPath, args => args.Append(cmd));
             }));
 
-Task("build-node-vscode")
-    .IsDependentOn("restore-node-vscode")
+Task("build-vscode")
+    .IsDependentOn("restore-vscode")
     .Does(() => DoInDirectory(srcExtensionsVscode, () => NpmRunScript("build")));
 
-Task("build-node-doc")
-    .IsDependentOn("restore-node-doc")
+Task("build-doc")
+    .IsDependentOn("restore-doc")
     .Does(() => DoInDirectory(doc, () => Npx("markdownlint-cli2")));
 
 Task("build")
-    .IsDependentOn("build-dotnet-trimming")
-    .IsDependentOn("build-celerity-stdlib")
-    .IsDependentOn("build-node-vscode")
-    .IsDependentOn("build-node-doc");
+    .IsDependentOn("build-stdlib")
+    .IsDependentOn("build-trimming")
+    .IsDependentOn("build-vscode")
+    .IsDependentOn("build-doc");
 
-Task("pack-dotnet")
-    .IsDependentOn("build-dotnet")
+Task("pack-core")
+    .IsDependentOn("build-core")
     .Does(() =>
         DotNetPack(
             celerityProj.FullPath,
@@ -245,20 +245,16 @@ Task("pack-dotnet")
                 NoBuild = true,
             }));
 
-Task("pack-node-vscode")
-    .IsDependentOn("build-node-vscode")
+Task("pack-vscode")
+    .IsDependentOn("build-vscode")
     .Does(() => DoInDirectory(srcExtensionsVscode, () => NpmRunScript("pack")));
 
 Task("pack")
-    .IsDependentOn("pack-dotnet")
-    .IsDependentOn("pack-node-vscode");
+    .IsDependentOn("pack-core")
+    .IsDependentOn("pack-vscode");
 
-Task("test-dotnet-benchmarks")
-    .IsDependentOn("build-dotnet")
-    .Does(() => DotNetRun(benchmarksCsproj, args => args.Append("-t")));
-
-Task("test-dotnet-tests")
-    .IsDependentOn("build-dotnet")
+Task("test-core")
+    .IsDependentOn("build-core")
     .Does(() =>
         DotNetTest(
             testsCsproj.FullPath,
@@ -269,26 +265,30 @@ Task("test-dotnet-tests")
                 NoBuild = true,
             }));
 
-Task("test-celerity-stdlib")
-    .IsDependentOn("build-celerity-stdlib")
+Task("test-benchmarks")
+    .IsDependentOn("build-core")
+    .Does(() => DotNetRun(benchmarksCsproj, args => args.Append("-t")));
+
+Task("test-stdlib")
+    .IsDependentOn("build-stdlib")
     .Does(() => DotNetRun(driverCsproj.FullPath, args => args.Append("test")));
 
 Task("test")
-    .IsDependentOn("test-dotnet-benchmarks")
-    .IsDependentOn("test-dotnet-tests")
-    .IsDependentOn("test-celerity-stdlib");
+    .IsDependentOn("test-core")
+    .IsDependentOn("test-benchmarks")
+    .IsDependentOn("test-stdlib");
 
-Task("benchmark-dotnet-benchmarks")
+Task("benchmark-core")
     .WithCriteria(configuration == "Release")
-    .IsDependentOn("build-dotnet")
+    .IsDependentOn("build-core")
     .Does(() =>
         DotNetRun(benchmarksCsproj, args => filter != null ? args.AppendSwitchQuoted("-f", filter) : args));
 
 Task("benchmark")
-    .IsDependentOn("benchmark-dotnet-benchmarks");
+    .IsDependentOn("benchmark-core");
 
-Task("install-dotnet")
-    .IsDependentOn("pack-dotnet")
+Task("install-core")
+    .IsDependentOn("pack-core")
     .Does(() =>
         RunDotNet(
             args =>
@@ -300,8 +300,8 @@ Task("install-dotnet")
                     .Append("-g"),
             (_, _) => true));
 
-Task("install-node-vscode")
-    .IsDependentOn("pack-node-vscode")
+Task("install-vscode")
+    .IsDependentOn("pack-vscode")
     .Does(() =>
     {
         var version = GitVersioningGetVersion(root.FullPath);
@@ -313,10 +313,10 @@ Task("install-node-vscode")
     });
 
 Task("install")
-    .IsDependentOn("install-dotnet")
-    .IsDependentOn("install-node-vscode");
+    .IsDependentOn("install-core")
+    .IsDependentOn("install-vscode");
 
-Task("uninstall-dotnet")
+Task("uninstall-core")
     .Does(() =>
         RunDotNet(
             args =>
@@ -327,17 +327,17 @@ Task("uninstall-dotnet")
                     .Append("-g"),
             (_, stdErr) => !stdErr.StartsWith("A tool with the package Id 'celerity' could not be found.")));
 
-Task("uninstall-node-vscode")
+Task("uninstall-vscode")
     .Does(() => RunVSCode(args => args.AppendSwitchQuoted("--uninstall-extension", "vezel.celerity")));
 
 Task("uninstall")
-    .IsDependentOn("uninstall-node-vscode")
-    .IsDependentOn("uninstall-dotnet");
+    .IsDependentOn("uninstall-core")
+    .IsDependentOn("uninstall-vscode");
 
-Task("upload-dotnet-github")
+Task("upload-core-github")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref == "refs/heads/master")
     .WithCriteria(configuration == "Debug")
-    .IsDependentOn("pack-dotnet")
+    .IsDependentOn("pack-core")
     .Does(() =>
         DotNetTool(
             null,
@@ -346,10 +346,10 @@ Task("upload-dotnet-github")
                 .AppendQuoted(githubGlob)
                 .AppendSwitchQuotedSecret("-k", githubToken)));
 
-Task("upload-dotnet-nuget")
+Task("upload-core-nuget")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
     .WithCriteria(configuration == "Release")
-    .IsDependentOn("pack-dotnet")
+    .IsDependentOn("pack-core")
     .Does(() =>
         DotNetNuGetPush(
             nugetGlob.Pattern,
@@ -360,16 +360,16 @@ Task("upload-dotnet-nuget")
                 SkipDuplicate = true,
             }));
 
-Task("upload-node-vscode-vsce")
+Task("upload-vscode-vsce")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
     .WithCriteria(configuration == "Release")
-    .IsDependentOn("pack-node-vscode")
+    .IsDependentOn("pack-vscode")
     .Does(() => UploadVSCode("vsce", vsceToken));
 
-Task("upload-node-vscode-ovsx")
+Task("upload-vscode-ovsx")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
     .WithCriteria(configuration == "Release")
-    .IsDependentOn("pack-node-vscode")
+    .IsDependentOn("pack-vscode")
     .Does(() => UploadVSCode("ovsx", ovsxToken));
 
 RunTarget(target);
