@@ -1,6 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/eslintrc.json",
   "extends": "../../../.eslintrc.json",
+  // TODO: https://github.com/eslint/eslint/discussions/17092
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2021
   }
