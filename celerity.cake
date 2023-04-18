@@ -295,20 +295,7 @@ Task("benchmark")
 Task("install-dotnet")
     .IsDependentOn("pack-dotnet")
     .Does(() =>
-    {
-        // TODO: https://github.com/dotnet/sdk/issues/31824
-        if (RunDotNet(
-            args =>
-                args
-                    .Append("tool")
-                    .Append("install")
-                    .Append("celerity")
-                    .Append("--prerelease")
-                    .Append("-g"),
-            (_, stdErr) => !stdErr.StartsWith("Tool 'celerity' is already installed.")))
-            return;
-
-        _ = RunDotNet(
+        RunDotNet(
             args =>
                 args
                     .Append("tool")
@@ -316,8 +303,7 @@ Task("install-dotnet")
                     .Append("celerity")
                     .Append("--prerelease")
                     .Append("-g"),
-            (_, _) => true);
-    });
+            (_, _) => true));
 
 Task("install-node-vscode")
     .IsDependentOn("pack-node-vscode")
@@ -337,16 +323,14 @@ Task("install")
 
 Task("uninstall-dotnet")
     .Does(() =>
-    {
-        _ = RunDotNet(
+        RunDotNet(
             args =>
                 args
                     .Append("tool")
                     .Append("uninstall")
                     .Append("celerity")
                     .Append("-g"),
-            (_, stdErr) => !stdErr.StartsWith("A tool with the package Id 'celerity' could not be found."));
-    });
+            (_, stdErr) => !stdErr.StartsWith("A tool with the package Id 'celerity' could not be found.")));
 
 Task("uninstall-node-vscode")
     .Does(() => RunVSCode(args => args.AppendSwitchQuoted("--uninstall-extension", "vezel.celerity")));
