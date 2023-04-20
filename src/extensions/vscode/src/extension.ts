@@ -147,28 +147,32 @@ class CelerityTaskProvider implements TaskProvider {
     private addTasks(uri : Uri) : void {
         const folder = workspace.getWorkspaceFolder(uri);
 
-        if (folder !== undefined)
-            this._tasks.set(
-                uri.fsPath,
-                ["Check", "Format", "Test"].map(kind => {
-                    const task = new Task(
-                        { type : "celerity" },
-                        folder,
-                        `${kind} ${workspace.asRelativePath(uri)}`,
-                        "Celerity",
-                        new ShellExecution(`celerity ${kind.toLowerCase()}`, kind === "Format" ? ["-f"] : []),
-                        "$celerity");
+        if (folder === undefined)
+            return;
 
-                    switch (kind) {
-                        case "Check":
-                            task.group = TaskGroup.Build;
-                            break;
-                        case "Test":
-                            task.group = TaskGroup.Test;
-                            break;
-                    }
+        const exe = workspace.getConfiguration("celerity").get<string>("executablePath", "celerity");
 
-                    return task;
-                }));
+        this._tasks.set(
+            uri.fsPath,
+            ["Check", "Format", "Test"].map(kind => {
+                const task = new Task(
+                    { type : "celerity" },
+                    folder,
+                    `${kind} ${workspace.asRelativePath(uri)}`,
+                    "Celerity",
+                    new ShellExecution(`${exe} ${kind.toLowerCase()}`, kind === "Format" ? ["-f"] : []),
+                    "$celerity");
+
+                switch (kind) {
+                    case "Check":
+                        task.group = TaskGroup.Build;
+                        break;
+                    case "Test":
+                        task.group = TaskGroup.Test;
+                        break;
+                }
+
+                return task;
+            }));
     }
 }
