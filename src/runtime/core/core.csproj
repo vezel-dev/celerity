@@ -22,8 +22,7 @@ bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>
     </ItemGroup>
 
     <Target Name="_AddNativeLibraries"
-            DependsOnTargets="ResolveAssemblyReferences"
-            BeforeTargets="AssignTargetPaths">
+            BeforeTargets="AssignTargetPaths; _GetPackageFiles">
         <MSBuild Projects="../native/native.cproj"
                  Targets="_GetNativeLibraries">
             <Output TaskParameter="TargetOutputs"
@@ -32,8 +31,8 @@ bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>
 
         <ItemGroup>
             <Content Include="@(_NativeLibrary)"
-                     CopyToOutputDirectory="Always"
                      Link="%(RuntimeIdentifier)/%(Filename)%(Extension)"
+                     CopyToOutputDirectory="Always"
                      PackagePath="runtimes/%(RuntimeIdentifier)/native" />
         </ItemGroup>
     </Target>
