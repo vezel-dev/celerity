@@ -1,8 +1,5 @@
 <Project Sdk="Microsoft.Build.Traversal">
     <ItemGroup>
-        <ProjectReference Include="src/benchmarks/benchmarks.csproj" />
-        <ProjectReference Include="src/driver/driver.csproj" />
-        <ProjectReference Include="src/tests/tests.csproj" />
-        <ProjectReference Include="src/trimming/trimming.csproj" />
+        <ProjectReference Include="src/**/*.*proj" />
     </ItemGroup>
 </Project>
