@@ -2,7 +2,7 @@ using Vezel.Celerity.Language.Tooling.Projects;
 
 namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
-public sealed class ProjectWorkspace : PhysicalWorkspace
+public sealed class ProjectWorkspace : Workspace
 {
     public const string ConfigurationFileName = "celerity.json";
 
@@ -12,23 +12,26 @@ public sealed class ProjectWorkspace : PhysicalWorkspace
 
     private readonly bool _disableAnalysis;
 
-    private ProjectWorkspace(string path, ProjectConfiguration configuration, bool disableAnalysis)
-        : base(path)
+    private ProjectWorkspace(
+        string path, SourceTextProvider textProvider, ProjectConfiguration configuration, bool disableAnalysis)
+        : base(path, textProvider)
     {
         Configuration = configuration;
         _sourceDirectory = new(System.IO.Path.Join(path, configuration.SourcePath));
         _disableAnalysis = disableAnalysis;
     }
 
-    public static ValueTask<ProjectWorkspace> OpenAsync(string path, CancellationToken cancellationToken = default)
+    public static ValueTask<ProjectWorkspace> OpenAsync(
+        string path, SourceTextProvider textProvider, CancellationToken cancellationToken = default)
     {
-        return OpenAsync(path, false, cancellationToken);
+        return OpenAsync(path, textProvider, false, cancellationToken);
     }
 
     public static ValueTask<ProjectWorkspace> OpenAsync(
-        string path, bool disableAnalysis, CancellationToken cancellationToken = default)
+        string path, SourceTextProvider textProvider, bool disableAnalysis, CancellationToken cancellationToken = default)
     {
         Check.Null(path);
+        Check.Null(textProvider);
 
         return OpenAsync();
 
@@ -43,7 +46,7 @@ public sealed class ProjectWorkspace : PhysicalWorkspace
             await using (stream.ConfigureAwait(false))
                 cfg = await ProjectConfiguration.LoadAsync(stream, cancellationToken).ConfigureAwait(false);
 
-            return new(path, cfg, disableAnalysis);
+            return new(path, textProvider, cfg, disableAnalysis);
         }
     }
 
@@ -59,7 +62,7 @@ public sealed class ProjectWorkspace : PhysicalWorkspace
             ? WorkspaceDocumentAttributes.DisableAnalyzers | WorkspaceDocumentAttributes.SuppressDiagnostics
             : WorkspaceDocumentAttributes.None;
 
-        if ((file.DirectoryName, file.Name) == (_sourceDirectory.FullName, EntryPointDocumentName))
+        if ((file.DirectoryName, file.Name) == (_sourceDirectory.FullName, WorkspaceDocument.EntryPointPath))
             return WorkspaceDocumentAttributes.EntryPoint | srcAttrs;
 
         var current = file.Directory;

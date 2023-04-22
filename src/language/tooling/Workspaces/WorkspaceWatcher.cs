@@ -15,6 +15,7 @@ public abstract class WorkspaceWatcher
     {
         Check.NullOrWhiteSpace(path);
 
+        // TODO: It would be good to verify that the path does not contain any . or .. segments.
         return !Path.IsPathFullyQualified(path) && Path.GetExtension(path) == ".cel";
     }
 

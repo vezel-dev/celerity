@@ -24,7 +24,7 @@ internal sealed class RunVerb : Verb
 
         if (workspace.GetEntryPointDocument() is not { } doc)
             throw new DriverException(
-                $"No entry point document named '{PhysicalWorkspace.EntryPointDocumentName}' found in the workspace.");
+                $"No entry point document named '{WorkspaceDocument.EntryPointPath}' found in the workspace.");
 
         // TODO: Run the program.
 

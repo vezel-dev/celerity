@@ -1,6 +1,6 @@
 namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
-public sealed class SimpleWorkspace : PhysicalWorkspace
+public sealed class SimpleWorkspace : Workspace
 {
     private static readonly IEnumerable<DiagnosticAnalyzer> _diagnosticAnalyzers = new[]
     {
@@ -9,15 +9,15 @@ public sealed class SimpleWorkspace : PhysicalWorkspace
 
     private readonly bool _disableAnalysis;
 
-    private SimpleWorkspace(string path, bool disableAnalysis)
-        : base(path)
+    private SimpleWorkspace(string path, SourceTextProvider textProvider, bool disableAnalysis)
+        : base(path, textProvider)
     {
         _disableAnalysis = disableAnalysis;
     }
 
-    public static SimpleWorkspace Open(string path, bool disableAnalysis = false)
+    public static SimpleWorkspace Open(string path, SourceTextProvider textProvider, bool disableAnalysis = false)
     {
-        return new(path, disableAnalysis);
+        return new(path, textProvider, disableAnalysis);
     }
 
     protected internal override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
@@ -27,7 +27,7 @@ public sealed class SimpleWorkspace : PhysicalWorkspace
 
     protected override WorkspaceDocumentAttributes GetDocumentAttributes(string path)
     {
-        var attrs = path == EntryPointDocumentName
+        var attrs = path == WorkspaceDocument.EntryPointPath
             ? WorkspaceDocumentAttributes.EntryPoint
             : WorkspaceDocumentAttributes.None;
 

@@ -4,6 +4,8 @@ namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
 public sealed class WorkspaceDocument
 {
+    public const string EntryPointPath = "main.cel";
+
     public Workspace Workspace { get; }
 
     public WorkspaceDocumentAttributes Attributes { get; }
@@ -63,8 +65,8 @@ public sealed class WorkspaceDocument
                 case SemanticTree semantics:
                     return semantics.Syntax.GetText();
                 case var path:
-                    var state = await Workspace.LoadTextAsync(Unsafe.As<string>(path), cancellationToken)
-                        .ConfigureAwait(false);
+                    var state = await Workspace.TextProvider.GetTextAsync(
+                        Workspace, Unsafe.As<string>(path), cancellationToken).ConfigureAwait(false);
 
                     Check.Operation(state != null);
 

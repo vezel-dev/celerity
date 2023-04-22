@@ -28,6 +28,8 @@ public abstract class Workspace
 
     public string Path { get; }
 
+    public SourceTextProvider TextProvider { get; }
+
     public ImmutableDictionary<string, WorkspaceDocument> Documents { get; private set; } =
         ImmutableDictionary<string, WorkspaceDocument>.Empty;
 
@@ -39,11 +41,13 @@ public abstract class Workspace
 
     private readonly Event<WorkspaceDocument> _documentRemoved = new();
 
-    protected Workspace(string path)
+    protected Workspace(string path, SourceTextProvider textProvider)
     {
         Check.Null(path);
+        Check.Null(textProvider);
 
         Path = path;
+        TextProvider = textProvider;
     }
 
     public WorkspaceDocument? GetEntryPointDocument()
@@ -51,8 +55,6 @@ public abstract class Workspace
         return Documents.Values.SingleOrDefault(
             static doc => doc.Attributes.HasFlag(WorkspaceDocumentAttributes.EntryPoint));
     }
-
-    protected internal abstract ValueTask<SourceText> LoadTextAsync(string path, CancellationToken cancellationToken);
 
     protected internal abstract IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers();
 

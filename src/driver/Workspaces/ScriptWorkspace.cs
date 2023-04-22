@@ -1,9 +1,9 @@
 namespace Vezel.Celerity.Driver.Workspaces;
 
-internal sealed class ScriptWorkspace : PhysicalWorkspace
+internal sealed class ScriptWorkspace : Workspace
 {
     public ScriptWorkspace(string file)
-        : base(System.IO.Path.GetDirectoryName(file)!)
+        : base(System.IO.Path.GetDirectoryName(file)!, PhysicalSourceTextProvider.Instance)
     {
         new ManualWorkspaceWatcher(this).AddDocument(System.IO.Path.GetFileName(file));
     }

@@ -50,7 +50,8 @@ internal abstract class Verb
         {
             try
             {
-                workspace = await ProjectWorkspace.OpenAsync(directory, disableAnalysis, cancellationToken);
+                workspace = await ProjectWorkspace.OpenAsync(
+                    directory, PhysicalSourceTextProvider.Instance, disableAnalysis, cancellationToken);
             }
             catch (PathTooLongException)
             {
@@ -82,7 +83,7 @@ internal abstract class Verb
         catch (FileNotFoundException)
         {
             // No configuration file, so try a simple workspace.
-            workspace = SimpleWorkspace.Open(directory, disableAnalysis);
+            workspace = SimpleWorkspace.Open(directory, PhysicalSourceTextProvider.Instance, disableAnalysis);
         }
 
         PhysicalWorkspaceWatcher.Populate(workspace);
