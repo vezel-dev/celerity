@@ -206,7 +206,7 @@
     "snippets": [
       {
         "language": "celerity",
-        "path": "snippets/celerity.json"
+        "path": "snippets/celerity.snippets.json"
       }
     ],
     "taskDefinitions": [
