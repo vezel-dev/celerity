@@ -76,15 +76,17 @@ export async function activate(context : ExtensionContext) : Promise<void> {
 
             try {
                 await client.start();
-
-                extensionChannel.info("Celerity language server started.");
-                setStatus("zap", client.initializeResult?.serverInfo?.version);
             } catch (err) {
                 extensionChannel.show(true);
 
                 extensionChannel.error("Celerity language server failed to start:", err);
                 setStatus("alert", `\`\`\`\n${err}\n\`\`\``);
+
+                return;
             }
+
+            extensionChannel.info("Celerity language server started.");
+            setStatus("zap", client.initializeResult?.serverInfo?.version);
         });
 
     registerCommand("celerity.stopServer", () => {
