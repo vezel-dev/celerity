@@ -11,12 +11,6 @@ This package provides the Language Server Protocol implementation.</PackageDescr
 
     <ItemGroup>
         <Using Include="Microsoft.Extensions.Logging" />
-        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities" />
-        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Document" />
-        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Models" />
-        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Server" />
-        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Server.Capabilities" />
-        <Using Include="OmniSharp.Extensions.LanguageServer.Protocol.Workspace" />
         <Using Include="OmniSharp.Extensions.LanguageServer.Server" />
         <Using Include="Vezel.Celerity.Diagnostics" />
     </ItemGroup>
