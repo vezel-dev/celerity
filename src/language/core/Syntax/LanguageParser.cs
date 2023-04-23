@@ -1046,13 +1046,11 @@ internal sealed class LanguageParser
     {
         var type = ParsePrimaryType();
 
-        if (Optional(SyntaxTokenKind.OrKeyword) is { } or)
+        if (Peek1().Kind == SyntaxTokenKind.OrKeyword)
         {
             var (types, seps) = SeparatedBuilder<TypeSyntax>();
 
             types.Add(type);
-            seps.Add(or);
-            types.Add(ParsePrimaryType());
 
             while (Optional(SyntaxTokenKind.OrKeyword) is { } sep)
             {
