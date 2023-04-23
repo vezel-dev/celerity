@@ -625,26 +625,7 @@ internal sealed class LanguageParser
 
     private TypeSyntax ParseType()
     {
-        var type = ParsePrimaryType();
-
-        if (Optional(SyntaxTokenKind.OrKeyword) is { } or)
-        {
-            var (types, seps) = SeparatedBuilder<TypeSyntax>();
-
-            types.Add(type);
-            seps.Add(or);
-            types.Add(ParsePrimaryType());
-
-            while (Optional(SyntaxTokenKind.OrKeyword) is { } sep)
-            {
-                seps.Add(sep);
-                types.Add(ParsePrimaryType());
-            }
-
-            return new UnionTypeSyntax(List(types, seps));
-        }
-
-        return type;
+        return Peek1().Kind == SyntaxTokenKind.TypeKeyword ? ParseVariableType() : ParseUnionType();
     }
 
     private TypeSyntax ParsePrimaryType()
@@ -1059,6 +1040,47 @@ internal sealed class LanguageParser
         var type = ParseType();
 
         return new(raise, type);
+    }
+
+    private TypeSyntax ParseUnionType()
+    {
+        var type = ParsePrimaryType();
+
+        if (Optional(SyntaxTokenKind.OrKeyword) is { } or)
+        {
+            var (types, seps) = SeparatedBuilder<TypeSyntax>();
+
+            types.Add(type);
+            seps.Add(or);
+            types.Add(ParsePrimaryType());
+
+            while (Optional(SyntaxTokenKind.OrKeyword) is { } sep)
+            {
+                seps.Add(sep);
+                types.Add(ParsePrimaryType());
+            }
+
+            return new UnionTypeSyntax(List(types, seps));
+        }
+
+        return type;
+    }
+
+    private VariableTypeSyntax ParseVariableType()
+    {
+        var type = Read();
+        var name = Expect(SyntaxTokenKind.LowerIdentifier);
+        var cons = ParseOptional(SyntaxTokenKind.Colon, static @this => @this.ParseVariableTypeConstraint());
+
+        return new(type, name, cons);
+    }
+
+    private VariableTypeConstraintSyntax ParseVariableTypeConstraint()
+    {
+        var colon = Read();
+        var type = ParseUnionType();
+
+        return new(colon, type);
     }
 
     // Statements

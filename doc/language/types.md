@@ -20,15 +20,17 @@ primary-type ::= any-type |
                  function-type |
                  agent-type |
                  nominal-type
-type ::= primary-type ('or' primary-type)*
+type ::= union-type | variable-type
 type-annotation ::= ':' type
 ```
 
 ## Return Types
 
 ```ebnf
-return-type ::= none-type |
-                type
+return-type ::= normal-return-type |
+                none-return-type
+normal-return-type ::= type
+none-return-type ::= 'none'
 return-type-annotation ::= '->' return-type return-type-annotation-raise?
 return-type-annotation-raise ::= 'raise' type
 ```

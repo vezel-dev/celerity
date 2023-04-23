@@ -195,6 +195,21 @@
         <Token Name="AnyKeyword" />
     </Type>
 
+    <Type Name="UnionType" Base="Type">
+        <Nodes Name="Type" Type="Type" Separated="true" />
+    </Type>
+
+    <Type Name="VariableType" Base="Type">
+        <Token Name="TypeKeyword" />
+        <Token Name="Name" />
+        <Node Name="Constraint" Type="VariableTypeConstraint" Optional="true" />
+    </Type>
+
+    <Type Name="VariableTypeConstraint" Parent="VariableType">
+        <Token Name="Colon" />
+        <Node Name="Type" Type="Type" />
+    </Type>
+
     <Type Name="NominalType" Base="Type">
         <Node Name="Path" Type="NominalTypePath" Optional="true" />
         <Token Name="Name" />
@@ -319,10 +334,6 @@
 
     <Type Name="AgentTypeMessageParameter" Parent="AgentTypeMessageParameterList">
         <Node Name="Type" Type="Type" />
-    </Type>
-
-    <Type Name="UnionType" Base="Type">
-        <Nodes Name="Type" Type="Type" Separated="true" />
     </Type>
 
     <Type Name="ReturnType" Abstract="true" />

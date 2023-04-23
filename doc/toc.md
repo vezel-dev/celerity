@@ -45,7 +45,8 @@
     * Special Types
         * [Literal Type](language/types/special/literal-type.md)
         * [Any Type](language/types/special/any-type.md)
-        * [None Type](language/types/special/none-type.md)
+        * [Union Type](language/types/special/union-type.md)
+        * [Variable Type](language/types/special/variable-type.md)
     * [Nominal Type](language/types/nominal-type.md)
     * [Record Type](language/types/record-type.md)
     * [Error Type](language/types/error-type.md)
