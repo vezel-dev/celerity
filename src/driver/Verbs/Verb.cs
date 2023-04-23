@@ -32,7 +32,7 @@ internal abstract class Verb
             await Error.WriteLineAsync(ex.Message, cancellationToken);
             await Error.WriteControlAsync(ControlSequences.ResetAttributes(), cancellationToken);
 
-            return 1;
+            return 2;
         }
     }
 
