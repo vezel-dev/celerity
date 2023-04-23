@@ -265,15 +265,10 @@
         <Token Name="MutKeyword" Optional="true" />
         <Token Name="Hash" />
         <Token Name="OpenBracket" />
-        <Nodes Name="Pair" Type="MapTypePair" Separated="true" />
-        <Token Name="CloseBracket" />
-    </Type>
-
-    <Type Name="MapTypePair" Parent="MapType">
         <Node Name="Key" Type="Type" />
         <Token Name="Colon" />
-        <Token Name="Question" Optional="true" />
         <Node Name="Value" Type="Type" />
+        <Token Name="CloseBracket" />
     </Type>
 
     <Type Name="FunctionType" Base="Type">

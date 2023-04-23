@@ -880,25 +880,12 @@ internal sealed class LanguageParser
         var mut = Optional(SyntaxTokenKind.MutKeyword);
         var hash = Read();
         var open = Read();
-        var (pairs, seps) = ParseSeparatedList(
-            static @this => @this.ParseMapTypePair(),
-            SyntaxTokenKind.Comma,
-            SyntaxTokenKind.CloseBracket,
-            allowEmpty: true,
-            allowTrailing: true);
-        var close = Expect(SyntaxTokenKind.CloseBracket);
-
-        return new(mut, hash, open, List(pairs, seps), close);
-    }
-
-    private MapTypePairSyntax ParseMapTypePair()
-    {
         var key = ParseType();
         var colon = Expect(SyntaxTokenKind.Colon);
-        var question = Optional(SyntaxTokenKind.Question);
         var value = ParseType();
+        var close = Expect(SyntaxTokenKind.CloseBracket);
 
-        return new(key, colon, question, value);
+        return new(mut, hash, open, key, colon, value, close);
     }
 
     private FunctionTypeSyntax ParseFunctionType()
