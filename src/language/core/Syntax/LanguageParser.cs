@@ -625,7 +625,13 @@ internal sealed class LanguageParser
 
     private TypeSyntax ParseType()
     {
-        return Peek1().Kind == SyntaxTokenKind.TypeKeyword ? ParseVariableType() : ParseUnionType();
+        return Peek1().Kind switch
+        {
+            SyntaxTokenKind.TypeKeyword => ParseVariableType(),
+            SyntaxTokenKind.AnyKeyword => ParseAnyType(),
+            SyntaxTokenKind.UnkKeyword => ParseUnknownType(),
+            _ => ParseUnionType(),
+        };
     }
 
     private TypeSyntax ParsePrimaryType()
@@ -633,7 +639,6 @@ internal sealed class LanguageParser
         var (tok1, tok2, tok3) = Peek3();
         var type = (tok1.Kind, tok2?.Kind, tok3?.Kind) switch
         {
-            (SyntaxTokenKind.AnyKeyword, _, _) => ParseAnyType(),
             (var kind, _, _) when IsMinus(tok1) || SyntaxFacts.IsLiteral(kind) => ParseLiteralType(),
             (SyntaxTokenKind.BoolKeyword, _, _) => ParseBooleanType(),
             (SyntaxTokenKind.IntKeyword, _, _) => ParseIntegerType(),
@@ -674,6 +679,83 @@ internal sealed class LanguageParser
         var any = Read();
 
         return new(any);
+    }
+
+    private UnknownTypeSyntax ParseUnknownType()
+    {
+        var unk = Read();
+
+        return new(unk);
+    }
+
+    private TypeSyntax ParseUnionType()
+    {
+        var type = ParsePrimaryType();
+
+        if (Peek1().Kind == SyntaxTokenKind.OrKeyword)
+        {
+            var (types, seps) = SeparatedBuilder<TypeSyntax>();
+
+            types.Add(type);
+
+            while (Optional(SyntaxTokenKind.OrKeyword) is { } sep)
+            {
+                seps.Add(sep);
+                types.Add(ParsePrimaryType());
+            }
+
+            return new UnionTypeSyntax(List(types, seps));
+        }
+
+        return type;
+    }
+
+    private VariableTypeSyntax ParseVariableType()
+    {
+        var type = Read();
+        var name = Expect(SyntaxTokenKind.LowerIdentifier);
+        var cons = ParseOptional(SyntaxTokenKind.Colon, static @this => @this.ParseVariableTypeConstraint());
+
+        return new(type, name, cons);
+    }
+
+    private VariableTypeConstraintSyntax ParseVariableTypeConstraint()
+    {
+        var colon = Read();
+        var type = ParseUnionType();
+
+        return new(colon, type);
+    }
+
+    private NominalTypeSyntax ParseNominalType()
+    {
+        var path = ParseOptional(SyntaxTokenKind.UpperIdentifier, static @this => @this.ParseNominalTypePath());
+        var name = Expect(SyntaxTokenKind.LowerIdentifier);
+        var args = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseNominalTypeArgumentList());
+
+        return new(path, name, args);
+    }
+
+    private NominalTypePathSyntax ParseNominalTypePath()
+    {
+        var path = ParseModulePath();
+        var dot = Expect(SyntaxTokenKind.Dot);
+
+        return new(path, dot);
+    }
+
+    private NominalTypeArgumentListSyntax ParseNominalTypeArgumentList()
+    {
+        var open = Expect(SyntaxTokenKind.OpenParen);
+        var (args, seps) = ParseSeparatedList(
+            static @this => @this.ParseType(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            allowEmpty: false,
+            allowTrailing: false);
+        var close = Expect(SyntaxTokenKind.CloseParen);
+
+        return new(open, List(args, seps), close);
     }
 
     private LiteralTypeSyntax ParseLiteralType()
@@ -963,37 +1045,6 @@ internal sealed class LanguageParser
         return new(type);
     }
 
-    private NominalTypeSyntax ParseNominalType()
-    {
-        var path = ParseOptional(SyntaxTokenKind.UpperIdentifier, static @this => @this.ParseNominalTypePath());
-        var name = Expect(SyntaxTokenKind.LowerIdentifier);
-        var args = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseNominalTypeArgumentList());
-
-        return new(path, name, args);
-    }
-
-    private NominalTypePathSyntax ParseNominalTypePath()
-    {
-        var path = ParseModulePath();
-        var dot = Expect(SyntaxTokenKind.Dot);
-
-        return new(path, dot);
-    }
-
-    private NominalTypeArgumentListSyntax ParseNominalTypeArgumentList()
-    {
-        var open = Expect(SyntaxTokenKind.OpenParen);
-        var (args, seps) = ParseSeparatedList(
-            static @this => @this.ParseType(),
-            SyntaxTokenKind.Comma,
-            SyntaxTokenKind.CloseParen,
-            allowEmpty: false,
-            allowTrailing: false);
-        var close = Expect(SyntaxTokenKind.CloseParen);
-
-        return new(open, List(args, seps), close);
-    }
-
     private ReturnTypeSyntax ParseReturnType()
     {
         return Peek1().Kind switch
@@ -1040,45 +1091,6 @@ internal sealed class LanguageParser
         var type = ParseType();
 
         return new(raise, type);
-    }
-
-    private TypeSyntax ParseUnionType()
-    {
-        var type = ParsePrimaryType();
-
-        if (Peek1().Kind == SyntaxTokenKind.OrKeyword)
-        {
-            var (types, seps) = SeparatedBuilder<TypeSyntax>();
-
-            types.Add(type);
-
-            while (Optional(SyntaxTokenKind.OrKeyword) is { } sep)
-            {
-                seps.Add(sep);
-                types.Add(ParsePrimaryType());
-            }
-
-            return new UnionTypeSyntax(List(types, seps));
-        }
-
-        return type;
-    }
-
-    private VariableTypeSyntax ParseVariableType()
-    {
-        var type = Read();
-        var name = Expect(SyntaxTokenKind.LowerIdentifier);
-        var cons = ParseOptional(SyntaxTokenKind.Colon, static @this => @this.ParseVariableTypeConstraint());
-
-        return new(type, name, cons);
-    }
-
-    private VariableTypeConstraintSyntax ParseVariableTypeConstraint()
-    {
-        var colon = Read();
-        var type = ParseUnionType();
-
-        return new(colon, type);
     }
 
     // Statements

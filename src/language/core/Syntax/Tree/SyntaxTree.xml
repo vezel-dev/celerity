@@ -140,6 +140,51 @@
 
     <Type Name="Type" Abstract="true" />
 
+    <Type Name="AnyType" Base="Type">
+        <Token Name="AnyKeyword" />
+    </Type>
+
+    <Type Name="UnknownType" Base="Type">
+        <Token Name="UnkKeyword" />
+    </Type>
+
+    <Type Name="UnionType" Base="Type">
+        <Nodes Name="Type" Type="Type" Separated="true" />
+    </Type>
+
+    <Type Name="VariableType" Base="Type">
+        <Token Name="TypeKeyword" />
+        <Token Name="Name" />
+        <Node Name="Constraint" Type="VariableTypeConstraint" Optional="true" />
+    </Type>
+
+    <Type Name="VariableTypeConstraint" Parent="VariableType">
+        <Token Name="Colon" />
+        <Node Name="Type" Type="Type" />
+    </Type>
+
+    <Type Name="NominalType" Base="Type">
+        <Node Name="Path" Type="NominalTypePath" Optional="true" />
+        <Token Name="Name" />
+        <Node Name="ArgumentList" Type="NominalTypeArgumentList" Optional="true" />
+    </Type>
+
+    <Type Name="NominalTypeArgumentList" Parent="NominalType">
+        <Token Name="OpenParen" />
+        <Nodes Name="Argument" Type="Type" Separated="true" />
+        <Token Name="CloseParen" />
+    </Type>
+
+    <Type Name="NominalTypePath" Parent="NominalType">
+        <Node Name="Path" Type="ModulePath" />
+        <Token Name="Dot" />
+    </Type>
+
+    <Type Name="LiteralType" Base="Type">
+        <Token Name="Minus" Optional="true" />
+        <Token Name="Literal" />
+    </Type>
+
     <Type Name="BooleanType" Base="Type">
         <Token Name="BoolKeyword" />
     </Type>
@@ -184,47 +229,6 @@
 
     <Type Name="ModuleType" Base="Type">
         <Token Name="ModKeyword" />
-    </Type>
-
-    <Type Name="LiteralType" Base="Type">
-        <Token Name="Minus" Optional="true" />
-        <Token Name="Literal" />
-    </Type>
-
-    <Type Name="AnyType" Base="Type">
-        <Token Name="AnyKeyword" />
-    </Type>
-
-    <Type Name="UnionType" Base="Type">
-        <Nodes Name="Type" Type="Type" Separated="true" />
-    </Type>
-
-    <Type Name="VariableType" Base="Type">
-        <Token Name="TypeKeyword" />
-        <Token Name="Name" />
-        <Node Name="Constraint" Type="VariableTypeConstraint" Optional="true" />
-    </Type>
-
-    <Type Name="VariableTypeConstraint" Parent="VariableType">
-        <Token Name="Colon" />
-        <Node Name="Type" Type="Type" />
-    </Type>
-
-    <Type Name="NominalType" Base="Type">
-        <Node Name="Path" Type="NominalTypePath" Optional="true" />
-        <Token Name="Name" />
-        <Node Name="ArgumentList" Type="NominalTypeArgumentList" Optional="true" />
-    </Type>
-
-    <Type Name="NominalTypeArgumentList" Parent="NominalType">
-        <Token Name="OpenParen" />
-        <Nodes Name="Argument" Type="Type" Separated="true" />
-        <Token Name="CloseParen" />
-    </Type>
-
-    <Type Name="NominalTypePath" Parent="NominalType">
-        <Node Name="Path" Type="ModulePath" />
-        <Token Name="Dot" />
     </Type>
 
     <Type Name="AggregateType" Base="Type" Abstract="true">

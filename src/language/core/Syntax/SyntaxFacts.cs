@@ -62,6 +62,7 @@ public static partial class SyntaxFacts
             "real" => SyntaxTokenKind.RealKeyword,
             "ref" => SyntaxTokenKind.RefKeyword,
             "str" => SyntaxTokenKind.StrKeyword,
+            "unk" => SyntaxTokenKind.UnkKeyword,
             _ => null,
         };
     }
@@ -184,7 +185,8 @@ public static partial class SyntaxFacts
             SyntaxTokenKind.NoneKeyword or
             SyntaxTokenKind.RealKeyword or
             SyntaxTokenKind.RefKeyword or
-            SyntaxTokenKind.StrKeyword;
+            SyntaxTokenKind.StrKeyword or
+            SyntaxTokenKind.UnkKeyword;
     }
 
     public static bool IsReservedKeyword(SyntaxTokenKind kind)

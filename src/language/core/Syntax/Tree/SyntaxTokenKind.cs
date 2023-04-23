@@ -78,6 +78,7 @@ public enum SyntaxTokenKind
     RealKeyword,
     RefKeyword,
     StrKeyword,
+    UnkKeyword,
     FriendKeyword,
     MacroKeyword,
     MetaKeyword,

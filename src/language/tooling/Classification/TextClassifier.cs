@@ -239,6 +239,14 @@ public static class TextClassifier
                     Classify(anyType.AnyKeywordToken, SyntaxClassification.TypeKeyword);
 
                     break;
+                case NominalTypeSyntax nomType:
+                    Classify(nomType.NameToken, SyntaxClassification.TypeName);
+
+                    break;
+                case UnknownTypeSyntax unkType:
+                    Classify(unkType.UnkKeywordToken, SyntaxClassification.TypeKeyword);
+
+                    break;
                 case BooleanTypeSyntax boolType:
                     Classify(boolType.BoolKeywordToken, SyntaxClassification.TypeKeyword);
 
@@ -269,10 +277,6 @@ public static class TextClassifier
                     break;
                 case ModuleTypeSyntax modType:
                     Classify(modType.ModKeywordToken, SyntaxClassification.TypeKeyword);
-
-                    break;
-                case NominalTypeSyntax nomType:
-                    Classify(nomType.NameToken, SyntaxClassification.TypeName);
 
                     break;
                 case AggregateTypeFieldSyntax aggrTypeField:

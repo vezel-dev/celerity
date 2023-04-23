@@ -62,7 +62,8 @@ type-keyword ::= 'agent' |
                  'none' |
                  'real' |
                  'ref' |
-                 'str'
+                 'str' |
+                 'unk'
 ```
 
 ## Reserved Keywords

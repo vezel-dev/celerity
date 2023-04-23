@@ -42,7 +42,7 @@ patterns:
     - name: keyword.expression.celerity
       match: \b(and|err|not|or|rec|this|with)\b
     - name: keyword.type.celerity
-      match: \b(agent|any|atom|bool|handle|int|none|real|ref|str)\b
+      match: \b(agent|any|atom|bool|handle|int|none|real|ref|str|unk)\b
     - name: keyword.other.celerity
       match: \b(friend|macro|meta|quote|unquote|yield)\b
     # Identifiers

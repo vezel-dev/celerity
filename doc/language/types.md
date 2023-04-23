@@ -1,7 +1,7 @@
 # Types
 
 ```ebnf
-primary-type ::= any-type |
+primary-type ::= nominal-type |
                  literal-type |
                  boolean-type |
                  integer-type |
@@ -18,9 +18,11 @@ primary-type ::= any-type |
                  set-type |
                  map-type |
                  function-type |
-                 agent-type |
-                 nominal-type
-type ::= union-type | variable-type
+                 agent-type
+type ::= any-type |
+         unknown-type |
+         union-type |
+         variable-type
 type-annotation ::= ':' type
 ```
 
