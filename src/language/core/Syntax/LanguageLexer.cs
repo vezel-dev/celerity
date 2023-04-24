@@ -381,6 +381,7 @@ internal sealed class LanguageLexer
         var kind = (ch1, ch2) switch
         {
             ('!', '=') => SyntaxTokenKind.ExclamationEquals,
+            ('>', '=') => SyntaxTokenKind.CloseAngleEquals,
             ('<', '=') => SyntaxTokenKind.OpenAngleEquals,
             ('=', '=') => SyntaxTokenKind.EqualsEquals,
             ('=', _) => SyntaxTokenKind.Equals,
@@ -405,12 +406,8 @@ internal sealed class LanguageLexer
         var parts = 1;
 
         // Lex the full operator.
-        while (Peek1() is '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<')
-        {
+        for (; Peek1() is '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<'; parts++)
             Advance(_token);
-
-            parts++;
-        }
 
         // Handle remaining special operators, and then custom operators.
         return (parts, ch1, ch2) switch
