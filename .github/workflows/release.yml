@@ -38,6 +38,9 @@ jobs:
               with:
                   name: ${{ github.workflow }}-${{ github.run_number }}-${{ github.run_attempt }}-windows-2022-Release
                   path: |
-                      out
-                      !out/dep
-                      !out/obj
+                      out/bin
+                      out/bld
+                      out/log
+                      out/pkg
+                      out/pub
+                      out/trx
