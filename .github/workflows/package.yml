@@ -38,5 +38,5 @@ jobs:
                   name: ${{ github.workflow }}-${{ github.run_number }}-${{ github.run_attempt }}-windows-2022-Debug
                   path: |
                       out
-                      !out/dep/**/*
-                      !out/obj/**/*
+                      !out/dep
+                      !out/obj
