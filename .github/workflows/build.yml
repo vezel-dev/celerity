@@ -47,8 +47,6 @@ jobs:
               with:
                   name: ${{ github.workflow }}-${{ github.run_number }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ matrix.cfg }}
                   path: |
-                      out/bin
-                      out/bld
                       out/log
                       out/pkg
                       out/pub
