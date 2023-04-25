@@ -15,8 +15,8 @@ public sealed class TestWithoutAssertPass : LintPass
     {
         foreach (var decl in Unsafe.As<ModuleDocumentSemantics>(context.Root).Declarations)
             if (decl is TestDeclarationSemantics { Syntax.NameToken: { IsMissing: false } name } test &&
-                test.Body.Descendants().All(static node => node is not AssertStatementSemantics))
+                test.Body.Descendants().All(static node => node is not AssertExpressionSemantics))
                 context.ReportDiagnostic(
-                    name.Span, $"Test declaration '{name.Text}' lacks 'assert' statements");
+                    name.Span, $"Test declaration '{name.Text}' lacks 'assert' expressions");
     }
 }

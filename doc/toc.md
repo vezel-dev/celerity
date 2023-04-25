@@ -59,7 +59,6 @@
 * [Statements](language/statements.md)
     * [Let Statement](language/statements/let-statement.md)
     * [Defer Statement](language/statements/defer-statement.md)
-    * [Assert Statement](language/statements/assert-statement.md)
     * [Expression Statement](language/statements/expression-statement.md)
 * [Expressions](language/expressions.md)
     * Value Expressions
@@ -96,6 +95,7 @@
     * [Block Expression](language/expressions/block-expression.md)
     * [This Expression](language/expressions/this-expression.md)
     * [Meta Expression](language/expressions/meta-expression.md)
+    * [Assert Expression](language/expressions/assert-expression.md)
     * [Identifier Expression](language/expressions/identifier-expression.md)
     * [Assignment Expression](language/expressions/assignment-expression.md)
     * [Field Expression](language/expressions/field-expression.md)

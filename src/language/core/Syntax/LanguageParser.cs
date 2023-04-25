@@ -1110,18 +1110,8 @@ internal sealed class LanguageParser
         {
             SyntaxTokenKind.LetKeyword => ParseLetStatement(attributes),
             SyntaxTokenKind.DeferKeyword => ParseDeferStatement(attributes),
-            SyntaxTokenKind.AssertKeyword => ParseAssertStatement(attributes),
             _ => ParseExpressionStatement(attributes),
         };
-    }
-
-    private AssertStatementSyntax ParseAssertStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
-    {
-        var assert = Read();
-        var expr = ParseExpression();
-        var semi = Expect(SyntaxTokenKind.Semicolon);
-
-        return new(List(attributes), assert, expr, semi);
     }
 
     private DeferStatementSyntax ParseDeferStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
@@ -1294,6 +1284,7 @@ internal sealed class LanguageParser
             (var literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralExpression(),
             (SyntaxTokenKind.ThisKeyword, _, _) => ParseThisExpression(),
             (SyntaxTokenKind.MetaKeyword, _, _) => ParseMetaExpression(),
+            (SyntaxTokenKind.AssertKeyword, _, _) => ParseAssertExpression(),
             (SyntaxTokenKind.UpperIdentifier, _, _) => ParseModuleExpression(),
             (SyntaxTokenKind.FnKeyword, _, _) or
             (SyntaxTokenKind.ErrKeyword, SyntaxTokenKind.FnKeyword, _) => ParseLambdaExpression(),
@@ -1405,6 +1396,14 @@ internal sealed class LanguageParser
         var oper = ParseExpression();
 
         return new(meta, oper);
+    }
+
+    private AssertExpressionSyntax ParseAssertExpression()
+    {
+        var assert = Read();
+        var cond = ParseExpression();
+
+        return new(assert, cond);
     }
 
     private LiteralExpressionSyntax ParseLiteralExpression()

@@ -395,13 +395,6 @@
         <Token Name="Semicolon" Override="true" />
     </Type>
 
-    <Type Name="AssertStatement" Base="Statement">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Token Name="AssertKeyword" />
-        <Node Name="Expression" Type="Expression" />
-        <Token Name="Semicolon" Override="true" />
-    </Type>
-
     <Type Name="ExpressionStatement" Base="Statement">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Node Name="Expression" Type="Expression" />
@@ -720,6 +713,11 @@
     <Type Name="MetaExpression" Base="Expression">
         <Token Name="MetaKeyword" />
         <Node Name="Operand" Type="Expression" />
+    </Type>
+
+    <Type Name="AssertExpression" Base="Expression">
+        <Token Name="AssertKeyword" />
+        <Node Name="Condition" Type="Expression" />
     </Type>
 
     <Type Name="IdentifierExpression" Base="Expression">

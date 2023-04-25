@@ -9,6 +9,7 @@ primary-expression ::= parenthesized-expression |
                        block-expression |
                        this-expression |
                        meta-expression |
+                       assert-expression |
                        identifier-expression |
                        literal-expression |
                        module-expression |

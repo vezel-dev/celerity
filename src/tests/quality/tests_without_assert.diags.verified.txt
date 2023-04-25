@@ -1,4 +1,4 @@
-﻿Warning[test-without-assert]: Test declaration 'foo' lacks 'assert' statements
+﻿Warning[test-without-assert]: Test declaration 'foo' lacks 'assert' expressions
 --> tests_without_assert.cel (2,10)-(2,13)
 1 | mod {
 2 |     test foo {

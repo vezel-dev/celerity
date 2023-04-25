@@ -546,14 +546,6 @@ internal sealed class LanguageAnalyzer
             return new(node, attrs, expr);
         }
 
-        public override AssertStatementSemantics VisitAssertStatement(AssertStatementSyntax node)
-        {
-            var attrs = ConvertAttributeList(node, node.Attributes);
-            var expr = VisitExpression(node.Expression);
-
-            return new(node, attrs, expr);
-        }
-
         public override ExpressionStatementSemantics VisitExpressionStatement(ExpressionStatementSyntax node)
         {
             var attrs = ConvertAttributeList(node, node.Attributes);
@@ -1080,6 +1072,13 @@ internal sealed class LanguageAnalyzer
             var oper = VisitExpression(node.Operand);
 
             return new(node, oper);
+        }
+
+        public override AssertExpressionSemantics VisitAssertExpression(AssertExpressionSyntax node)
+        {
+            var cond = VisitExpression(node.Condition);
+
+            return new(node, cond);
         }
 
         public override AssignmentExpressionSemantics VisitAssignmentExpression(AssignmentExpressionSyntax node)

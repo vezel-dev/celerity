@@ -102,11 +102,6 @@
         <Node Name="Expression" Type="Expression" />
     </Type>
 
-    <Type Name="AssertStatement" Base="Statement">
-        <Nodes Name="Attribute" Type="Attribute" Override="true" />
-        <Node Name="Expression" Type="Expression" />
-    </Type>
-
     <Type Name="ExpressionStatement" Base="Statement">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Node Name="Expression" Type="Expression" />
@@ -344,6 +339,10 @@
 
     <Type Name="MetaExpression">
         <Node Name="Operand" Type="Expression" />
+    </Type>
+
+    <Type Name="AssertExpression" Base="Expression">
+        <Node Name="Condition" Type="Expression" />
     </Type>
 
     <Type Name="IdentifierExpression" Base="Expression">
