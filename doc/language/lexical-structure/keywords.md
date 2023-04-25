@@ -27,6 +27,7 @@ normal-keyword ::= 'and' |
                    'in' |
                    'let' |
                    'match' |
+                   'meta' |
                    'mod' |
                    'mut' |
                    'next' |
@@ -71,7 +72,6 @@ type-keyword ::= 'agent' |
 ```ebnf
 reserved-keyword ::= 'friend' |
                      'macro' |
-                     'meta' |
                      'quote' |
                      'unquote' |
                      'yield'

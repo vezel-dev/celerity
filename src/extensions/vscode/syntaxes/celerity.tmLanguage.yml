@@ -38,13 +38,13 @@ patterns:
     - name: keyword.declaration.celerity
       match: \b(const|ext|fn|mod|opaque|pub|test|type|use)\b
     - name: keyword.control.celerity
-      match: \b(as|assert|break|catch|cond|defer|else|for|if|in|let|match|mut|next|raise|recv|ret|tail|try|while)\b
+      match: \b(as|assert|break|catch|cond|defer|else|for|if|in|let|match|meta|mut|next|raise|recv|ret|tail|try|while)\b
     - name: keyword.expression.celerity
       match: \b(and|err|not|or|rec|this|with)\b
     - name: keyword.type.celerity
       match: \b(agent|any|atom|bool|handle|int|none|real|ref|str|unk)\b
     - name: keyword.other.celerity
-      match: \b(friend|macro|meta|quote|unquote|yield)\b
+      match: \b(friend|macro|quote|unquote|yield)\b
     # Identifiers
     - name: support.type.celerity
       match: '[A-Z][0-9a-zA-Z]*'

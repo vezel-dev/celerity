@@ -141,6 +141,7 @@
     <Type Name="RecordExpression" Base="AggregateExpression">
         <Node Name="With" Type="Expression" Optional="true" Override="true" />
         <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
+        <Node Name="Meta" Type="Expression" Optional="true" />
     </Type>
 
     <Type Name="ErrorExpression" Base="AggregateExpression">
@@ -340,6 +341,10 @@
     </Type>
 
     <Type Name="ThisExpression" Base="Expression" />
+
+    <Type Name="MetaExpression">
+        <Node Name="Operand" Type="Expression" />
+    </Type>
 
     <Type Name="IdentifierExpression" Base="Expression">
         <Value Name="Symbol" Type="Symbol?" />

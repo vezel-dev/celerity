@@ -102,6 +102,7 @@ public static class TextClassifier
                     SyntaxTokenKind.IfKeyword or
                     SyntaxTokenKind.InKeyword or
                     SyntaxTokenKind.MatchKeyword or
+                    SyntaxTokenKind.MetaKeyword or
                     SyntaxTokenKind.MutKeyword or
                     SyntaxTokenKind.NextKeyword or
                     SyntaxTokenKind.NotKeyword or
@@ -117,7 +118,6 @@ public static class TextClassifier
                     SyntaxTokenKind.WithKeyword => SyntaxClassification.OperationKeyword,
                     SyntaxTokenKind.FriendKeyword or
                     SyntaxTokenKind.MacroKeyword or
-                    SyntaxTokenKind.MetaKeyword or
                     SyntaxTokenKind.QuoteKeyword or
                     SyntaxTokenKind.UnquoteKeyword or
                     SyntaxTokenKind.YieldKeyword => SyntaxClassification.ReservedKeyword,

@@ -8,6 +8,7 @@ prefix-expression ::= unary-expression |
 primary-expression ::= parenthesized-expression |
                        block-expression |
                        this-expression |
+                       meta-expression |
                        identifier-expression |
                        literal-expression |
                        module-expression |

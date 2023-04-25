@@ -95,6 +95,7 @@
     * [Parenthesized Expression](language/expressions/parenthesized-expression.md)
     * [Block Expression](language/expressions/block-expression.md)
     * [This Expression](language/expressions/this-expression.md)
+    * [Meta Expression](language/expressions/meta-expression.md)
     * [Identifier Expression](language/expressions/identifier-expression.md)
     * [Assignment Expression](language/expressions/assignment-expression.md)
     * [Field Expression](language/expressions/field-expression.md)

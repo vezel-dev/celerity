@@ -25,6 +25,7 @@ public static partial class SyntaxFacts
             "in" => SyntaxTokenKind.InKeyword,
             "let" => SyntaxTokenKind.LetKeyword,
             "match" => SyntaxTokenKind.MatchKeyword,
+            "meta" => SyntaxTokenKind.MetaKeyword,
             "mod" => SyntaxTokenKind.ModKeyword,
             "mut" => SyntaxTokenKind.MutKeyword,
             "next" => SyntaxTokenKind.NextKeyword,
@@ -73,7 +74,6 @@ public static partial class SyntaxFacts
         {
             "friend" => SyntaxTokenKind.FriendKeyword,
             "macro" => SyntaxTokenKind.MacroKeyword,
-            "meta" => SyntaxTokenKind.MetaKeyword,
             "quote" => SyntaxTokenKind.QuoteKeyword,
             "unquote" => SyntaxTokenKind.UnquoteKeyword,
             "yield" => SyntaxTokenKind.YieldKeyword,
@@ -150,6 +150,7 @@ public static partial class SyntaxFacts
             SyntaxTokenKind.InKeyword or
             SyntaxTokenKind.LetKeyword or
             SyntaxTokenKind.MatchKeyword or
+            SyntaxTokenKind.MetaKeyword or
             SyntaxTokenKind.ModKeyword or
             SyntaxTokenKind.MutKeyword or
             SyntaxTokenKind.NextKeyword or
@@ -196,7 +197,6 @@ public static partial class SyntaxFacts
         return kind is
             SyntaxTokenKind.FriendKeyword or
             SyntaxTokenKind.MacroKeyword or
-            SyntaxTokenKind.MetaKeyword or
             SyntaxTokenKind.QuoteKeyword or
             SyntaxTokenKind.UnquoteKeyword or
             SyntaxTokenKind.YieldKeyword;

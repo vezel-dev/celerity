@@ -249,6 +249,12 @@
         <Token Name="OpenBrace" Override="true" />
         <Nodes Name="Field" Type="AggregateTypeField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
+        <Node Name="Meta" Type="RecordTypeMeta" Optional="true" />
+    </Type>
+
+    <Type Name="RecordTypeMeta" Parent="RecordType">
+        <Token Name="MetaKeyword" />
+        <Node Name="Type" Type="Type" />
     </Type>
 
     <Type Name="ErrorType" Base="AggregateType">
@@ -441,6 +447,12 @@
         <Token Name="OpenBrace" Override="true" />
         <Nodes Name="Field" Type="AggregateExpressionField" Separated="true" Override="true" />
         <Token Name="CloseBrace" Override="true" />
+        <Node Name="Meta" Type="RecordExpressionMeta" Optional="true" />
+    </Type>
+
+    <Type Name="RecordExpressionMeta" Parent="RecordExpression">
+        <Token Name="MetaKeyword" />
+        <Node Name="Operand" Type="Expression" />
     </Type>
 
     <Type Name="ErrorExpression" Base="AggregateExpression">
@@ -703,6 +715,11 @@
 
     <Type Name="ThisExpression" Base="Expression">
         <Token Name="ThisKeyword" />
+    </Type>
+
+    <Type Name="MetaExpression" Base="Expression">
+        <Token Name="MetaKeyword" />
+        <Node Name="Operand" Type="Expression" />
     </Type>
 
     <Type Name="IdentifierExpression" Base="Expression">

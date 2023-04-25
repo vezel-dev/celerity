@@ -381,12 +381,16 @@ internal sealed class LanguageAnalyzer
 
         public override DeclarationSubmissionSemantics VisitDeclarationSubmission(DeclarationSubmissionSyntax node)
         {
-            return new(node, VisitDeclaration(node.Declaration));
+            var decl = VisitDeclaration(node.Declaration);
+
+            return new(node, decl);
         }
 
         public override StatementSubmissionSemantics VisitStatementSubmission(StatementSubmissionSyntax node)
         {
-            return new(node, VisitStatement(node.Statement));
+            var stmt = VisitStatement(node.Statement);
+
+            return new(node, stmt);
         }
 
         // Declarations
@@ -580,26 +584,30 @@ internal sealed class LanguageAnalyzer
         public override AggregateExpressionFieldSemantics VisitAggregateExpressionField(
             AggregateExpressionFieldSyntax node)
         {
-            return new(node, VisitExpression(node.Value));
+            var field = VisitExpression(node.Value);
+
+            return new(node, field);
         }
 
         public override RecordExpressionSemantics VisitRecordExpression(RecordExpressionSyntax node)
         {
+            var with = node.With?.Operand is { } w ? VisitExpression(w) : null;
             var fields = ConvertList(node.Fields, static (@this, field) => @this.VisitAggregateExpressionField(field));
+            var meta = node.Meta?.Operand is { } m ? VisitExpression(m) : null;
 
             CheckDuplicateFields(fields, static field => field.Syntax.NameToken, "Record", "assigned");
 
-            return new(node, node.With?.Operand is { } with ? VisitExpression(with) : null, fields);
+            return new(node, with, fields, meta);
         }
 
         public override ErrorExpressionSemantics VisitErrorExpression(ErrorExpressionSyntax node)
         {
-            var fields = ConvertList(
-                node.Fields, static (@this, field) => @this.VisitAggregateExpressionField(field));
+            var with = node.With?.Operand is { } w ? VisitExpression(w) : null;
+            var fields = ConvertList(node.Fields, static (@this, field) => @this.VisitAggregateExpressionField(field));
 
             CheckDuplicateFields(fields, static field => field.Syntax.NameToken, "Error", "assigned");
 
-            return new(node, node.With?.Operand is { } with ? VisitExpression(with) : null, fields);
+            return new(node, with, fields);
         }
 
         public override TupleExpressionSemantics VisitTupleExpression(TupleExpressionSyntax node)
@@ -982,7 +990,9 @@ internal sealed class LanguageAnalyzer
         public override ParenthesizedExpressionSemantics VisitParenthesizedExpression(
             ParenthesizedExpressionSyntax node)
         {
-            return new(node, VisitExpression(node.Expression));
+            var expr = VisitExpression(node.Expression);
+
+            return new(node, expr);
         }
 
         public override BlockExpressionSemantics VisitBlockExpression(BlockExpressionSyntax node)
@@ -1065,6 +1075,13 @@ internal sealed class LanguageAnalyzer
             return sema;
         }
 
+        public override MetaExpressionSemantics VisitMetaExpression(MetaExpressionSyntax node)
+        {
+            var oper = VisitExpression(node.Operand);
+
+            return new(node, oper);
+        }
+
         public override AssignmentExpressionSemantics VisitAssignmentExpression(AssignmentExpressionSyntax node)
         {
             var left = VisitExpression(node.LeftOperand);
@@ -1101,7 +1118,9 @@ internal sealed class LanguageAnalyzer
 
         public override FieldExpressionSemantics VisitFieldExpression(FieldExpressionSyntax node)
         {
-            return new(node, VisitExpression(node.Subject));
+            var subject = VisitExpression(node.Subject);
+
+            return new(node, subject);
         }
 
         public override IndexExpressionSemantics VisitIndexExpression(IndexExpressionSyntax node)

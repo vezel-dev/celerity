@@ -866,8 +866,17 @@ internal sealed class LanguageParser
             allowEmpty: true,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
+        var meta = ParseOptional(SyntaxTokenKind.MetaKeyword, static @this => @this.ParseRecordTypeMeta());
 
-        return new(rec, open, List(fields, seps), close);
+        return new(rec, open, List(fields, seps), close, meta);
+    }
+
+    private RecordTypeMetaSyntax ParseRecordTypeMeta()
+    {
+        var meta = Read();
+        var type = ParseType();
+
+        return new(meta, type);
     }
 
     private ErrorTypeSyntax ParseErrorType()
@@ -1284,6 +1293,7 @@ internal sealed class LanguageParser
             (var ident, _, _) when SyntaxFacts.IsBindingIdentifier(ident) => ParseIdentifierExpression(),
             (var literal, _, _) when SyntaxFacts.IsLiteral(literal) => ParseLiteralExpression(),
             (SyntaxTokenKind.ThisKeyword, _, _) => ParseThisExpression(),
+            (SyntaxTokenKind.MetaKeyword, _, _) => ParseMetaExpression(),
             (SyntaxTokenKind.UpperIdentifier, _, _) => ParseModuleExpression(),
             (SyntaxTokenKind.FnKeyword, _, _) or
             (SyntaxTokenKind.ErrKeyword, SyntaxTokenKind.FnKeyword, _) => ParseLambdaExpression(),
@@ -1389,6 +1399,14 @@ internal sealed class LanguageParser
         return new(@this);
     }
 
+    private MetaExpressionSyntax ParseMetaExpression()
+    {
+        var meta = Read();
+        var oper = ParseExpression();
+
+        return new(meta, oper);
+    }
+
     private LiteralExpressionSyntax ParseLiteralExpression()
     {
         var literal = Read();
@@ -1415,8 +1433,17 @@ internal sealed class LanguageParser
             allowEmpty: true,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBrace);
+        var meta = ParseOptional(SyntaxTokenKind.MetaKeyword, static @this => @this.ParseRecordExpressionMeta());
 
-        return new(rec, with, open, List(fields, seps), close);
+        return new(rec, with, open, List(fields, seps), close, meta);
+    }
+
+    private RecordExpressionMetaSyntax ParseRecordExpressionMeta()
+    {
+        var meta = Read();
+        var operand = ParseExpression();
+
+        return new(meta, operand);
     }
 
     private ErrorExpressionSyntax ParseErrorExpression()
