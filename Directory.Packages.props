@@ -45,7 +45,7 @@
         <PackageVersion Include="Spdx"
                         Version="0.8.0" />
         <PackageVersion Include="Verify.DiffPlex"
-                        Version="2.2.0" />
+                        Version="2.2.1" />
         <PackageVersion Include="Verify.Xunit"
                         Version="19.12.1" />
         <PackageVersion Include="Vezel.Cathode"
