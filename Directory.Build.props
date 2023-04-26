@@ -10,9 +10,6 @@
     <PropertyGroup>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <AnalysisLevel>latest-all</AnalysisLevel>
-        <ArtifactsPath>$(MSBuildThisFileDirectory)out</ArtifactsPath>
-        <ArtifactsPublishOutputName>pub</ArtifactsPublishOutputName>
-        <ArtifactsPackageOutputName>pkg/dotnet</ArtifactsPackageOutputName>
         <EnablePackageValidation>true</EnablePackageValidation>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <ImplicitUsings>true</ImplicitUsings>
@@ -38,11 +35,13 @@ based on lightweight agents, and non-suspending garbage collection.</PackageDesc
         <SymbolVisibility>Hidden</SymbolVisibility>
         <TargetFramework>net8.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <UseArtifactsOutput>true</UseArtifactsOutput>
     </PropertyGroup>
 
-    <!-- TODO: https://github.com/dotnet/designs/pull/281#issuecomment-1503979448 -->
     <PropertyGroup>
+        <UseArtifactsOutput>true</UseArtifactsOutput>
+        <ArtifactsPath>$(MSBuildThisFileDirectory)out</ArtifactsPath>
         <ArtifactsProjectName>$([MSBuild]::MakeRelative('$(MSBuildThisFileDirectory)', '$(MSBuildProjectDirectory)'))</ArtifactsProjectName>
+        <ArtifactsPublishOutputName>pub</ArtifactsPublishOutputName>
+        <ArtifactsPackageOutputName>pkg/dotnet</ArtifactsPackageOutputName>
     </PropertyGroup>
 </Project>
