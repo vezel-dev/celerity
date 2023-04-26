@@ -6,13 +6,13 @@
 ## Language
 
 * Basic Concepts
-    * [Modules and Declarations](language/basic-concepts/modules-and-declarations.md)
-    * [Values and Types](language/basic-concepts/values-and-types.md)
+    * [Modules and Code Reuse](language/basic-concepts/modules-and-code-reuse.md)
+    * [Types and Values](language/basic-concepts/types-and-values.md)
     * [Optional Type Checking](language/basic-concepts/optional-type-checking.md)
     * [Mutability and Freezing](language/basic-concepts/mutability-and-freezing.md)
     * [Pattern Matching](language/basic-concepts/pattern-matching.md)
     * [Error Handling](language/basic-concepts/error-handling.md)
-    * [Agents and Message Passing](language/basic-concepts/agents-and-message-passing.md)
+    * [Agents and Communication](language/basic-concepts/agents-and-communication.md)
     * [Garbage Collection](language/basic-concepts/garbage-collection.md)
     * [Startup and Termination](language/basic-concepts/startup-and-termination.md)
 * [Lexical Structure](language/lexical-structure.md)
