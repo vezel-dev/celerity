@@ -8,8 +8,6 @@ public sealed class ProjectWorkspace : Workspace
 
     public ProjectConfiguration Configuration { get; }
 
-    private readonly DirectoryInfo _sourceDirectory;
-
     private readonly bool _disableAnalysis;
 
     private ProjectWorkspace(
@@ -17,7 +15,6 @@ public sealed class ProjectWorkspace : Workspace
         : base(path, textProvider)
     {
         Configuration = configuration;
-        _sourceDirectory = new(System.IO.Path.Join(path, configuration.SourcePath));
         _disableAnalysis = disableAnalysis;
     }
 
@@ -57,26 +54,13 @@ public sealed class ProjectWorkspace : Workspace
 
     protected override WorkspaceDocumentAttributes GetDocumentAttributes(string path)
     {
-        var file = new FileInfo(System.IO.Path.Join(Path, path));
-        var srcAttrs = _disableAnalysis
-            ? WorkspaceDocumentAttributes.DisableAnalyzers | WorkspaceDocumentAttributes.SuppressDiagnostics
+        var attrs = path == WorkspaceDocument.EntryPointPath
+            ? WorkspaceDocumentAttributes.EntryPoint
             : WorkspaceDocumentAttributes.None;
 
-        if ((file.DirectoryName, file.Name) == (_sourceDirectory.FullName, WorkspaceDocument.EntryPointPath))
-            return WorkspaceDocumentAttributes.EntryPoint | srcAttrs;
+        if (_disableAnalysis || System.IO.Path.GetDirectoryName(path) != Configuration.SourcePath)
+            attrs |= WorkspaceDocumentAttributes.DisableAnalyzers | WorkspaceDocumentAttributes.SuppressDiagnostics;
 
-        var current = file.Directory;
-
-        while (current != null)
-        {
-            // Is the document within the configured source directory?
-            if (current.FullName == _sourceDirectory.FullName)
-                return srcAttrs;
-
-            current = current.Parent;
-        }
-
-        // It must be a loose document or a dependency document, so no analyzers and diagnostics.
-        return WorkspaceDocumentAttributes.DisableAnalyzers | WorkspaceDocumentAttributes.SuppressDiagnostics;
+        return attrs;
     }
 }
