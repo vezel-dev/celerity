@@ -94,6 +94,8 @@ public sealed class ProjectConfiguration
 
             if (Path.IsPathFullyQualified(path))
                 Error("'path' property, if present, must be relative.");
+
+            // TODO: It would be good to verify that the path does not contain any . or .. segments.
         }
 
         var paths = ImmutableDictionary<ModulePath, string>.Empty;
@@ -120,6 +122,8 @@ public sealed class ProjectConfiguration
 
                 if (Path.IsPathFullyQualified(dir))
                     Error($"Directory path for module path '{prop.Name}' must be relative.");
+
+                // TODO: It would be good to verify that the path does not contain any . or .. segments.
 
                 paths = paths.SetItem(modPath, dir);
             }
