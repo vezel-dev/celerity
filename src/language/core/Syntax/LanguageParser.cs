@@ -1059,11 +1059,11 @@ internal sealed class LanguageParser
         return Peek1().Kind switch
         {
             SyntaxTokenKind.NoneKeyword => ParseNoneReturnType(),
-            _ => ParseNormalReturnType(),
+            _ => ParseRegularReturnType(),
         };
     }
 
-    private NormalReturnTypeSyntax ParseNormalReturnType()
+    private RegularReturnTypeSyntax ParseRegularReturnType()
     {
         var type = ParseType();
 

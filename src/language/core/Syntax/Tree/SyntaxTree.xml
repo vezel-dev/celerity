@@ -348,7 +348,7 @@
 
     <Type Name="ReturnType" Abstract="true" />
 
-    <Type Name="NormalReturnType" Base="ReturnType">
+    <Type Name="RegularReturnType" Base="ReturnType">
         <Node Name="Type" Type="Type" />
     </Type>
 

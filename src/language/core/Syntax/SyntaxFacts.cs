@@ -4,7 +4,7 @@ namespace Vezel.Celerity.Language.Syntax;
 
 public static partial class SyntaxFacts
 {
-    public static SyntaxTokenKind? GetNormalKeywordKind(scoped ReadOnlySpan<char> text)
+    public static SyntaxTokenKind? GetRegularKeywordKind(scoped ReadOnlySpan<char> text)
     {
         return text switch
         {
@@ -99,7 +99,7 @@ public static partial class SyntaxFacts
     public static bool IsCodeIdentifier(scoped ReadOnlySpan<char> text)
     {
         return IsLowerIdentifier(text) &&
-               (GetNormalKeywordKind(text),
+               (GetRegularKeywordKind(text),
                 GetReservedKeywordKind(text),
                 GetKeywordLiteralKind(text)) == (null, null, null);
     }
@@ -128,7 +128,7 @@ public static partial class SyntaxFacts
     [GeneratedRegex(@"^_[_0-9a-z]*$", RegexOptions.Singleline | RegexOptions.CultureInvariant)]
     private static partial Regex DiscardIdentifierRegex();
 
-    public static bool IsNormalKeyword(SyntaxTokenKind kind)
+    public static bool IsRegularKeyword(SyntaxTokenKind kind)
     {
         Check.Enum(kind);
 
@@ -347,7 +347,7 @@ public static partial class SyntaxFacts
             SyntaxTokenKind.CloseBracket or
             SyntaxTokenKind.OpenBrace or
             SyntaxTokenKind.CloseBrace ||
-            IsNormalKeyword(kind) ||
+            IsRegularKeyword(kind) ||
             IsTypeKeyword(kind) ||
             IsReservedKeyword(kind) ||
             IsLiteralKeyword(kind);

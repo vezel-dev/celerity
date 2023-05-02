@@ -29,9 +29,9 @@ type-annotation ::= ':' type
 ## Return Types
 
 ```ebnf
-return-type ::= normal-return-type |
+return-type ::= regular-return-type |
                 none-return-type
-normal-return-type ::= type
+regular-return-type ::= type
 none-return-type ::= 'none'
 return-type-annotation ::= '->' return-type return-type-annotation-raise?
 return-type-annotation-raise ::= 'raise' type

@@ -1,54 +1,54 @@
 # Keywords
 
 ```ebnf
-keyword ::= normal-keyword |
+keyword ::= regular-keyword |
             type-keyword |
             reserved-keyword
 ```
 
-## Normal Keywords
+## Regular Keywords
 
 ```ebnf
-normal-keyword ::= 'and' |
-                   'as' |
-                   'assert' |
-                   'break' |
-                   'catch' |
-                   'cond' |
-                   'const' |
-                   'defer' |
-                   'else' |
-                   'err' |
-                   'ext' |
-                   'false' |
-                   'fn' |
-                   'for' |
-                   'if' |
-                   'in' |
-                   'let' |
-                   'match' |
-                   'meta' |
-                   'mod' |
-                   'mut' |
-                   'next' |
-                   'nil' |
-                   'not' |
-                   'opaque' |
-                   'or' |
-                   'pub' |
-                   'raise' |
-                   'rec' |
-                   'recv' |
-                   'ret' |
-                   'tail' |
-                   'test' |
-                   'this' |
-                   'true' |
-                   'try' |
-                   'type' |
-                   'use' |
-                   'while' |
-                   'with'
+regular-keyword ::= 'and' |
+                    'as' |
+                    'assert' |
+                    'break' |
+                    'catch' |
+                    'cond' |
+                    'const' |
+                    'defer' |
+                    'else' |
+                    'err' |
+                    'ext' |
+                    'false' |
+                    'fn' |
+                    'for' |
+                    'if' |
+                    'in' |
+                    'let' |
+                    'match' |
+                    'meta' |
+                    'mod' |
+                    'mut' |
+                    'next' |
+                    'nil' |
+                    'not' |
+                    'opaque' |
+                    'or' |
+                    'pub' |
+                    'raise' |
+                    'rec' |
+                    'recv' |
+                    'ret' |
+                    'tail' |
+                    'test' |
+                    'this' |
+                    'true' |
+                    'try' |
+                    'type' |
+                    'use' |
+                    'while' |
+                    'with'
 ```
 
 ## Type Keywords

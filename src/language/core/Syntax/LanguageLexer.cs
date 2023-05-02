@@ -108,7 +108,7 @@ internal sealed class LanguageLexer
         // We handle keywords and nil/Boolean literals here to avoid an extra allocation while lexing identifiers.
         if (kind == SyntaxTokenKind.LowerIdentifier)
         {
-            if (SyntaxFacts.GetNormalKeywordKind(text) is { } kw1)
+            if (SyntaxFacts.GetRegularKeywordKind(text) is { } kw1)
                 kind = kw1;
             else if (SyntaxFacts.GetTypeKeywordKind(text) is { } kw2)
                 kind = kw2;
