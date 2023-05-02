@@ -57,12 +57,20 @@ atom-literal ::= ':' (upper-identifier |
 ## String Literal
 
 ```ebnf
-string-literal ::= '"' ([^#xa#xd#x85#x2028#x2029"\] |
-                        string-escape-sequence)* '"'
-string-escape-sequence ::= '\' (string-escape-simple |
-                                string-escape-unicode)
-string-escape-simple ::= [0aAbBeEfFnNrRtTvV"\]
-string-escape-unicode ::= [uU] hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit
+string-literal ::= normal-string-literal |
+                   verbatim-string-literal |
+                   block-string-literal
+```
+
+### Normal String Literal
+
+```ebnf
+normal-string-literal ::= '"' ([^#xa#xd#x85#x2028#x2029"\] |
+                               string-escape-sequence)* '"'
+normal-string-escape-sequence ::= '\' (string-escape-simple |
+                                       string-escape-unicode)
+normal-string-escape-simple ::= [0aAbBeEfFnNrRtTvV"\]
+normal-string-escape-unicode ::= [uU] hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit hexadecimal-digit
 ```
 
 ### Verbatim String Literal
