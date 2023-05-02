@@ -18,14 +18,6 @@ public sealed class WorkspaceDocument
         var path => Unsafe.As<string>(path),
     };
 
-    public bool IsCurrent
-    {
-        get => _current;
-        internal set => _current = value;
-    }
-
-    private volatile bool _current = true;
-
     // This starts out as a string (path). As callers access text, syntax, and semantic information, it gets promoted to
     // SourceText, SyntaxTree, and SemanticTree, respectively. SemanticTree links back to SyntaxTree which in turn
     // soft-links back to SourceText. The SourceText can always be reconstructed from the SyntaxTree (and by extension
@@ -49,8 +41,6 @@ public sealed class WorkspaceDocument
 
     public ValueTask<SourceText> GetTextAsync(CancellationToken cancellationToken = default)
     {
-        Check.Operation((_state, IsCurrent) is not (string, false));
-
         return GetTextAsync();
 
         [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]

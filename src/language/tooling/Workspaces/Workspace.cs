@@ -78,8 +78,6 @@ public abstract class Workspace
 
             Documents = Documents.SetItem(path, editedOldDoc);
 
-            oldDoc.IsCurrent = false;
-
             _documentEdited.Raise(oldDoc, editedOldDoc);
         }
 
@@ -103,8 +101,6 @@ public abstract class Workspace
 
                 Documents = Documents.Remove(oldPath).Add(newPath, movedOldDoc);
 
-                oldDoc.IsCurrent = false;
-
                 _documentRenamed.Raise(oldDoc, movedOldDoc);
 
                 break;
@@ -115,8 +111,6 @@ public abstract class Workspace
                 var editedNewDoc = CreateDocument(newPath);
 
                 Documents = Documents.SetItem(newPath, editedNewDoc);
-
-                newDoc.IsCurrent = false;
 
                 _documentEdited.Raise(newDoc, editedNewDoc);
 
@@ -129,9 +123,6 @@ public abstract class Workspace
                 var editedNewDoc = CreateDocument(newPath);
 
                 Documents = Documents.SetItem(oldPath, editedOldDoc).SetItem(newPath, editedNewDoc);
-
-                oldDoc.IsCurrent = false;
-                newDoc.IsCurrent = false;
 
                 _documentEdited.Raise(oldDoc, editedOldDoc);
                 _documentEdited.Raise(newDoc, editedNewDoc);
@@ -148,18 +139,11 @@ public abstract class Workspace
 
         Documents = Documents.Remove(path);
 
-        doc.IsCurrent = false;
-
         _documentRemoved.Raise(doc);
     }
 
     internal void ClearDocuments()
     {
-        var docs = Documents;
-
-        Documents = ImmutableDictionary<string, WorkspaceDocument>.Empty;
-
-        foreach (var (_, doc) in docs)
-            doc.IsCurrent = false;
+        Documents = Documents.Clear();
     }
 }
