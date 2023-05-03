@@ -226,7 +226,7 @@
     "eslint": "8.39.0",
     "generator-code": "1.7.5",
     "js-yaml": "4.1.0",
-    "mkdirp": "3.0.0",
+    "mkdirp": "3.0.1",
     "nerdbank-gitversioning": "3.6.128",
     "ovsx": "0.8.0",
     "rimraf": "5.0.0",
