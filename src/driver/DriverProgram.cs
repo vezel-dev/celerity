@@ -19,9 +19,7 @@ internal sealed class DriverProgram : IProgram
         context.ExitCode = await parser
             .ParseArguments(
                 context.Arguments.ToArray(),
-#pragma warning disable CS0436 // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
                 typeof(ThisAssembly)
-#pragma warning restore CS0436
                     .Assembly
                     .DefinedTypes
                     .Where(static type => type.GetCustomAttribute<VerbAttribute>() != null)

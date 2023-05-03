@@ -1,3 +1,5 @@
+using Vezel.Celerity.Tests;
+
 [SuppressMessage("", "CA1050")]
 [SuppressMessage("", "CA1707")]
 [SuppressMessage("", "IDE1006")]

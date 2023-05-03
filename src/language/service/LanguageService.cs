@@ -30,9 +30,7 @@ public sealed class LanguageService : IDisposable
             T GetAttribute<T>()
                 where T : Attribute
             {
-#pragma warning disable CS0436 // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
                 return typeof(ThisAssembly).Assembly.GetCustomAttribute<T>()!;
-#pragma warning restore CS0436
             }
 
             return new(

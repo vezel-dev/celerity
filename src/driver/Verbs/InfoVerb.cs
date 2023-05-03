@@ -9,12 +9,10 @@ internal sealed class InfoVerb : Verb
     private static readonly IEnumerable<(string Name, object Value)> _celerity =
         new (string, object)[]
         {
-#pragma warning disable CS0436 // TODO: https://github.com/dotnet/Nerdbank.GitVersioning/issues/555
             ("Version", ThisAssembly.AssemblyInformationalVersion),
             ("Commit", ThisAssembly.GitCommitId),
             ("Date", ThisAssembly.GitCommitDate.ToString("o", CultureInfo.InvariantCulture)),
             ("Mode", ThisAssembly.AssemblyConfiguration),
-#pragma warning restore CS0436
         };
 
     private static readonly IEnumerable<(string Name, object Value)> _runtime =
