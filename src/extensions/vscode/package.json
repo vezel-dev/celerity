@@ -224,7 +224,7 @@
     "cpy-cli": "4.2.0",
     "esbuild": "0.17.18",
     "eslint": "8.39.0",
-    "generator-code": "1.7.5",
+    "generator-code": "1.7.6",
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.1",
     "nerdbank-gitversioning": "3.6.128",
