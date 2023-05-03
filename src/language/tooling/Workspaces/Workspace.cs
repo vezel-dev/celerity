@@ -30,8 +30,7 @@ public abstract class Workspace
 
     public SourceTextProvider TextProvider { get; }
 
-    public ImmutableDictionary<string, WorkspaceDocument> Documents { get; private set; } =
-        ImmutableDictionary<string, WorkspaceDocument>.Empty;
+    public ImmutableDictionary<string, WorkspaceDocument> Documents => _documents;
 
     private readonly Event<WorkspaceDocument> _documentAdded = new();
 
@@ -40,6 +39,11 @@ public abstract class Workspace
     private readonly Event<WorkspaceDocument, WorkspaceDocument> _documentRenamed = new();
 
     private readonly Event<WorkspaceDocument> _documentRemoved = new();
+
+    // This is always modified under the WorkspaceWatcher lock, but it may be read by anyone without locking. The
+    // volatile ensures that a fresh reference will always be seen by readers.
+    private volatile ImmutableDictionary<string, WorkspaceDocument> _documents =
+        ImmutableDictionary<string, WorkspaceDocument>.Empty;
 
     protected Workspace(string path, SourceTextProvider textProvider)
     {
@@ -52,7 +56,7 @@ public abstract class Workspace
 
     public WorkspaceDocument? GetEntryPointDocument()
     {
-        return Documents.Values.SingleOrDefault(
+        return _documents.Values.SingleOrDefault(
             static doc => doc.Attributes.HasFlag(WorkspaceDocumentAttributes.EntryPoint));
     }
 
@@ -72,26 +76,26 @@ public abstract class Workspace
 
     internal void AddOrEditDocument(string path)
     {
-        if (Documents.TryGetValue(path, out var oldDoc))
+        if (_documents.TryGetValue(path, out var oldDoc))
         {
             var editedOldDoc = CreateDocument(path);
 
-            Documents = Documents.SetItem(path, editedOldDoc);
+            _documents = _documents.SetItem(path, editedOldDoc);
 
             _documentEdited.Raise(oldDoc, editedOldDoc);
         }
 
         var newDoc = CreateDocument(path);
 
-        Documents = Documents.Add(path, newDoc);
+        _documents = _documents.Add(path, newDoc);
 
         _documentAdded.Raise(newDoc);
     }
 
     internal void MoveDocument(string oldPath, string newPath)
     {
-        var oldDoc = Documents.GetValueOrDefault(oldPath);
-        var newDoc = Documents.GetValueOrDefault(newPath);
+        var oldDoc = _documents.GetValueOrDefault(oldPath);
+        var newDoc = _documents.GetValueOrDefault(newPath);
 
         switch ((oldDoc, newDoc))
         {
@@ -99,7 +103,7 @@ public abstract class Workspace
             {
                 var movedOldDoc = CreateDocument(newPath);
 
-                Documents = Documents.Remove(oldPath).Add(newPath, movedOldDoc);
+                _documents = _documents.Remove(oldPath).Add(newPath, movedOldDoc);
 
                 _documentRenamed.Raise(oldDoc, movedOldDoc);
 
@@ -110,7 +114,7 @@ public abstract class Workspace
             {
                 var editedNewDoc = CreateDocument(newPath);
 
-                Documents = Documents.SetItem(newPath, editedNewDoc);
+                _documents = _documents.SetItem(newPath, editedNewDoc);
 
                 _documentEdited.Raise(newDoc, editedNewDoc);
 
@@ -122,7 +126,7 @@ public abstract class Workspace
                 var editedOldDoc = CreateDocument(oldPath);
                 var editedNewDoc = CreateDocument(newPath);
 
-                Documents = Documents.SetItem(oldPath, editedOldDoc).SetItem(newPath, editedNewDoc);
+                _documents = _documents.SetItem(oldPath, editedOldDoc).SetItem(newPath, editedNewDoc);
 
                 _documentEdited.Raise(oldDoc, editedOldDoc);
                 _documentEdited.Raise(newDoc, editedNewDoc);
@@ -134,16 +138,16 @@ public abstract class Workspace
 
     internal void DeleteDocument(string path)
     {
-        if (!Documents.TryGetValue(path, out var doc))
+        if (!_documents.TryGetValue(path, out var doc))
             return;
 
-        Documents = Documents.Remove(path);
+        _documents = _documents.Remove(path);
 
         _documentRemoved.Raise(doc);
     }
 
     internal void ClearDocuments()
     {
-        Documents = Documents.Clear();
+        _documents = _documents.Clear();
     }
 }
