@@ -51,6 +51,6 @@ public sealed class RuntimeModule : RuntimeMetadata
 
     internal int AllocateLambdaId()
     {
-        return _lambdaId++;
+        return Interlocked.Increment(ref _lambdaId);
     }
 }
