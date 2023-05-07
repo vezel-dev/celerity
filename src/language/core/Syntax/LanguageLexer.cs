@@ -8,6 +8,12 @@ internal sealed class LanguageLexer
 {
     private static readonly Encoding _utf8 = Encoding.UTF8;
 
+    private static readonly object _boxedNil = Nil.Value;
+
+    private static readonly object _boxedTrue = true;
+
+    private static readonly object _boxedFalse = false;
+
     private readonly ListReader<char> _reader;
 
     private readonly SyntaxMode _mode;
@@ -148,14 +154,14 @@ internal sealed class LanguageLexer
         return token;
     }
 
-    private static Nil CreateNil()
+    private static object CreateNil()
     {
-        return Nil.Value;
+        return _boxedNil;
     }
 
-    private static bool CreateBoolean(string text)
+    private static object CreateBoolean(string text)
     {
-        return text == "true";
+        return text == "true" ? _boxedTrue : _boxedFalse;
     }
 
     private BigInteger? CreateInteger(int position, string text)
