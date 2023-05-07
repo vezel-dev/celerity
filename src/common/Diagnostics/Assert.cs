@@ -3,7 +3,7 @@ namespace Vezel.Celerity.Diagnostics;
 [StackTraceHidden]
 internal static class Assert
 {
-    public static void Fast(
+    public static void Always(
         [DoesNotReturnIf(false)] bool condition,
         [CallerArgumentExpression(nameof(condition))] string expression = "")
     {
@@ -12,7 +12,7 @@ internal static class Assert
     }
 
     [Conditional("DEBUG")]
-    public static void Slow(
+    public static void Debug(
         [DoesNotReturnIf(false)] bool condition,
         [CallerArgumentExpression(nameof(condition))] string expression = "")
     {
