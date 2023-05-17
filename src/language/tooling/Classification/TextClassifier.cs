@@ -197,7 +197,7 @@ public static class TextClassifier
                         Classify(Unsafe.As<SyntaxToken>(token), SyntaxClassification.ModuleName);
 
                     break;
-                case CodeParameterSyntax { NameToken: var name } codeParam:
+                case CodeParameterSyntax { NameToken: var name }:
                     Classify(name, SyntaxClassification.CodeParameterName, discard: name.Text.StartsWith('_'));
 
                     break;
@@ -209,7 +209,7 @@ public static class TextClassifier
                         opaque: typeDecl.OpaqueKeywordToken != null);
 
                     break;
-                case TypeParameterSyntax { NameToken: var name } typeParam:
+                case TypeParameterSyntax { NameToken: var name }:
                     Classify(name, SyntaxClassification.TypeParameterName, discard: name.Text.StartsWith('_'));
 
                     break;

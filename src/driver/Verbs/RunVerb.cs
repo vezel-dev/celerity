@@ -22,7 +22,7 @@ internal sealed class RunVerb : Verb
             throw new DriverException(
                 $"Workspace not configured as program in '{ProjectWorkspace.ConfigurationFileName}'.");
 
-        if (workspace.GetEntryPointDocument() is not { } doc)
+        if (workspace.GetEntryPointDocument() is not { })
             throw new DriverException(
                 $"No entry point document named '{WorkspaceDocument.EntryPointPath}' found in the workspace.");
 
