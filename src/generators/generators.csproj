@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>Vezel.Celerity.Generators</AssemblyName>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <RootNamespace>Vezel.Celerity.Generators</RootNamespace>
         <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
