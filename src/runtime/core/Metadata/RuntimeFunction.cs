@@ -35,4 +35,22 @@ public class RuntimeFunction : RuntimeMember
     {
         Parameters = parameters.Select((param, i) => new RuntimeParameter(this, i, param)).ToImmutableArray();
     }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+
+        if (IsPublic)
+            _ = sb.Append("pub ");
+
+        if (IsExternal)
+            _ = sb.Append("ext ");
+
+        if (IsFallible)
+            _ = sb.Append("err ");
+
+        _ = sb.Append(CultureInfo.InvariantCulture, $"fn {Module.Path}.{Name}");
+
+        return sb.ToString();
+    }
 }

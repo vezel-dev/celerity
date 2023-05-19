@@ -15,4 +15,9 @@ public sealed class RuntimeParameter : RuntimeMetadata
         Ordinal = ordinal;
         Name = parameter.Symbol!.Name;
     }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }

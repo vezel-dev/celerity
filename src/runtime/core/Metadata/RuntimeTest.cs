@@ -6,4 +6,9 @@ public sealed class RuntimeTest : RuntimeMember
         : base(module, isPublic: false, test.Symbol!.Name, test.Attributes)
     {
     }
+
+    public override string ToString()
+    {
+        return $"test {Module.Path}.{Name}";
+    }
 }

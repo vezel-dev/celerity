@@ -51,6 +51,11 @@ public sealed class RuntimeModule : RuntimeMetadata
 
     internal int AllocateLambdaId()
     {
-        return Interlocked.Increment(ref _lambdaId);
+        return _lambdaId++;
+    }
+
+    public override string ToString()
+    {
+        return $"mod {Path}";
     }
 }
