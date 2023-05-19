@@ -1935,7 +1935,7 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.RecKeyword, _) => ParseRecordPattern(),
             (SyntaxTokenKind.ErrKeyword, _) => ParseErrorPattern(),
             (SyntaxTokenKind.OpenParen, _) => ParseTuplePattern(),
-            (SyntaxTokenKind.OpenBracket, _) => ParseArrayPattern(null),
+            (SyntaxTokenKind.OpenBracket or SyntaxTokenKind.DotDot, _) => ParseArrayPattern(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBrace) => ParseSetPattern(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket) => ParseMapPattern(),
             _ => null,
@@ -1963,13 +1963,8 @@ internal sealed class LanguageParser
     {
         var binding = ParseBinding();
 
-        switch (Peek2())
-        {
-            case ({ Kind: SyntaxTokenKind.ColonColon }, { Kind: SyntaxTokenKind.StringLiteral }):
-                return ParseStringPattern(binding);
-            case ({ Kind: SyntaxTokenKind.ColonColon }, { Kind: SyntaxTokenKind.OpenBracket }):
-                return ParseArrayPattern(binding);
-        }
+        if (Peek1().Kind == SyntaxTokenKind.DotDot)
+            return ParseStringPattern(binding);
 
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
@@ -2001,12 +1996,12 @@ internal sealed class LanguageParser
         {
             leftLit = Read();
 
-            if (Optional(SyntaxTokenKind.ColonColon) is { } left)
+            if (Optional(SyntaxTokenKind.DotDot) is { } left)
             {
                 leftSep = left;
                 binding = ParseBinding();
 
-                if (Optional(SyntaxTokenKind.ColonColon) is { } right)
+                if (Optional(SyntaxTokenKind.DotDot) is { } right)
                 {
                     rightSep = right;
                     rightLit = Expect(SyntaxTokenKind.StringLiteral);
@@ -2100,52 +2095,21 @@ internal sealed class LanguageParser
         return new(open, List(comps, seps), close, alias);
     }
 
-    private ArrayPatternSyntax ParseArrayPattern(BindingSyntax? binding)
+    private ArrayPatternSyntax ParseArrayPattern()
     {
-        var leftClause = default(ArrayPatternClauseSyntax);
-        var leftSep = default(SyntaxToken);
-        var rightSep = default(SyntaxToken);
-        var rightClause = default(ArrayPatternClauseSyntax);
-
-        if (binding != null)
-        {
-            rightSep = Read();
-            rightClause = ParseArrayPatternClause();
-        }
-        else
-        {
-            leftClause = ParseArrayPatternClause();
-
-            if (Optional(SyntaxTokenKind.ColonColon) is { } left)
-            {
-                leftSep = left;
-                binding = ParseBinding();
-
-                if (Optional(SyntaxTokenKind.ColonColon) is { } right)
-                {
-                    rightSep = right;
-                    rightClause = ParseArrayPatternClause();
-                }
-            }
-        }
-
-        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
-
-        return new(leftClause, leftSep, binding, rightSep, rightClause, alias);
-    }
-
-    private ArrayPatternClauseSyntax ParseArrayPatternClause()
-    {
+        var prefix = Optional(SyntaxTokenKind.DotDot);
         var open = Expect(SyntaxTokenKind.OpenBracket);
         var (elems, seps) = ParseSeparatedList(
             static @this => @this.ParsePattern(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBracket,
-            allowEmpty: true,
+            allowEmpty: prefix == null,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
+        var suffix = (prefix, elems.Count) == (null, 0) ? Optional(SyntaxTokenKind.DotDot) : null;
+        var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
-        return new(open, List(elems, seps), close);
+        return new(prefix, open, List(elems, seps), close, suffix, alias);
     }
 
     private SetPatternSyntax ParseSetPattern()

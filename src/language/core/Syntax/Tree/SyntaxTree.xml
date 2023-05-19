@@ -818,9 +818,9 @@
 
     <Type Name="StringPattern" Base="Pattern">
         <Token Name="LeftLiteral" Optional="true" />
-        <Token Name="LeftColonColon" Optional="true" />
+        <Token Name="LeftDotDot" Optional="true" />
         <Node Name="MiddleBinding" Type="Binding" Optional="true" />
-        <Token Name="RightColonColon" Optional="true" />
+        <Token Name="RightDotDot" Optional="true" />
         <Token Name="RightLiteral" Optional="true" />
         <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
@@ -871,18 +871,12 @@
     </Type>
 
     <Type Name="ArrayPattern" Base="Pattern">
-        <Node Name="LeftClause" Type="ArrayPatternClause" Optional="true" />
-        <Token Name="LeftColonColon" Optional="true" />
-        <Node Name="MiddleBinding" Type="Binding" Optional="true" />
-        <Token Name="RightColonColon" Optional="true" />
-        <Node Name="RightClause" Type="ArrayPatternClause" Optional="true" />
-        <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
-    </Type>
-
-    <Type Name="ArrayPatternClause" Parent="ArrayPattern">
+        <Token Name="LeftDotDot" Optional="true" />
         <Token Name="OpenBracket" />
         <Nodes Name="Element" Type="Pattern" Separated="true" />
         <Token Name="CloseBracket" />
+        <Token Name="RightDotDot" Optional="true" />
+        <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
 
     <Type Name="SetPattern" Base="Pattern">

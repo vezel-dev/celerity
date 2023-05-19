@@ -415,7 +415,9 @@
     </Type>
 
     <Type Name="StringPattern" Base="Pattern">
+        <Computed Name="LeftLiteral" Type="string?" Body="Unsafe.As&lt;string&gt;(Syntax.LeftLiteralToken?.Value)" />
         <Node Name="MiddleBinding" Type="Binding" Optional="true" />
+        <Computed Name="RightLiteral" Type="string?" Body="Unsafe.As&lt;string&gt;(Syntax.RightLiteralToken?.Value)" />
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
@@ -452,14 +454,10 @@
     </Type>
 
     <Type Name="ArrayPattern" Base="Pattern">
-        <Node Name="LeftClause" Type="ArrayPatternClause" Optional="true" />
-        <Node Name="MiddleBinding" Type="Binding" Optional="true" />
-        <Node Name="RightClause" Type="ArrayPatternClause" Optional="true" />
-        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
-    </Type>
-
-    <Type Name="ArrayPatternClause" Parent="ArrayPattern">
+        <Computed Name="HasPrefix" Type="bool" Body="Syntax.LeftDotDotToken != null" />
         <Nodes Name="Element" Type="Pattern" Separated="true" />
+        <Computed Name="HasSuffix" Type="bool" Body="Syntax.RightDotDotToken != null" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="SetPattern" Base="Pattern">

@@ -350,11 +350,6 @@ public static class TextClassifier
                     Classify(discardBind.NameToken, SyntaxClassification.VariableName, discard: true);
 
                     break;
-                case StringPatternSyntax strPat:
-                    Classify(strPat.LeftColonColonToken, SyntaxClassification.Punctuator);
-                    Classify(strPat.RightColonColonToken, SyntaxClassification.Punctuator);
-
-                    break;
                 case AggregatePatternFieldSyntax aggrPatField:
                     Classify(aggrPatField.NameToken, SyntaxClassification.FieldName);
 
@@ -362,11 +357,6 @@ public static class TextClassifier
                 case ErrorPatternSyntax errPat:
                     Classify(errPat.ErrKeywordToken, SyntaxClassification.OperationKeyword);
                     Classify(errPat.NameToken, SyntaxClassification.ErrorName);
-
-                    break;
-                case ArrayPatternSyntax arrPat:
-                    Classify(arrPat.LeftColonColonToken, SyntaxClassification.Punctuator);
-                    Classify(arrPat.RightColonColonToken, SyntaxClassification.Punctuator);
 
                     break;
             }

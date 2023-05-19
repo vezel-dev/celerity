@@ -1285,19 +1285,10 @@ internal sealed class LanguageAnalyzer
 
         public override ArrayPatternSemantics VisitArrayPattern(ArrayPatternSyntax node)
         {
-            var left = node.LeftClause is { } l ? VisitArrayPatternClause(l) : null;
-            var middle = node.MiddleBinding is { } m ? VisitBinding(m) : null;
-            var right = node.RightClause is { } r ? VisitArrayPatternClause(r) : null;
+            var elems = ConvertList(node.Elements, static (@this, elem) => @this.VisitPattern(elem));
             var alias = node.Alias is { } a ? VisitVariableBinding(a.Binding) : null;
 
-            return new(node, left, middle, right, alias);
-        }
-
-        public override ArrayPatternClauseSemantics VisitArrayPatternClause(ArrayPatternClauseSyntax node)
-        {
-            var elems = ConvertList(node.Elements, static (@this, elem) => @this.VisitPattern(elem));
-
-            return new(node, elems);
+            return new(node, elems, alias);
         }
 
         public override MapPatternSemantics VisitMapPattern(MapPatternSyntax node)
