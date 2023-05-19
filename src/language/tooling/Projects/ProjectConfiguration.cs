@@ -98,7 +98,7 @@ public sealed class ProjectConfiguration
             // TODO: It would be good to verify that the path does not contain any . or .. segments.
         }
 
-        var paths = ImmutableDictionary<ModulePath, string>.Empty;
+        var paths = ImmutableDictionary.CreateBuilder<ModulePath, string>();
 
         if (root.TryGetProperty("paths"u8, out var pathsProp))
         {
@@ -125,7 +125,7 @@ public sealed class ProjectConfiguration
 
                 // TODO: It would be good to verify that the path does not contain any . or .. segments.
 
-                paths = paths.SetItem(modPath, dir);
+                paths[modPath] = dir;
             }
         }
 
@@ -155,7 +155,7 @@ public sealed class ProjectConfiguration
             version = semVer.ToFullString();
         }
 
-        var passes = LintPass.DefaultPasses;
+        var passes = LintPass.DefaultPasses.ToBuilder();
         var severities = LintConfiguration.Default;
 
         if (root.TryGetProperty("lints"u8, out var lintsProp))
@@ -177,7 +177,7 @@ public sealed class ProjectConfiguration
 
                 if (value.ValueKind == JsonValueKind.Null)
                 {
-                    passes = passes.Remove(pass);
+                    _ = passes.Remove(pass);
 
                     continue;
                 }
@@ -201,10 +201,10 @@ public sealed class ProjectConfiguration
             nameProp.GetString()!,
             kind,
             path,
-            paths,
+            paths.ToImmutable(),
             license,
             version,
-            passes,
+            passes.DrainToImmutable(),
             severities,
             ImmutableArray.Create<DiagnosticAnalyzer>(new LintDiagnosticAnalyzer(passes, severities)));
     }
