@@ -647,9 +647,9 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.StrKeyword, _, _) => ParseStringType(),
             (SyntaxTokenKind.RefKeyword, _, _) => ParseReferenceType(),
             (SyntaxTokenKind.HandleKeyword, _, _) => ParseHandleType(),
-            (SyntaxTokenKind.ModKeyword, _, _) => ParseModuleType(),
             (SyntaxTokenKind.FnKeyword, _, _) or
             (SyntaxTokenKind.ErrKeyword, SyntaxTokenKind.FnKeyword, _) => ParseFunctionType(),
+            (SyntaxTokenKind.ModKeyword, _, _) => ParseModuleType(),
             (SyntaxTokenKind.RecKeyword, _, _) => ParseRecordType(),
             (SyntaxTokenKind.ErrKeyword, _, _) => ParseErrorType(),
             (SyntaxTokenKind.OpenParen, _, _) => ParseTupleType(),
@@ -851,8 +851,16 @@ internal sealed class LanguageParser
     private ModuleTypeSyntax ParseModuleType()
     {
         var mod = Read();
+        var open = Expect(SyntaxTokenKind.OpenBrace);
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregateTypeField(allowMutable: false),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
+        var close = Expect(SyntaxTokenKind.CloseBrace);
 
-        return new(mod);
+        return new(mod, open, List(fields, seps), close);
     }
 
     private RecordTypeSyntax ParseRecordType()
@@ -860,7 +868,7 @@ internal sealed class LanguageParser
         var rec = Read();
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var (fields, seps) = ParseSeparatedList(
-            static @this => @this.ParseAggregateTypeField(),
+            static @this => @this.ParseAggregateTypeField(allowMutable: true),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
             allowEmpty: true,
@@ -885,7 +893,7 @@ internal sealed class LanguageParser
         var name = Optional(SyntaxTokenKind.UpperIdentifier);
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var (fields, seps) = ParseSeparatedList(
-            static @this => @this.ParseAggregateTypeField(),
+            static @this => @this.ParseAggregateTypeField(allowMutable: true),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
             allowEmpty: true,
@@ -895,9 +903,9 @@ internal sealed class LanguageParser
         return new(err, name, open, List(fields, seps), close);
     }
 
-    private AggregateTypeFieldSyntax ParseAggregateTypeField()
+    private AggregateTypeFieldSyntax ParseAggregateTypeField(bool allowMutable)
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = allowMutable ? Optional(SyntaxTokenKind.MutKeyword) : null;
         var name = ExpectCodeIdentifier();
         var colon = Expect(SyntaxTokenKind.Colon);
         var type = ParseType();
@@ -1923,13 +1931,13 @@ internal sealed class LanguageParser
             (var kind, _) when SyntaxFacts.IsBindingIdentifier(kind) => ParseWildcardOrStringOrArrayPattern(),
             (SyntaxTokenKind.StringLiteral, _) => ParseStringPattern(null),
             (var kind, _) when IsMinus(tok1) || SyntaxFacts.IsLiteral(kind) => ParseLiteralPattern(),
+            (SyntaxTokenKind.ModKeyword, _) => ParseModulePattern(),
             (SyntaxTokenKind.RecKeyword, _) => ParseRecordPattern(),
             (SyntaxTokenKind.ErrKeyword, _) => ParseErrorPattern(),
             (SyntaxTokenKind.OpenParen, _) => ParseTuplePattern(),
             (SyntaxTokenKind.OpenBracket, _) => ParseArrayPattern(null),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBrace) => ParseSetPattern(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket) => ParseMapPattern(),
-            (SyntaxTokenKind.UpperIdentifier, _) => ParseModulePattern(),
             _ => null,
         };
 
@@ -2013,10 +2021,19 @@ internal sealed class LanguageParser
 
     private ModulePatternSyntax ParseModulePattern()
     {
-        var path = ParseModulePath();
+        var mod = Read();
+        var path = ParseOptional(SyntaxTokenKind.UpperIdentifier, static @this => @this.ParseModulePath());
+        var open = Expect(SyntaxTokenKind.OpenBrace);
+        var (fields, seps) = ParseSeparatedList(
+            static @this => @this.ParseAggregatePatternField(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseBrace,
+            allowEmpty: true,
+            allowTrailing: true);
+        var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
-        return new(path, alias);
+        return new(mod, path, open, List(fields, seps), close, alias);
     }
 
     private RecordPatternSyntax ParseRecordPattern()

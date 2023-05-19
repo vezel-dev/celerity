@@ -227,10 +227,6 @@
         <Token Name="HandleKeyword" />
     </Type>
 
-    <Type Name="ModuleType" Base="Type">
-        <Token Name="ModKeyword" />
-    </Type>
-
     <Type Name="AggregateType" Base="Type" Abstract="true">
         <Token Name="OpenBrace" />
         <Nodes Name="Field" Type="AggregateTypeField" Separated="true" />
@@ -242,6 +238,13 @@
         <Token Name="Name" />
         <Token Name="Colon" />
         <Node Name="Type" Type="Type" />
+    </Type>
+
+    <Type Name="ModuleType" Base="AggregateType">
+        <Token Name="ModKeyword" />
+        <Token Name="OpenBrace" Override="true" />
+        <Nodes Name="Field" Type="AggregateTypeField" Separated="true" Override="true" />
+        <Token Name="CloseBrace" Override="true" />
     </Type>
 
     <Type Name="RecordType" Base="AggregateType">
@@ -822,11 +825,6 @@
         <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
 
-    <Type Name="ModulePattern" Base="Pattern">
-        <Node Name="Path" Type="ModulePath" />
-        <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
-    </Type>
-
     <Type Name="AggregatePattern" Base="Pattern" Abstract="true">
         <Token Name="OpenBrace" />
         <Nodes Name="Field" Type="AggregatePatternField" Separated="true" />
@@ -837,6 +835,15 @@
         <Token Name="Name" />
         <Token Name="Colon" />
         <Node Name="Pattern" Type="Pattern" />
+    </Type>
+
+    <Type Name="ModulePattern" Base="AggregatePattern">
+        <Token Name="ModKeyword" />
+        <Node Name="Path" Type="ModulePath" Optional="true" />
+        <Token Name="OpenBrace" Override="true" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" Override="true" />
+        <Token Name="CloseBrace" Override="true" />
+        <Node Name="Alias" Type="PatternAlias" Optional="true" Override="true" />
     </Type>
 
     <Type Name="RecordPattern" Base="AggregatePattern">

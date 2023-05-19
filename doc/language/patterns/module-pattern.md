@@ -1,5 +1,6 @@
 # Module Pattern
 
 ```ebnf
-module-pattern ::= module-path
+module-pattern ::= 'mod' module-path? '{' (module-pattern-field (',' module-pattern-field)* ','?)? '}'
+module-pattern-field ::= code-identifier ':' pattern
 ```

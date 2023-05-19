@@ -419,12 +419,6 @@
         <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
-    <Type Name="ModulePattern" Base="Pattern">
-        <Value Name="Use" Type="UseDeclarationSemantics?" />
-        <Value Name="Path" Type="ModulePath" />
-        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
-    </Type>
-
     <Type Name="AggregatePattern" Base="Pattern" Abstract="true">
         <Nodes Name="Field" Type="AggregatePatternField" Separated="true" />
     </Type>
@@ -432,6 +426,13 @@
     <Type Name="AggregatePatternField" Parent="AggregatePattern">
         <Computed Name="Name" Type="string" Body="Syntax.NameToken.Text" />
         <Node Name="Pattern" Type="Pattern" />
+    </Type>
+
+    <Type Name="ModulePattern" Base="AggregatePattern">
+        <Value Name="Use" Type="UseDeclarationSemantics?" />
+        <Value Name="Path" Type="ModulePath?" />
+        <Nodes Name="Field" Type="AggregatePatternField" Separated="true" Override="true" />
+        <Node Name="Alias" Type="VariableBinding" Optional="true" Override="true" />
     </Type>
 
     <Type Name="RecordPattern" Base="AggregatePattern">

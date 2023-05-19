@@ -1234,19 +1234,23 @@ internal sealed class LanguageAnalyzer
             return new(node, middle, alias);
         }
 
-        public override ModulePatternSemantics VisitModulePattern(ModulePatternSyntax node)
-        {
-            var (use, path) = ResolveModulePath(node.Path);
-            var alias = node.Alias is { } a ? VisitVariableBinding(a.Binding) : null;
-
-            return new(node, use, path!, alias);
-        }
-
         public override AggregatePatternFieldSemantics VisitAggregatePatternField(AggregatePatternFieldSyntax node)
         {
             var pat = VisitPattern(node.Pattern);
 
             return new(node, pat);
+        }
+
+        public override ModulePatternSemantics VisitModulePattern(ModulePatternSyntax node)
+        {
+            var (use, path) = node.Path is { } p ? ResolveModulePath(p) : (null, null);
+            var fields = ConvertList(node.Fields, static (@this, field) => @this.VisitAggregatePatternField(field));
+
+            CheckDuplicateFields(fields, static field => field.Syntax.NameToken, "Module", "matched");
+
+            var alias = node.Alias is { } a ? VisitVariableBinding(a.Binding) : null;
+
+            return new(node, use, path!, fields, alias);
         }
 
         public override RecordPatternSemantics VisitRecordPattern(RecordPatternSyntax node)
