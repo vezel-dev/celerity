@@ -64,7 +64,7 @@ internal abstract class Verb
             catch (IOException ex) when (ex is not FileNotFoundException)
             {
                 throw new DriverException(
-                    $"I/O error while reading '{ProjectWorkspace.ConfigurationFileName}': {ex.Message}");
+                    $"I/O error while reading '{ProjectConfiguration.DefaultFileName}': {ex.Message}");
             }
             catch (Exception ex) when (ex is UnauthorizedAccessException or SecurityException)
             {
@@ -73,11 +73,11 @@ internal abstract class Verb
             catch (JsonException ex)
             {
                 throw new DriverException(
-                    $"'{ProjectWorkspace.ConfigurationFileName}' contains invalid JSON: {ex.Message}");
+                    $"'{ProjectConfiguration.DefaultFileName}' contains invalid JSON: {ex.Message}");
             }
             catch (ProjectException ex)
             {
-                throw new DriverException($"'{ProjectWorkspace.ConfigurationFileName}': {ex.Message}");
+                throw new DriverException($"'{ProjectConfiguration.DefaultFileName}': {ex.Message}");
             }
         }
         catch (FileNotFoundException)

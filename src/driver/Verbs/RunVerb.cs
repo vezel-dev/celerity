@@ -20,7 +20,7 @@ internal sealed class RunVerb : Verb
 
         if (workspace is ProjectWorkspace { Configuration.Kind: not ProjectKind.Program })
             throw new DriverException(
-                $"Workspace not configured as program in '{ProjectWorkspace.ConfigurationFileName}'.");
+                $"Workspace not configured as program in '{ProjectConfiguration.DefaultFileName}'.");
 
         if (workspace.GetEntryPointDocument() is not { })
             throw new DriverException(

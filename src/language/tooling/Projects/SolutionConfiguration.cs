@@ -2,6 +2,8 @@ namespace Vezel.Celerity.Language.Tooling.Projects;
 
 public sealed class SolutionConfiguration
 {
+    public const string DefaultFileName = "celerity.solution.json";
+
     public ImmutableArray<string> Projects { get; }
 
     private SolutionConfiguration(ImmutableArray<string> projects)

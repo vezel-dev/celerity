@@ -4,8 +4,6 @@ namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
 public sealed class ProjectWorkspace : Workspace
 {
-    public const string ConfigurationFileName = "celerity.json";
-
     public ProjectConfiguration Configuration { get; }
 
     private readonly bool _disableAnalysis;
@@ -36,7 +34,7 @@ public sealed class ProjectWorkspace : Workspace
         [SuppressMessage("", "CA2000")] // TODO: https://github.com/dotnet/roslyn-analyzers/issues/6512
         async ValueTask<ProjectWorkspace> OpenAsync()
         {
-            var stream = File.OpenRead(System.IO.Path.Join(path, ConfigurationFileName));
+            var stream = File.OpenRead(System.IO.Path.Join(path, ProjectConfiguration.DefaultFileName));
 
             ProjectConfiguration cfg;
 

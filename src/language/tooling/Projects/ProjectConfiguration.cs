@@ -2,6 +2,8 @@ namespace Vezel.Celerity.Language.Tooling.Projects;
 
 public sealed class ProjectConfiguration
 {
+    public const string DefaultFileName = "celerity.json";
+
     public string Name { get; }
 
     public ProjectKind Kind { get; }
