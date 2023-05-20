@@ -6,4 +6,4 @@
    :            ^^^
  4 |         "this should be documented";
  5 |     }
- 6 | 
+ 6 |

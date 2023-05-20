@@ -14,42 +14,42 @@ Error[E0034]: Standard attribute 'doc' is not valid on this item
  5 |     @doc "asdf"
    :     ^^^^^^^^^^^
  6 |     use X = Y;
- 7 | 
+ 7 |
  8 |     @doc 42
 Error[E0035]: Value for standard attribute 'doc' must be a string literal (documentation text) or 'false' literal
 ---> standard_attributes.cel (8,10)-(8,12)
  5 |     @doc "asdf"
  6 |     use X = Y;
- 7 | 
+ 7 |
  8 |     @doc 42
    :          ^^
  9 |     @deprecated "very broken"
 10 |     fn a() { 1; }
-11 | 
+11 |
 Error[E0036]: Standard attribute 'doc' specified multiple times
 ---> standard_attributes.cel (15,5)-(15,16)
 12 |     @doc false
 13 |     fn b() { 2; }
-14 | 
+14 |
 15 |     @doc "text"
    :     ^^^^^^^^^^^
 16 |     @doc "duplicate"
 17 |     fn c() { 3; }
-18 | 
+18 |
 Note: Also specified here
 ---> standard_attributes.cel (16,5)-(16,21)
 13 |     fn b() { 2; }
-14 | 
+14 |
 15 |     @doc "text"
 16 |     @doc "duplicate"
    :     ^^^^^^^^^^^^^^^^
 17 |     fn c() { 3; }
-18 | 
+18 |
 19 |     @ignore "bad test"
 Error[E0035]: Value for standard attribute 'flaky' must be a string literal (reason)
 ---> standard_attributes.cel (20,12)-(20,16)
 17 |     fn c() { 3; }
-18 | 
+18 |
 19 |     @ignore "bad test"
 20 |     @flaky true
    :            ^^^^
@@ -58,7 +58,7 @@ Error[E0035]: Value for standard attribute 'flaky' must be a string literal (rea
 23 |         assert false;
 Error[E0034]: Standard attribute 'deprecated' is not valid on this item
 ---> standard_attributes.cel (21,5)-(21,22)
-18 | 
+18 |
 19 |     @ignore "bad test"
 20 |     @flaky true
 21 |     @deprecated false
@@ -68,7 +68,7 @@ Error[E0034]: Standard attribute 'deprecated' is not valid on this item
 24 |     }
 Error[E0035]: Value for standard attribute 'deprecated' must be a string literal (reason)
 ---> standard_attributes.cel (21,17)-(21,22)
-18 | 
+18 |
 19 |     @ignore "bad test"
 20 |     @flaky true
 21 |     @deprecated false

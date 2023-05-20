@@ -5,18 +5,18 @@
  3 |         let a = b;
    :                 ^
  4 |         let c = a;
- 5 | 
+ 5 |
  6 |         c = 1;
 Error[E0032]: Assignment to immutable symbol 'c'
 ---> let_bindings.cel (6,9)-(6,10)
  3 |         let a = b;
  4 |         let c = a;
- 5 | 
+ 5 |
  6 |         c = 1;
    :         ^
- 7 | 
+ 7 |
  8 |         let mut c = c;
- 9 | 
+ 9 |
 Note: Symbol defined here
 ---> let_bindings.cel (4,13)-(4,14)
  1 | mod {
@@ -24,6 +24,6 @@ Note: Symbol defined here
  3 |         let a = b;
  4 |         let c = a;
    :             ^
- 5 | 
+ 5 |
  6 |         c = 1;
- 7 | 
+ 7 |

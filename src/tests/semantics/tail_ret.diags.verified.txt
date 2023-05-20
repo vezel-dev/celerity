@@ -1,28 +1,28 @@
 ﻿Error[E0041]: Operand of 'tail ret' expression is not a call expression
 ---> tail_ret.cel (7,9)-(7,34)
- 4 | 
+ 4 |
  5 |         tail ret tail_call(2 + 2, :foo, "bar");
- 6 | 
+ 6 |
  7 |         tail ret tail_call() + 42;
    :         ^^^^^^^^^^^^^^^^^^^^^^^^^
- 8 | 
+ 8 |
  9 |         tail ret Foo.tail_call();
-10 | 
+10 |
 Error[E0041]: Operand of 'tail ret' expression is not a call expression
 ---> tail_ret.cel (13,9)-(13,38)
-10 | 
+10 |
 11 |         tail ret Foo.tail_call(2 + 2, :foo, "bar");
-12 | 
+12 |
 13 |         tail ret Foo.tail_call() + 42;
    :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-14 | 
+14 |
 15 |         fn() -> tail ret this();
-16 | 
+16 |
 Error[E0041]: Operand of 'tail ret' expression is not a call expression
 ---> tail_ret.cel (19,17)-(19,37)
-16 | 
+16 |
 17 |         fn() -> tail ret this(2 + 2, :foo, "bar");
-18 | 
+18 |
 19 |         fn() -> tail ret this() + 42;
    :                 ^^^^^^^^^^^^^^^^^^^^
 20 |     }

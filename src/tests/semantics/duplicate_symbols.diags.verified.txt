@@ -4,7 +4,7 @@
  2 |     use Aaa = Bbb;
    :         ^^^
  3 |     use Aaa = Bbb;
- 4 | 
+ 4 |
  5 |     fn foo() { 1; }
 Note: Also declared here
 ---> duplicate_symbols.cel (3,9)-(3,12)
@@ -12,83 +12,83 @@ Note: Also declared here
  2 |     use Aaa = Bbb;
  3 |     use Aaa = Bbb;
    :         ^^^
- 4 | 
+ 4 |
  5 |     fn foo() { 1; }
- 6 | 
+ 6 |
 Error[E0022]: Multiple declarations of 'foo' in the same module
 ---> duplicate_symbols.cel (5,8)-(5,11)
  2 |     use Aaa = Bbb;
  3 |     use Aaa = Bbb;
- 4 | 
+ 4 |
  5 |     fn foo() { 1; }
    :        ^^^
- 6 | 
+ 6 |
  7 |     const foo = 2;
- 8 | 
+ 8 |
 Note: Also declared here
 ---> duplicate_symbols.cel (7,11)-(7,14)
- 4 | 
+ 4 |
  5 |     fn foo() { 1; }
- 6 | 
+ 6 |
  7 |     const foo = 2;
    :           ^^^
- 8 | 
+ 8 |
  9 |     test foo { assert true; }
-10 | 
+10 |
 Note: Also declared here
 ---> duplicate_symbols.cel (9,10)-(9,13)
- 6 | 
+ 6 |
  7 |     const foo = 2;
- 8 | 
+ 8 |
  9 |     test foo { assert true; }
    :          ^^^
-10 | 
+10 |
 11 |     fn bar(aaa, aaa) {
 12 |         fn(bbb, bbb) -> 3;
 Error[E0023]: Multiple bindings of parameter 'aaa' in the same function
 ---> duplicate_symbols.cel (11,12)-(11,15)
- 8 | 
+ 8 |
  9 |     test foo { assert true; }
-10 | 
+10 |
 11 |     fn bar(aaa, aaa) {
    :            ^^^
 12 |         fn(bbb, bbb) -> 3;
 13 |     }
-14 | 
+14 |
 Note: Also bound here
 ---> duplicate_symbols.cel (11,17)-(11,20)
- 8 | 
+ 8 |
  9 |     test foo { assert true; }
-10 | 
+10 |
 11 |     fn bar(aaa, aaa) {
    :                 ^^^
 12 |         fn(bbb, bbb) -> 3;
 13 |     }
-14 | 
+14 |
 Error[E0023]: Multiple bindings of parameter 'bbb' in the same function
 ---> duplicate_symbols.cel (12,12)-(12,15)
  9 |     test foo { assert true; }
-10 | 
+10 |
 11 |     fn bar(aaa, aaa) {
 12 |         fn(bbb, bbb) -> 3;
    :            ^^^
 13 |     }
-14 | 
+14 |
 15 |     fn baz() {
 Note: Also bound here
 ---> duplicate_symbols.cel (12,17)-(12,20)
  9 |     test foo { assert true; }
-10 | 
+10 |
 11 |     fn bar(aaa, aaa) {
 12 |         fn(bbb, bbb) -> 3;
    :                 ^^^
 13 |     }
-14 | 
+14 |
 15 |     fn baz() {
 Error[E0024]: Multiple bindings of variable 'x' in the same pattern context
 ---> duplicate_symbols.cel (16,14)-(16,15)
 13 |     }
-14 | 
+14 |
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
    :              ^
@@ -98,7 +98,7 @@ Error[E0024]: Multiple bindings of variable 'x' in the same pattern context
 Note: Also bound here
 ---> duplicate_symbols.cel (16,17)-(16,18)
 13 |     }
-14 | 
+14 |
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
    :                 ^
@@ -107,7 +107,7 @@ Note: Also bound here
 19 | }
 Error[E0024]: Multiple bindings of variable '_x' in the same pattern context
 ---> duplicate_symbols.cel (17,14)-(17,16)
-14 | 
+14 |
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
 17 |         let (_x, _x) = (x, x);
@@ -116,7 +116,7 @@ Error[E0024]: Multiple bindings of variable '_x' in the same pattern context
 19 | }
 Note: Also bound here
 ---> duplicate_symbols.cel (17,18)-(17,20)
-14 | 
+14 |
 15 |     fn baz() {
 16 |         let (x, x) = (4, 5);
 17 |         let (_x, _x) = (x, x);

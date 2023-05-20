@@ -17,10 +17,10 @@ Note: Also assigned here
    :             ^
  6 |         };
  7 |     }
- 8 | 
+ 8 |
 Error[E0025]: Error field 'y' is assigned multiple times
 ---> duplicate_fields.cel (11,13)-(11,14)
- 8 | 
+ 8 |
  9 |     fn bar() {
 10 |         err MyError {
 11 |             y : 3,
@@ -37,10 +37,10 @@ Note: Also assigned here
    :             ^
 13 |         };
 14 |     }
-15 | 
+15 |
 Error[E0025]: Record field 'x' is matched multiple times
 ---> duplicate_fields.cel (18,19)-(18,20)
-15 | 
+15 |
 16 |     fn baz(value) {
 17 |         match value {
 18 |             rec { x : _a, x : _b } -> 5,
@@ -50,7 +50,7 @@ Error[E0025]: Record field 'x' is matched multiple times
 21 |     }
 Note: Also matched here
 ---> duplicate_fields.cel (18,27)-(18,28)
-15 | 
+15 |
 16 |     fn baz(value) {
 17 |         match value {
 18 |             rec { x : _a, x : _b } -> 5,

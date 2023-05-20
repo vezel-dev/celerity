@@ -4,24 +4,24 @@
  2 |     fn code() {
  3 |         0B111;
    :         ^^^^^
- 4 | 
+ 4 |
  5 |         @lint "uppercase-base-indicator:none"
  6 |         {
 Error[uppercase-base-indicator]: Consider using lowercase base indicator '0x' for clarity
 ---> lint_severity_attributes.cel (11,17)-(11,22)
- 8 | 
+ 8 |
  9 |             @lint "uppercase-base-indicator:error"
 10 |             {
 11 |                 0X111;
    :                 ^^^^^
 12 |             };
-13 | 
+13 |
 14 |             0O111;
 Warning[uppercase-base-indicator]: Consider using lowercase base indicator '0b' for clarity
 ---> lint_severity_attributes.cel (17,9)-(17,14)
 14 |             0O111;
 15 |         };
-16 | 
+16 |
 17 |         0B111;
    :         ^^^^^
 18 |     }

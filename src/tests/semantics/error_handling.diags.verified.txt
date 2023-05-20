@@ -4,34 +4,34 @@
  2 |     fn infallible() {
  3 |         raise err MyError { message : "uh oh" };
    :         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 4 | 
+ 4 |
  5 |         try raise err MyError { message : "this is fine" } catch { _ -> nil };
- 6 | 
+ 6 |
 Error[E0027]: 'raise' expression in infallible context is invalid
 ---> error_handling.cel (7,30)-(7,75)
- 4 | 
+ 4 |
  5 |         try raise err MyError { message : "this is fine" } catch { _ -> nil };
- 6 | 
+ 6 |
  7 |         try nil catch { _ -> raise err MyError { message : "this is bad" } };
    :                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
- 8 | 
+ 8 |
  9 |         fallible()?;
 10 |     }
 Error[E0027]: Error-propagating call expression in infallible context is invalid
 ---> error_handling.cel (9,9)-(9,20)
- 6 | 
+ 6 |
  7 |         try nil catch { _ -> raise err MyError { message : "this is bad" } };
- 8 | 
+ 8 |
  9 |         fallible()?;
    :         ^^^^^^^^^^^
 10 |     }
-11 | 
+11 |
 12 |     err fn fallible() {
 Error[E0027]: 'raise' expression in infallible context is invalid
 ---> error_handling.cel (17,17)-(17,76)
-14 | 
+14 |
 15 |         fallible()?;
-16 | 
+16 |
 17 |         fn() -> raise err MyError { message : "this lambda is infallible" };
    :                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 18 |     }

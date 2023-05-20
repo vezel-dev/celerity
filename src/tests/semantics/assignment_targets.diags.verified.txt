@@ -4,44 +4,44 @@
  2 |     fn assign(arg) {
  3 |         arg = 0;
    :         ^^^
- 4 | 
+ 4 |
  5 |         let x = 1;
- 6 | 
+ 6 |
 Note: Symbol defined here
 ---> assignment_targets.cel (2,15)-(2,18)
  1 | mod {
  2 |     fn assign(arg) {
    :               ^^^
  3 |         arg = 0;
- 4 | 
+ 4 |
  5 |         let x = 1;
 Error[E0032]: Assignment to immutable symbol 'x'
 ---> assignment_targets.cel (7,9)-(7,10)
- 4 | 
+ 4 |
  5 |         let x = 1;
- 6 | 
+ 6 |
  7 |         x = 2;
    :         ^
- 8 | 
+ 8 |
  9 |         let mut y = 3;
-10 | 
+10 |
 Note: Symbol defined here
 ---> assignment_targets.cel (5,13)-(5,14)
  2 |     fn assign(arg) {
  3 |         arg = 0;
- 4 | 
+ 4 |
  5 |         let x = 1;
    :             ^
- 6 | 
+ 6 |
  7 |         x = 2;
- 8 | 
+ 8 |
 Error[E0031]: Assignment target must be an identifier, field, or index expression
 ---> assignment_targets.cel (16,9)-(16,18)
 13 |         x.field = 5;
 14 |         y.field = 6;
-15 | 
+15 |
 16 |         "literal" = 7;
    :         ^^^^^^^^^
-17 | 
+17 |
 18 |         let arr1 = [1, 2, 3];
 19 |         let arr2 = mut [1, 2, 3];

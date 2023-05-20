@@ -91,8 +91,15 @@ public sealed class DiagnosticWriter
                     await WriteAsync(DiagnosticPart.Margin, lineValue).ConfigureAwait(false);
                     await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
                     await WriteAsync(DiagnosticPart.Separator, "|").ConfigureAwait(false);
-                    await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
-                    await WriteAsync(part, text.Replace("\t", tab, StringComparison.Ordinal)).ConfigureAwait(false);
+
+                    var content = text.Replace("\t", tab, StringComparison.Ordinal);
+
+                    if (content.Length != 0)
+                    {
+                        await WriteAsync(DiagnosticPart.WhiteSpace, " ").ConfigureAwait(false);
+                        await WriteAsync(part, content).ConfigureAwait(false);
+                    }
+
                     await WriteLineAsync().ConfigureAwait(false);
                 }
 

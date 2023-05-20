@@ -2,7 +2,7 @@
 --> test_reference.cel (4,16)-(4,19)
 1 | mod {
 2 |     test foo { assert true; }
-3 | 
+3 |
 4 |     fn bar() { foo; }
   :                ^^^
 5 | }
@@ -11,6 +11,6 @@ Note: Symbol declared here
 1 | mod {
 2 |     test foo { assert true; }
   :          ^^^
-3 | 
+3 |
 4 |     fn bar() { foo; }
 5 | }

@@ -3,14 +3,14 @@
 1 | mod {
 2 |     type x = -;
   :               ^
-3 | 
+3 |
 4 |     @foo
 5 |     fn () { 1; }
 Error[E0012]: Expected literal
 --> missing_tokens.cel (4,9)-(5,1)
 1 | mod {
 2 |     type x = -;
-3 | 
+3 |
 4 |     @foo
   :         ^
 5 |     fn () { 1; }
@@ -18,7 +18,7 @@ Error[E0012]: Expected literal
 Error[E0012]: Expected lowercase identifier
 --> missing_tokens.cel (5,8)-(5,9)
 2 |     type x = -;
-3 | 
+3 |
 4 |     @foo
 5 |     fn () { 1; }
   :        ^

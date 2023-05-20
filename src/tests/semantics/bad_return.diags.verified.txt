@@ -3,6 +3,6 @@
  1 | mod {
  2 |     const a = ret 1;
    :               ^^^^^
- 3 | 
+ 3 |
  4 |     const b = fn() -> ret 2;
- 5 | 
+ 5 |
