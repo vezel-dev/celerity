@@ -917,7 +917,13 @@ internal sealed class LanguageAnalyzer
                 Error(
                     node.Span,
                     StandardDiagnosticCodes.MissingEnclosingFunction,
-                    $"No enclosing function for 'ret' expression");
+                    "No enclosing function for 'ret' expression");
+
+            if (sema.IsTail && oper is not CallExpressionSemantics)
+                Error(
+                    node.Span,
+                    StandardDiagnosticCodes.ImproperTailCall,
+                    "Operand of 'tail ret' expression is not a call expression");
 
             return sema;
         }

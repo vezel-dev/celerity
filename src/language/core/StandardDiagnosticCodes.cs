@@ -88,6 +88,8 @@ public static class StandardDiagnosticCodes
 
     public static DiagnosticCode ImproperBlockStringLiteral { get; } = CreateCode();
 
+    public static DiagnosticCode ImproperTailCall { get; } = CreateCode();
+
     private static int _code;
 
     private static DiagnosticCode CreateCode()
