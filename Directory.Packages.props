@@ -47,7 +47,7 @@
         <PackageVersion Include="Verify.DiffPlex"
                         Version="2.2.1" />
         <PackageVersion Include="Verify.Xunit"
-                        Version="19.14.1" />
+                        Version="20.3.2" />
         <PackageVersion Include="Vezel.Cathode"
                         Version="0.10.40" />
         <PackageVersion Include="Vezel.Cathode.Hosting"
