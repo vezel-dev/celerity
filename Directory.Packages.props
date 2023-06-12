@@ -29,7 +29,7 @@
         <PackageVersion Include="DotNext"
                         Version="4.12.0" />
         <PackageVersion Include="Iced"
-                        Version="1.18.0" />
+                        Version="1.19.0" />
         <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework"
                         Version="2.1.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp"
