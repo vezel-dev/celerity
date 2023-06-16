@@ -227,7 +227,7 @@
     "generator-code": "1.7.6",
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.1",
-    "nerdbank-gitversioning": "3.6.132",
+    "nerdbank-gitversioning": "3.6.133",
     "ovsx": "0.8.1",
     "rimraf": "5.0.0",
     "symlink-dir": "5.1.1",
