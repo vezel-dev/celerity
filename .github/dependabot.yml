@@ -9,14 +9,14 @@ updates:
           time: "12:00"
       labels: []
     - directory: /
-      package-ecosystem: nuget
+      package-ecosystem: npm
       schedule:
           interval: daily
           timezone: Europe/Copenhagen
           time: "12:00"
       labels: []
     - directory: /
-      package-ecosystem: npm
+      package-ecosystem: nuget
       schedule:
           interval: daily
           timezone: Europe/Copenhagen
