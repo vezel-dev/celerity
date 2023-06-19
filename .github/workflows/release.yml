@@ -11,6 +11,9 @@ env:
     DOTNET_CLI_TELEMETRY_OPTOUT: true
     DOTNET_GENERATE_ASPNET_CERTIFICATE: false
     DOTNET_NOLOGO: true
+    NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+    OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+    VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
 jobs:
     release:
         if: github.repository == 'vezel-dev/celerity'
