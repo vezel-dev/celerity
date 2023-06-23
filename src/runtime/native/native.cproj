@@ -4,6 +4,7 @@
         <DefineConstants>
             $(DefineConstants);
             _XOPEN_SOURCE;
+            UNICODE;
             WIN32_LEAN_AND_MEAN
         </DefineConstants>
         <!-- TODO: https://github.com/dotnet/msbuild/issues/6672 -->
