@@ -96,7 +96,7 @@ void DotNetRun(FilePath project, Func<ProcessArgumentBuilder, ProcessArgumentBui
         });
 }
 
-(int ExitCode, string StandardOut, string StandardError) RunCommand(
+void RunCommand(
     string name,
     string[] tools,
     Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender,
@@ -130,18 +130,16 @@ void DotNetRun(FilePath project, Func<ProcessArgumentBuilder, ProcessArgumentBui
 
     if (code != 0 && checker(stdOutStr, stdErrStr))
         throw new CakeException(code, $"{name}: Process returned an error (exit code {code}).");
-
-    return (code, stdOutStr, stdErrStr);
 }
 
-bool RunDotNet(Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender, Func<string, string, bool> checker)
+void RunDotNet(Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender, Func<string, string, bool> checker)
 {
-    return RunCommand(".NET CLI", new[] { "dotnet", "dotnet.exe" }, appender, checker).ExitCode == 0;
+    RunCommand(".NET CLI", new[] { "dotnet", "dotnet.exe" }, appender, checker);
 }
 
 void RunVSCode(Func<ProcessArgumentBuilder, ProcessArgumentBuilder> appender)
 {
-    _ = RunCommand("VS Code", new[] { "code.cmd", "code" }, appender, (_, _) => true);
+    RunCommand("VS Code", new[] { "code.cmd", "code" }, appender, (_, _) => true);
 }
 
 void UploadVSCode(string command, string token)
