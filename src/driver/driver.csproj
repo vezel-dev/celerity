@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>celerity</AssemblyName>
+        <CopyDebugSymbolFilesFromPackages Condition="'$(DebugSymbols)' == 'true'">true</CopyDebugSymbolFilesFromPackages>
         <IsPackable>true</IsPackable>
         <IsPublishable>true</IsPublishable>
         <OutputType>Exe</OutputType>
