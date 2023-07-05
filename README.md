@@ -40,7 +40,7 @@ This project offers the following packages:
 
 | Package | Description | Downloads |
 | -: | - | :- |
-| [![celerity][cli-img]][cli-pkg] | Provides the .NET global tool. | ![Downloads][cli-dls] |
+| [![celerity][driver-img]][driver-pkg] | Provides the .NET global tool. | ![Downloads][driver-dls] |
 | [![Vezel.Celerity.Language][language-core-img]][language-core-pkg] | Provides language analysis services such as lexing, parsing, binding, and linting. | ![Downloads][language-core-dls] |
 | [![Vezel.Celerity.Language.Library][language-library-img]][language-library-pkg] | Provides the language's standard library. | ![Downloads][language-library-dls] |
 | [![Vezel.Celerity.Language.Tooling][language-tooling-img]][language-tooling-pkg] | Provides user-oriented tooling such as project management and diagnostic rendering. | ![Downloads][language-tooling-dls] |
@@ -50,7 +50,7 @@ This project offers the following packages:
 | [![Vezel.Celerity.Runtime.Interpreter][runtime-interpreter-img]][runtime-interpreter-pkg] | Provides the portable bytecode interpreter which does not require dynamic code generation. | ![Downloads][runtime-interpreter-dls] |
 | [![Vezel.Celerity.Runtime.Compiler][runtime-compiler-img]][runtime-compiler-pkg] | Provides the optimizing just-in-time compiler for 64-bit systems. | ![Downloads][runtime-compiler-dls] |
 
-[cli-pkg]: https://www.nuget.org/packages/celerity
+[driver-pkg]: https://www.nuget.org/packages/celerity
 [language-core-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Language
 [language-library-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Language.Library
 [language-tooling-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Language.Tooling
@@ -60,7 +60,7 @@ This project offers the following packages:
 [runtime-interpreter-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime.Interpreter
 [runtime-compiler-pkg]: https://www.nuget.org/packages/Vezel.Celerity.Runtime.Compiler
 
-[cli-img]: https://img.shields.io/nuget/v/celerity?label=celerity
+[driver-img]: https://img.shields.io/nuget/v/celerity?label=celerity
 [language-core-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Language?label=Vezel.Celerity.Language
 [language-library-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Language.Library?label=Vezel.Celerity.Language.Library
 [language-tooling-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Language.Tooling?label=Vezel.Celerity.Language.Tooling
@@ -70,7 +70,7 @@ This project offers the following packages:
 [runtime-interpreter-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime.Interpreter?label=Vezel.Celerity.Runtime.Interpreter
 [runtime-compiler-img]: https://img.shields.io/nuget/v/Vezel.Celerity.Runtime.Compiler?label=Vezel.Celerity.Runtime.Compiler
 
-[cli-dls]: https://img.shields.io/nuget/dt/celerity?label=
+[driver-dls]: https://img.shields.io/nuget/dt/celerity?label=
 [language-core-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Language?label=
 [language-library-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Language.Library?label=
 [language-tooling-dls]: https://img.shields.io/nuget/dt/Vezel.Celerity.Language.Tooling?label=
