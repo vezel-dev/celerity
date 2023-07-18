@@ -123,6 +123,7 @@
     ],
     "@typescript-eslint/lines-between-class-members": [
       "error",
+      "always",
       {
         "exceptAfterOverload": false
       }
@@ -293,12 +294,7 @@
       }
     ],
     "@typescript-eslint/prefer-namespace-keyword": "error",
-    "@typescript-eslint/prefer-nullish-coalescing": [
-      "error",
-      {
-        "ignoreTernaryTests": false
-      }
-    ],
+    "@typescript-eslint/prefer-nullish-coalescing": "error",
     "@typescript-eslint/prefer-optional-chain": "error",
     "@typescript-eslint/prefer-readonly": "error",
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
@@ -320,12 +316,7 @@
         "allowTemplateLiterals": true
       }
     ],
-    "@typescript-eslint/require-array-sort-compare": [
-      "error",
-      {
-        "ignoreStringArrays": true
-      }
-    ],
+    "@typescript-eslint/require-array-sort-compare": "error",
     "@typescript-eslint/require-await": "error",
     "@typescript-eslint/restrict-plus-operands": "error",
     "@typescript-eslint/restrict-template-expressions": "off",
@@ -356,7 +347,6 @@
     "@typescript-eslint/strict-boolean-expressions": [
       "error",
       {
-        "allowNullableEnum": false,
         "allowNumber": false,
         "allowString": false
       }
@@ -535,7 +525,6 @@
     "no-dupe-else-if": "error",
     "no-dupe-keys": "error",
     "no-duplicate-case": "error",
-    "no-duplicate-imports": "error",
     "no-else-return": [
       "error",
       {
