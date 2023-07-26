@@ -54,7 +54,7 @@
     "Testing"
   ],
   "engines": {
-    "node": "20.2.0",
+    "node": "20.5.0",
     "vscode": "^1.80.0"
   },
   "extensionKind": [
