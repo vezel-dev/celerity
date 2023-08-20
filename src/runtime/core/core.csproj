@@ -32,7 +32,7 @@ bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>
         <ItemGroup>
             <Content Include="@(_NativeLibrary)"
                      Link="%(RuntimeIdentifier)/%(Filename)%(Extension)"
-                     CopyToOutputDirectory="Always"
+                     CopyToOutputDirectory="PreserveNewest"
                      PackagePath="runtimes/%(RuntimeIdentifier)/native" />
         </ItemGroup>
     </Target>
