@@ -37,7 +37,7 @@ jobs:
                   ./cake upload-vscode-ovsx -c Release
             - name: Upload artifacts
               if: always()
-              uses: actions/upload-artifact@v3.1.2
+              uses: actions/upload-artifact@v3.1.3
               with:
                   name: ${{ github.workflow }}-${{ github.run_number }}-${{ github.run_attempt }}-windows-2022-Release
                   path: |
