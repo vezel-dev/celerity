@@ -151,7 +151,7 @@ public sealed class ProjectConfiguration
             if (versionProp.ValueKind != JsonValueKind.String)
                 Error("'version' property, if present, must be a string.");
 
-            if (!SemanticVersion.TryParse(versionProp.GetString(), out var semVer))
+            if (!SemanticVersion.TryParse(versionProp.GetString()!, out var semVer))
                 Error("'version' property, if present, must be a valid Semantic Versioning 2.0.0 version number.");
 
             version = semVer.ToFullString();
