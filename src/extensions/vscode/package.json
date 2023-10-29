@@ -228,7 +228,7 @@
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.1",
     "nerdbank-gitversioning": "3.6.133",
-    "ovsx": "0.8.2",
+    "ovsx": "0.8.3",
     "rimraf": "5.0.1",
     "symlink-dir": "5.1.1",
     "typescript": "5.1.6",
