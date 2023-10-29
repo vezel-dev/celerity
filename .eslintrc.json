@@ -31,6 +31,7 @@
     "@typescript-eslint/block-spacing": "error",
     "@typescript-eslint/brace-style": "error",
     "@typescript-eslint/class-literal-property-style": "error",
+    "@typescript-eslint/class-methods-use-this": "error",
     "@typescript-eslint/comma-dangle": [
       "error",
       {
@@ -283,6 +284,13 @@
     "@typescript-eslint/padding-line-between-statements": "off",
     "@typescript-eslint/parameter-properties": "error",
     "@typescript-eslint/prefer-as-const": "error",
+    "@typescript-eslint/prefer-destructuring": [
+      "error",
+      {
+        "array": true,
+        "object": true
+      }
+    ],
     "@typescript-eslint/prefer-enum-initializers": "off",
     "@typescript-eslint/prefer-for-of": "error",
     "@typescript-eslint/prefer-function-type": "error",
@@ -403,7 +411,6 @@
     "brace-style": "off",
     "camelcase": "error",
     "capitalized-comments": "off",
-    "class-methods-use-this": "error",
     "comma-dangle": "off",
     "comma-spacing": "off",
     "comma-style": "error",
@@ -739,13 +746,6 @@
     "padding-line-between-statements": "off",
     "prefer-arrow-callback": "error",
     "prefer-const": "error",
-    "prefer-destructuring": [
-      "error",
-      {
-        "array": true,
-        "object": true
-      }
-    ],
     "prefer-exponentiation-operator": "error",
     "prefer-named-capture-group": "off",
     "prefer-numeric-literals": "error",
