@@ -51,7 +51,7 @@
         <PackageVersion Include="Vezel.Cathode.Hosting"
                         Version="0.10.40" />
         <PackageVersion Include="xunit"
-                        Version="2.5.3" />
+                        Version="2.6.1" />
         <PackageVersion Include="xunit.runner.visualstudio"
                         Version="2.5.3" />
     </ItemGroup>
