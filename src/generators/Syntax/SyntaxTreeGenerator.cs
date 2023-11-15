@@ -28,7 +28,7 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
 
                 var baseName = Path.GetFileName(file.Path);
 
-                foreach (var type in root.Types ?? Array.Empty<SyntaxTreeType>())
+                foreach (var type in root.Types ?? [])
                     GenerateType(ctx, Path.ChangeExtension(baseName, $"{type.Name}Syntax.g.cs"), type);
             });
     }
@@ -65,7 +65,7 @@ public sealed class SyntaxTreeGenerator : IIncrementalGenerator
             writer.WriteLine();
         }
 
-        var props = type.Properties ?? Array.Empty<SyntaxTreeProperty>();
+        var props = type.Properties ?? [];
 
         foreach (var prop in props)
         {

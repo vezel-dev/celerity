@@ -36,12 +36,11 @@ internal sealed class LanguageAnalyzer
 
         private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
 
-        private readonly Dictionary<string, (List<UseDeclarationSemantics> Declarations, ModulePath? Path)> _uses =
-            new();
+        private readonly Dictionary<string, (List<UseDeclarationSemantics> Declarations, ModulePath? Path)> _uses = [];
 
-        private readonly List<IdentifierExpressionSemantics> _identifiers = new();
+        private readonly List<IdentifierExpressionSemantics> _identifiers = [];
 
-        private readonly HashSet<Symbol> _duplicates = new();
+        private readonly HashSet<Symbol> _duplicates = [];
 
         private Scope _scope = new(null);
 
@@ -183,7 +182,7 @@ internal sealed class LanguageAnalyzer
             where TSemantics : SemanticNode
         {
             if (syntax.Count == 0)
-                return new(syntax, ImmutableArray<TSemantics>.Empty);
+                return new(syntax, []);
 
             var builder = Builder<TSemantics>(syntax.Count);
 
@@ -251,7 +250,7 @@ internal sealed class LanguageAnalyzer
                         $"Value for standard attribute '{name}' must be a {valueMsg}");
 
                 if (!allowMultiple)
-                    (CollectionsMarshal.GetValueRefOrAddDefault(grouped, name, out _) ??= new()).Add(attr);
+                    (CollectionsMarshal.GetValueRefOrAddDefault(grouped, name, out _) ??= []).Add(attr);
             }
 
             foreach (var (name, list) in grouped.OrderBy(static kvp => kvp.Key))
@@ -273,7 +272,7 @@ internal sealed class LanguageAnalyzer
             var elements = syntax.Elements;
 
             if (elements.Length == 0)
-                return new(syntax, ImmutableArray<TSemantics>.Empty);
+                return new(syntax, []);
 
             var builder = Builder<TSemantics>(elements.Length);
 
@@ -298,7 +297,7 @@ internal sealed class LanguageAnalyzer
 
             foreach (var field in fields)
                 if (selector(field) is { IsMissing: false } name)
-                    (CollectionsMarshal.GetValueRefOrAddDefault(map, name.Text, out _) ??= new()).Add(name.Span);
+                    (CollectionsMarshal.GetValueRefOrAddDefault(map, name.Text, out _) ??= []).Add(name.Span);
 
             foreach (var (name, spans) in map)
                 if (spans.Count != 1)
@@ -412,7 +411,7 @@ internal sealed class LanguageAnalyzer
                 ref var entry = ref CollectionsMarshal.GetValueRefOrAddDefault(_uses, name.Text, out var exists);
 
                 if (!exists)
-                    entry = (new(), path);
+                    entry = ([], path);
 
                 entry.Declarations.Add(sema);
             }
@@ -1140,9 +1139,7 @@ internal sealed class LanguageAnalyzer
         {
             var subject = VisitExpression(node.Subject);
             var args = ConvertList(node.ArgumentList.Arguments, static (@this, arg) => @this.VisitExpression(arg));
-            var defers = node.QuestionToken != null
-                ? _scope.CollectDefers(null)
-                : ImmutableArray<DeferStatementSemantics>.Empty;
+            var defers = node.QuestionToken != null ? _scope.CollectDefers(null) : [];
 
             var sema = new CallExpressionSemantics(node, subject, args, defers);
 

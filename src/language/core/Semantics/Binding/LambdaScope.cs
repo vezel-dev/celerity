@@ -7,7 +7,7 @@ internal sealed class LambdaScope : FunctionScope, IScope<LambdaScope>
     public ImmutableArray<ThisExpressionSemantics>.Builder ThisExpressions { get; } =
         ImmutableArray.CreateBuilder<ThisExpressionSemantics>(0);
 
-    private readonly Dictionary<Symbol, UpvalueSymbol> _upvalues = new();
+    private readonly Dictionary<Symbol, UpvalueSymbol> _upvalues = [];
 
     private int _upvalueSlot;
 

@@ -208,6 +208,6 @@ public sealed class ProjectConfiguration
             version,
             passes.DrainToImmutable(),
             severities,
-            ImmutableArray.Create<DiagnosticAnalyzer>(new LintDiagnosticAnalyzer(passes, severities)));
+            [new LintDiagnosticAnalyzer(passes, severities)]);
     }
 }

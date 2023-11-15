@@ -6,7 +6,7 @@ internal class Scope : IScope<Scope>
 {
     public Scope? Parent { get; }
 
-    private readonly Dictionary<string, Symbol> _symbols = new();
+    private readonly Dictionary<string, Symbol> _symbols = [];
 
     protected internal Scope(Scope? parent)
     {

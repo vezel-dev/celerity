@@ -14,13 +14,11 @@ public abstract class LocalSymbol : Symbol
 
     public override sealed ImmutableArray<AssignmentExpressionSemantics> Assignments => _assignments;
 
-    private ImmutableArray<SemanticNode> _bindings = ImmutableArray<SemanticNode>.Empty;
+    private ImmutableArray<SemanticNode> _bindings = [];
 
-    private ImmutableArray<IdentifierExpressionSemantics> _references =
-        ImmutableArray<IdentifierExpressionSemantics>.Empty;
+    private ImmutableArray<IdentifierExpressionSemantics> _references = [];
 
-    private ImmutableArray<AssignmentExpressionSemantics> _assignments =
-        ImmutableArray<AssignmentExpressionSemantics>.Empty;
+    private ImmutableArray<AssignmentExpressionSemantics> _assignments = [];
 
     private protected LocalSymbol(string name)
     {

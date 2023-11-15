@@ -49,7 +49,7 @@ internal struct EventHandlerList<T>
                         }
                         catch (Exception ex)
                         {
-                            (exceptions ??= new()).Add(ex);
+                            (exceptions ??= []).Add(ex);
                         }
                     }
 

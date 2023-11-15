@@ -22,7 +22,7 @@ internal sealed class LanguageLexer
 
     private readonly StringBuilder _token = new();
 
-    private readonly List<char> _string = new();
+    private readonly List<char> _string = [];
 
     private readonly StringBuilder _closingIndentation = new();
 
@@ -81,14 +81,7 @@ internal sealed class LanguageLexer
 
     private void Error(int position, int length, DiagnosticCode code, string message)
     {
-        _diagnostics.Add(
-            tree => new(
-                tree,
-                new(position, length),
-                DiagnosticSeverity.Error,
-                code,
-                message,
-                ImmutableArray<DiagnosticNote>.Empty));
+        _diagnostics.Add(tree => new(tree, new(position, length), DiagnosticSeverity.Error, code, message, []));
 
         _errors = true;
     }

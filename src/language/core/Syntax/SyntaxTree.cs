@@ -20,7 +20,7 @@ public sealed class SyntaxTree
         _text = new(discardText ? null : text);
         Path = text.Path;
         Root = root;
-        Diagnostics = diagnostics.Select(creator => creator(this)).OrderBy(diag => diag.Span).ToImmutableArray();
+        Diagnostics = [.. diagnostics.Select(creator => creator(this)).OrderBy(diag => diag.Span)];
 
         root.SetParent(this);
     }

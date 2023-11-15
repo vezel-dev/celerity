@@ -12,7 +12,7 @@ internal sealed class CelerityBenchmarkConfig : ManualConfig
             _ = AddValidator(JitOptimizationsValidator.FailOnError);
 
         if (filter != null)
-            _ = AddFilter(new GlobFilter(new[] { filter }));
+            _ = AddFilter(new GlobFilter([filter]));
 
         _ = WithOptions(ConfigOptions.JoinSummary | ConfigOptions.StopOnFirstError)
             .WithArtifactsPath(Path.Join(Path.GetDirectoryName(Environment.ProcessPath!)!, "artifacts"))

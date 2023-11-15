@@ -39,13 +39,7 @@ public sealed class SyntaxToken : SyntaxTerminal
     private readonly int _position;
 
     internal SyntaxToken()
-        : this(
-            -1,
-            SyntaxTokenKind.Missing,
-            string.Empty,
-            null,
-            new(ImmutableArray<SyntaxTrivia>.Empty),
-            new(ImmutableArray<SyntaxTrivia>.Empty))
+        : this(-1, SyntaxTokenKind.Missing, string.Empty, null, new([]), new([]))
     {
     }
 

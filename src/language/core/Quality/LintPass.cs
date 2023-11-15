@@ -6,12 +6,13 @@ namespace Vezel.Celerity.Language.Quality;
 public abstract class LintPass
 {
     public static ImmutableArray<LintPass> DefaultPasses { get; } =
-        ImmutableArray.Create<LintPass>(
+        [
             TestWithoutAssertPass.Instance,
             UndocumentedPublicSymbolPass.Instance,
             UnreachableCodePass.Instance,
             UnusedLocalSymbolPass.Instance,
-            UppercaseBaseIndicatorPass.Instance);
+            UppercaseBaseIndicatorPass.Instance
+        ];
 
     public DiagnosticCode Code { get; }
 

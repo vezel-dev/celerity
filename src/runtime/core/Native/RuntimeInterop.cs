@@ -10,6 +10,6 @@ internal static partial class RuntimeInterop
     }
 
     [LibraryImport(Library, EntryPoint = "celerity_initialize")]
-    [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvCdecl) })]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     public static partial void Initialize();
 }
