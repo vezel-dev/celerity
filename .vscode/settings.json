@@ -3,6 +3,7 @@
     "out": true,
     "**/*.received.*": true,
     "**/*.verified.*": true,
+    "**/.idea": true,
     "**/.vs": true,
     "**/node_modules": true
   }
