@@ -2,7 +2,8 @@
 
 <div align="center">
     <img src="celerity.svg"
-         width="128" />
+         width="128"
+         alt="Celerity" />
 </div>
 
 <p align="center">
