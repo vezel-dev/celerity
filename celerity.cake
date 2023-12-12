@@ -124,10 +124,7 @@ void RunCommand(
         out var stdOut,
         out var stdErr);
 
-    var stdOutStr = string.Join(null, stdOut);
-    var stdErrStr = string.Join(null, stdErr);
-
-    if (code != 0 && checker(stdOutStr, stdErrStr))
+    if (code != 0 && checker(string.Join(null, stdOut), string.Join(null, stdErr)))
         throw new CakeException(code, $"{name}: Process returned an error (exit code {code}).");
 }
 
