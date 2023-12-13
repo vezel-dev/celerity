@@ -345,14 +345,17 @@ Task("upload-core-nuget")
     .WithCriteria(configuration == "Release")
     .IsDependentOn("pack-core")
     .Does(() =>
-        DotNetNuGetPush(
-            nugetGlob.Pattern,
-            new()
-            {
-                Source = "https://api.nuget.org/v3/index.json",
-                ApiKey = nugetToken,
-                SkipDuplicate = true,
-            }));
+    {
+        foreach (var pkg in GetFiles(nugetGlob))
+            DotNetNuGetPush(
+                pkg,
+                new()
+                {
+                    Source = "https://api.nuget.org/v3/index.json",
+                    ApiKey = nugetToken,
+                    SkipDuplicate = true,
+                });
+    });
 
 Task("upload-vscode-vsce")
     .WithCriteria(BuildSystem.GitHubActions.Environment.Workflow.Ref.StartsWith("refs/tags/v"))
