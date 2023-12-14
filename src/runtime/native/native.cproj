@@ -9,12 +9,12 @@
         </DefineConstants>
         <!-- TODO: https://github.com/dotnet/msbuild/issues/6672 -->
         <PackageDefines>false</PackageDefines>
-        <!-- TODO: https://github.com/vezel-dev/zig-sdk/issues/4 -->
         <RuntimeIdentifiers>
             linux-arm64;
             linux-x64;
             linux-musl-arm64;
             linux-musl-x64;
+            osx-arm64;
             osx-x64;
             win-arm64;
             win-x64
