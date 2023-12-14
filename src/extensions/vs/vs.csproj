@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>Vezel.Celerity.VisualStudio</AssemblyName>
+        <BeforePack>_PackVsixContainer</BeforePack>
+        <CopyDebugSymbolFilesFromPackages Condition="'$(DebugSymbols)' == 'true'">true</CopyDebugSymbolFilesFromPackages>
+        <CreateVsixContainer>false</CreateVsixContainer>
+        <RootNamespace>Vezel.Celerity.VisualStudio</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="Microsoft.VisualStudio.Extensibility" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../language/library/library.csproj" />
+        <ProjectReference Include="../../language/service/service.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- TODO: Remove this hack when the packages are available on NuGet. -->
+        <GlobalPackageReference Remove="Microsoft.VisualStudio.Threading.Analyzers" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.VisualStudio.Extensibility.Build" />
+        <PackageReference Include="Microsoft.VisualStudio.Extensibility.Sdk" />
+    </ItemGroup>
+
+    <!--
+    Ordinarily, the VS SDK will produce the VSIX as part of a regular build. We
+    use this hack to ensure that it is only produced as part of a pack
+    operation. Also, we need more precise control over the output path and file
+    name.
+
+    We only run this target on Windows; the VSIX tools in the VS SDK do not
+    appear to work on Unix platforms.
+    -->
+    <Target Name="_PackVsixContainer"
+            DependsOnTargets="GetBuildVersion"
+            Condition="$([System.OperatingSystem]::IsWindows())">
+        <PropertyGroup>
+            <_VsixOutputPath>$(ArtifactsPath)/pkg/vs/$(Configuration.ToLowerInvariant())</_VsixOutputPath>
+        </PropertyGroup>
+
+        <MakeDir Directories="$(_VsixOutputPath)" />
+
+        <MSBuild Projects="$(MSBuildProjectFullPath)"
+                 Targets="CreateVsixContainer"
+                 Properties="CreateVsixContainer=true; TargetVsixContainer=$(_VsixOutputPath)/vs-celerity-$(Version).vsix"
+                 BuildInParallel="$(BuildInParallel)" />
+    </Target>
+
+    <Import Project="../../language/core/core.targets" />
+    <Import Project="../../language/library/library.targets" />
+    <Import Project="../../language/service/service.targets" />
+    <Import Project="../../language/tooling/tooling.targets" />
+</Project>
