@@ -18,6 +18,8 @@
         <LanguageStandard>gnu2x</LanguageStandard>
         <LangVersion>latest</LangVersion>
         <MicrosoftExtensions>true</MicrosoftExtensions>
+        <!-- TODO: Remove when -err is re-enabled in Directory.Build.rsp. -->
+        <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
         <Nullable>enable</Nullable>
         <PackRelease>false</PackRelease>
         <PackageDescription>$(Description)

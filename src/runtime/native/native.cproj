@@ -7,6 +7,8 @@
             UNICODE;
             WIN32_LEAN_AND_MEAN
         </DefineConstants>
+        <!-- TODO: Remove when -err is re-enabled in Directory.Build.rsp. -->
+        <MSBuildTreatWarningsAsErrors>false</MSBuildTreatWarningsAsErrors>
         <!-- TODO: https://github.com/dotnet/msbuild/issues/6672 -->
         <PackageDefines>false</PackageDefines>
         <RuntimeIdentifiers>
