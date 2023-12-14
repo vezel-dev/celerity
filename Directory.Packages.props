@@ -34,10 +34,6 @@
                         Version="4.7.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk"
                         Version="17.8.0" />
-        <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Build"
-                        Version="17.9.2080" />
-        <PackageVersion Include="Microsoft.VisualStudio.Extensibility.Sdk"
-                        Version="17.9.2080" />
         <PackageVersion Include="NuGet.Versioning"
                         Version="6.7.0" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
