@@ -53,6 +53,6 @@
         <PackageVersion Include="xunit"
                         Version="2.6.3" />
         <PackageVersion Include="xunit.runner.visualstudio"
-                        Version="2.5.3" />
+                        Version="2.5.5" />
     </ItemGroup>
 </Project>
