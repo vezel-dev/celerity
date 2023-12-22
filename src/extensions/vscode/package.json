@@ -232,7 +232,7 @@
     "rimraf": "5.0.5",
     "symlink-dir": "5.2.0",
     "typescript": "5.2.2",
-    "yo": "4.3.1"
+    "yo": "5.0.0"
   },
   "dependencies": {
     "vscode-languageclient": "9.0.1"
