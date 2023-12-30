@@ -3,7 +3,7 @@
         <AssemblyName>Vezel.Celerity.Runtime.Native</AssemblyName>
         <DefineConstants>
             $(DefineConstants);
-            _XOPEN_SOURCE;
+            _GNU_SOURCE;
             _UNICODE;
             UNICODE;
             WIN32_LEAN_AND_MEAN
