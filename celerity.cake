@@ -22,9 +22,7 @@ var ovsxToken = EnvironmentVariable("OVSX_TOKEN");
 
 var root = Context.Environment.WorkingDirectory;
 var celerityProj = root.CombineWithFilePath("celerity.proj");
-
 var doc = root.Combine("doc");
-
 var src = root.Combine("src");
 var srcLanguageLibrary = src.Combine("language").Combine("library");
 var srcExtensionsVscode = src.Combine("extensions").Combine("vscode");
@@ -32,7 +30,6 @@ var driverCsproj = src.Combine("driver").CombineWithFilePath("driver.csproj");
 var benchmarksCsproj = src.Combine("benchmarks").CombineWithFilePath("benchmarks.csproj");
 var testsCsproj = src.Combine("tests").CombineWithFilePath("tests.csproj");
 var trimmingCsproj = src.Combine("trimming").CombineWithFilePath("trimming.csproj");
-
 var @out = root.Combine("out");
 var outLogDotnet = @out.Combine("log").Combine("dotnet");
 var outPkg = @out.Combine("pkg");
