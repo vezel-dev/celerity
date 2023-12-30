@@ -4,6 +4,7 @@
         <DefineConstants>
             $(DefineConstants);
             _XOPEN_SOURCE;
+            _UNICODE;
             UNICODE;
             WIN32_LEAN_AND_MEAN
         </DefineConstants>
