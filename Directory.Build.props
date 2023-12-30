@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
         <Product>Celerity</Product>
-        <Description>$(Product) is an expressive programming language for writing concurrent and maintainable software.</Description>
+        <Description>Celerity is an expressive programming language for writing concurrent and maintainable software.</Description>
         <Company>Vezel</Company>
         <Authors>$(Company) Contributors</Authors>
         <Copyright>Copyright © $(Authors)</Copyright>
