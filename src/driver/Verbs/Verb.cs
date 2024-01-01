@@ -27,8 +27,7 @@ internal abstract class Verb
         }
         catch (DriverException ex)
         {
-            await Error.WriteControlAsync(
-                ControlSequences.SetForegroundColor(_errorColor.R, _errorColor.G, _errorColor.B), cancellationToken);
+            await Error.WriteControlAsync(ControlSequences.SetForegroundColor(_errorColor), cancellationToken);
             await Error.WriteLineAsync(ex.Message, cancellationToken);
             await Error.WriteControlAsync(ControlSequences.ResetAttributes(), cancellationToken);
 

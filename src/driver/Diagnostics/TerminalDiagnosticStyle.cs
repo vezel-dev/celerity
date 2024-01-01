@@ -36,20 +36,15 @@ internal sealed class TerminalDiagnosticStyle : DiagnosticStyle
             _ when !_interactive => null,
             DiagnosticPart.Severity or DiagnosticPart.Caret => severity switch
             {
-                DiagnosticSeverity.Warning =>
-                    ControlSequences.SetForegroundColor(_warningColor.R, _warningColor.G, _warningColor.B),
-                DiagnosticSeverity.Error =>
-                    ControlSequences.SetForegroundColor(_errorColor.R, _errorColor.G, _errorColor.B),
-                null => ControlSequences.SetForegroundColor(_noteColor.R, _noteColor.G, _noteColor.B),
+                DiagnosticSeverity.Warning => ControlSequences.SetForegroundColor(_warningColor),
+                DiagnosticSeverity.Error => ControlSequences.SetForegroundColor(_errorColor),
+                null => ControlSequences.SetForegroundColor(_noteColor),
                 _ => throw new UnreachableException(),
             },
-            DiagnosticPart.Separator =>
-                ControlSequences.SetForegroundColor(_separatorColor.R, _separatorColor.G, _separatorColor.B),
-            DiagnosticPart.Path =>
-                ControlSequences.SetForegroundColor(_locationColor.R, _locationColor.G, _locationColor.B),
-            DiagnosticPart.Range => ControlSequences.SetForegroundColor(_spanColor.R, _spanColor.G, _spanColor.B),
-            DiagnosticPart.Margin =>
-                ControlSequences.SetForegroundColor(_marginColor.R, _marginColor.G, _marginColor.B),
+            DiagnosticPart.Separator => ControlSequences.SetForegroundColor(_separatorColor),
+            DiagnosticPart.Path => ControlSequences.SetForegroundColor(_locationColor),
+            DiagnosticPart.Range => ControlSequences.SetForegroundColor(_spanColor),
+            DiagnosticPart.Margin => ControlSequences.SetForegroundColor(_marginColor),
             DiagnosticPart.TargetLine => ControlSequences.SetDecorations(intense: true),
             _ => null,
         };

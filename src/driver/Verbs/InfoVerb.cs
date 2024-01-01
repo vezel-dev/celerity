@@ -43,13 +43,15 @@ internal sealed class InfoVerb : Verb
         [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
         async ValueTask WriteSectionAsync(string header, IEnumerable<(string Name, object Value)> table)
         {
-            await Out.WriteControlAsync(ControlSequences.SetForegroundColor(175, 255, 0), cancellationToken);
+            await Out.WriteControlAsync(
+                ControlSequences.SetForegroundColor(Color.FromArgb(175, 255, 0)), cancellationToken);
             await Out.WriteLineAsync(header, cancellationToken);
             await Out.WriteControlAsync(ControlSequences.ResetAttributes(), cancellationToken);
 
             foreach (var (name, value) in table)
             {
-                await Out.WriteControlAsync(ControlSequences.SetForegroundColor(215, 215, 255), cancellationToken);
+                await Out.WriteControlAsync(
+                    ControlSequences.SetForegroundColor(Color.FromArgb(215, 215, 255)), cancellationToken);
                 await Out.WriteAsync($"{name}: ", cancellationToken);
                 await Out.WriteControlAsync(ControlSequences.ResetAttributes(), cancellationToken);
                 await Out.WriteLineAsync(value, cancellationToken);

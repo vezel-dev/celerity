@@ -37,8 +37,7 @@ internal sealed class TerminalLanguageServiceLogger : LanguageServiceLogger
         var writer = _provider.Writer;
 
         writer.Write("[");
-        writer.WriteControl(
-            ControlSequences.SetForegroundColor(_timestampColor.R, _timestampColor.G, _timestampColor.B));
+        writer.WriteControl(ControlSequences.SetForegroundColor(_timestampColor));
         writer.Write($"{DateTime.Now:HH:mm:ss.fff}");
         writer.WriteControl(ControlSequences.ResetAttributes());
         writer.Write("]");
@@ -55,19 +54,19 @@ internal sealed class TerminalLanguageServiceLogger : LanguageServiceLogger
         };
 
         writer.Write("[");
-        writer.WriteControl(ControlSequences.SetForegroundColor(color.R, color.G, color.B));
+        writer.WriteControl(ControlSequences.SetForegroundColor(color));
         writer.Write(level);
         writer.WriteControl(ControlSequences.ResetAttributes());
         writer.Write("]");
 
         writer.Write("[");
-        writer.WriteControl(ControlSequences.SetForegroundColor(_nameColor.R, _nameColor.G, _nameColor.B));
+        writer.WriteControl(ControlSequences.SetForegroundColor(_nameColor));
         writer.Write(_name);
         writer.WriteControl(ControlSequences.ResetAttributes());
         writer.Write("]");
 
         writer.Write("[");
-        writer.WriteControl(ControlSequences.SetForegroundColor(_eventColor.R, _eventColor.G, _eventColor.B));
+        writer.WriteControl(ControlSequences.SetForegroundColor(_eventColor));
         writer.Write(eventName);
         writer.WriteControl(ControlSequences.ResetAttributes());
         writer.Write("] ");

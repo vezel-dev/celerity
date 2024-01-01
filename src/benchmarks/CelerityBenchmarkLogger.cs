@@ -10,17 +10,17 @@ internal sealed class CelerityBenchmarkLogger : ILogger
 
     private static readonly bool _interactive = Terminal.StandardOut.IsInteractive;
 
-    private static readonly ImmutableDictionary<LogKind, (byte R, byte G, byte B)> _colors =
-        new Dictionary<LogKind, (byte, byte, byte)>
+    private static readonly ImmutableDictionary<LogKind, Color> _colors =
+        new Dictionary<LogKind, Color>
         {
-            [LogKind.Default] = (135, 135, 175),
-            [LogKind.Help] = (175, 95, 0),
-            [LogKind.Header] = (175, 255, 0),
-            [LogKind.Result] = (135, 135, 255),
-            [LogKind.Statistic] = (175, 175, 255),
-            [LogKind.Info] = (255, 255, 255),
-            [LogKind.Error] = (255, 0, 0),
-            [LogKind.Hint] = (0, 175, 135),
+            [LogKind.Default] = Color.FromArgb(135, 135, 175),
+            [LogKind.Help] = Color.FromArgb(175, 95, 0),
+            [LogKind.Header] = Color.FromArgb(175, 255, 0),
+            [LogKind.Result] = Color.FromArgb(135, 135, 255),
+            [LogKind.Statistic] = Color.FromArgb(175, 175, 255),
+            [LogKind.Info] = Color.FromArgb(255, 255, 255),
+            [LogKind.Error] = Color.FromArgb(255, 0, 0),
+            [LogKind.Hint] = Color.FromArgb(0, 175, 135),
         }.ToImmutableDictionary();
 
     private CelerityBenchmarkLogger()
@@ -29,15 +29,13 @@ internal sealed class CelerityBenchmarkLogger : ILogger
 
     private void Write(LogKind kind, string text, bool eol)
     {
-        var (r, g, b) = _colors[kind];
-
         static void WriteControl(string sequence)
         {
             if (_interactive)
                 Terminal.Out(sequence);
         }
 
-        WriteControl(ControlSequences.SetForegroundColor(r, g, b));
+        WriteControl(ControlSequences.SetForegroundColor(_colors[kind]));
         Terminal.Out(text);
         WriteControl(ControlSequences.ResetAttributes());
 
