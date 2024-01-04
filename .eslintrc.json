@@ -361,7 +361,12 @@
         "allowString": false
       }
     ],
-    "@typescript-eslint/switch-exhaustiveness-check": "error",
+    "@typescript-eslint/switch-exhaustiveness-check": [
+      "error",
+      {
+        "allowDefaultCaseForExhaustiveSwitch": false
+      }
+    ],
     "@typescript-eslint/triple-slash-reference": [
       "error",
       {
