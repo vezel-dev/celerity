@@ -8,7 +8,14 @@ updates:
           timezone: Europe/Copenhagen
           time: "12:00"
       labels: []
-    - directory: /
+    - directory: /doc
+      package-ecosystem: npm
+      schedule:
+          interval: daily
+          timezone: Europe/Copenhagen
+          time: "12:00"
+      labels: []
+    - directory: /src/extensions/vscode
       package-ecosystem: npm
       schedule:
           interval: daily
