@@ -29,6 +29,7 @@
             Returns="@(_NativeLibrary)">
         <ItemGroup>
             <_NativeLibrary Include="$(TargetPath)"
+                            Symbols="@(_DebugSymbolsOutputPath)"
                             RuntimeIdentifier="$(RuntimeIdentifier)" />
         </ItemGroup>
     </Target>

@@ -34,6 +34,11 @@ bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>
                      Link="runtimes/%(RuntimeIdentifier)/native/%(Filename)%(Extension)"
                      CopyToOutputDirectory="PreserveNewest"
                      PackagePath="runtimes/%(RuntimeIdentifier)/native" />
+            <_NativeLibrarySymbols Include="@(_NativeLibrary->'%(Symbols)')" />
+            <Content Include="@(_NativeLibrarySymbols)"
+                     Link="runtimes/%(RuntimeIdentifier)/native/%(Filename)%(Extension)"
+                     CopyToOutputDirectory="PreserveNewest"
+                     PackagePath="runtimes/%(RuntimeIdentifier)/native" />
         </ItemGroup>
     </Target>
 
