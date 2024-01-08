@@ -8,7 +8,8 @@ public sealed class StringSourceText : SourceText
 
     public override char this[int index] => Value[index];
 
-    private static readonly UnicodeEncoding _encoding = new(false, false, true);
+    private static readonly UnicodeEncoding _encoding =
+        new(bigEndian: false, byteOrderMark: false, throwOnInvalidBytes: true);
 
     public StringSourceText(string path, string value)
         : base(path)
@@ -19,7 +20,7 @@ public sealed class StringSourceText : SourceText
         }
         catch (EncoderFallbackException)
         {
-            throw new ArgumentException(null, nameof(value));
+            throw new ArgumentException(message: null, nameof(value));
         }
 
         Value = value;

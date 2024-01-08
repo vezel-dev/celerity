@@ -27,7 +27,7 @@ public sealed class UndocumentedPublicSymbolPass : LintPass
         }
 
         if (syntax.ModKeywordToken is { IsMissing: false } mod)
-            CheckDocumentationAttribute("Module", mod, syntax.Attributes, null);
+            CheckDocumentationAttribute("Module", mod, syntax.Attributes, name: null);
 
         // If the module is explicitly undocumented, do not require declarations within it to be decorated.
         if (module.Attributes.Any(static attr => attr is { Name: "doc", Value: false }))

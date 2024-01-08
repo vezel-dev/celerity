@@ -2,7 +2,7 @@ using Vezel.Celerity.Language.Syntax;
 
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
-public sealed partial class InteractiveContext
+public sealed class InteractiveContext
 {
     public static InteractiveContext Default { get; } =
         new(ImmutableDictionary<string, ModulePath>.Empty, ImmutableDictionary<string, InteractiveSymbol>.Empty);

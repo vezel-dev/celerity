@@ -68,7 +68,7 @@ public readonly struct SeparatedSyntaxItemList<T> : IReadOnlyList<SyntaxItem>
 
     // This constructs a partially-initialized list. It is only intended for use in LanguageParser.
     internal SeparatedSyntaxItemList(ImmutableArray<T> elements, ImmutableArray<SyntaxToken> separators)
-        : this(elements, separators, null!)
+        : this(elements, separators, parent: null!)
     {
     }
 
@@ -142,12 +142,12 @@ public readonly struct SeparatedSyntaxItemList<T> : IReadOnlyList<SyntaxItem>
 
     public override string ToString()
     {
-        return ToString(false);
+        return ToString(full: false);
     }
 
     public string ToFullString()
     {
-        return ToString(true);
+        return ToString(full: true);
     }
 
     private string ToString(bool full)

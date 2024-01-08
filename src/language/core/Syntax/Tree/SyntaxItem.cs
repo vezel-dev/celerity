@@ -99,7 +99,7 @@ public abstract class SyntaxItem
     {
         var sb = new StringBuilder();
 
-        ToString(sb, false, false);
+        ToString(sb, leading: false, trailing: false);
 
         return sb.ToString();
     }
@@ -108,7 +108,7 @@ public abstract class SyntaxItem
     {
         var sb = new StringBuilder();
 
-        ToString(sb, true, true);
+        ToString(sb, leading: true, trailing: true);
 
         return sb.ToString();
     }

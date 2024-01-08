@@ -55,7 +55,7 @@ public readonly struct SeparatedSemanticNodeList<TSemantics, TSyntax> : IReadOnl
 
     // This constructs a partially-initialized list. It is only intended for use in LanguageAnalyzer.
     internal SeparatedSemanticNodeList(SeparatedSyntaxItemList<TSyntax> syntax, ImmutableArray<TSemantics> items)
-        : this(syntax, items, null!)
+        : this(syntax, items, parent: null!)
     {
     }
 

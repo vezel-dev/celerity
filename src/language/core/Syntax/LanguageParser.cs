@@ -661,7 +661,7 @@ internal sealed class LanguageParser
         {
             ErrorExpected(tok1.Span, StandardDiagnosticCodes.MissingType, "type");
 
-            type = new NominalTypeSyntax(null, Missing(), null);
+            type = new NominalTypeSyntax(path: null, Missing(), argumentList: null);
         }
 
         return type;
@@ -1892,7 +1892,7 @@ internal sealed class LanguageParser
         {
             ErrorExpected(next.Span, StandardDiagnosticCodes.MissingBinding, "variable or discard binding");
 
-            binding = new VariableBindingSyntax(null, Missing());
+            binding = new VariableBindingSyntax(mutKeywordToken: null, Missing());
         }
 
         return binding;
@@ -1922,7 +1922,7 @@ internal sealed class LanguageParser
         {
             (SyntaxTokenKind.MutKeyword, _) => ParseWildcardOrStringOrArrayPattern(),
             (var kind, _) when SyntaxFacts.IsBindingIdentifier(kind) => ParseWildcardOrStringOrArrayPattern(),
-            (SyntaxTokenKind.StringLiteral, _) => ParseStringPattern(null),
+            (SyntaxTokenKind.StringLiteral, _) => ParseStringPattern(binding: null),
             (var kind, _) when IsMinus(tok1) || SyntaxFacts.IsLiteral(kind) => ParseLiteralPattern(),
             (SyntaxTokenKind.ModKeyword, _) => ParseModulePattern(),
             (SyntaxTokenKind.RecKeyword, _) => ParseRecordPattern(),
@@ -1938,7 +1938,7 @@ internal sealed class LanguageParser
         {
             ErrorExpected(tok1.Span, StandardDiagnosticCodes.MissingPattern, "pattern");
 
-            pat = new WildcardPatternSyntax(new VariableBindingSyntax(null, Missing()), null);
+            pat = new WildcardPatternSyntax(new VariableBindingSyntax(mutKeywordToken: null, Missing()), alias: null);
         }
 
         return pat;

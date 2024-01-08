@@ -94,7 +94,7 @@ public sealed partial class DriverTests : CelerityTests
         }
         finally
         {
-            directory.Delete(true);
+            directory.Delete(recursive: true);
         }
     }
 }

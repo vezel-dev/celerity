@@ -6,7 +6,7 @@ public readonly struct SourceTextSpan :
     IComparable<SourceTextSpan>,
     IComparisonOperators<SourceTextSpan, SourceTextSpan, bool>
 {
-    public static SourceTextSpan Empty { get; }
+    public static SourceTextSpan Empty { get; } = new(start: 0, length: 0);
 
     public int Start { get; }
 

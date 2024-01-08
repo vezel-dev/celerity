@@ -45,12 +45,12 @@ internal sealed class CelerityBenchmarkLogger : ILogger
 
     public void Write(LogKind logKind, string text)
     {
-        Write(logKind, text, false);
+        Write(logKind, text, eol: false);
     }
 
     public void WriteLine(LogKind logKind, string text)
     {
-        Write(logKind, text, true);
+        Write(logKind, text, eol: true);
     }
 
     public void WriteLine()

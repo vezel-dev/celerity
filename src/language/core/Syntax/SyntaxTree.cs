@@ -17,7 +17,7 @@ public sealed class SyntaxTree
     private SyntaxTree(
         SourceText text, bool discardText, DocumentSyntax root, IEnumerable<Func<SyntaxTree, Diagnostic>> diagnostics)
     {
-        _text = new(discardText ? null : text);
+        _text = new(!discardText ? text : null);
         Path = text.Path;
         Root = root;
         Diagnostics = [.. diagnostics.Select(creator => creator(this)).OrderBy(diag => diag.Span)];

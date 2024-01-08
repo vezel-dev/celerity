@@ -42,7 +42,7 @@ internal sealed class LanguageAnalyzer
 
         private readonly HashSet<Symbol> _duplicates = [];
 
-        private Scope _scope = new(null);
+        private Scope _scope = new(parent: null);
 
         public AnalysisVisitor(
             SyntaxTree tree, InteractiveContext context, ImmutableArray<Diagnostic>.Builder diagnostics)
@@ -906,7 +906,7 @@ internal sealed class LanguageAnalyzer
         public override ReturnExpressionSemantics VisitReturnExpression(ReturnExpressionSyntax node)
         {
             var oper = VisitExpression(node.Operand);
-            var defers = _scope.CollectDefers(null);
+            var defers = _scope.CollectDefers(target: null);
 
             var sema = new ReturnExpressionSemantics(node, oper, defers);
 
@@ -930,7 +930,7 @@ internal sealed class LanguageAnalyzer
         public override RaiseExpressionSemantics VisitRaiseExpression(RaiseExpressionSyntax node)
         {
             var oper = VisitExpression(node.Operand);
-            var defers = _scope.CollectDefers(null);
+            var defers = _scope.CollectDefers(target: null);
 
             var sema = new RaiseExpressionSemantics(node, oper, defers);
 
@@ -1139,7 +1139,7 @@ internal sealed class LanguageAnalyzer
         {
             var subject = VisitExpression(node.Subject);
             var args = ConvertList(node.ArgumentList.Arguments, static (@this, arg) => @this.VisitExpression(arg));
-            var defers = node.QuestionToken != null ? _scope.CollectDefers(null) : [];
+            var defers = node.QuestionToken != null ? _scope.CollectDefers(target: null) : [];
 
             var sema = new CallExpressionSemantics(node, subject, args, defers);
 

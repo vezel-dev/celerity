@@ -55,7 +55,7 @@ public readonly struct SemanticNodeList<TSemantics, TSyntax> : IReadOnlyList<TSe
 
     // This constructs a partially-initialized list. It is only intended for use in LanguageAnalyzer.
     internal SemanticNodeList(SyntaxItemList<TSyntax> syntax, ImmutableArray<TSemantics> items)
-        : this(syntax, items, null!)
+        : this(syntax, items, parent: null!)
     {
     }
 

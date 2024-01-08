@@ -221,7 +221,8 @@ public sealed class DiagnosticWriter
                 .ConfigureAwait(false);
 
             foreach (var note in diagnostic.Notes)
-                await WriteWindowAsync(lines, note.GetLocation(), null, "Note", note.Message).ConfigureAwait(false);
+                await WriteWindowAsync(lines, note.GetLocation(), severity: null, "Note", note.Message)
+                    .ConfigureAwait(false);
         }
     }
 }

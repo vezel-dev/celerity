@@ -37,15 +37,15 @@ internal struct EventHandlerList<T>
         // No need for locking; we want a snapshot anyway.
         if (Handlers is { } handlers)
             _ = ThreadPool.UnsafeQueueUserWorkItem(
-                static t =>
+                static tup =>
                 {
                     var exceptions = default(List<Exception>);
 
-                    foreach (var handler in t.handlers)
+                    foreach (var handler in tup.Handlers)
                     {
                         try
                         {
-                            t.raiser(Unsafe.As<T>(handler), t.state);
+                            tup.Raiser(Unsafe.As<T>(handler), tup.State);
                         }
                         catch (Exception ex)
                         {
@@ -56,7 +56,7 @@ internal struct EventHandlerList<T>
                     if (exceptions != null)
                         throw new AggregateException(exceptions);
                 },
-                (handlers, state, raiser),
-                true);
+                (Handlers: handlers, State: state, Raiser: raiser),
+                preferLocal: true);
     }
 }

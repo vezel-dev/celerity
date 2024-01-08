@@ -110,7 +110,7 @@ public sealed class WorkspaceDocument
                 }
 
                 semantics = SemanticTree.Analyze(
-                    await GetSyntaxAsync(cancellationToken).ConfigureAwait(false), null, analyzers);
+                    await GetSyntaxAsync(cancellationToken).ConfigureAwait(false), context: null, analyzers);
 
                 _state = semantics;
             }

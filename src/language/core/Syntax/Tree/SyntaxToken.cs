@@ -6,14 +6,14 @@ public sealed class SyntaxToken : SyntaxTerminal
 {
     public new SyntaxNode Parent => Unsafe.As<SyntaxNode>(base.Parent!);
 
-    public override SourceTextSpan Span => IsMissing ? default : new(_position, Text.Length);
+    public override SourceTextSpan Span => !IsMissing ? new(_position, Text.Length) : SourceTextSpan.Empty;
 
     public override SourceTextSpan FullSpan
     {
         get
         {
             if (IsMissing)
-                return default;
+                return SourceTextSpan.Empty;
 
             var start = LeadingTrivia.Count != 0 ? LeadingTrivia[0].FullSpan.Start : _position;
             var length = TrailingTrivia.Count != 0 ? TrailingTrivia[^1].FullSpan.End - start : Text.Length;
@@ -39,7 +39,8 @@ public sealed class SyntaxToken : SyntaxTerminal
     private readonly int _position;
 
     internal SyntaxToken()
-        : this(-1, SyntaxTokenKind.Missing, string.Empty, null, new([]), new([]))
+        : this(
+            position: -1, SyntaxTokenKind.Missing, text: string.Empty, value: null, leading: new([]), trailing: new([]))
     {
     }
 

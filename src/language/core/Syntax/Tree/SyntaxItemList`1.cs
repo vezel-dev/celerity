@@ -56,7 +56,7 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
 
     // This constructs a partially-initialized list. It is only intended for use in LanguageParser.
     internal SyntaxItemList(ImmutableArray<T> items)
-        : this(items, null!)
+        : this(items, parent: null!)
     {
     }
 
@@ -129,12 +129,12 @@ public readonly struct SyntaxItemList<T> : IReadOnlyList<T>
 
     public override string ToString()
     {
-        return ToString(false);
+        return ToString(full: false);
     }
 
     public string ToFullString()
     {
-        return ToString(true);
+        return ToString(full: true);
     }
 
     private string ToString(bool full)

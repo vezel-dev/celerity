@@ -11,7 +11,7 @@ internal static class Check
         _ = value;
 
         if (!condition)
-            throw new ArgumentException(null, name);
+            throw new ArgumentException(message: null, name);
     }
 
     public static void Null([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string name = "")
@@ -24,14 +24,14 @@ internal static class Check
         [NotNull] string? value, [CallerArgumentExpression(nameof(value))] string name = "")
     {
         if (string.IsNullOrEmpty(value))
-            throw value == null ? new ArgumentNullException(name) : new ArgumentException(null, name);
+            throw value == null ? new ArgumentNullException(name) : new ArgumentException(message: null, name);
     }
 
     public static void NullOrWhiteSpace(
         [NotNull] string? value, [CallerArgumentExpression(nameof(value))] string name = "")
     {
         if (string.IsNullOrWhiteSpace(value))
-            throw value == null ? new ArgumentNullException(name) : new ArgumentException(null, name);
+            throw value == null ? new ArgumentNullException(name) : new ArgumentException(message: null, name);
     }
 
     public static void Range<T>(
@@ -72,7 +72,7 @@ internal static class Check
     {
         foreach (var item in value)
             if (!predicate(item))
-                throw new ArgumentException(null, name);
+                throw new ArgumentException(message: null, name);
     }
 
     public static void All<T, TState>(
@@ -83,6 +83,6 @@ internal static class Check
     {
         foreach (var item in value)
             if (!predicate(item, state))
-                throw new ArgumentException(null, name);
+                throw new ArgumentException(message: null, name);
     }
 }

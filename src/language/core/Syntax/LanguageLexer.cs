@@ -206,7 +206,7 @@ internal sealed class LanguageLexer
     private double? CreateReal(int position, string text)
     {
         var value = double.Parse(
-            text.Replace("_", null, StringComparison.Ordinal),
+            text.Replace("_", newValue: null, StringComparison.Ordinal),
             NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent,
             CultureInfo.InvariantCulture);
 
@@ -251,6 +251,7 @@ internal sealed class LanguageLexer
             var position = _reader.Position;
             var kind = Peek1() switch
             {
+                null => SyntaxTokenKind.EndOfInput,
                 '+' or '-' or '~' or '*' or '/' or '%' or '&' or '|' or '^' or '>' or '<' or '=' or '!' =>
                     LexOperatorOrPunctuator(position),
                 '.' => LexPunctuator(SyntaxTokenKind.Dot),
@@ -274,7 +275,6 @@ internal sealed class LanguageLexer
                 >= '0' and <= '9' => LexNumberLiteral(position),
                 ':' => LexAtomLiteralOrPunctuator(position),
                 '"' => LexStringLiteral(position),
-                null => SyntaxTokenKind.EndOfInput,
                 _ => LexUnrecognized(position),
             };
 
@@ -724,7 +724,7 @@ internal sealed class LanguageLexer
         var openQuotes = ReadQuotes(int.MaxValue);
         var afterOpenQuotes = _reader.Position - position;
 
-        ReadWhiteSpace(_token, null);
+        ReadWhiteSpace(_token, indentation: null);
 
         // Is it a verbatim (i.e. single-line) string literal?
         if (Peek1() is not { } ch1 || !TextFacts.IsNewLine(ch1))
@@ -854,7 +854,7 @@ internal sealed class LanguageLexer
 
             _ = _currentIndentation.Clear();
 
-            ReadWhiteSpace(null, _currentIndentation);
+            ReadWhiteSpace(builder: null, _currentIndentation);
 
             static bool StartsWith(StringBuilder builder, StringBuilder value)
             {
@@ -887,10 +887,10 @@ internal sealed class LanguageLexer
 
             // Add the line content, if any.
             while (!TextFacts.IsNewLine((char)Peek1()!))
-                _string.Add(Read(null));
+                _string.Add(Read(builder: null));
 
-            if ((Read(null), Peek1()) == ('\r', '\n'))
-                Advance(null);
+            if ((Read(builder: null), Peek1()) == ('\r', '\n'))
+                Advance(builder: null);
 
             // Finally, add a line break. Block string literals normalize to LF.
             _string.Add('\n');

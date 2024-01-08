@@ -2,7 +2,7 @@ using Vezel.Celerity.Language.Syntax;
 
 namespace Vezel.Celerity.Language;
 
-public sealed partial class ModulePath : IEquatable<ModulePath>, IEqualityOperators<ModulePath, ModulePath, bool>
+public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<ModulePath, ModulePath, bool>
 {
     public ImmutableArray<string> Components { get; }
 

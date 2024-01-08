@@ -11,7 +11,7 @@ public sealed partial class QualityTests : CelerityTests
         var syntax = SyntaxTree.Parse(
             new StringSourceText($"{name}.cel", contents), SyntaxMode.Module, discardText: true);
         var semantics = SemanticTree.Analyze(
-            syntax, null, new LintDiagnosticAnalyzer(new[] { pass }, LintConfiguration.Default));
+            syntax, context: null, new LintDiagnosticAnalyzer(new[] { pass }, LintConfiguration.Default));
 
         return VerifyDiagnosticsAsync(
             syntax.Diagnostics.Concat(semantics.Diagnostics).OrderBy(static diag => diag.Span), file, name);
