@@ -89,6 +89,17 @@ To install a library package, run `dotnet add package <name>`.
 For more information, please visit the
 [project home page](https://docs.vezel.dev/celerity).
 
+## Building
+
+You will need the .NET SDK and Node.js installed. Simply run `./cake`
+(a [Bash](https://www.gnu.org/software/bash) script) to build artifacts and run
+tests. You can also run `./cake pack` to avoid running tests, or `./cake test`
+to just build and run tests.
+
+These commands will use the `Debug` configuration by default, which is suitable
+for development and debugging. Pass `-c Release` instead to get an optimized
+build.
+
 ## License
 
 This project is licensed under the terms found in
