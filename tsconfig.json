@@ -5,7 +5,6 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "checkJs": true,
-    "exactOptionalPropertyTypes": false, // TODO: https://github.com/microsoft/vscode-languageserver-node/issues/1231
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
