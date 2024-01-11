@@ -769,7 +769,7 @@
     "prefer-exponentiation-operator": "error",
     "prefer-named-capture-group": "off",
     "prefer-numeric-literals": "error",
-    "prefer-object-has-own": "off", // TODO: Enable if/when we upgrade to ES2022.
+    "prefer-object-has-own": "error",
     "prefer-object-spread": "error",
     "prefer-promise-reject-errors": "error",
     "prefer-regex-literals": [
