@@ -18,7 +18,6 @@
           "command": "dotnet",
           "args": [
             "cake",
-            "celerity.cake",
             "-t",
             "pack"
           ]
