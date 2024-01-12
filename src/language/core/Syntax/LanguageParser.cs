@@ -38,7 +38,7 @@ internal sealed class LanguageParser
         _ = _reader.TryPeek(0, out var tok1);
         _ = _reader.TryPeek(1, out var tok2);
 
-        // See comment in Peek1.
+        // See comment in Peek1().
         return (tok1!, tok2);
     }
 
@@ -48,7 +48,7 @@ internal sealed class LanguageParser
         _ = _reader.TryPeek(1, out var tok2);
         _ = _reader.TryPeek(2, out var tok3);
 
-        // See comment in Peek1.
+        // See comment in Peek1().
         return (tok1!, tok2, tok3);
     }
 
@@ -109,7 +109,8 @@ internal sealed class LanguageParser
     {
         var next = Peek1();
 
-        // Same idea as above.
+        // In the vast majority of places where we use lowercase identifiers in the language, there is no reason to
+        // reserve these common words for use as type keywords. So allow them as lowercase identifiers.
         if (SyntaxFacts.IsBindingIdentifier(next.Kind))
             return Read();
 
@@ -122,8 +123,7 @@ internal sealed class LanguageParser
     {
         var next = Peek1();
 
-        // In the vast majority of places where we use lowercase identifiers in the language, there is no reason to
-        // reserve these common words for use as type keywords. So allow them as lowercase identifiers.
+        // Same idea as ExpectBindingIdentifier().
         if (SyntaxFacts.IsCodeIdentifier(next.Kind))
             return Read();
 
@@ -193,10 +193,9 @@ internal sealed class LanguageParser
         return token is { Kind: SyntaxTokenKind.AdditiveOperator, Text: "-" };
     }
 
-    private SyntaxToken? Optional(SyntaxTokenKind kind)
+    private SyntaxToken? Optional(ReadOnlySpan<SyntaxTokenKind> kinds)
     {
-        // TODO: Take params ReadOnlySpan<SyntaxTokenKind>.
-        return Peek1().Kind == kind ? Read() : null;
+        return MemoryMarshal.Cast<SyntaxTokenKind, int>(kinds).Contains((int)Peek1().Kind) ? Read() : null;
     }
 
     private static SyntaxToken Missing()
@@ -341,7 +340,7 @@ internal sealed class LanguageParser
 
             elems.Add(parser(this));
 
-            while (Optional(separator) is { } sep)
+            while (Optional([separator]) is { } sep)
             {
                 seps.Add(sep);
                 elems.Add(parser(this));
@@ -354,7 +353,7 @@ internal sealed class LanguageParser
         {
             elems.Add(parser(this));
 
-            if (Optional(separator) is not { } sep)
+            if (Optional([separator]) is not { } sep)
                 return result;
 
             seps.Add(sep);
@@ -364,7 +363,7 @@ internal sealed class LanguageParser
         {
             elems.Add(parser(this));
 
-            if (Optional(separator) is not { } sep2)
+            if (Optional([separator]) is not { } sep2)
                 break;
 
             seps.Add(sep2);
@@ -449,7 +448,7 @@ internal sealed class LanguageParser
 
         idents.Add(Expect(SyntaxTokenKind.UpperIdentifier));
 
-        while (Optional(SyntaxTokenKind.ColonColon) is { } sep)
+        while (Optional([SyntaxTokenKind.ColonColon]) is { } sep)
         {
             seps.Add(sep);
             idents.Add(Expect(SyntaxTokenKind.UpperIdentifier));
@@ -519,8 +518,8 @@ internal sealed class LanguageParser
 
     private TypeDeclarationSyntax ParseTypeDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
-        var pub = Optional(SyntaxTokenKind.PubKeyword);
-        var opaque = pub != null ? Optional(SyntaxTokenKind.OpaqueKeyword) : null;
+        var pub = Optional([SyntaxTokenKind.PubKeyword]);
+        var opaque = pub != null ? Optional([SyntaxTokenKind.OpaqueKeyword]) : null;
         var kw = Expect(SyntaxTokenKind.TypeKeyword);
         var name = Expect(SyntaxTokenKind.LowerIdentifier);
         var parms = ParseOptional(SyntaxTokenKind.OpenParen, static @this => @this.ParseTypeParameterList());
@@ -555,7 +554,7 @@ internal sealed class LanguageParser
 
     private ConstantDeclarationSyntax ParseConstantDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
-        var pub = Optional(SyntaxTokenKind.PubKeyword);
+        var pub = Optional([SyntaxTokenKind.PubKeyword]);
         var @const = Expect(SyntaxTokenKind.ConstKeyword);
         var name = ExpectCodeIdentifier();
         var type = ParseOptional(SyntaxTokenKind.Colon, static @this => @this.ParseTypeAnnotation());
@@ -568,9 +567,9 @@ internal sealed class LanguageParser
 
     private FunctionDeclarationSyntax ParseFunctionDeclaration(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
-        var pub = Optional(SyntaxTokenKind.PubKeyword);
-        var ext = Optional(SyntaxTokenKind.ExtKeyword);
-        var err = Optional(SyntaxTokenKind.ErrKeyword);
+        var pub = Optional([SyntaxTokenKind.PubKeyword]);
+        var ext = Optional([SyntaxTokenKind.ExtKeyword]);
+        var err = Optional([SyntaxTokenKind.ErrKeyword]);
         var fn = Expect(SyntaxTokenKind.FnKeyword);
         var name = ExpectCodeIdentifier();
         var parms = ParseFunctionParameterList();
@@ -691,7 +690,7 @@ internal sealed class LanguageParser
 
             types.Add(type);
 
-            while (Optional(SyntaxTokenKind.OrKeyword) is { } sep)
+            while (Optional([SyntaxTokenKind.OrKeyword]) is { } sep)
             {
                 seps.Add(sep);
                 types.Add(ParsePrimaryType());
@@ -883,7 +882,7 @@ internal sealed class LanguageParser
     private ErrorTypeSyntax ParseErrorType()
     {
         var err = Read();
-        var name = Optional(SyntaxTokenKind.UpperIdentifier);
+        var name = Optional([SyntaxTokenKind.UpperIdentifier]);
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var (fields, seps) = ParseSeparatedList(
             static @this => @this.ParseAggregateTypeField(allowMutable: true),
@@ -898,7 +897,7 @@ internal sealed class LanguageParser
 
     private AggregateTypeFieldSyntax ParseAggregateTypeField(bool allowMutable)
     {
-        var mut = allowMutable ? Optional(SyntaxTokenKind.MutKeyword) : null;
+        var mut = allowMutable ? Optional([SyntaxTokenKind.MutKeyword]) : null;
         var name = ExpectCodeIdentifier();
         var colon = Expect(SyntaxTokenKind.Colon);
         var type = ParseType();
@@ -916,7 +915,7 @@ internal sealed class LanguageParser
         seps.Add(Expect(SyntaxTokenKind.Comma));
         comps.Add(ParseType());
 
-        while (Optional(SyntaxTokenKind.Comma) is { } sep)
+        while (Optional([SyntaxTokenKind.Comma]) is { } sep)
         {
             seps.Add(sep);
             comps.Add(ParseType());
@@ -929,7 +928,7 @@ internal sealed class LanguageParser
 
     private ArrayTypeSyntax ParseArrayType()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var open = Read();
         var elem = ParseType();
         var close = Expect(SyntaxTokenKind.CloseBracket);
@@ -939,7 +938,7 @@ internal sealed class LanguageParser
 
     private SetTypeSyntax ParseSetType()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var hash = Read();
         var open = Read();
         var elem = ParseType();
@@ -950,7 +949,7 @@ internal sealed class LanguageParser
 
     private MapTypeSyntax ParseMapType()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var hash = Read();
         var open = Read();
         var key = ParseType();
@@ -963,7 +962,7 @@ internal sealed class LanguageParser
 
     private FunctionTypeSyntax ParseFunctionType()
     {
-        var err = Optional(SyntaxTokenKind.ErrKeyword);
+        var err = Optional([SyntaxTokenKind.ErrKeyword]);
         var fn = Read();
         var sig = err != null
             ? ParseFunctionTypeSignature()
@@ -1154,7 +1153,7 @@ internal sealed class LanguageParser
     {
         var expr = ParseLogicalExpression();
 
-        while (Optional(SyntaxTokenKind.Equals) is { } op)
+        while (Optional([SyntaxTokenKind.Equals]) is { } op)
         {
             var right = ParseAssignmentExpression();
 
@@ -1168,9 +1167,8 @@ internal sealed class LanguageParser
     {
         var expr = ParseRelationalExpression();
 
-        while (Peek1().Kind is SyntaxTokenKind.AndKeyword or SyntaxTokenKind.OrKeyword)
+        while (Optional([SyntaxTokenKind.AndKeyword, SyntaxTokenKind.OrKeyword]) is { } op)
         {
-            var op = Read();
             var right = ParseRelationalExpression();
 
             expr = new LogicalExpressionSyntax(expr, op, right);
@@ -1183,15 +1181,16 @@ internal sealed class LanguageParser
     {
         var expr = ParseBitwiseExpression();
 
-        while (Peek1().Kind is
-            SyntaxTokenKind.ExclamationEquals or
-            SyntaxTokenKind.EqualsEquals or
-            SyntaxTokenKind.CloseAngle or
-            SyntaxTokenKind.CloseAngleEquals or
-            SyntaxTokenKind.OpenAngle or
-            SyntaxTokenKind.OpenAngleEquals)
+        while (Optional(
+            [
+                SyntaxTokenKind.ExclamationEquals,
+                SyntaxTokenKind.EqualsEquals,
+                SyntaxTokenKind.CloseAngle,
+                SyntaxTokenKind.CloseAngleEquals,
+                SyntaxTokenKind.OpenAngle,
+                SyntaxTokenKind.OpenAngleEquals
+            ]) is { } op)
         {
-            var op = Read();
             var right = ParseBitwiseExpression();
 
             expr = new RelationalExpressionSyntax(expr, op, right);
@@ -1204,7 +1203,7 @@ internal sealed class LanguageParser
     {
         var expr = ParseShiftExpression();
 
-        while (Optional(SyntaxTokenKind.BitwiseOperator) is { } op)
+        while (Optional([SyntaxTokenKind.BitwiseOperator]) is { } op)
         {
             var right = ParseShiftExpression();
 
@@ -1218,7 +1217,7 @@ internal sealed class LanguageParser
     {
         var expr = ParseAdditiveExpression();
 
-        while (Optional(SyntaxTokenKind.ShiftOperator) is { } op)
+        while (Optional([SyntaxTokenKind.ShiftOperator]) is { } op)
         {
             var right = ParseAdditiveExpression();
 
@@ -1232,7 +1231,7 @@ internal sealed class LanguageParser
     {
         var expr = ParseMultiplicativeExpression();
 
-        while (Optional(SyntaxTokenKind.AdditiveOperator) is { } op)
+        while (Optional([SyntaxTokenKind.AdditiveOperator]) is { } op)
         {
             var right = ParseMultiplicativeExpression();
 
@@ -1246,7 +1245,7 @@ internal sealed class LanguageParser
     {
         var expr = ParsePrefixExpression();
 
-        while (Optional(SyntaxTokenKind.MultiplicativeOperator) is { } op)
+        while (Optional([SyntaxTokenKind.MultiplicativeOperator]) is { } op)
         {
             var right = ParsePrefixExpression();
 
@@ -1326,7 +1325,7 @@ internal sealed class LanguageParser
         var open = Read();
         var expr = ParseExpression();
 
-        if (Optional(SyntaxTokenKind.Comma) is { } comma)
+        if (Optional([SyntaxTokenKind.Comma]) is { } comma)
         {
             var (exprs, seps) = SeparatedBuilder<ExpressionSyntax>();
 
@@ -1335,7 +1334,7 @@ internal sealed class LanguageParser
             seps.Add(comma);
             exprs.Add(ParseExpression());
 
-            while (Optional(SyntaxTokenKind.Comma) is { } sep)
+            while (Optional([SyntaxTokenKind.Comma]) is { } sep)
             {
                 seps.Add(sep);
                 exprs.Add(ParseExpression());
@@ -1473,7 +1472,7 @@ internal sealed class LanguageParser
 
     private AggregateExpressionFieldSyntax ParseAggregateExpressionField()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var name = ExpectCodeIdentifier();
         var colon = Expect(SyntaxTokenKind.Colon);
         var value = ParseExpression();
@@ -1483,7 +1482,7 @@ internal sealed class LanguageParser
 
     private ArrayExpressionSyntax ParseArrayExpression()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var open = Read();
         var (elems, seps) = ParseSeparatedList(
             static @this => @this.ParseExpression(),
@@ -1498,7 +1497,7 @@ internal sealed class LanguageParser
 
     private SetExpressionSyntax ParseSetExpression()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var hash = Read();
         var open = Read();
         var (elems, seps) = ParseSeparatedList(
@@ -1514,7 +1513,7 @@ internal sealed class LanguageParser
 
     private MapExpressionSyntax ParseMapExpression()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var hash = Read();
         var open = Read();
         var (pairs, seps) = ParseSeparatedList(
@@ -1539,7 +1538,7 @@ internal sealed class LanguageParser
 
     private LambdaExpressionSyntax ParseLambdaExpression()
     {
-        var err = Optional(SyntaxTokenKind.ErrKeyword);
+        var err = Optional([SyntaxTokenKind.ErrKeyword]);
         var fn = Read();
         var parms = ParseLambdaParameterList();
         var arrow = Expect(SyntaxTokenKind.MinusCloseAngle);
@@ -1735,7 +1734,7 @@ internal sealed class LanguageParser
 
     private ReturnExpressionSyntax ParseReturnExpression()
     {
-        var tail = Optional(SyntaxTokenKind.TailKeyword);
+        var tail = Optional([SyntaxTokenKind.TailKeyword]);
         var ret = tail != null ? Expect(SyntaxTokenKind.RetKeyword) : Read();
         var oper = ParseExpression();
 
@@ -1777,25 +1776,19 @@ internal sealed class LanguageParser
     {
         while (Peek1() is { IsEndOfInput: false } next)
         {
-            switch (next.Kind)
-            {
-                case SyntaxTokenKind.Dot:
-                    subject = ParseFieldExpression(subject);
-                    continue;
-                case SyntaxTokenKind.OpenBracket:
-                    subject = ParseIndexExpression(subject);
-                    continue;
-                case SyntaxTokenKind.OpenParen:
-                    subject = ParseCallExpression(subject);
-                    continue;
-                case SyntaxTokenKind.MinusCloseAngle:
-                    subject = ParseSendExpression(subject);
-                    continue;
-                default:
-                    break;
-            }
+            var old = subject;
 
-            break;
+            subject = next.Kind switch
+            {
+                SyntaxTokenKind.Dot => ParseFieldExpression(subject),
+                SyntaxTokenKind.OpenBracket => ParseIndexExpression(subject),
+                SyntaxTokenKind.OpenParen => ParseCallExpression(subject),
+                SyntaxTokenKind.MinusCloseAngle => ParseSendExpression(subject),
+                _ => subject,
+            };
+
+            if (subject == old)
+                break;
         }
 
         return subject;
@@ -1833,7 +1826,7 @@ internal sealed class LanguageParser
     private CallExpressionSyntax ParseCallExpression(ExpressionSyntax subject)
     {
         var args = ParseCallArgumentList();
-        var question = Optional(SyntaxTokenKind.Question);
+        var question = Optional([SyntaxTokenKind.Question]);
 
         return new(subject, args, question);
     }
@@ -1900,7 +1893,7 @@ internal sealed class LanguageParser
 
     private VariableBindingSyntax ParseVariableBinding()
     {
-        var mut = Optional(SyntaxTokenKind.MutKeyword);
+        var mut = Optional([SyntaxTokenKind.MutKeyword]);
         var name = ExpectCodeIdentifier();
 
         return new(mut, name);
@@ -1989,12 +1982,12 @@ internal sealed class LanguageParser
         {
             leftLit = Read();
 
-            if (Optional(SyntaxTokenKind.DotDot) is { } left)
+            if (Optional([SyntaxTokenKind.DotDot]) is { } left)
             {
                 leftSep = left;
                 binding = ParseBinding();
 
-                if (Optional(SyntaxTokenKind.DotDot) is { } right)
+                if (Optional([SyntaxTokenKind.DotDot]) is { } right)
                 {
                     rightSep = right;
                     rightLit = Expect(SyntaxTokenKind.StringLiteral);
@@ -2043,7 +2036,7 @@ internal sealed class LanguageParser
     private ErrorPatternSyntax ParseErrorPattern()
     {
         var err = Read();
-        var name = Optional(SyntaxTokenKind.UpperIdentifier);
+        var name = Optional([SyntaxTokenKind.UpperIdentifier]);
         var open = Expect(SyntaxTokenKind.OpenBrace);
         var (fields, seps) = ParseSeparatedList(
             static @this => @this.ParseAggregatePatternField(),
@@ -2076,7 +2069,7 @@ internal sealed class LanguageParser
         seps.Add(Expect(SyntaxTokenKind.Comma));
         comps.Add(ParsePattern());
 
-        while (Optional(SyntaxTokenKind.Comma) is { } sep)
+        while (Optional([SyntaxTokenKind.Comma]) is { } sep)
         {
             seps.Add(sep);
             comps.Add(ParsePattern());
@@ -2090,7 +2083,7 @@ internal sealed class LanguageParser
 
     private ArrayPatternSyntax ParseArrayPattern()
     {
-        var prefix = Optional(SyntaxTokenKind.DotDot);
+        var prefix = Optional([SyntaxTokenKind.DotDot]);
         var open = Expect(SyntaxTokenKind.OpenBracket);
         var (elems, seps) = ParseSeparatedList(
             static @this => @this.ParsePattern(),
@@ -2099,7 +2092,7 @@ internal sealed class LanguageParser
             allowEmpty: prefix == null,
             allowTrailing: true);
         var close = Expect(SyntaxTokenKind.CloseBracket);
-        var suffix = (prefix, elems.Count) == (null, 0) ? Optional(SyntaxTokenKind.DotDot) : null;
+        var suffix = (prefix, elems.Count) == (null, 0) ? Optional([SyntaxTokenKind.DotDot]) : null;
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
         return new(prefix, open, List(elems, seps), close, suffix, alias);
