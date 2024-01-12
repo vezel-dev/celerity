@@ -31,7 +31,6 @@ public sealed class ProjectWorkspace : Workspace
         return OpenAsync();
 
         [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
-        [SuppressMessage("", "CA2000")] // TODO: https://github.com/dotnet/roslyn-analyzers/issues/6512
         async ValueTask<ProjectWorkspace> OpenAsync()
         {
             var stream = File.OpenRead(System.IO.Path.Join(path, ProjectConfiguration.DefaultFileName));
