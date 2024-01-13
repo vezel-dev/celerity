@@ -1,0 +1,173 @@
+#nullable enable
+abstract Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticStyle.WriteAsync(Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity? severity, Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart part, string! value, System.IO.TextWriter! writer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+abstract Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider.GetTextAsync(Vezel.Celerity.Language.Tooling.Workspaces.Workspace! workspace, string! path, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Text.SourceText!>
+abstract Vezel.Celerity.Language.Tooling.Workspaces.Workspace.GetDiagnosticAnalyzers() -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Semantics.DiagnosticAnalyzer!>!
+abstract Vezel.Celerity.Language.Tooling.Workspaces.Workspace.GetDocumentAttributes(string! path) -> Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes
+const Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.DefaultFileName = "celerity.json" -> string!
+const Vezel.Celerity.Language.Tooling.Projects.SolutionConfiguration.DefaultFileName = "celerity.solution.json" -> string!
+const Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.EntryPointPath = "main.cel" -> string!
+override Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.Equals(object? obj) -> bool
+override Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.GetHashCode() -> int
+override Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.ToString() -> string!
+override Vezel.Celerity.Language.Tooling.Diagnostics.PlainDiagnosticStyle.WriteAsync(Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity? severity, Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart part, string! value, System.IO.TextWriter! writer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+static Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.operator !=(Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan left, Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan right) -> bool
+static Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.operator ==(Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan left, Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan right) -> bool
+static Vezel.Celerity.Language.Tooling.Classification.TextClassifier.ClassifySemantically(Vezel.Celerity.Language.Semantics.Tree.SemanticNode! node, Vezel.Celerity.Language.Text.SourceTextSpan span) -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan>!
+static Vezel.Celerity.Language.Tooling.Classification.TextClassifier.ClassifySyntactically(Vezel.Celerity.Language.Syntax.Tree.SyntaxNode! node, Vezel.Celerity.Language.Text.SourceTextSpan span) -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan>!
+static Vezel.Celerity.Language.Tooling.Diagnostics.PlainDiagnosticStyle.Instance.get -> Vezel.Celerity.Language.Tooling.Diagnostics.PlainDiagnosticStyle!
+static Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.LoadAsync(System.IO.Stream! stream, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration!>
+static Vezel.Celerity.Language.Tooling.Projects.SolutionConfiguration.LoadAsync(System.IO.Stream! stream, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Tooling.Projects.SolutionConfiguration!>
+static Vezel.Celerity.Language.Tooling.Workspaces.PhysicalSourceTextProvider.Instance.get -> Vezel.Celerity.Language.Tooling.Workspaces.PhysicalSourceTextProvider!
+static Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher.Create(Vezel.Celerity.Language.Tooling.Workspaces.Workspace! workspace) -> Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher!
+static Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher.DefaultRetry.get -> System.Func<System.Exception!, bool>!
+static Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher.Populate(Vezel.Celerity.Language.Tooling.Workspaces.Workspace! workspace) -> void
+static Vezel.Celerity.Language.Tooling.Workspaces.ProjectWorkspace.OpenAsync(string! path, Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider! textProvider, bool disableAnalysis, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Tooling.Workspaces.ProjectWorkspace!>
+static Vezel.Celerity.Language.Tooling.Workspaces.ProjectWorkspace.OpenAsync(string! path, Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider! textProvider, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Tooling.Workspaces.ProjectWorkspace!>
+static Vezel.Celerity.Language.Tooling.Workspaces.SimpleWorkspace.Open(string! path, Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider! textProvider, bool disableAnalysis = false) -> Vezel.Celerity.Language.Tooling.Workspaces.SimpleWorkspace!
+Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan
+Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.Classification.get -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.ClassifiedSourceTextSpan() -> void
+Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.Equals(Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan other) -> bool
+Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.Modifiers.get -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan.Span.get -> Vezel.Celerity.Language.Text.SourceTextSpan
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.AtomLiteral = 13 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.AttributeName = 15 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.BooleanLiteral = 10 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.CodeParameterName = 17 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.Comment = 2 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.ConstantName = 21 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.DeclarationKeyword = 5 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.ErrorName = 26 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.FieldName = 27 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.FunctionName = 22 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.IntegerLiteral = 11 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.InteractiveName = 25 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.MessageName = 28 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.ModuleName = 16 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.NilLiteral = 9 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.OperationKeyword = 6 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.Operator = 3 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.Punctuator = 4 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.RealLiteral = 12 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.ReservedKeyword = 8 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.ShebangLine = 1 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.StringLiteral = 14 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.TestName = 23 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.TypeKeyword = 7 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.TypeName = 18 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.TypeParameterName = 19 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.UnresolvedName = 20 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.VariableName = 24 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification.WhiteSpace = 0 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassification
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.Discard = 32 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.External = 4 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.Fallible = 8 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.Mutable = 16 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.None = 0 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.Opaque = 2 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.Public = 1 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers.Upvalue = 64 -> Vezel.Celerity.Language.Tooling.Classification.SyntaxClassificationModifiers
+Vezel.Celerity.Language.Tooling.Classification.TextClassifier
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.Caret = 9 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.ContextLine = 7 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.Margin = 6 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.Message = 2 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.Path = 4 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.Range = 5 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.Separator = 3 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.Severity = 1 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.TargetLine = 8 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart.WhiteSpace = 0 -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticPart
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticStyle
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticStyle.DiagnosticStyle() -> void
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriter
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriter.Configuration.get -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration!
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriter.DiagnosticWriter(Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration! configuration) -> void
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriter.WriteAsync(Vezel.Celerity.Language.Diagnostics.Diagnostic! diagnostic, System.IO.TextWriter! writer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.ContextLines.get -> int
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.DiagnosticWriterConfiguration() -> void
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.Style.get -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticStyle!
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.TabWidth.get -> int
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.WidthMeasurer.get -> System.Func<System.Text.Rune, int>!
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.WithContextLines(int contextLines) -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration!
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.WithStyle(Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticStyle! style) -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration!
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.WithTabWidth(int tabWidth) -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration!
+Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration.WithWidthMeasurer(System.Func<System.Text.Rune, int>! widthMeasurer) -> Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticWriterConfiguration!
+Vezel.Celerity.Language.Tooling.Diagnostics.PlainDiagnosticStyle
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.DiagnosticAnalyzers.get -> System.Collections.Immutable.ImmutableArray<Vezel.Celerity.Language.Semantics.DiagnosticAnalyzer!>
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.Kind.get -> Vezel.Celerity.Language.Tooling.Projects.ProjectKind
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.License.get -> string?
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.LintConfiguration.get -> Vezel.Celerity.Language.Quality.LintConfiguration!
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.LintPasses.get -> System.Collections.Immutable.ImmutableArray<Vezel.Celerity.Language.Quality.LintPass!>
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.Name.get -> string!
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.SearchPaths.get -> System.Collections.Immutable.ImmutableDictionary<Vezel.Celerity.Language.ModulePath!, string!>!
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.SourcePath.get -> string!
+Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration.Version.get -> string!
+Vezel.Celerity.Language.Tooling.Projects.ProjectException
+Vezel.Celerity.Language.Tooling.Projects.ProjectException.ProjectException() -> void
+Vezel.Celerity.Language.Tooling.Projects.ProjectException.ProjectException(string! message) -> void
+Vezel.Celerity.Language.Tooling.Projects.ProjectException.ProjectException(string! message, System.Exception! innerException) -> void
+Vezel.Celerity.Language.Tooling.Projects.ProjectKind
+Vezel.Celerity.Language.Tooling.Projects.ProjectKind.Library = 1 -> Vezel.Celerity.Language.Tooling.Projects.ProjectKind
+Vezel.Celerity.Language.Tooling.Projects.ProjectKind.Program = 0 -> Vezel.Celerity.Language.Tooling.Projects.ProjectKind
+Vezel.Celerity.Language.Tooling.Projects.SolutionConfiguration
+Vezel.Celerity.Language.Tooling.Projects.SolutionConfiguration.Projects.get -> System.Collections.Immutable.ImmutableArray<string!>
+Vezel.Celerity.Language.Tooling.Projects.SolutionException
+Vezel.Celerity.Language.Tooling.Projects.SolutionException.SolutionException() -> void
+Vezel.Celerity.Language.Tooling.Projects.SolutionException.SolutionException(string! message) -> void
+Vezel.Celerity.Language.Tooling.Projects.SolutionException.SolutionException(string! message, System.Exception! innerException) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.ManualWorkspaceWatcher
+Vezel.Celerity.Language.Tooling.Workspaces.ManualWorkspaceWatcher.AddDocument(string! path) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.ManualWorkspaceWatcher.ClearDocuments() -> void
+Vezel.Celerity.Language.Tooling.Workspaces.ManualWorkspaceWatcher.DeleteDocument(string! path) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.ManualWorkspaceWatcher.EditDocument(string! path) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.ManualWorkspaceWatcher.ManualWorkspaceWatcher(Vezel.Celerity.Language.Tooling.Workspaces.Workspace! workspace) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.ManualWorkspaceWatcher.MoveDocument(string! oldPath, string! newPath) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.PhysicalSourceTextProvider
+Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher
+Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher.Dispose() -> void
+Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher.Retry.get -> System.Func<System.Exception!, bool>!
+Vezel.Celerity.Language.Tooling.Workspaces.PhysicalWorkspaceWatcher.Retry.set -> void
+Vezel.Celerity.Language.Tooling.Workspaces.ProjectWorkspace
+Vezel.Celerity.Language.Tooling.Workspaces.ProjectWorkspace.Configuration.get -> Vezel.Celerity.Language.Tooling.Projects.ProjectConfiguration!
+Vezel.Celerity.Language.Tooling.Workspaces.SimpleWorkspace
+Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider
+Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider.SourceTextProvider() -> void
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.DocumentAdded -> System.Action<Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument!>?
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.DocumentEdited -> System.Action<Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument!, Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument!>?
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.DocumentRemoved -> System.Action<Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument!>?
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.DocumentRenamed -> System.Action<Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument!, Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument!>?
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.Documents.get -> System.Collections.Immutable.ImmutableDictionary<string!, Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument!>!
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.GetEntryPointDocument() -> Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument?
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.Path.get -> string!
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.TextProvider.get -> Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider!
+Vezel.Celerity.Language.Tooling.Workspaces.Workspace.Workspace(string! path, Vezel.Celerity.Language.Tooling.Workspaces.SourceTextProvider! textProvider) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.Attributes.get -> Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.GetClassificationsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Tooling.Classification.ClassifiedSourceTextSpan>!>
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.GetDiagnosticsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Diagnostics.Diagnostic!>!>
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.GetSemanticsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Semantics.SemanticTree!>
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.GetSyntaxAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Syntax.SyntaxTree!>
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.GetTextAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Text.SourceText!>
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.Path.get -> string!
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocument.Workspace.get -> Vezel.Celerity.Language.Tooling.Workspaces.Workspace!
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes.DisableAnalyzers = 2 -> Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes.EntryPoint = 1 -> Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes.None = 0 -> Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes.SuppressDiagnostics = 4 -> Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceDocumentAttributes
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher.AddDocument(string! path) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher.ClearDocuments() -> void
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher.DeleteDocument(string! path) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher.EditDocument(string! path) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher.MoveDocument(string! oldPath, string! newPath) -> void
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher.Workspace.get -> Vezel.Celerity.Language.Tooling.Workspaces.Workspace!
+Vezel.Celerity.Language.Tooling.Workspaces.WorkspaceWatcher.WorkspaceWatcher(Vezel.Celerity.Language.Tooling.Workspaces.Workspace! workspace) -> void
+virtual Vezel.Celerity.Language.Tooling.Diagnostics.DiagnosticStyle.WriteLineAsync(System.IO.TextWriter! writer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask

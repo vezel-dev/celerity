@@ -1,0 +1,28 @@
+#nullable enable
+override abstract Vezel.Celerity.Runtime.Metadata.RuntimeMetadata.ToString() -> string!
+override Vezel.Celerity.Runtime.Metadata.RuntimeConstant.ToString() -> string!
+override Vezel.Celerity.Runtime.Metadata.RuntimeFunction.ToString() -> string!
+override Vezel.Celerity.Runtime.Metadata.RuntimeModule.ToString() -> string!
+override Vezel.Celerity.Runtime.Metadata.RuntimeParameter.ToString() -> string!
+override Vezel.Celerity.Runtime.Metadata.RuntimeTest.ToString() -> string!
+Vezel.Celerity.Runtime.Metadata.RuntimeConstant
+Vezel.Celerity.Runtime.Metadata.RuntimeFunction
+Vezel.Celerity.Runtime.Metadata.RuntimeFunction.IsExternal.get -> bool
+Vezel.Celerity.Runtime.Metadata.RuntimeFunction.IsFallible.get -> bool
+Vezel.Celerity.Runtime.Metadata.RuntimeFunction.Parameters.get -> System.Collections.Immutable.ImmutableArray<Vezel.Celerity.Runtime.Metadata.RuntimeParameter!>
+Vezel.Celerity.Runtime.Metadata.RuntimeMember
+Vezel.Celerity.Runtime.Metadata.RuntimeMember.IsPublic.get -> bool
+Vezel.Celerity.Runtime.Metadata.RuntimeMember.Module.get -> Vezel.Celerity.Runtime.Metadata.RuntimeModule!
+Vezel.Celerity.Runtime.Metadata.RuntimeMember.Name.get -> string!
+Vezel.Celerity.Runtime.Metadata.RuntimeMetadata
+Vezel.Celerity.Runtime.Metadata.RuntimeMetadata.Attributes.get -> System.Collections.Immutable.ImmutableArray<(string! Name, object! Value)>
+Vezel.Celerity.Runtime.Metadata.RuntimeModule
+Vezel.Celerity.Runtime.Metadata.RuntimeModule.Constants.get -> System.Collections.Immutable.ImmutableDictionary<string!, Vezel.Celerity.Runtime.Metadata.RuntimeConstant!>!
+Vezel.Celerity.Runtime.Metadata.RuntimeModule.Functions.get -> System.Collections.Immutable.ImmutableDictionary<string!, Vezel.Celerity.Runtime.Metadata.RuntimeFunction!>!
+Vezel.Celerity.Runtime.Metadata.RuntimeModule.Path.get -> Vezel.Celerity.Language.ModulePath!
+Vezel.Celerity.Runtime.Metadata.RuntimeModule.Tests.get -> System.Collections.Immutable.ImmutableDictionary<string!, Vezel.Celerity.Runtime.Metadata.RuntimeTest!>!
+Vezel.Celerity.Runtime.Metadata.RuntimeParameter
+Vezel.Celerity.Runtime.Metadata.RuntimeParameter.Function.get -> Vezel.Celerity.Runtime.Metadata.RuntimeFunction!
+Vezel.Celerity.Runtime.Metadata.RuntimeParameter.Name.get -> string!
+Vezel.Celerity.Runtime.Metadata.RuntimeParameter.Ordinal.get -> int
+Vezel.Celerity.Runtime.Metadata.RuntimeTest

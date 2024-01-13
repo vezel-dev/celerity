@@ -105,6 +105,7 @@ public readonly struct SeparatedSyntaxItemList<T> : IReadOnlyList<SyntaxItem>
             separator.SetParent(parent);
     }
 
+    [SuppressMessage("", "RS0041")] // TODO: https://github.com/dotnet/roslyn-analyzers/issues/6921
     public Enumerator GetEnumerator()
     {
         return new(this);
