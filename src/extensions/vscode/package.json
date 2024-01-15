@@ -225,15 +225,13 @@
     "cpy-cli": "5.0.0",
     "esbuild": "0.19.11",
     "eslint": "8.56.0",
-    "generator-code": "1.8.2",
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.1",
     "nerdbank-gitversioning": "3.6.133",
     "ovsx": "0.8.3",
     "rimraf": "5.0.5",
     "symlink-dir": "5.2.1",
-    "typescript": "5.3.3",
-    "yo": "5.0.0"
+    "typescript": "5.3.3"
   },
   "dependencies": {
     "vscode-languageclient": "9.0.1"
