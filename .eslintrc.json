@@ -298,6 +298,7 @@
     "@typescript-eslint/method-signature-style": "error",
     "@typescript-eslint/naming-convention": "error",
     "@typescript-eslint/no-array-constructor": "error",
+    "@typescript-eslint/no-array-delete": "error",
     "@typescript-eslint/no-base-to-string": [
       "error",
       {
@@ -459,6 +460,7 @@
     "@typescript-eslint/prefer-namespace-keyword": "error",
     "@typescript-eslint/prefer-nullish-coalescing": "error",
     "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/prefer-promise-reject-errors": "error",
     "@typescript-eslint/prefer-readonly": "error",
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
     "@typescript-eslint/prefer-reduce-type-parameter": "error",
@@ -775,7 +777,6 @@
     "prefer-numeric-literals": "error",
     "prefer-object-has-own": "error",
     "prefer-object-spread": "error",
-    "prefer-promise-reject-errors": "error",
     "prefer-regex-literals": [
       "error",
       {
