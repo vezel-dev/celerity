@@ -1,5 +1,4 @@
 [SuppressMessage("", "CA1050")]
-[UsesVerify]
 public abstract partial class CelerityTests
 {
     private protected static async Task VerifyDiagnosticsAsync(
