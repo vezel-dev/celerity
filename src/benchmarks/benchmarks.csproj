@@ -32,7 +32,7 @@
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" />
         <PackageReference Include="CommandLineParser" />
-        <PackageReference Include="Vezel.Cathode.Hosting" />
+        <PackageReference Include="Vezel.Cathode" />
     </ItemGroup>
 
     <Import Project="../language/core/core.targets" />

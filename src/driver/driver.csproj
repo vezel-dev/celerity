@@ -30,7 +30,7 @@ This package provides the .NET global tool.</PackageDescription>
 
     <ItemGroup>
         <PackageReference Include="CommandLineParser" />
-        <PackageReference Include="Vezel.Cathode.Hosting" />
+        <PackageReference Include="Vezel.Cathode" />
     </ItemGroup>
 
     <Import Project="../language/core/core.targets" />

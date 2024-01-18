@@ -1,9 +1,8 @@
 namespace Vezel.Celerity.Benchmarks;
 
-[SuppressMessage("", "CA1812")] // TODO: https://github.com/dotnet/roslyn-analyzers/issues/6218
-internal sealed class BenchmarkProgram : IProgram
+internal static class Program
 {
-    public static Task RunAsync(ProgramContext context)
+    public static Task<int> Main(string[] args)
     {
         using var parser = new Parser(static settings =>
         {
@@ -16,7 +15,7 @@ internal sealed class BenchmarkProgram : IProgram
 
         return Task.FromResult(
             parser
-                .ParseArguments<BenchmarkOptions>(context.Arguments.ToArray())
+                .ParseArguments<BenchmarkOptions>(args)
                 .MapResult(
                     static opts =>
                         BenchmarkSwitcher
