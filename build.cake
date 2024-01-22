@@ -220,7 +220,7 @@ Task("build-vscode")
 
 Task("build-doc")
     .IsDependentOn("restore-doc")
-    .Does(() => DoInDirectory(doc, () => Npx("markdownlint-cli2")));
+    .Does(() => DoInDirectory(doc, () => NpmRunScript("build")));
 
 Task("build")
     .IsDependentOn("build-stdlib")
