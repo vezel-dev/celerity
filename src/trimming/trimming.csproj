@@ -16,23 +16,23 @@
 
     <ItemGroup>
         <TrimmerRootAssembly Include="Vezel.Celerity.Common" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Library" />
+        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Tooling" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Runtime" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Runtime.Compiler" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Runtime.Interpreter" />
         <TrimmerRootAssembly Include="Vezel.Celerity.Runtime.Kernel" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Language" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Library" />
-        <TrimmerRootAssembly Include="Vezel.Celerity.Language.Tooling" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../common/common.csproj" />
+        <ProjectReference Include="../language/core/core.csproj" />
+        <ProjectReference Include="../language/library/library.csproj" />
+        <ProjectReference Include="../language/tooling/tooling.csproj" />
         <ProjectReference Include="../runtime/compiler/compiler.csproj" />
         <ProjectReference Include="../runtime/core/core.csproj" />
         <ProjectReference Include="../runtime/interpreter/interpreter.csproj" />
         <ProjectReference Include="../runtime/kernel/kernel.csproj" />
-        <ProjectReference Include="../language/core/core.csproj" />
-        <ProjectReference Include="../language/library/library.csproj" />
-        <ProjectReference Include="../language/tooling/tooling.csproj" />
     </ItemGroup>
 </Project>
