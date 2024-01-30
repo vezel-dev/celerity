@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AssemblyName>Vezel.Celerity.Language.Library</AssemblyName>
         <IsPackable>true</IsPackable>
-        <PackageDescription>$(PackageDescription)
+        <PackageDescription>$(Description)
 
 This package provides the language's standard library.</PackageDescription>
         <PackageId>Vezel.Celerity.Language.Library</PackageId>

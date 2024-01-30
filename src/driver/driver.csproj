@@ -6,7 +6,7 @@
         <IsPublishable>true</IsPublishable>
         <OutputType>Exe</OutputType>
         <PackAsTool>true</PackAsTool>
-        <PackageDescription>$(PackageDescription)
+        <PackageDescription>$(Description)
 
 This package provides the .NET global tool.</PackageDescription>
         <PackageId>celerity</PackageId>

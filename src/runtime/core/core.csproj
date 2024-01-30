@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AssemblyName>Vezel.Celerity.Runtime</AssemblyName>
         <IsPackable>true</IsPackable>
-        <PackageDescription>$(PackageDescription)
+        <PackageDescription>$(Description)
 
 This package provides shared components of the runtime system such as the
 bytecode lowerer, garbage collector, and agent scheduler.</PackageDescription>

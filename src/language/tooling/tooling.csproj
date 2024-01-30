@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AssemblyName>Vezel.Celerity.Language.Tooling</AssemblyName>
         <IsPackable>true</IsPackable>
-        <PackageDescription>$(PackageDescription)
+        <PackageDescription>$(Description)
 
 This package provides user-oriented tooling such as project management and
 diagnostic rendering.</PackageDescription>

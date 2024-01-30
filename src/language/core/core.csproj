@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AssemblyName>Vezel.Celerity.Language</AssemblyName>
         <IsPackable>true</IsPackable>
-        <PackageDescription>$(PackageDescription)
+        <PackageDescription>$(Description)
 
 This package provides language analysis services such as lexing, parsing,
 binding, and linting.</PackageDescription>

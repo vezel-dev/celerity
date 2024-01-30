@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AssemblyName>Vezel.Celerity.Runtime.Kernel</AssemblyName>
         <IsPackable>true</IsPackable>
-        <PackageDescription>$(PackageDescription)
+        <PackageDescription>$(Description)
 
 This package provides the host operating system interfaces for the runtime
 system.</PackageDescription>

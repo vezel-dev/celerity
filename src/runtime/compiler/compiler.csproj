@@ -2,7 +2,7 @@
     <PropertyGroup>
         <AssemblyName>Vezel.Celerity.Runtime.Compiler</AssemblyName>
         <IsPackable>true</IsPackable>
-        <PackageDescription>$(PackageDescription)
+        <PackageDescription>$(Description)
 
 This package provides the optimizing just-in-time compiler for 64-bit systems.</PackageDescription>
         <PackageId>Vezel.Celerity.Runtime.Compiler</PackageId>
