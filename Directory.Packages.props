@@ -37,7 +37,7 @@
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp"
                         Version="4.8.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk"
-                        Version="17.8.0" />
+                        Version="17.9.0" />
         <PackageVersion Include="NuGet.Versioning"
                         Version="6.8.0" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
