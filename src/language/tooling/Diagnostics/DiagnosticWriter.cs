@@ -27,10 +27,10 @@ public sealed class DiagnosticWriter
         Check.Argument(diagnostic.Severity != DiagnosticSeverity.None, diagnostic);
         Check.Null(writer);
 
-        return WriteAsyncCore();
+        return WriteCoreAsync();
 
         [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder))]
-        async ValueTask WriteAsyncCore()
+        async ValueTask WriteCoreAsync()
         {
             var lines = diagnostic
                 .Tree
