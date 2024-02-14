@@ -28,7 +28,7 @@ public abstract class SyntaxItem
 
     public IEnumerable<SyntaxItem> Ancestors()
     {
-        return Parent?.AncestorsAndSelf() ?? Array.Empty<SyntaxItem>();
+        return Parent?.AncestorsAndSelf() ?? [];
     }
 
     public IEnumerable<SyntaxItem> AncestorsAndSelf()
@@ -51,7 +51,7 @@ public abstract class SyntaxItem
 
     public IEnumerable<SyntaxItem> SiblingsAndSelf()
     {
-        foreach (var sibling in Parent?.Children() ?? Array.Empty<SyntaxItem>())
+        foreach (var sibling in Parent?.Children() ?? [])
             yield return sibling;
     }
 

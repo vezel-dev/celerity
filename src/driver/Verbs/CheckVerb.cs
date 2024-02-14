@@ -31,7 +31,7 @@ internal sealed class CheckVerb : Verb
 
             try
             {
-                diags = (await doc.GetDiagnosticsAsync(cancellationToken)).ToArray();
+                diags = [.. await doc.GetDiagnosticsAsync(cancellationToken)];
             }
             catch (PathTooLongException)
             {

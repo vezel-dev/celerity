@@ -36,7 +36,7 @@ public sealed class WorkspaceDocument
         _state = path;
 
         if (attributes.HasFlag(WorkspaceDocumentAttributes.SuppressDiagnostics))
-            _diagnostics = Array.Empty<Diagnostic>();
+            _diagnostics = [];
     }
 
     public ValueTask<SourceText> GetTextAsync(CancellationToken cancellationToken = default)
@@ -126,13 +126,12 @@ public sealed class WorkspaceDocument
         {
             var semantics = await GetSemanticsAsync(cancellationToken).ConfigureAwait(false);
 
-            _diagnostics = semantics
+            _diagnostics = [.. semantics
                 .Syntax
                 .Diagnostics
                 .Concat(semantics.Diagnostics)
                 .Where(static diag => diag.Severity != DiagnosticSeverity.None)
-                .OrderBy(static diag => diag.Span)
-                .ToArray();
+                .OrderBy(static diag => diag.Span)];
         }
 
         return _diagnostics;

@@ -13,7 +13,7 @@ public sealed partial class DriverTests : CelerityTests
 
         public DirectoryBuilder()
         {
-            Files = ImmutableArray<(string, string)>.Empty;
+            Files = [];
         }
 
         private DirectoryBuilder(ImmutableArray<(string Name, string Contents)> files)

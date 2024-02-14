@@ -27,11 +27,10 @@ internal static class Program
         return await parser
             .ParseArguments(
                 args,
-                typeof(ThisAssembly)
+                [.. typeof(ThisAssembly)
                     .Assembly
                     .DefinedTypes
-                    .Where(static type => type.GetCustomAttribute<VerbAttribute>() != null)
-                    .ToArray())
+                    .Where(static type => type.GetCustomAttribute<VerbAttribute>() != null)])
             .MapResult(
                 verb => Unsafe.As<Verb>(verb).RunWithHandlerAsync(cts.Token),
                 static _ => ValueTask.FromResult(1));

@@ -27,7 +27,7 @@ public abstract class SemanticNode
 
     public IEnumerable<SemanticNode> Ancestors()
     {
-        return Parent?.AncestorsAndSelf() ?? Array.Empty<SemanticNode>();
+        return Parent?.AncestorsAndSelf() ?? [];
     }
 
     public IEnumerable<SemanticNode> AncestorsAndSelf()
@@ -50,7 +50,7 @@ public abstract class SemanticNode
 
     public IEnumerable<SemanticNode> SiblingsAndSelf()
     {
-        foreach (var sibling in Parent?.Children() ?? Array.Empty<SemanticNode>())
+        foreach (var sibling in Parent?.Children() ?? [])
             yield return sibling;
     }
 

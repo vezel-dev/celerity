@@ -16,12 +16,7 @@ public class RuntimeFunction : RuntimeMember
     }
 
     internal RuntimeFunction(RuntimeModule module, LambdaExpressionSemantics function)
-        : this(
-            module,
-            isPublic: false,
-            $"λ{module.AllocateLambdaId()}",
-            Array.Empty<AttributeSemantics>(),
-            function.Parameters)
+        : this(module, isPublic: false, $"λ{module.AllocateLambdaId()}", attributes: [], function.Parameters)
     {
     }
 

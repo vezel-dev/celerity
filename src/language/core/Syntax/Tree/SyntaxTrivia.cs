@@ -37,7 +37,7 @@ public sealed class SyntaxTrivia : SyntaxTerminal
 
     public override IEnumerable<SyntaxTerminal> Children()
     {
-        return Array.Empty<SyntaxTerminal>();
+        return [];
     }
 
     public new IEnumerable<SyntaxTrivia> ChildrenAndSelf()
@@ -47,7 +47,7 @@ public sealed class SyntaxTrivia : SyntaxTerminal
 
     public override IEnumerable<SyntaxTerminal> Descendants()
     {
-        return Array.Empty<SyntaxTerminal>();
+        return [];
     }
 
     public new IEnumerable<SyntaxTrivia> DescendantsAndSelf()
