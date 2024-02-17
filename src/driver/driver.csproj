@@ -10,7 +10,7 @@
 
 This package provides the .NET global tool.</PackageDescription>
         <PackageId>celerity</PackageId>
-        <RollForward>LatestMajor</RollForward>
+        <RollForward>Major</RollForward>
         <RootNamespace>Vezel.Celerity.Driver</RootNamespace>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <ServerGarbageCollection>true</ServerGarbageCollection>
