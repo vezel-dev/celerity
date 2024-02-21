@@ -49,7 +49,7 @@
         <PackageVersion Include="Verify.DiffPlex"
                         Version="2.3.0" />
         <PackageVersion Include="Verify.Xunit"
-                        Version="23.2.0" />
+                        Version="23.2.1" />
         <PackageVersion Include="Vezel.Cathode"
                         Version="0.12.42" />
         <PackageVersion Include="xunit"
