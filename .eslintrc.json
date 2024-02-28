@@ -248,6 +248,7 @@
     "@typescript-eslint/class-methods-use-this": "error",
     "@typescript-eslint/consistent-generic-constructors": "error",
     "@typescript-eslint/consistent-indexed-object-style": "error",
+    "@typescript-eslint/consistent-return": "error",
     "@typescript-eslint/consistent-type-assertions": [
       "error",
       {
@@ -540,7 +541,6 @@
     "camelcase": "error",
     "capitalized-comments": "off",
     "complexity": "off",
-    "consistent-return": "error",
     "consistent-this": "error",
     "constructor-super": "error",
     "curly": "off",
