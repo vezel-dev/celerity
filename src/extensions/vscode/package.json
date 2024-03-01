@@ -216,7 +216,7 @@
     ]
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "1.6.2",
+    "@stylistic/eslint-plugin": "1.6.3",
     "@types/node": "18.15.0",
     "@types/vscode": "1.83.0",
     "@typescript-eslint/eslint-plugin": "7.1.0",
