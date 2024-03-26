@@ -388,7 +388,6 @@
       }
     ],
     "@typescript-eslint/no-this-alias": "error",
-    "@typescript-eslint/no-throw-literal": "error",
     "@typescript-eslint/no-type-alias": "off",
     "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
     "@typescript-eslint/no-unnecessary-condition": [
@@ -439,6 +438,7 @@
     "@typescript-eslint/no-useless-template-literals": "error",
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/non-nullable-type-assertion-style": "error",
+    "@typescript-eslint/only-throw-error": "error",
     "@typescript-eslint/parameter-properties": "error",
     "@typescript-eslint/prefer-as-const": "error",
     "@typescript-eslint/prefer-destructuring": [
