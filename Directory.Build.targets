@@ -43,10 +43,7 @@
     <Choose>
         <When Condition="'$(IsPackable)' == 'true'">
             <PropertyGroup>
-                <ApplicationIcon Condition="'$(OutputType)' != 'Library'">$(MSBuildThisFileDirectory)celerity.ico</ApplicationIcon>
                 <IsAotCompatible Condition="'$(OutputType)' == 'Library'">true</IsAotCompatible>
-                <PackageIcon>celerity.png</PackageIcon>
-                <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
             </PropertyGroup>
 
             <ItemGroup>

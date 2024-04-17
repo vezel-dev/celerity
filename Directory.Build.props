@@ -10,6 +10,7 @@
     <PropertyGroup>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <AnalysisLevel>latest-all</AnalysisLevel>
+        <ApplicationIcon>$(MSBuildThisFileDirectory)celerity.ico</ApplicationIcon>
         <DisableRuntimeMarshalling>true</DisableRuntimeMarshalling>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
         <EnablePackageValidation>true</EnablePackageValidation>
@@ -24,8 +25,10 @@
         <MSBuildTreatWarningsAsErrors>true</MSBuildTreatWarningsAsErrors>
         <Nullable>enable</Nullable>
         <PackRelease>false</PackRelease>
+        <PackageIcon>celerity.png</PackageIcon>
         <PackageLicenseExpression>0BSD</PackageLicenseExpression>
         <PackageProjectUrl>https://docs.vezel.dev/celerity</PackageProjectUrl>
+        <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
         <PolySharpIncludeRuntimeSupportedAttributes>true</PolySharpIncludeRuntimeSupportedAttributes>
         <PublishRelease>false</PublishRelease>
         <RepositoryUrl>https://github.com/vezel-dev/celerity.git</RepositoryUrl>
