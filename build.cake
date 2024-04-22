@@ -1,6 +1,6 @@
 #addin nuget:?package=Cake.DoInDirectory&version=6.0.0
 #addin nuget:?package=Cake.GitVersioning&version=3.6.133
-#addin nuget:?package=Cake.Npm&version=2.0.0
+#addin nuget:?package=Cake.Npm&version=4.0.0
 #addin nuget:?package=Cake.Npx&version=1.7.0
 
 #nullable enable
