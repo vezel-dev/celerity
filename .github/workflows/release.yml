@@ -35,8 +35,7 @@ jobs:
       - name: Run Cake
         run: |
           ./cake upload-core-nuget -c Release
-          ./cake upload-vscode-vsce -c Release
-          ./cake upload-vscode-ovsx -c Release
+          ./cake upload-vscode -c Release
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4.3.3
