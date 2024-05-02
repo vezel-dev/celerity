@@ -218,7 +218,7 @@
   "devDependencies": {
     "@stylistic/eslint-plugin": "1.8.0",
     "@types/node": "18.15.0",
-    "@types/vscode": "1.83.0",
+    "@types/vscode": "1.88.0",
     "@typescript-eslint/eslint-plugin": "7.8.0",
     "@typescript-eslint/parser": "7.8.0",
     "@vscode/vsce": "2.26.0",
