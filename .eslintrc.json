@@ -54,7 +54,6 @@
     "@stylistic/function-paren-newline": "off",
     "@stylistic/generator-star-spacing": "error",
     "@stylistic/implicit-arrow-linebreak": "off",
-    // TODO: Configure the indent rules.
     "@stylistic/indent": "off",
     "@stylistic/indent-binary-ops": "off",
     "@stylistic/key-spacing": [
