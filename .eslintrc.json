@@ -65,6 +65,7 @@
     ],
     "@stylistic/keyword-spacing": "error",
     "@stylistic/linebreak-style": "off",
+    "@stylistic/line-comment-position": "off",
     "@stylistic/lines-around-comment": [
       "error",
       {
@@ -108,6 +109,13 @@
     ],
     "@stylistic/max-statements-per-line": "error",
     "@stylistic/member-delimiter-style": "error",
+    "@stylistic/multiline-comment-style": [
+      "error",
+      "separate-lines",
+      {
+        "checkJSDoc": true
+      }
+    ],
     "@stylistic/multiline-ternary": [
       "error",
       "always-multiline"
@@ -569,7 +577,6 @@
     "id-length": "off",
     "id-match": "off",
     "init-declarations": "off",
-    "line-comment-position": "off",
     "logical-assignment-operators": [
       "error",
       "always",
@@ -584,13 +591,6 @@
     "max-nested-callbacks": "off",
     "max-params": "off",
     "max-statements": "off",
-    "multiline-comment-style": [
-      "error",
-      "separate-lines",
-      {
-        "checkJSDoc": true
-      }
-    ],
     "new-cap": "error",
     "no-alert": "off",
     "no-array-constructor": "off",
