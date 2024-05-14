@@ -2,10 +2,10 @@ namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
 public sealed class SimpleWorkspace : Workspace
 {
-    private static readonly IEnumerable<DiagnosticAnalyzer> _diagnosticAnalyzers = new[]
-    {
-        new LintDiagnosticAnalyzer(LintPass.DefaultPasses, LintConfiguration.Default),
-    };
+    private static readonly IEnumerable<DiagnosticAnalyzer> _diagnosticAnalyzers =
+        [
+            new LintDiagnosticAnalyzer(LintPass.DefaultPasses, LintConfiguration.Default),
+        ];
 
     private readonly bool _disableAnalysis;
 

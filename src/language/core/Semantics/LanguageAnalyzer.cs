@@ -123,7 +123,7 @@ internal sealed class LanguageAnalyzer
             DiagnosticCode code,
             string message)
         {
-            Error(span, code, message, Array.Empty<(SourceTextSpan, string)>());
+            Error(span, code, message, notes: []);
         }
 
         private void Error(

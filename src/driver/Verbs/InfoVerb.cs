@@ -7,35 +7,31 @@ namespace Vezel.Celerity.Driver.Verbs;
 internal sealed class InfoVerb : Verb
 {
     private static readonly IEnumerable<(string Name, object Value)> _celerity =
-        new (string, object)[]
-        {
+        [
             ("Version", ThisAssembly.AssemblyInformationalVersion),
             ("Commit", ThisAssembly.GitCommitId),
             ("Date", ThisAssembly.GitCommitDate.ToString("o", CultureInfo.InvariantCulture)),
             ("Mode", ThisAssembly.AssemblyConfiguration),
-        };
+        ];
 
     private static readonly IEnumerable<(string Name, object Value)> _runtime =
-        new (string, object)[]
-        {
+        [
             ("Version", Environment.Version),
             ("RID", RuntimeInformation.RuntimeIdentifier),
-        };
+        ];
 
     private static readonly IEnumerable<(string Name, object Value)> _process =
-        new (string, object)[]
-        {
+        [
             ("Architecture", RuntimeInformation.ProcessArchitecture),
             ("CPUs", Environment.ProcessorCount),
             ("Privileged", Environment.IsPrivilegedProcess),
-        };
+        ];
 
     private static readonly IEnumerable<(string Name, object Value)> _system =
-        new (string, object)[]
-        {
+        [
             ("Version", RuntimeInformation.OSDescription),
             ("Architecture", RuntimeInformation.OSArchitecture),
-        };
+        ];
 
     [AsyncMethodBuilder(typeof(PoolingAsyncValueTaskMethodBuilder<>))]
     protected override async ValueTask<int> RunAsync(CancellationToken cancellationToken)
