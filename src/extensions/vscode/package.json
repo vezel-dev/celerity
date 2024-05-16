@@ -223,7 +223,7 @@
     "@typescript-eslint/parser": "7.9.0",
     "@vscode/vsce": "2.26.1",
     "cpy-cli": "5.0.0",
-    "esbuild": "0.21.2",
+    "esbuild": "0.21.3",
     "eslint": "8.57.0",
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.1",
