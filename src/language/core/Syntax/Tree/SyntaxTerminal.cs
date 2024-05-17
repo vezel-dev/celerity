@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Language.Syntax.Tree;
 
 public abstract class SyntaxTerminal : SyntaxItem

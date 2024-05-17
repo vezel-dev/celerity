@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Language.Semantics.Binding;
 
 internal interface ILocalSymbol<T>

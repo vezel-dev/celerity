@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 using Vezel.Celerity.Driver.Logging;
 
 namespace Vezel.Celerity.Driver.Verbs;

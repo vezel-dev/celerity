@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Runtime.Compiler.Native;
 
 internal static partial class RuntimeInterop

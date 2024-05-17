@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Driver.Verbs;
 
 [SuppressMessage("", "CA1812")]

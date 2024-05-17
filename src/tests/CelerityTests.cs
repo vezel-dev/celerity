@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 [SuppressMessage("", "CA1050")]
 public abstract partial class CelerityTests
 {

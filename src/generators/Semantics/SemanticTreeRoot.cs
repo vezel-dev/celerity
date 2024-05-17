@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Generators.Semantics;
 
 [XmlRoot("Tree", Namespace = "https://vezel.dev/celerity/SemanticTree")]

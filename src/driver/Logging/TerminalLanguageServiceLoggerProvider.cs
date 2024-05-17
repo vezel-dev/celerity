@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Driver.Logging;
 
 internal sealed class TerminalLanguageServiceLoggerProvider : LanguageServiceLoggerProvider

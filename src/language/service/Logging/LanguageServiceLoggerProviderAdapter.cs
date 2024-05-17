@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Language.Service.Logging;
 
 internal sealed class LanguageServiceLoggerProviderAdapter : ILoggerProvider

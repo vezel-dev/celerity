@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Runtime.Metadata;
 
 public sealed class RuntimeTest : RuntimeMember

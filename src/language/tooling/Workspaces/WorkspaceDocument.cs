@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 using Vezel.Celerity.Language.Tooling.Classification;
 
 namespace Vezel.Celerity.Language.Tooling.Workspaces;

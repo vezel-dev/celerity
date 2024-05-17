@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: 0BSD -->
+
 <Tree xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns="https://vezel.dev/celerity/SemanticTree"
       xsi:schemaLocation="https://vezel.dev/celerity/SemanticTree ../../../../generators/Semantics/SemanticTree.xsd">

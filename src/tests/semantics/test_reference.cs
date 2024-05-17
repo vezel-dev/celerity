@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 public sealed partial class SemanticTests
 {
     [Fact]

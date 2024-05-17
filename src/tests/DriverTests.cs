@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 using Vezel.Celerity.Tests;
 
 [SuppressMessage("", "CA1050")]

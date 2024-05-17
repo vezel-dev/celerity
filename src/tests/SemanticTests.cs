@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 [SuppressMessage("", "CA1050")]
 [SuppressMessage("", "CA1707")]
 [SuppressMessage("", "IDE1006")]

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Language.Text;
 
 public readonly struct SourceTextLinePosition :

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 using Vezel.Celerity.Language.Service.Logging;
 
 namespace Vezel.Celerity.Language.Service;

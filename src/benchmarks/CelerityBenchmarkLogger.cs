@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Benchmarks;
 
 internal sealed class CelerityBenchmarkLogger : ILogger

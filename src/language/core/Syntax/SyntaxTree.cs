@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 using Vezel.Celerity.Language.Diagnostics;
 using Vezel.Celerity.Language.Syntax.Tree;
 using Vezel.Celerity.Language.Text;

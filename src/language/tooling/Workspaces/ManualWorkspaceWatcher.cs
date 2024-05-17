@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: 0BSD
+
 namespace Vezel.Celerity.Language.Tooling.Workspaces;
 
 public sealed class ManualWorkspaceWatcher : WorkspaceWatcher
