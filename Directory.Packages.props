@@ -39,7 +39,7 @@
         <PackageVersion Include="Microsoft.NET.Test.Sdk"
                         Version="17.9.0" />
         <PackageVersion Include="NuGet.Versioning"
-                        Version="6.9.1" />
+                        Version="6.10.0" />
         <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
                         Version="0.19.9" />
         <PackageVersion Include="Shouldly"
