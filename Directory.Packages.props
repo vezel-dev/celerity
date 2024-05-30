@@ -33,7 +33,7 @@
         <PackageVersion Include="Iced"
                         Version="1.21.0" />
         <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework"
-                        Version="2.1.0" />
+                        Version="2.2.0" />
         <PackageVersion Include="Microsoft.CodeAnalysis.CSharp"
                         Version="4.9.2" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk"
