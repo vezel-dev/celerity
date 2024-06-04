@@ -227,7 +227,7 @@
     "eslint": "8.57.0",
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.1",
-    "nerdbank-gitversioning": "3.6.133",
+    "nerdbank-gitversioning": "3.6.139",
     "ovsx": "0.9.1",
     "rimraf": "5.0.7",
     "symlink-dir": "6.0.0",
