@@ -45,7 +45,7 @@
         <PackageVersion Include="Shouldly"
                         Version="4.2.1" />
         <PackageVersion Include="Spdx"
-                        Version="0.10.0" />
+                        Version="0.11.0" />
         <PackageVersion Include="Verify.DiffPlex"
                         Version="3.0.0" />
         <PackageVersion Include="Verify.Xunit"
