@@ -25,7 +25,8 @@
 
 --------------------------------------------------------------------------------
 
-**Warning:** This is currently in-development vaporware.
+> [!WARNING]
+> This is currently in-development vaporware.
 
 **Celerity** is a programming language aiming for a good balance of
 productivity and scalability while being easily embeddable in host applications.
