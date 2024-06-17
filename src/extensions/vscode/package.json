@@ -43,6 +43,11 @@
       "description": "Discord",
       "url": "https://img.shields.io/badge/discord-chat-7289da?logo=discord",
       "href": "https://discord.gg/wtzCfaX2Nj"
+    },
+    {
+      "description": "Zulip",
+      "url": "https://img.shields.io/badge/zulip-chat-394069?logo=zulip",
+      "href": "https://vezel.zulipchat.com"
     }
   ],
   "categories": [
