@@ -236,7 +236,7 @@
     "ovsx": "0.9.1",
     "rimraf": "5.0.7",
     "symlink-dir": "6.0.0",
-    "typescript": "5.4.5"
+    "typescript": "5.5.2"
   },
   "dependencies": {
     "vscode-languageclient": "9.0.1"
