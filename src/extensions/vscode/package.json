@@ -235,7 +235,7 @@
     "nerdbank-gitversioning": "3.6.139",
     "ovsx": "0.9.1",
     "rimraf": "5.0.8",
-    "symlink-dir": "6.0.0",
+    "symlink-dir": "6.0.1",
     "typescript": "5.5.3"
   },
   "dependencies": {
