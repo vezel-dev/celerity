@@ -1,5 +1,5 @@
 # Tuple Type
 
 ```ebnf
-tuple-type ::= '(' type (',' type)+ ')'
+tuple-type ::= '(' type (',' type)+ ','? ')'
 ```

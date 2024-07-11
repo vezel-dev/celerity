@@ -273,6 +273,7 @@ internal sealed class LanguageParser
         while (true)
         {
             var mark = _reader.Save();
+
             var first = Peek1();
             var attrs = ParseAttributes();
             var next = Peek1();
@@ -317,11 +318,7 @@ internal sealed class LanguageParser
     }
 
     private (ImmutableArray<T>.Builder Elements, ImmutableArray<SyntaxToken>.Builder Separators) ParseSeparatedList<T>(
-        Func<LanguageParser, T> parser,
-        SyntaxTokenKind separator,
-        SyntaxTokenKind closer,
-        bool allowEmpty,
-        bool allowTrailing)
+        Func<LanguageParser, T> parser, SyntaxTokenKind separator, SyntaxTokenKind closer, int minimum)
         where T : SyntaxNode
     {
         // TODO: The way we parse a parameter list (and other similar syntax nodes) causes the parser to misinterpret
@@ -330,40 +327,16 @@ internal sealed class LanguageParser
         var result = SeparatedBuilder<T>();
         var (elems, seps) = result;
 
-        bool NextIsRelevant()
+        for (var i = 0; i < minimum || (Peek1() is { IsEndOfInput: false } next && next.Kind != closer); i++)
         {
-            return Peek1() is { IsEndOfInput: false } next && next.Kind != closer;
-        }
-
-        if (!allowTrailing)
-        {
-            if (allowEmpty && !NextIsRelevant())
-                return result;
-
             elems.Add(parser(this));
 
-            while (Optional([separator]) is { } sep)
+            if (i < minimum - 1)
             {
-                seps.Add(sep);
-                elems.Add(parser(this));
+                seps.Add(Expect(separator));
+
+                continue;
             }
-
-            return result;
-        }
-
-        if (!allowEmpty)
-        {
-            elems.Add(parser(this));
-
-            if (Optional([separator]) is not { } sep)
-                return result;
-
-            seps.Add(sep);
-        }
-
-        while (NextIsRelevant())
-        {
-            elems.Add(parser(this));
 
             if (Optional([separator]) is not { } sep2)
                 break;
@@ -539,8 +512,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseTypeParameter(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: false,
-            allowTrailing: false);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -590,8 +562,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseFunctionParameter(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: true,
-            allowTrailing: false);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -745,8 +716,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseType(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: false,
-            allowTrailing: false);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(args, seps), close);
@@ -850,8 +820,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregateTypeField(allowMutable: false),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(mod, open, List(fields, seps), close);
@@ -865,8 +834,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregateTypeField(allowMutable: true),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var meta = ParseOptional(SyntaxTokenKind.MetaKeyword, static @this => @this.ParseRecordTypeMeta());
 
@@ -890,8 +858,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregateTypeField(allowMutable: true),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(err, name, open, List(fields, seps), close);
@@ -910,19 +877,11 @@ internal sealed class LanguageParser
     private TupleTypeSyntax ParseTupleType()
     {
         var open = Read();
-        var (comps, seps) = SeparatedBuilder<TypeSyntax>();
-
-        // TODO: Can we merge this with ParseSeparatedList?
-        comps.Add(ParseType());
-        seps.Add(Expect(SyntaxTokenKind.Comma));
-        comps.Add(ParseType());
-
-        while (Optional([SyntaxTokenKind.Comma]) is { } sep)
-        {
-            seps.Add(sep);
-            comps.Add(ParseType());
-        }
-
+        var (comps, seps) = ParseSeparatedList(
+            static @this => @this.ParseType(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            minimum: 2);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(comps, seps), close);
@@ -990,8 +949,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseFunctionTypeParameter(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: true,
-            allowTrailing: false);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -1020,8 +978,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAgentTypeMessage(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: false,
-            allowTrailing: true);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(open, List(msgs, seps), close);
@@ -1042,8 +999,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAgentTypeMessageParameter(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: true,
-            allowTrailing: false);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -1324,32 +1280,34 @@ internal sealed class LanguageParser
 
     private ExpressionSyntax ParseParenthesizedOrTupleExpression()
     {
+        var mark = _reader.Save();
+
         var open = Read();
         var expr = ParseExpression();
 
-        if (Optional([SyntaxTokenKind.Comma]) is { } comma)
+        if (Peek1()?.Kind == SyntaxTokenKind.Comma)
         {
-            var (exprs, seps) = SeparatedBuilder<ExpressionSyntax>();
+            _reader.Rewind(mark);
 
-            // TODO: Can we merge this with ParseSeparatedList?
-            exprs.Add(expr);
-            seps.Add(comma);
-            exprs.Add(ParseExpression());
-
-            while (Optional([SyntaxTokenKind.Comma]) is { } sep)
-            {
-                seps.Add(sep);
-                exprs.Add(ParseExpression());
-            }
-
-            var tclose = Expect(SyntaxTokenKind.CloseParen);
-
-            return new TupleExpressionSyntax(open, List(exprs, seps), tclose);
+            return ParseTupleExpression();
         }
 
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new ParenthesizedExpressionSyntax(open, expr, close);
+    }
+
+    private TupleExpressionSyntax ParseTupleExpression()
+    {
+        var open = Read();
+        var (comps, seps) = ParseSeparatedList(
+            static @this => @this.ParseExpression(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            minimum: 2);
+        var close = Expect(SyntaxTokenKind.CloseParen);
+
+        return new(open, List(comps, seps), close);
     }
 
     private BlockExpressionSyntax ParseBlockExpression()
@@ -1431,8 +1389,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregateExpressionField(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var meta = ParseOptional(SyntaxTokenKind.MetaKeyword, static @this => @this.ParseRecordExpressionMeta());
 
@@ -1457,8 +1414,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregateExpressionField(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(err, name, with, open, List(fields, seps), close);
@@ -1490,8 +1446,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpression(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBracket,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(mut, open, List(elems, seps), close);
@@ -1506,8 +1461,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpression(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(mut, hash, open, List(elems, seps), close);
@@ -1522,8 +1476,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseMapExpressionPair(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBracket,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(mut, hash, open, List(pairs, seps), close);
@@ -1556,8 +1509,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseLambdaParameter(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: true,
-            allowTrailing: false);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -1597,8 +1549,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseConditionExpressionArm(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: false,
-            allowTrailing: true);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(cond, open, List(arms, seps), close);
@@ -1622,8 +1573,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpressionPatternArm(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: false,
-            allowTrailing: true);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(match, oper, open, List(arms, seps), close);
@@ -1655,8 +1605,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseReceiveExpressionArm(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: false,
-            allowTrailing: true);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var @else = ParseOptional(SyntaxTokenKind.ElseKeyword, static @this => @this.ParseExpressionElse());
 
@@ -1681,8 +1630,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseReceiveParameter(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: true,
-            allowTrailing: false);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(parms, seps), close);
@@ -1705,8 +1653,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpressionPatternArm(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: false,
-            allowTrailing: true);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseBrace);
 
         return new(@try, oper, @catch, open, List(arms, seps), close);
@@ -1818,8 +1765,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpression(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBracket,
-            allowEmpty: false,
-            allowTrailing: false);
+            minimum: 1);
         var close = Expect(SyntaxTokenKind.CloseBracket);
 
         return new(open, List(args, seps), close);
@@ -1840,8 +1786,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpression(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: true,
-            allowTrailing: false);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(args, seps), close);
@@ -1863,8 +1808,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpression(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseParen,
-            allowEmpty: true,
-            allowTrailing: false);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseParen);
 
         return new(open, List(args, seps), close);
@@ -2011,8 +1955,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregatePatternField(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
@@ -2027,8 +1970,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregatePatternField(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
@@ -2044,8 +1986,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseAggregatePatternField(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
@@ -2064,19 +2005,11 @@ internal sealed class LanguageParser
     private TuplePatternSyntax ParseTuplePattern()
     {
         var open = Read();
-        var (comps, seps) = SeparatedBuilder<PatternSyntax>();
-
-        // TODO: Can we merge this with ParseSeparatedList?
-        comps.Add(ParsePattern());
-        seps.Add(Expect(SyntaxTokenKind.Comma));
-        comps.Add(ParsePattern());
-
-        while (Optional([SyntaxTokenKind.Comma]) is { } sep)
-        {
-            seps.Add(sep);
-            comps.Add(ParsePattern());
-        }
-
+        var (comps, seps) = ParseSeparatedList(
+            static @this => @this.ParsePattern(),
+            SyntaxTokenKind.Comma,
+            SyntaxTokenKind.CloseParen,
+            minimum: 2);
         var close = Expect(SyntaxTokenKind.CloseParen);
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
@@ -2091,8 +2024,7 @@ internal sealed class LanguageParser
             static @this => @this.ParsePattern(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBracket,
-            allowEmpty: prefix == null,
-            allowTrailing: true);
+            minimum: prefix != null ? 1 : 0);
         var close = Expect(SyntaxTokenKind.CloseBracket);
         var suffix = (prefix, elems.Count) == (null, 0) ? Optional([SyntaxTokenKind.DotDot]) : null;
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
@@ -2108,8 +2040,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseExpression(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBrace,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBrace);
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
@@ -2124,8 +2055,7 @@ internal sealed class LanguageParser
             static @this => @this.ParseMapPatternPair(),
             SyntaxTokenKind.Comma,
             SyntaxTokenKind.CloseBracket,
-            allowEmpty: true,
-            allowTrailing: true);
+            minimum: 0);
         var close = Expect(SyntaxTokenKind.CloseBracket);
         var alias = ParseOptional(SyntaxTokenKind.AsKeyword, static @this => @this.ParsePatternAlias());
 
