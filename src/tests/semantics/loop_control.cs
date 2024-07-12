@@ -19,11 +19,11 @@ public sealed partial class SemanticTests
                         break as 1;
 
                         next;
-                    };
+                    }
 
                     while break {
                         2;
-                    };
+                    }
 
                     while next {
                         3;
@@ -35,7 +35,7 @@ public sealed partial class SemanticTests
                         break as 4;
 
                         next;
-                    };
+                    }
 
                     for _ in break {
                         5;

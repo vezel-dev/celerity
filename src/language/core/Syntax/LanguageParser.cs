@@ -1094,8 +1094,9 @@ internal sealed class LanguageParser
 
     private ExpressionStatementSyntax ParseExpressionStatement(ImmutableArray<AttributeSyntax>.Builder attributes)
     {
-        var expr = ParseExpression();
-        var semi = Expect(SyntaxTokenKind.Semicolon);
+        var flow = SyntaxFacts.IsFlowExpressionStarter(Peek1().Kind);
+        var expr = flow ? ParseFlowExpression() : ParseExpression();
+        var semi = flow ? Optional([SyntaxTokenKind.Semicolon]) : Expect(SyntaxTokenKind.Semicolon);
 
         return new(List(attributes), expr, semi);
     }
@@ -1231,6 +1232,22 @@ internal sealed class LanguageParser
         return new(op, oper);
     }
 
+    private ExpressionSyntax ParseFlowExpression()
+    {
+        return Peek1().Kind switch
+        {
+            SyntaxTokenKind.OpenBrace => ParseBlockExpression(),
+            SyntaxTokenKind.IfKeyword => ParseIfExpression(),
+            SyntaxTokenKind.CondKeyword => ParseConditionExpression(),
+            SyntaxTokenKind.MatchKeyword => ParseMatchExpression(),
+            SyntaxTokenKind.RecvKeyword => ParseReceiveExpression(),
+            SyntaxTokenKind.TryKeyword => ParseTryExpression(),
+            SyntaxTokenKind.WhileKeyword => ParseWhileExpression(),
+            SyntaxTokenKind.ForKeyword => ParseForExpression(),
+            _ => throw new UnreachableException(),
+        };
+    }
+
     private ExpressionSyntax ParsePrimaryExpression()
     {
         var (tok1, tok2, tok3) = Peek3();
@@ -1254,13 +1271,7 @@ internal sealed class LanguageParser
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBrace) => ParseSetExpression(),
             (SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket, _) or
             (SyntaxTokenKind.MutKeyword, SyntaxTokenKind.Hash, SyntaxTokenKind.OpenBracket) => ParseMapExpression(),
-            (SyntaxTokenKind.IfKeyword, _, _) => ParseIfExpression(),
-            (SyntaxTokenKind.CondKeyword, _, _) => ParseConditionExpression(),
-            (SyntaxTokenKind.MatchKeyword, _, _) => ParseMatchExpression(),
-            (SyntaxTokenKind.RecvKeyword, _, _) => ParseReceiveExpression(),
-            (SyntaxTokenKind.TryKeyword, _, _) => ParseTryExpression(),
-            (SyntaxTokenKind.WhileKeyword, _, _) => ParseWhileExpression(),
-            (SyntaxTokenKind.ForKeyword, _, _) => ParseForExpression(),
+            (var flow, _, _) when SyntaxFacts.IsFlowExpressionStarter(flow) => ParseFlowExpression(),
             (SyntaxTokenKind.RetKeyword or SyntaxTokenKind.TailKeyword, _, _) => ParseReturnExpression(),
             (SyntaxTokenKind.RaiseKeyword, _, _) => ParseRaiseExpression(),
             (SyntaxTokenKind.NextKeyword, _, _) => ParseNextExpression(),

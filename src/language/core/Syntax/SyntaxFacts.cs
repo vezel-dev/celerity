@@ -287,32 +287,38 @@ public static partial class SyntaxFacts
         return kind == SyntaxTokenKind.DeferKeyword || IsStatementSubmissionStarter(kind);
     }
 
+    internal static bool IsFlowExpressionStarter(SyntaxTokenKind kind)
+    {
+        return kind is
+            SyntaxTokenKind.OpenBrace or
+            SyntaxTokenKind.CondKeyword or
+            SyntaxTokenKind.ForKeyword or
+            SyntaxTokenKind.IfKeyword or
+            SyntaxTokenKind.MatchKeyword or
+            SyntaxTokenKind.RecvKeyword or
+            SyntaxTokenKind.TryKeyword or
+            SyntaxTokenKind.WhileKeyword;
+    }
+
     public static bool IsExpressionStarter(SyntaxTokenKind kind)
     {
         return kind is
             SyntaxTokenKind.Hash or
             SyntaxTokenKind.OpenParen or
             SyntaxTokenKind.OpenBracket or
-            SyntaxTokenKind.OpenBrace or
             SyntaxTokenKind.BreakKeyword or
-            SyntaxTokenKind.CondKeyword or
             SyntaxTokenKind.ErrKeyword or
             SyntaxTokenKind.FnKeyword or
-            SyntaxTokenKind.ForKeyword or
-            SyntaxTokenKind.IfKeyword or
-            SyntaxTokenKind.MatchKeyword or
             SyntaxTokenKind.MutKeyword or
             SyntaxTokenKind.NextKeyword or
             SyntaxTokenKind.NotKeyword or
             SyntaxTokenKind.RaiseKeyword or
             SyntaxTokenKind.RecKeyword or
-            SyntaxTokenKind.RecvKeyword or
             SyntaxTokenKind.RetKeyword or
             SyntaxTokenKind.TailKeyword or
             SyntaxTokenKind.ThisKeyword or
-            SyntaxTokenKind.TryKeyword or
-            SyntaxTokenKind.WhileKeyword or
             SyntaxTokenKind.UpperIdentifier ||
+            IsFlowExpressionStarter(kind) ||
             IsCustomOperator(kind) ||
             IsBindingIdentifier(kind) ||
             IsLiteral(kind);

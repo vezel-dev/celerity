@@ -47,7 +47,7 @@ abstract Vezel.Celerity.Language.Syntax.Tree.ExpressionArmSyntax.Body.get -> Vez
 abstract Vezel.Celerity.Language.Syntax.Tree.PatternSyntax.Alias.get -> Vezel.Celerity.Language.Syntax.Tree.PatternAliasSyntax?
 abstract Vezel.Celerity.Language.Syntax.Tree.PostfixExpressionSyntax.Subject.get -> Vezel.Celerity.Language.Syntax.Tree.ExpressionSyntax!
 abstract Vezel.Celerity.Language.Syntax.Tree.StatementSyntax.Attributes.get -> Vezel.Celerity.Language.Syntax.Tree.SyntaxItemList<Vezel.Celerity.Language.Syntax.Tree.AttributeSyntax!>
-abstract Vezel.Celerity.Language.Syntax.Tree.StatementSyntax.SemicolonToken.get -> Vezel.Celerity.Language.Syntax.Tree.SyntaxToken!
+abstract Vezel.Celerity.Language.Syntax.Tree.StatementSyntax.SemicolonToken.get -> Vezel.Celerity.Language.Syntax.Tree.SyntaxToken?
 abstract Vezel.Celerity.Language.Syntax.Tree.SyntaxItem.Children() -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Syntax.Tree.SyntaxItem!>!
 abstract Vezel.Celerity.Language.Syntax.Tree.SyntaxItem.Descendants() -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Syntax.Tree.SyntaxItem!>!
 abstract Vezel.Celerity.Language.Syntax.Tree.SyntaxItem.FullSpan.get -> Vezel.Celerity.Language.Text.SourceTextSpan
@@ -513,7 +513,7 @@ override Vezel.Celerity.Language.Syntax.Tree.ExpressionStatementSyntax.Children(
 override Vezel.Celerity.Language.Syntax.Tree.ExpressionStatementSyntax.ChildTokens() -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Syntax.Tree.SyntaxToken!>!
 override Vezel.Celerity.Language.Syntax.Tree.ExpressionStatementSyntax.HasNodes.get -> bool
 override Vezel.Celerity.Language.Syntax.Tree.ExpressionStatementSyntax.HasTokens.get -> bool
-override Vezel.Celerity.Language.Syntax.Tree.ExpressionStatementSyntax.SemicolonToken.get -> Vezel.Celerity.Language.Syntax.Tree.SyntaxToken!
+override Vezel.Celerity.Language.Syntax.Tree.ExpressionStatementSyntax.SemicolonToken.get -> Vezel.Celerity.Language.Syntax.Tree.SyntaxToken?
 override Vezel.Celerity.Language.Syntax.Tree.FieldExpressionSyntax.ChildNodes() -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Syntax.Tree.SyntaxNode!>!
 override Vezel.Celerity.Language.Syntax.Tree.FieldExpressionSyntax.Children() -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Syntax.Tree.SyntaxItem!>!
 override Vezel.Celerity.Language.Syntax.Tree.FieldExpressionSyntax.ChildTokens() -> System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Syntax.Tree.SyntaxToken!>!

@@ -1,7 +1,7 @@
 # Defer Statement
 
 ```ebnf
-defer-statement ::= 'defer' expression
+defer-statement ::= 'defer' expression ';'
 ```
 
 Defers evaluation of [`expression`](../expressions.md) (the *body*) until

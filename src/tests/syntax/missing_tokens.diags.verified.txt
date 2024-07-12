@@ -1,25 +1,38 @@
 ﻿Error[E0012]: Expected integer literal or real literal
---> missing_tokens.cel (2,15)-(2,16)
-1 | mod {
-2 |     type x = -;
-  :               ^
-3 |
-4 |     @foo
-5 |     fn () { 1; }
+---> missing_tokens.cel (2,15)-(2,16)
+ 1 | mod {
+ 2 |     type x = -;
+   :               ^
+ 3 |
+ 4 |     @foo
+ 5 |     fn () { 1; }
 Error[E0012]: Expected literal
---> missing_tokens.cel (4,9)-(5,1)
-1 | mod {
-2 |     type x = -;
-3 |
-4 |     @foo
-  :         ^
-5 |     fn () { 1; }
-6 | }
+---> missing_tokens.cel (4,9)-(5,1)
+ 1 | mod {
+ 2 |     type x = -;
+ 3 |
+ 4 |     @foo
+   :         ^
+ 5 |     fn () { 1; }
+ 6 |
+ 7 |     fn bar() {
+ 8 |         (if true { rec { baz : 42 }; }).baz;
 Error[E0012]: Expected lowercase identifier
---> missing_tokens.cel (5,8)-(5,9)
-2 |     type x = -;
-3 |
-4 |     @foo
-5 |     fn () { 1; }
-  :        ^
-6 | }
+---> missing_tokens.cel (5,8)-(5,9)
+ 2 |     type x = -;
+ 3 |
+ 4 |     @foo
+ 5 |     fn () { 1; }
+   :        ^
+ 6 |
+ 7 |     fn bar() {
+ 8 |         (if true { rec { baz : 42 }; }).baz;
+Error[E0013]: Unexpected token in block
+---> missing_tokens.cel (9,38)-(9,39)
+ 6 |
+ 7 |     fn bar() {
+ 8 |         (if true { rec { baz : 42 }; }).baz;
+ 9 |         if true { rec { baz : 42 }; }.baz;
+   :                                      ^
+10 |     }
+11 | }

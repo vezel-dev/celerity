@@ -11,6 +11,10 @@ public sealed partial class SyntaxTests
             2 + 2;
             assert true;
             let x = 42;
+            if true {
+                false;
+            }
+            foo();
             """);
     }
 }

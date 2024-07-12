@@ -13,6 +13,11 @@ public sealed partial class SyntaxTests
 
                 @foo
                 fn () { 1; }
+
+                fn bar() {
+                    (if true { rec { baz : 42 }; }).baz;
+                    if true { rec { baz : 42 }; }.baz;
+                }
             }
             """);
     }

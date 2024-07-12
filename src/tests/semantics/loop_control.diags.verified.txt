@@ -20,17 +20,17 @@ Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> loop_control.cel (15,15)-(15,20)
 12 |             next;
-13 |         };
+13 |         }
 14 |
 15 |         while break {
    :               ^^^^^
 16 |             2;
-17 |         };
+17 |         }
 18 |
 Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 ---> loop_control.cel (19,15)-(19,19)
 16 |             2;
-17 |         };
+17 |         }
 18 |
 19 |         while next {
    :               ^^^^
@@ -40,7 +40,7 @@ Error[E0028]: No enclosing 'while' or 'for' expression for 'next' expression
 Error[E0028]: No enclosing 'while' or 'for' expression for 'break' expression
 ---> loop_control.cel (31,18)-(31,23)
 28 |             next;
-29 |         };
+29 |         }
 30 |
 31 |         for _ in break {
    :                  ^^^^^

@@ -1,7 +1,14 @@
 # Expression Statement
 
 ```ebnf
-expression-statement ::= expression
+expression-statement ::= (block-expression |
+                          if-expression |
+                          condition-expression |
+                          match-expression |
+                          receive-expression |
+                          while-expression |
+                          for-expression |
+                          try-expression) ';'? | expression ';'
 ```
 
 Evaluates [`expression`](../expressions.md) (the *value*). If the expression

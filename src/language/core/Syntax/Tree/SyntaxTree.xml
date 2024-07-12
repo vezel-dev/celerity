@@ -381,7 +381,7 @@
 
     <Type Name="Statement" Abstract="true">
         <Nodes Name="Attribute" Type="Attribute" />
-        <Token Name="Semicolon" />
+        <Token Name="Semicolon" Optional="true" />
     </Type>
 
     <Type Name="LetStatement" Base="Statement">
@@ -403,7 +403,7 @@
     <Type Name="ExpressionStatement" Base="Statement">
         <Nodes Name="Attribute" Type="Attribute" Override="true" />
         <Node Name="Expression" Type="Expression" />
-        <Token Name="Semicolon" Override="true" />
+        <Token Name="Semicolon" Optional="true" Override="true" />
     </Type>
 
     <!-- Expressions -->
