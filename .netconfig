@@ -8,6 +8,11 @@
 	sha = 7d581ae5eedad5892855cebc673edafad664856b
 	etag = d763492a10cc6e14ba8f8ffe3279eda7964580ed9e18bcd6c7875fe2f53f226b
 	weak
+[file "src/extensions/vscode/eslint.config.js"]
+	url = https://github.com/vezel-dev/.github/blob/master/syn/eslint.config.js
+	sha = 641a7ceeb50f65802134a14c1f52be06865e17e0
+	etag = 043c12197cf204b8f1728b8387c54b3cc6f8d03b60e20015a49d5333737e40f1
+	weak
 [file ".editorconfig"]
 	url = https://github.com/vezel-dev/.github/blob/master/syn/.editorconfig
 	sha = 25cfbb6a508a9fcf8444ef283ddfe7b2e5121bca
@@ -57,9 +62,4 @@
 	url = https://github.com/vezel-dev/.github/blob/master/syn/tasks.vs.json
 	sha = d3266cef4044ccbe6e51133fcac3a77a5b42dde1
 	etag = e37280c2dccfe881742b68239db201d39758cff1f1c7472f358b7a1164a5771d
-	weak
-[file "tsconfig.json"]
-	url = https://github.com/vezel-dev/.github/blob/master/syn/tsconfig.json
-	sha = 7d581ae5eedad5892855cebc673edafad664856b
-	etag = 1592ee04962b18721bddf6a191b0b9b4737c390477fc9651e4b3cdf4bcc99bc3
 	weak

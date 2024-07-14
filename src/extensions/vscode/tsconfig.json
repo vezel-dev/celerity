@@ -1,8 +1,26 @@
 {
-  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "target": "es2022",
-    "module": "commonjs",
-    "rootDir": "src"
-  }
+    "allowArbitraryExtensions": true,
+    "allowJs": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "module": "CommonJS",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "resolveJsonModule": true,
+    "rootDir": "src",
+    "strict": true,
+    "target": "ES2022"
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
