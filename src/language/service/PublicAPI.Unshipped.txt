@@ -1,32 +1,9 @@
 #nullable enable
-abstract Vezel.Celerity.Language.Service.Logging.LanguageServiceLogger.Log(Vezel.Celerity.Language.Service.Logging.LogLevel logLevel, string! eventName, string! message, System.Exception? exception) -> void
-abstract Vezel.Celerity.Language.Service.Logging.LanguageServiceLoggerProvider.CreateLogger(string! name) -> Vezel.Celerity.Language.Service.Logging.LanguageServiceLogger!
-static Vezel.Celerity.Language.Service.LanguageService.CreateAsync(Vezel.Celerity.Language.Service.LanguageServiceConfiguration! configuration, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Vezel.Celerity.Language.Service.LanguageService!>
+static Vezel.Celerity.Language.Service.LanguageService.RunAsync(Vezel.Celerity.Language.Service.LanguageServiceConfiguration! configuration, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
 Vezel.Celerity.Language.Service.LanguageService
-Vezel.Celerity.Language.Service.LanguageService.Completion.get -> System.Threading.Tasks.Task!
-Vezel.Celerity.Language.Service.LanguageService.Dispose() -> void
 Vezel.Celerity.Language.Service.LanguageServiceConfiguration
 Vezel.Celerity.Language.Service.LanguageServiceConfiguration.Input.get -> System.IO.Stream!
 Vezel.Celerity.Language.Service.LanguageServiceConfiguration.LanguageServiceConfiguration(System.IO.Stream! input, System.IO.Stream! output) -> void
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.LoggerProvider.get -> Vezel.Celerity.Language.Service.Logging.LanguageServiceLoggerProvider?
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.LogLevel.get -> Vezel.Celerity.Language.Service.Logging.LogLevel
 Vezel.Celerity.Language.Service.LanguageServiceConfiguration.Output.get -> System.IO.Stream!
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.ProtocolLogging.get -> bool
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.RequestTimeout.get -> System.TimeSpan
 Vezel.Celerity.Language.Service.LanguageServiceConfiguration.WithInput(System.IO.Stream! input) -> Vezel.Celerity.Language.Service.LanguageServiceConfiguration!
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.WithLoggerProvider(Vezel.Celerity.Language.Service.Logging.LanguageServiceLoggerProvider! loggerProvider) -> Vezel.Celerity.Language.Service.LanguageServiceConfiguration!
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.WithLogLevel(Vezel.Celerity.Language.Service.Logging.LogLevel logLevel) -> Vezel.Celerity.Language.Service.LanguageServiceConfiguration!
 Vezel.Celerity.Language.Service.LanguageServiceConfiguration.WithOutput(System.IO.Stream! output) -> Vezel.Celerity.Language.Service.LanguageServiceConfiguration!
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.WithProtocolLogging(bool protocolLogging) -> Vezel.Celerity.Language.Service.LanguageServiceConfiguration!
-Vezel.Celerity.Language.Service.LanguageServiceConfiguration.WithRequestTimeout(System.TimeSpan requestTimeout) -> Vezel.Celerity.Language.Service.LanguageServiceConfiguration!
-Vezel.Celerity.Language.Service.Logging.LanguageServiceLogger
-Vezel.Celerity.Language.Service.Logging.LanguageServiceLogger.LanguageServiceLogger() -> void
-Vezel.Celerity.Language.Service.Logging.LanguageServiceLoggerProvider
-Vezel.Celerity.Language.Service.Logging.LanguageServiceLoggerProvider.LanguageServiceLoggerProvider() -> void
-Vezel.Celerity.Language.Service.Logging.LogLevel
-Vezel.Celerity.Language.Service.Logging.LogLevel.Critical = 5 -> Vezel.Celerity.Language.Service.Logging.LogLevel
-Vezel.Celerity.Language.Service.Logging.LogLevel.Debug = 1 -> Vezel.Celerity.Language.Service.Logging.LogLevel
-Vezel.Celerity.Language.Service.Logging.LogLevel.Error = 4 -> Vezel.Celerity.Language.Service.Logging.LogLevel
-Vezel.Celerity.Language.Service.Logging.LogLevel.Information = 2 -> Vezel.Celerity.Language.Service.Logging.LogLevel
-Vezel.Celerity.Language.Service.Logging.LogLevel.Trace = 0 -> Vezel.Celerity.Language.Service.Logging.LogLevel
-Vezel.Celerity.Language.Service.Logging.LogLevel.Warning = 3 -> Vezel.Celerity.Language.Service.Logging.LogLevel

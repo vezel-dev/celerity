@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: 0BSD
 
-using Vezel.Celerity.Driver.Logging;
-
 namespace Vezel.Celerity.Driver.Verbs;
 
 [SuppressMessage("", "CA1812")]
@@ -10,9 +8,6 @@ internal sealed class ServeVerb : Verb
 {
     [Option('w', "workspace", HelpText = "Set workspace directory.")]
     public required string? Workspace { get; init; }
-
-    [Option('l', "level", Default = LogLevel.Information, HelpText = "Set log level.")]
-    public required LogLevel Level { get; init; }
 
     // We only support communication over standard I/O. This option exists because the LSP specification strongly
     // recommends supporting it, and in practice, LSP clients tend to assume that it is supported.
@@ -30,14 +25,7 @@ internal sealed class ServeVerb : Verb
 
         await Error.WriteLineAsync("Running Celerity language server on standard I/O.", cancellationToken);
 
-        using var service = await LanguageService.CreateAsync(
-            new LanguageServiceConfiguration(In.Stream, Out.Stream)
-                .WithLogLevel(Level)
-                .WithLoggerProvider(new TerminalLanguageServiceLoggerProvider(Error))
-                .WithProtocolLogging(protocolLogging: true),
-            cancellationToken);
-
-        await service.Completion;
+        await LanguageService.RunAsync(new(In.Stream, Out.Stream), cancellationToken);
 
         return 0;
     }

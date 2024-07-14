@@ -30,6 +30,8 @@
                         Version="2.9.1" />
         <PackageVersion Include="DotNext"
                         Version="5.7.0" />
+        <PackageVersion Include="Draco.Lsp"
+                        Version="0.3.4-pre" />
         <PackageVersion Include="Iced"
                         Version="1.21.0" />
         <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework"
@@ -40,8 +42,6 @@
                         Version="17.10.0" />
         <PackageVersion Include="NuGet.Versioning"
                         Version="6.10.1" />
-        <PackageVersion Include="OmniSharp.Extensions.LanguageServer"
-                        Version="0.19.9" />
         <PackageVersion Include="Shouldly"
                         Version="4.2.1" />
         <PackageVersion Include="Spdx"
