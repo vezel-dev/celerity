@@ -22,9 +22,6 @@ public static class LanguageService
     {
         Check.Null(configuration);
 
-        // TODO: Add cancellation support?
-        _ = cancellationToken;
-
         return RunAsync();
 
         async Task RunAsync()
@@ -32,7 +29,7 @@ public static class LanguageService
             var client = LanguageServer.Connect(new DuplexPipe(configuration.Input, configuration.Output));
             using var server = new CelerityLanguageServer(client);
 
-            await client.RunAsync(server).ConfigureAwait(false);
+            await client.RunAsync(server, cancellationToken).ConfigureAwait(false);
         }
     }
 }
