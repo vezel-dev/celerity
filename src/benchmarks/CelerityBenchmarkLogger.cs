@@ -23,6 +23,7 @@ internal sealed class CelerityBenchmarkLogger : ILogger
             [LogKind.Info] = Color.FromArgb(255, 255, 255),
             [LogKind.Error] = Color.FromArgb(255, 0, 0),
             [LogKind.Hint] = Color.FromArgb(0, 175, 135),
+            [LogKind.Warning] = Color.FromArgb(255, 255, 0),
         }.ToImmutableDictionary();
 
     private CelerityBenchmarkLogger()
