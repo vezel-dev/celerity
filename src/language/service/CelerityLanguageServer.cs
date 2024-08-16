@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: 0BSD
 
-namespace Vezel.Celerity.Language;
+namespace Vezel.Celerity.Language.Service;
 
 internal sealed class CelerityLanguageServer : ILanguageServer
 {
