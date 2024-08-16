@@ -226,7 +226,7 @@
     "@types/eslint__js": "8.42.3",
     "@types/node": "18.15.0",
     "@types/vscode": "1.83.0",
-    "@vscode/vsce": "2.31.1",
+    "@vscode/vsce": "3.0.0",
     "cpy-cli": "5.0.0",
     "esbuild": "0.23.0",
     "eslint": "8.57.0",
