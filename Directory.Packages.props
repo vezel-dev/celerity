@@ -1,60 +1,34 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <GlobalPackageReference Include="DotNet.ReproducibleBuilds"
-                                Version="1.2.4" />
-        <GlobalPackageReference Include="Microsoft.Build.CopyOnWrite"
-                                Version="1.0.315" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(UsingVezelZigSdk)' != 'true'">
-        <GlobalPackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers"
-                                Version="3.3.4" />
-        <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers"
-                                Version="17.11.20" />
-        <GlobalPackageReference Include="Nerdbank.GitVersioning"
-                                Version="3.6.141" />
-        <GlobalPackageReference Include="PolySharp"
-                                Version="1.14.1" />
-        <GlobalPackageReference Include="StyleCop.Analyzers"
-                                Version="1.2.0-beta.556" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageVersion Include="BenchmarkDotNet"
-                        Version="0.14.0" />
-        <PackageVersion Include="CommandLineParser"
-                        Version="2.9.1" />
-        <PackageVersion Include="DotNext"
-                        Version="5.12.1" />
-        <PackageVersion Include="Draco.Lsp"
-                        Version="0.3.6-pre" />
-        <PackageVersion Include="Iced"
-                        Version="1.21.0" />
-        <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework"
-                        Version="2.3.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp"
-                        Version="4.11.0" />
-        <PackageVersion Include="Microsoft.NET.Test.Sdk"
-                        Version="17.11.0" />
-        <PackageVersion Include="NuGet.Versioning"
-                        Version="6.11.0" />
-        <PackageVersion Include="Shouldly"
-                        Version="4.2.1" />
-        <PackageVersion Include="Spdx"
-                        Version="0.11.0" />
-        <PackageVersion Include="Verify.DiffPlex"
-                        Version="3.1.0" />
-        <PackageVersion Include="Verify.Xunit"
-                        Version="26.2.0" />
-        <PackageVersion Include="Vezel.Cathode"
-                        Version="0.14.17" />
-        <PackageVersion Include="xunit"
-                        Version="2.9.0" />
-        <PackageVersion Include="xunit.runner.visualstudio"
-                        Version="2.8.2" />
-    </ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <GlobalPackageReference Include="DotNet.ReproducibleBuilds" Version="1.2.4" />
+    <GlobalPackageReference Include="Microsoft.Build.CopyOnWrite" Version="1.0.315" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsingVezelZigSdk)' != 'true'">
+    <GlobalPackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
+    <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.11.20" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.6.141" />
+    <GlobalPackageReference Include="PolySharp" Version="1.14.1" />
+    <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
+    <PackageVersion Include="CommandLineParser" Version="2.9.1" />
+    <PackageVersion Include="DotNext" Version="5.12.1" />
+    <PackageVersion Include="Draco.Lsp" Version="0.3.6-pre" />
+    <PackageVersion Include="Iced" Version="1.21.0" />
+    <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework" Version="2.3.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageVersion Include="NuGet.Versioning" Version="6.11.0" />
+    <PackageVersion Include="Shouldly" Version="4.2.1" />
+    <PackageVersion Include="Spdx" Version="0.11.0" />
+    <PackageVersion Include="Verify.DiffPlex" Version="3.1.0" />
+    <PackageVersion Include="Verify.Xunit" Version="26.2.0" />
+    <PackageVersion Include="Vezel.Cathode" Version="0.14.17" />
+    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
 </Project>
