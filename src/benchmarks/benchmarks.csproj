@@ -32,6 +32,7 @@
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" />
         <PackageReference Include="CommandLineParser" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
         <PackageReference Include="Vezel.Cathode" />
     </ItemGroup>
 
