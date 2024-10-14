@@ -29,7 +29,7 @@
         <PackageVersion Include="CommandLineParser"
                         Version="2.9.1" />
         <PackageVersion Include="DotNext"
-                        Version="5.13.0" />
+                        Version="5.14.0" />
         <PackageVersion Include="Draco.Lsp"
                         Version="0.3.6-pre" />
         <PackageVersion Include="Iced"
