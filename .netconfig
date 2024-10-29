@@ -10,8 +10,8 @@
 	weak
 [file "src/extensions/vscode/eslint.config.js"]
 	url = https://github.com/vezel-dev/.github/blob/master/syn/eslint.config.js
-	sha = ec29fef429ce135dfab8f66146a7d70b05ec11c8
-	etag = 4408f1ab806181c7714ae5c24f5cc01b8113a64a959dc0e8505bfce28627c22f
+	sha = 37075b6114245c244ed9d4871eda9f0101d25cca
+	etag = ddd55d77d85337332c1f42ed9b4a4feef93dad5affbee5171134f5bd3c32b8ca
 	weak
 [file ".editorconfig"]
 	url = https://github.com/vezel-dev/.github/blob/master/syn/.editorconfig

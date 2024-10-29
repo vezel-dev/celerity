@@ -45,6 +45,10 @@ module.exports = tseslint.config({
         "@stylistic/comma-spacing": "error",
         "@stylistic/comma-style": "error",
         "@stylistic/computed-property-spacing": "error",
+        "@stylistic/curly-newline": [
+            "error",
+            "always",
+        ],
         "@stylistic/dot-location": [
             "error",
             "property",
