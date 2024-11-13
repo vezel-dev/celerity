@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: 0BSD
 
 [SuppressMessage("", "CA1050")]
+[SuppressMessage("", "CA1515")]
 public abstract partial class CelerityTests
 {
     private protected static async Task VerifyDiagnosticsAsync(
