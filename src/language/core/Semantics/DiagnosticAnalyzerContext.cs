@@ -10,7 +10,7 @@ public sealed class DiagnosticAnalyzerContext
 {
     public DocumentSemantics Root { get; }
 
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
 
     private readonly ImmutableArray<Diagnostic>.Builder _diagnostics;
 

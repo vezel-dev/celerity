@@ -7,7 +7,7 @@ internal struct EventHandlerList<T>
 {
     public Delegate[]? Handlers { get; private set; }
 
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
 
     private T? _event;
 

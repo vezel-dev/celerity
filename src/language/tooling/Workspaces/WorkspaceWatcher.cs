@@ -6,7 +6,7 @@ public abstract class WorkspaceWatcher
 {
     public Workspace Workspace { get; }
 
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
 
     protected WorkspaceWatcher(Workspace workspace)
     {

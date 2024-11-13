@@ -10,7 +10,7 @@ public sealed class LintPassContext
 {
     public DocumentSemantics Root { get; }
 
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
 
     private readonly LintPass _pass;
 
