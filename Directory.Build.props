@@ -35,6 +35,7 @@
         <SymbolVisibility>Hidden</SymbolVisibility>
         <TargetFramework>net9.0</TargetFramework>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <UnicodeEnvironment>true</UnicodeEnvironment>
     </PropertyGroup>
 
     <PropertyGroup>
