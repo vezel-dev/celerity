@@ -1046,13 +1046,13 @@ override Vezel.Celerity.Language.Text.StringSourceText.Count.get -> int
 override Vezel.Celerity.Language.Text.StringSourceText.GetEnumerator() -> System.CharEnumerator!
 override Vezel.Celerity.Language.Text.StringSourceText.this[int index].get -> char
 override Vezel.Celerity.Language.Text.StringSourceText.ToString(Vezel.Celerity.Language.Text.SourceTextSpan span) -> string!
-static Vezel.Celerity.Language.Diagnostics.Diagnostic.Create(Vezel.Celerity.Language.Syntax.SyntaxTree! tree, Vezel.Celerity.Language.Text.SourceTextSpan span, Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity severity, Vezel.Celerity.Language.Diagnostics.DiagnosticCode code, string! message, params (Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)[]! notes) -> Vezel.Celerity.Language.Diagnostics.Diagnostic!
+static Vezel.Celerity.Language.Diagnostics.Diagnostic.Create(Vezel.Celerity.Language.Syntax.SyntaxTree! tree, Vezel.Celerity.Language.Text.SourceTextSpan span, Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity severity, Vezel.Celerity.Language.Diagnostics.DiagnosticCode code, string! message, params System.ReadOnlySpan<(Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)> notes) -> Vezel.Celerity.Language.Diagnostics.Diagnostic!
 static Vezel.Celerity.Language.Diagnostics.Diagnostic.Create(Vezel.Celerity.Language.Syntax.SyntaxTree! tree, Vezel.Celerity.Language.Text.SourceTextSpan span, Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity severity, Vezel.Celerity.Language.Diagnostics.DiagnosticCode code, string! message, System.Collections.Generic.IEnumerable<(Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)>! notes) -> Vezel.Celerity.Language.Diagnostics.Diagnostic!
 static Vezel.Celerity.Language.Diagnostics.DiagnosticCode.Create(string! name) -> Vezel.Celerity.Language.Diagnostics.DiagnosticCode
 static Vezel.Celerity.Language.Diagnostics.DiagnosticCode.operator !=(Vezel.Celerity.Language.Diagnostics.DiagnosticCode left, Vezel.Celerity.Language.Diagnostics.DiagnosticCode right) -> bool
 static Vezel.Celerity.Language.Diagnostics.DiagnosticCode.operator ==(Vezel.Celerity.Language.Diagnostics.DiagnosticCode left, Vezel.Celerity.Language.Diagnostics.DiagnosticCode right) -> bool
 static Vezel.Celerity.Language.Diagnostics.DiagnosticCode.TryCreate(string! name, out Vezel.Celerity.Language.Diagnostics.DiagnosticCode code) -> bool
-static Vezel.Celerity.Language.ModulePath.Create(params string![]! components) -> Vezel.Celerity.Language.ModulePath!
+static Vezel.Celerity.Language.ModulePath.Create(params System.ReadOnlySpan<string!> components) -> Vezel.Celerity.Language.ModulePath!
 static Vezel.Celerity.Language.ModulePath.Create(System.Collections.Generic.IEnumerable<string!>! components) -> Vezel.Celerity.Language.ModulePath!
 static Vezel.Celerity.Language.ModulePath.operator !=(Vezel.Celerity.Language.ModulePath? left, Vezel.Celerity.Language.ModulePath? right) -> bool
 static Vezel.Celerity.Language.ModulePath.operator ==(Vezel.Celerity.Language.ModulePath? left, Vezel.Celerity.Language.ModulePath? right) -> bool
@@ -1073,7 +1073,7 @@ static Vezel.Celerity.Language.Quality.Passes.UnreachableCodePass.Instance.get -
 static Vezel.Celerity.Language.Quality.Passes.UnusedLocalSymbolPass.Instance.get -> Vezel.Celerity.Language.Quality.Passes.UnusedLocalSymbolPass!
 static Vezel.Celerity.Language.Quality.Passes.UppercaseBaseIndicatorPass.Instance.get -> Vezel.Celerity.Language.Quality.Passes.UppercaseBaseIndicatorPass!
 static Vezel.Celerity.Language.Semantics.Binding.InteractiveContext.Default.get -> Vezel.Celerity.Language.Semantics.Binding.InteractiveContext!
-static Vezel.Celerity.Language.Semantics.SemanticTree.Analyze(Vezel.Celerity.Language.Syntax.SyntaxTree! syntax, Vezel.Celerity.Language.Semantics.Binding.InteractiveContext? context, params Vezel.Celerity.Language.Semantics.DiagnosticAnalyzer![]! analyzers) -> Vezel.Celerity.Language.Semantics.SemanticTree!
+static Vezel.Celerity.Language.Semantics.SemanticTree.Analyze(Vezel.Celerity.Language.Syntax.SyntaxTree! syntax, Vezel.Celerity.Language.Semantics.Binding.InteractiveContext? context, params System.ReadOnlySpan<Vezel.Celerity.Language.Semantics.DiagnosticAnalyzer!> analyzers) -> Vezel.Celerity.Language.Semantics.SemanticTree!
 static Vezel.Celerity.Language.Semantics.SemanticTree.Analyze(Vezel.Celerity.Language.Syntax.SyntaxTree! syntax, Vezel.Celerity.Language.Semantics.Binding.InteractiveContext? context, System.Collections.Generic.IEnumerable<Vezel.Celerity.Language.Semantics.DiagnosticAnalyzer!>! analyzers) -> Vezel.Celerity.Language.Semantics.SemanticTree!
 static Vezel.Celerity.Language.StandardDiagnosticCodes.DuplicateAggregateExpressionField.get -> Vezel.Celerity.Language.Diagnostics.DiagnosticCode
 static Vezel.Celerity.Language.StandardDiagnosticCodes.DuplicateAggregatePatternField.get -> Vezel.Celerity.Language.Diagnostics.DiagnosticCode
@@ -1202,7 +1202,7 @@ Vezel.Celerity.Language.Quality.LintPass.Code.get -> Vezel.Celerity.Language.Dia
 Vezel.Celerity.Language.Quality.LintPass.LintPass(string! code) -> void
 Vezel.Celerity.Language.Quality.LintPassContext
 Vezel.Celerity.Language.Quality.LintPassContext.AddDiagnostic(Vezel.Celerity.Language.Diagnostics.Diagnostic! diagnostic) -> void
-Vezel.Celerity.Language.Quality.LintPassContext.ReportDiagnostic(Vezel.Celerity.Language.Text.SourceTextSpan span, string! message, params (Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)[]! notes) -> void
+Vezel.Celerity.Language.Quality.LintPassContext.ReportDiagnostic(Vezel.Celerity.Language.Text.SourceTextSpan span, string! message, params System.ReadOnlySpan<(Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)> notes) -> void
 Vezel.Celerity.Language.Quality.LintPassContext.ReportDiagnostic(Vezel.Celerity.Language.Text.SourceTextSpan span, string! message, System.Collections.Generic.IEnumerable<(Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)>! notes) -> void
 Vezel.Celerity.Language.Quality.LintPassContext.Root.get -> Vezel.Celerity.Language.Semantics.Tree.DocumentSemantics!
 Vezel.Celerity.Language.Quality.Passes.TestWithoutAssertPass
@@ -1230,7 +1230,7 @@ Vezel.Celerity.Language.Semantics.DiagnosticAnalyzer
 Vezel.Celerity.Language.Semantics.DiagnosticAnalyzer.DiagnosticAnalyzer() -> void
 Vezel.Celerity.Language.Semantics.DiagnosticAnalyzerContext
 Vezel.Celerity.Language.Semantics.DiagnosticAnalyzerContext.AddDiagnostic(Vezel.Celerity.Language.Diagnostics.Diagnostic! diagnostic) -> void
-Vezel.Celerity.Language.Semantics.DiagnosticAnalyzerContext.ReportDiagnostic(Vezel.Celerity.Language.Text.SourceTextSpan span, Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity severity, Vezel.Celerity.Language.Diagnostics.DiagnosticCode code, string! message, params (Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)[]! notes) -> void
+Vezel.Celerity.Language.Semantics.DiagnosticAnalyzerContext.ReportDiagnostic(Vezel.Celerity.Language.Text.SourceTextSpan span, Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity severity, Vezel.Celerity.Language.Diagnostics.DiagnosticCode code, string! message, params System.ReadOnlySpan<(Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)> notes) -> void
 Vezel.Celerity.Language.Semantics.DiagnosticAnalyzerContext.ReportDiagnostic(Vezel.Celerity.Language.Text.SourceTextSpan span, Vezel.Celerity.Language.Diagnostics.DiagnosticSeverity severity, Vezel.Celerity.Language.Diagnostics.DiagnosticCode code, string! message, System.Collections.Generic.IEnumerable<(Vezel.Celerity.Language.Text.SourceTextSpan Span, string! Message)>! notes) -> void
 Vezel.Celerity.Language.Semantics.DiagnosticAnalyzerContext.Root.get -> Vezel.Celerity.Language.Semantics.Tree.DocumentSemantics!
 Vezel.Celerity.Language.Semantics.SemanticTree

@@ -32,9 +32,9 @@ public sealed class LintPassContext
     }
 
     public void ReportDiagnostic(
-        SourceTextSpan span, string message, params (SourceTextSpan Span, string Message)[] notes)
+        SourceTextSpan span, string message, params ReadOnlySpan<(SourceTextSpan Span, string Message)> notes)
     {
-        ReportDiagnostic(span, message, notes.AsEnumerable());
+        ReportDiagnostic(span, message, notes.ToArray().AsEnumerable());
     }
 
     public void ReportDiagnostic(

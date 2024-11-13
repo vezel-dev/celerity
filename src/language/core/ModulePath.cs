@@ -21,9 +21,9 @@ public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<Modu
 
     public static bool operator !=(ModulePath? left, ModulePath? right) => !(left == right);
 
-    public static ModulePath Create(params string[] components)
+    public static ModulePath Create(params ReadOnlySpan<string> components)
     {
-        return Create(components.AsEnumerable());
+        return Create(components.ToArray().AsEnumerable());
     }
 
     public static ModulePath Create(IEnumerable<string> components)

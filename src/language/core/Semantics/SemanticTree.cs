@@ -26,9 +26,9 @@ public sealed class SemanticTree
     }
 
     public static SemanticTree Analyze(
-        SyntaxTree syntax, InteractiveContext? context, params DiagnosticAnalyzer[] analyzers)
+        SyntaxTree syntax, InteractiveContext? context, params ReadOnlySpan<DiagnosticAnalyzer> analyzers)
     {
-        return Analyze(syntax, context, analyzers.AsEnumerable());
+        return Analyze(syntax, context, analyzers.ToArray().AsEnumerable());
     }
 
     public static SemanticTree Analyze(

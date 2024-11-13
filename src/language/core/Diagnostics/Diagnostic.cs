@@ -46,9 +46,9 @@ public sealed class Diagnostic
         DiagnosticSeverity severity,
         DiagnosticCode code,
         string message,
-        params (SourceTextSpan Span, string Message)[] notes)
+        params ReadOnlySpan<(SourceTextSpan Span, string Message)> notes)
     {
-        return Create(tree, span, severity, code, message, notes.AsEnumerable());
+        return Create(tree, span, severity, code, message, notes.ToArray().AsEnumerable());
     }
 
     public static Diagnostic Create(

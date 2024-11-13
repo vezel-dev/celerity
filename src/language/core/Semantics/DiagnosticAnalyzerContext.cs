@@ -33,9 +33,9 @@ public sealed class DiagnosticAnalyzerContext
         DiagnosticSeverity severity,
         DiagnosticCode code,
         string message,
-        params (SourceTextSpan Span, string Message)[] notes)
+        params ReadOnlySpan<(SourceTextSpan Span, string Message)> notes)
     {
-        ReportDiagnostic(span, severity, code, message, notes.AsEnumerable());
+        ReportDiagnostic(span, severity, code, message, notes.ToArray().AsEnumerable());
     }
 
     public void ReportDiagnostic(
