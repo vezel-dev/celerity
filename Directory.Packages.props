@@ -32,7 +32,7 @@
         <PackageVersion Include="DotNext"
                         Version="5.14.0" />
         <PackageVersion Include="Draco.Lsp"
-                        Version="0.3.6-pre" />
+                        Version="0.4.14-pre" />
         <PackageVersion Include="Iced"
                         Version="1.21.0" />
         <PackageVersion Include="Meziantou.Xunit.ParallelTestFramework"
