@@ -39,11 +39,11 @@ jobs:
           ./cake upload-core-nuget -c Release
           ./cake upload-vscode -c Release
       - name: Attest packages
-        uses: actions/attest-build-provenance@v1.4.4
+        uses: actions/attest-build-provenance@v2.0.0
         with:
           subject-path: out/pkg/dotnet/release/*.nupkg
       - name: Attest extensions
-        uses: actions/attest-build-provenance@v1.4.4
+        uses: actions/attest-build-provenance@v2.0.0
         with:
           subject-path: out/pkg/vs*/*.vsix
       - name: Upload artifacts
