@@ -44,7 +44,7 @@
         <PackageVersion Include="NuGet.Versioning"
                         Version="6.12.1" />
         <PackageVersion Include="Shouldly"
-                        Version="4.2.1" />
+                        Version="4.3.0" />
         <PackageVersion Include="Spdx"
                         Version="0.11.0" />
         <PackageVersion Include="Verify.DiffPlex"
