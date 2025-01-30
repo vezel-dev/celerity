@@ -229,7 +229,7 @@
     "@vscode/vsce": "3.2.2",
     "cpy-cli": "5.0.0",
     "esbuild": "0.24.2",
-    "eslint": "8.57.1",
+    "eslint": "9.19.0",
     "js-yaml": "4.1.0",
     "mkdirp": "3.0.1",
     "nerdbank-gitversioning": "3.7.115",
