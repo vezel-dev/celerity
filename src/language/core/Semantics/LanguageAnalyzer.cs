@@ -141,7 +141,7 @@ internal sealed class LanguageAnalyzer
                     DiagnosticSeverity.Error,
                     code,
                     message,
-                    notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray()));
+                    [.. notes.Select(static t => new DiagnosticNote(t.Span, t.Message))]));
         }
 
         private (UseDeclarationSemantics? Use, ModulePath? Path) ResolveModulePath(ModulePathSyntax path)

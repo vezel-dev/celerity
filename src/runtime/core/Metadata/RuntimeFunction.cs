@@ -30,7 +30,7 @@ public class RuntimeFunction : RuntimeMember
         IEnumerable<CodeParameterSemantics> parameters)
         : base(module, isPublic, name, attributes)
     {
-        Parameters = parameters.Select((param, i) => new RuntimeParameter(this, i, param)).ToImmutableArray();
+        Parameters = [.. parameters.Select((param, i) => new RuntimeParameter(this, i, param))];
     }
 
     public override string ToString()

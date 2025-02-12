@@ -62,7 +62,7 @@ public sealed class ModulePath : IEquatable<ModulePath>, IEqualityOperators<Modu
 
         if (good)
         {
-            path = new(components.ToImmutableArray());
+            path = new([.. components]);
 
             return true;
         }

@@ -8,7 +8,7 @@ public abstract class RuntimeMetadata
 
     private protected RuntimeMetadata(IEnumerable<AttributeSemantics> attributes)
     {
-        Attributes = attributes.Select(static pair => (pair.Name, pair.Value!)).ToImmutableArray();
+        Attributes = [.. attributes.Select(static pair => (pair.Name, pair.Value!))];
     }
 
     public abstract override string ToString();

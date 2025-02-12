@@ -77,7 +77,7 @@ public sealed class Diagnostic
             severity,
             code,
             message,
-            notes.Select(static t => new DiagnosticNote(t.Span, t.Message)).ToImmutableArray());
+            [.. notes.Select(static t => new DiagnosticNote(t.Span, t.Message))]);
     }
 
     public SourceTextLocation GetLocation()
