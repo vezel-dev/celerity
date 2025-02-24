@@ -42,7 +42,7 @@
         <PackageVersion Include="Microsoft.NET.Test.Sdk"
                         Version="17.12.0" />
         <PackageVersion Include="NuGet.Versioning"
-                        Version="6.12.1" />
+                        Version="6.13.1" />
         <PackageVersion Include="Shouldly"
                         Version="4.3.0" />
         <PackageVersion Include="Spdx"
