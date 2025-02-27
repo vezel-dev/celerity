@@ -41,11 +41,9 @@ jobs:
       - name: Attest packages
         uses: actions/attest-build-provenance@v2.2.1
         with:
-          subject-path: out/pkg/dotnet/release/*.nupkg
-      - name: Attest extensions
-        uses: actions/attest-build-provenance@v2.2.1
-        with:
-          subject-path: out/pkg/vs*/*.vsix
+          subject-path: |
+            out/pkg/dotnet/release/*.nupkg
+            out/pkg/vs*/*.vsix
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4.6.1
